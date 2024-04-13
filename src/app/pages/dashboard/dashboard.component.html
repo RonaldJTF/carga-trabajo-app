@@ -1,0 +1,4 @@
+<div *ngIf="menuService.functionality$ | async as functionality" class="card">
+    <app-functionality [functionality]="functionality"></app-functionality>
+    <router-outlet></router-outlet>
+</div>

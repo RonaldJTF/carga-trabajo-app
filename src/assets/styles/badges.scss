@@ -1,0 +1,130 @@
+.badge {
+    border-radius: var(--border-radius);
+    padding: .25em .5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.badge {
+    &.badge-green {
+        background: #C8E6C9;
+        color: #256029;
+    }
+    &.badge-red {
+        background: #FFCDD2;
+        color: #C63737;
+    }
+    &.badge-blue {
+        background: #B3E5FC;
+        color: #23547B;
+    }
+    &.badge-gray {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+}
+
+.status-badge {
+    border-radius: var(--border-radius);
+    padding: .25em .5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.status-badge {
+    &.status-active {
+        background: #C8E6C9;
+        color: #256029;
+    }
+    &.status-inactive {
+        background: #FFCDD2;
+        color: #C63737;
+    }
+    &.status-unknown {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+}
+
+
+.answer-status-badge {
+    border-radius: var(--border-radius);
+    padding: .25em .5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.answer-status-badge {
+    &.answer-status-answered {
+        background: #C8E6C9;
+        color: #256029;
+    }
+    &.answer-status-no-answered {
+        background: #FFCDD2;
+        color: #C63737;
+    }
+    &.answer-status-unknown {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+}
+
+
+.expiration-badge {
+    border-radius: var(--border-radius);
+    padding: .25em .5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.expiration-badge {
+    &.expiration-open {
+        background: #C8E6C9;
+        color: #256029;
+    }
+    &.expiration-closed {
+        background: #FFCDD2;
+        color: #C63737;
+    }
+    &.expiration-soon {
+        background: #B3E5FC;
+        color: #23547B;
+    }
+    &.expiration-unknown {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+}
+
+
+.editable-badge {
+    border-radius: var(--border-radius);
+    padding: .25em .5rem;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.editable-badge {
+    &.editable-active {
+        background: #C8E6C9;
+        color: #256029;
+    }
+    &.editable-inactive {
+        background: #FFCDD2;
+        color: #C63737;
+    }
+    &.editable-unknown {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+}
+
