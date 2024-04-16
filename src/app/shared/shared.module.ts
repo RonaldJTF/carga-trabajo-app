@@ -28,6 +28,17 @@ import { SidebarModule } from 'primeng/sidebar';
 import { AuthRoutingModule } from '../pages/account/auth/auth-routing.module';
 import { FunctionalityComponent } from './funcionality/functionality.component';
 
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
+import { RatingModule } from 'primeng/rating';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DialogModule } from 'primeng/dialog';
+import { TableModule } from 'primeng/table';
+import { DataViewModule } from 'primeng/dataview';
+import { TagModule } from 'primeng/tag';
+
 @NgModule({
   declarations: [
     FunctionalityComponent,
@@ -57,6 +68,21 @@ import { FunctionalityComponent } from './funcionality/functionality.component';
     PasswordModule,
     ButtonModule,
     InputTextModule,
+
+  //LPR: Agregó
+    ToastModule,
+    ToolbarModule,
+    RatingModule,
+    InputTextareaModule,
+    DropdownModule,
+    InputNumberModule,
+    DialogModule,
+    TableModule,
+    MenuModule,
+    DataViewModule,
+    TagModule
+  // LPR:FIN
+
   ], 
   exports: [
     FunctionalityComponent,
@@ -83,6 +109,20 @@ import { FunctionalityComponent } from './funcionality/functionality.component';
     PasswordModule,
     ButtonModule,
     InputTextModule,
+
+    //LPR: Agregó
+    ToastModule,
+    ToolbarModule,
+    RatingModule,
+    InputTextareaModule,
+    DropdownModule,
+    InputNumberModule,
+    DialogModule,
+    TableModule,
+    MenuModule,
+    DataViewModule,
+    TagModule
+    //LPR: FIN
   ], 
   providers: []
 })

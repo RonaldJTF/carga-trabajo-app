@@ -26,7 +26,8 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Configuración',
                 items: [
-                    { label: 'Estructuras', icon: 'pi pi-sitemap', color:'blue', description: 'Gestión de estructuras de dependencias, procesos, procedimientos y actividades',  routerLink: ['/configurations/structures']}
+                    { label: 'Estructuras', icon: 'pi pi-sitemap', color:'blue', description: 'Gestión de estructuras de dependencias, procesos, procedimientos y actividades',  routerLink: ['/configurations/structures']},
+                    { label: 'Usuarios', icon: 'pi pi-user', color:'blue', description: 'Gestión de usuarios para el acceso al aplicativo', routerLink: ['/configurations/users']}
                 ],
             },
         ];

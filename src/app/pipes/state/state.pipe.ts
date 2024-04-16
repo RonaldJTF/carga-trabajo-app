@@ -11,12 +11,11 @@ export class Out{
 export class StatePipe implements PipeTransform {
 
   transform(stateIn: string): Out {
-    if (stateIn == "1"){
+    if (stateIn == "1" || stateIn == "true"){
       return {classStyle: 'active', value: 'Activo'}
-    }else if (stateIn == "0"){
+    }else if (stateIn == "0" || stateIn == "false"){
       return {classStyle: 'inactive', value: 'Inactivo'}
     }
     return {classStyle: 'unknown', value: 'Desconocido'}
   }
-
 }

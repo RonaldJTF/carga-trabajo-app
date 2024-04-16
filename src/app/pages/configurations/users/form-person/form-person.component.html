@@ -1,0 +1,67 @@
+<p>form-person works!</p>
+<p-dialog [(visible)]="personDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <img [src]="person.srcFoto" [alt]="person.srcFoto" width="150" class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="person.srcFoto">
+       <div class="field grid">              
+        <div class="field col">
+            <label for="primerNombre">Primer Nombre</label>
+            <input type="text" pInputText id="primerNombre" [(ngModel)]="person.primerNombre" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.primerNombre}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.primerNombre">Primer Nombre is required.</small>
+        </div>
+        <div class="field col">
+            <label for="segundoNombre">Segundo Nombre</label>
+            <input type="text" pInputText id="segundoNombre" [(ngModel)]="person.segundoNombre" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.segundoNombre}"/>
+            <!-- <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.primerNombre">Primer Nombre is required.</small> -->
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="field col">
+            <label for="primerApellido">Primer Apellido</label>
+            <input type="text" pInputText id="primerApellido" [(ngModel)]="person.segundoNombre" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.segundoNombre}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.primerNombre">Primer Nombre is required.</small>
+        </div>
+        <div class="field col">
+            <label for="primerApellido">Segundo Apellido</label>
+            <input type="text" pInputText id="segundoApellido" [(ngModel)]="person.segundoNombre" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.segundoNombre}"/>
+            <!-- <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.primerNombre">Primer Nombre is required.</small> -->
+        </div>
+    </div>
+    
+    <div class="field">
+        <label for="status">Tipo Documento</label>
+        <p-dropdown [(ngModel)]="person.tipoDocumento" inputId="inventoryStatus" optionValue="value" [options]="statuses" placeholder="Selecciona...">
+            <ng-template pTemplate="selectedItem">
+                <span *ngIf="person && person.tipoDocumento.descripcion" [class]="'product-badge status-' + person.tipoDocumento.descripcion.toString().toLowerCase()">{{person.tipoDocumento.descripcion}}</span>
+            </ng-template>
+            <ng-template let-option pTemplate="item">
+                <span [class]="'product-badge status-' + option.value">{{option.label}}</span>
+            </ng-template>
+        </p-dropdown>
+    </div>
+    
+    <div class="field">
+        <label for="numeroDocumento">Numero Documento</label>
+        <input type="text" pInputText id="nuemroDocumento" [(ngModel)]="person.numeroDocumento" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.numeroDocumento}"/>
+        <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.numeroDocumento">Numero de Documento es requerido.</small>
+    </div>
+   
+    <div class="field grid">
+        <div class="field col">
+            <label for="correo">Correo</label>
+            <input type="text" pInputText id="correo" [(ngModel)]="person.correo" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.correo}"/>
+            <!-- <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.correo">Numero de Documento es requerido.</small> -->
+        </div>
+        <div class="field col">
+            <label for="telefono">Telefono</label>
+            <input type="text" pInputText id="telefono" [(ngModel)]="person.telefono" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.telefono}"/>
+            <!-- <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.correo">Numero de Documento es requerido.</small> -->
+        </div>
+    </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="savePerson()"></button>
+    </ng-template>
+</p-dialog>
+
