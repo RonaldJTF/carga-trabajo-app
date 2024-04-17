@@ -10,7 +10,7 @@ export class ImageFallbackDirective {
   constructor(private el: ElementRef, private renderer: Renderer2) {}
 
   @HostListener('error') onError() {
-    const fallbackUrl = this.appImageFallback || 'assets/layout/images/image-fallback.png'; 
+    const fallbackUrl = this.appImageFallback || 'assets/content/images/image-fallback.png'; 
     this.renderer.setAttribute(this.el.nativeElement, 'src', fallbackUrl);
   }
 }

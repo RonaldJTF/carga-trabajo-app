@@ -1,4 +1,4 @@
-export const message = {
+export const MESSAGE = {
     ARCHIVO_ADJUNTO_NO_CARGADO: "Archivo adjunto no cargado",
     NADA_AGREGADO: "No hay registros agregados",
     NADA_CONFIGURADO: "No hay nada configurado por aquí",
