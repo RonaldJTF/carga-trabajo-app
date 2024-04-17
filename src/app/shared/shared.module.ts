@@ -18,20 +18,27 @@ import { PrettyDatePipe } from '../pipes/pretty-date/pretty-date.pipe';
 import { TimeAgoPipe } from '../pipes/time-ago/time-ago.pipe';
 import { ImageFallbackDirective } from '../directives/image-fallback.directive';
 import { CommonModule } from '@angular/common';
-import { MenuModule } from 'primeng/menu';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { BadgeModule } from 'primeng/badge';
-import { TooltipModule } from 'primeng/tooltip';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { QuillModule } from 'ngx-quill';
-import { SidebarModule } from 'primeng/sidebar';
+import { DataViewModule } from 'primeng/dataview';
 import { AuthRoutingModule } from '../pages/account/auth/auth-routing.module';
 import { FunctionalityComponent } from './funcionality/functionality.component';
+import { GoToIfNotFoundComponent } from './go-to-if-not-found/go-to-if-not-found.component';
+import { MenuItemComponent } from './menu-item/menu-item.component';
+import { DividerModule } from 'primeng/divider';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PanelModule } from 'primeng/panel';
+import { MenuModule } from 'primeng/menu';
+import { TableModule } from 'primeng/table';
+import { TreeTableModule} from 'primeng/treetable';
+import { NoResultComponent } from './no-result/no-result.component';
+import { LabelValueChartComponent } from './charts/label-value-chart/label-value-chart.component';
 
 @NgModule({
   declarations: [
     FunctionalityComponent,
-
+    GoToIfNotFoundComponent,
+    MenuItemComponent,
+    NoResultComponent,
+    LabelValueChartComponent,
 
     FirstNamePipe, 
     StatePipe, 
@@ -43,7 +50,6 @@ import { FunctionalityComponent } from './funcionality/functionality.component';
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
-
 
     ImageFallbackDirective,
   ],
@@ -57,12 +63,23 @@ import { FunctionalityComponent } from './funcionality/functionality.component';
     PasswordModule,
     ButtonModule,
     InputTextModule,
+    DataViewModule,
+    DividerModule,
+    OverlayPanelModule,
+    PanelModule,
+    MenuModule,
+    TableModule,
+    TreeTableModule,
   ], 
   exports: [
     FunctionalityComponent,
-    
+    GoToIfNotFoundComponent,
+    MenuItemComponent,
+    NoResultComponent,
+    LabelValueChartComponent,
+
     ImageFallbackDirective,
-    
+   
     FirstNamePipe, 
     StatePipe, 
     FileSizePipe,
@@ -83,6 +100,13 @@ import { FunctionalityComponent } from './funcionality/functionality.component';
     PasswordModule,
     ButtonModule,
     InputTextModule,
+    DataViewModule,
+    DividerModule,
+    OverlayPanelModule,
+    PanelModule,
+    MenuModule,
+    TableModule,
+    TreeTableModule,
   ], 
   providers: []
 })
