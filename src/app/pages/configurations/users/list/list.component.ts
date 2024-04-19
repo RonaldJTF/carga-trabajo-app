@@ -3,6 +3,8 @@ import { Table } from 'primeng/table';
 import { Person } from 'src/app/models/person';
 import { MenuItem, MessageService } from 'primeng/api';
 import { PersonService } from 'src/app/services/person.service';
+import { Router } from '@angular/router';
+import { ConfirmationDialogService } from '../../../../services/confirmation-dialog.service';
 
 @Component({
   selector: 'app-list',
@@ -10,7 +12,6 @@ import { PersonService } from 'src/app/services/person.service';
   styleUrls: ['./list.component.scss'],
 })
 export class ListComponent {
-  
   layout: string = 'list';
 
   personDialog: boolean = false;
@@ -21,7 +22,7 @@ export class ListComponent {
 
   people: Person[] = [];
 
-  person: Person = new Person;
+  person: Person = new Person();
 
   selectedPeople: Person[] = [];
 
@@ -35,71 +36,90 @@ export class ListComponent {
 
   cardMenu: MenuItem[] = [];
 
-  
+  items: MenuItem[] = [];
+
   constructor(
     private messageService: MessageService,
-    private personService: PersonService
-  ){}
+    private personService: PersonService,
+    private confirmationDialogService: ConfirmationDialogService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    this.items = [
+      {label: 'Asignar credenciales', icon: 'pi pi-key', command: (e) => this.onUserPerson(e)},
+      { label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editPerson(e) },
+      { label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDelete(e) }
+  ];
     this.cols = [
       { field: 'person', header: 'Person' },
       { field: 'price', header: 'Price' },
       { field: 'category', header: 'Category' },
       { field: 'rating', header: 'Reviews' },
-      { field: 'inventoryStatus', header: 'Status' }
+      { field: 'inventoryStatus', header: 'Status' },
     ];
 
     this.getPeople();
   }
-  
-  getPeople(){
-    this.personService.getPeople().subscribe(data => this.people = data);
+
+  getPeople() {
+    this.personService.getPeople().subscribe({
+      next: (data) => {
+        this.people = data;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   openNew() {
-    this.person = new Person;
-    this.submitted = false;
-    this.personDialog = true;
+    this.router.navigate(['configurations/users/person/'], {
+      skipLocationChange: true,
+      });    
   }
 
   deleteSelectedPeople() {
     this.deletePeopleDialog = true;
   }
 
-  editPerson(person: Person) {
-    this.person = { ...person };
-    this.personDialog = true;
+  editPerson(event: any) {
+    this.router.navigate(['configurations/users/person/', event.item.id], {
+      skipLocationChange: true,
+      });
   }
 
   deletePerson(person: Person) {
-    this.deletePersonDialog = true;
     this.person = { ...person };
   }
 
+  onDelete(idPerson: any){
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      ()=>{
+        console.log(idPerson)
+        //this.deletePerson(idPerson);
+       this.people = this.people.filter(item => item.id!==idPerson);
+      }
+    )
+  }
+
   confirmDeleteSelected() {
-     this.deletePeopleDialog = false;
-     this.people = this.people.filter(
-       (val) => !this.selectedPeople.includes(val)
-     );
-     this.messageService.add({
-       severity: 'success',
-       summary: 'Successful',
-       detail: 'Products Deleted',
-       life: 3000,
-     });
-     this.selectedPeople = [];
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      ()=>{
+        this.deletePerson(this.person);       
+      }
+    )
   }
 
   confirmDelete() {
     this.deletePersonDialog = false;
     this.people = this.people.filter((val) => val.id !== this.person.id);
-     this.messageService.add({
-       severity: 'success',
-       summary: 'Successful',
-       detail: 'Product Deleted',
-       life: 3000,
-     });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successful',
+      detail: 'Product Deleted',
+      life: 3000,
+    });
     //this.people;
   }
 
@@ -136,62 +156,12 @@ export class ListComponent {
 
   savePerson() {
     this.submitted = true;
-
-    // if (this.product.name?.trim()) {
-    //   if (this.product.id) {
-    //     // @ts-ignore
-    //     this.product.inventoryStatus = this.product.inventoryStatus.value
-    //       ? this.product.inventoryStatus.value
-    //       : this.product.inventoryStatus;
-    //     this.products[this.findIndexById(this.product.id)] = this.product;
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Successful',
-    //       detail: 'Product Updated',
-    //       life: 3000,
-    //     });
-    //   } else {
-    //     this.product.id = this.createId();
-    //     this.product.code = this.createId();
-    //     this.product.image = 'product-placeholder.svg';
-    //     // @ts-ignore
-    //     this.product.inventoryStatus = this.product.inventoryStatus
-    //       ? this.product.inventoryStatus.value
-    //       : 'INSTOCK';
-    //     this.products.push(this.product);
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Successful',
-    //       detail: 'Product Created',
-    //       life: 3000,
-    //     });
-    //   }
-
-    //   this.products = [...this.products];
-    //   this.productDialog = false;
-    //   this.product = {};
-    // }
   }
 
-//   getSeverity(person: Person) {
-//     switch (person.usuario.activo) {
-//         case true:
-//             return 'success';
+  onUserPerson(event: any) {
+    this.router.navigate(['configurations/users/user/', event.item.id], {
+    skipLocationChange: true,
+    });
+  }
 
-//         case false:
-//             return 'warning';
-
-//         case null:
-//             return 'danger';
-
-//         default:
-//             return null;
-//     }
-// }
-
-onSort(){}
-onFilter(){}
-applyFilterGlobal(event: any, string: string){
-
-}
 }

@@ -1,8 +1,9 @@
-<div class="grid">
-    <div class="col-12">
-        <div class="card px-6 py-6">
-            <p-toast></p-toast>
-            <p-toolbar styleClass="mb-4">
+<ng-container>
+    <div class="grid grid-nogutter">
+        <div class="col-12 p-2 mb-0">
+            <div class="card">
+                <!-- <p-toast></p-toast> -->
+                <!-- <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                     <div class="my-2">
                         <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
@@ -11,155 +12,200 @@
                 </ng-template>
 
                 <ng-template pTemplate="right">
-                    <!-- <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload> -->
+                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
                     <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
                 </ng-template>
-            </p-toolbar>
+            </p-toolbar> -->
 
+                <p-table #dt [value]="people" rowGroupMode="subheader" sortField="order" sortMode="single"
+                    [paginator]="true" [rows]="10"
+                    [globalFilterFields]="['primerNombre', 'idTipoDocumento', 'numeroDocumento', 'status']"
+                    [paginator]="true" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [(selection)]="selectedPeople" selectionMode="multiple" dataKey="id" class="border-round-lg">
+                    <ng-template pTemplate="caption">
+                        <div class="flex">
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-danger"
+                                    (click)="deleteSelectedPeople()"
+                                    [disabled]="!selectedPeople || !selectedPeople.length"></button>
 
-            <p-table #dt [value]="people" rowGroupMode="subheader" sortField="order" sortMode="single" [paginator]="true" [rows]="10" [globalFilterFields]="['primerNombre','idTipoDocumento','numeroDocumento','status']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedPeople" selectionMode="multiple" dataKey="id">
-            <ng-template pTemplate="caption">
-                <div class="flex">
-                    <div class="flex">
-                        <!-- <button type="button" pButton pRipple icon="pi pi-file-excel" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
-                        <button type="button" pButton pRipple icon="pi pi-file-pdf" class="p-button-warning" pTooltip="PDF" tooltipPosition="bottom"></button> -->
+                                <!-- <button type="button" pButton pRipple icon="pi pi-file-excel" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+                                    <button type="button" pButton pRipple icon="pi pi-file-pdf" class="p-button-warning" pTooltip="PDF" tooltipPosition="bottom"></button> -->
+                            </div>
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)"
+                                    placeholder="Search..." class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th class="text-center" style="min-width: 300px" pSortableColumn="primerNombre">
+                                Usuario
+                                <p-sortIcon field="primerNombre"></p-sortIcon>
+                            </th>
+                            <th class="text-center" style="width: 20%" pSortableColumn="usuario.activo">
+                                Estado
+                                <p-sortIcon field="usuario.activo"></p-sortIcon>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-request let-rowIndex="rowIndex">
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="request"></p-tableCheckbox>
+                            </td>
+                            <td class="flex align-items-center">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
+                                    <img [src]="request.srcFoto" [appImageFallback]="'assets/layout/images/image-fallback-perfil.png'" style="width: 100%; height: auto" />
+                                </div>
+                                <div class="flex flex-column align-items-center justify-content-start ml-2">
+                                    <span class="image-text ml-2 w-full">{{ request.primerNombre }}
+                                        {{ request.primerApellido }}</span>
+                                    <span class="image-text text-500 text-sm ml-2 w-full">{{ request.tipoDocumento }}:
+                                        {{ request.numeroDocumento }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span [class]="'expiration-badge expiration-' + (request.usuario?.activo | state).classStyle">
+                                    {{ (request.usuario?.activo | state).value }}
+                                </span>
+                            </td>
+                            <td class="p-0 text-center">
+                                <!-- Menu con las acciones para gestionar la persona -->
+                                <!-- <button pButton pRipple icon="pi pi-key" class="p-button-rounded p-button-info mr-2"
+                                    [routerLink]="['user/', request.id]" (click)="onUserPerson(request)"></button>
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success mr-2" [routerLink]="['person/', request.id]"
+                                    (click)="editPerson(request)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                    (click)="deletePerson(request)"></button> -->
+                                <app-menu-item [menuItems]="items" [id]="request.id"></app-menu-item>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <!-- <td colspan="4" class="text-center">{{message.NO_REGISTROS}}</td> -->
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+                <!-- <app-form-person [person]="person" [submitted]="submitted" [personDialog]="personDialog"></app-form-person> -->
+
+                <p-dialog [(visible)]="personDialog" [style]="{ width: '450px' }" header="Detalle Persona"
+                    [modal]="true" class="p-fluid">
+                    <ng-template pTemplate="content">
+                        <img [src]="person.srcFoto" [alt]="person.srcFoto" width="150"
+                            class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="person.srcFoto" />
+                        <div class="field grid">
+                            <div class="field col">
+                                <label for="primerNombre">Primer Nombre</label>
+                                <input type="text" pInputText id="primerNombre" [(ngModel)]="person.primerNombre"
+                                    required autofocus [ngClass]="{'ng-invalid ng-dirty': submitted && !person.primerNombre}" />
+                                <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.primerNombre">Primer
+                                    Nombre is required.</small>
+                            </div>
+                            <div class="field col">
+                                <label for="segundoNombre">Segundo Nombre</label>
+                                <input type="text" pInputText id="segundoNombre" [(ngModel)]="person.segundoNombre"
+                                    autofocus [ngClass]="{'ng-invalid ng-dirty': submitted && !person.segundoNombre}" />
+                            </div>
+                        </div>
+                        <div class="field grid">
+                            <div class="field col">
+                                <label for="primerApellido">Primer Apellido</label>
+                                <input type="text" pInputText id="primerApellido" [(ngModel)]="person.segundoNombre"
+                                    required autofocus [ngClass]="{'ng-invalid ng-dirty': submitted && !person.segundoNombre}" />
+                                <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.primerNombre">Primer
+                                    Nombre is required.</small>
+                            </div>
+                            <div class="field col">
+                                <label for="primerApellido">Segundo Apellido</label>
+                                <input type="text" pInputText id="segundoApellido" [(ngModel)]="person.segundoNombre"
+                                    autofocus [ngClass]="{'ng-invalid ng-dirty': submitted && !person.segundoNombre}" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="status">Tipo Documento</label>
+                            <p-dropdown [(ngModel)]="person.tipoDocumento" inputId="inventoryStatus" optionValue="value"
+                                [options]="statuses" placeholder="Selecciona...">
+                                <ng-template pTemplate="selectedItem">
+                                    <span *ngIf="person && person.tipoDocumento.descripcion" [class]="'product-badge status-' + person.tipoDocumento.descripcion.toString().toLowerCase()">{{ person.tipoDocumento.descripcion }}</span>
+                                </ng-template>
+                                <ng-template let-option pTemplate="item">
+                                    <span [class]="'product-badge status-' + option.value">{{
+                                        option.label
+                                        }}</span>
+                                </ng-template>
+                            </p-dropdown>
+                        </div>
+
+                        <div class="field">
+                            <label for="numeroDocumento">Numero Documento</label>
+                            <input type="text" pInputText id="nuemroDocumento" [(ngModel)]="person.numeroDocumento"
+                                required autofocus [ngClass]="{'ng-invalid ng-dirty': submitted && !person.numeroDocumento}" />
+                            <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.numeroDocumento">Numero de
+                                Documento es requerido.</small>
+                        </div>
+
+                        <div class="field grid">
+                            <div class="field col">
+                                <label for="correo">Correo</label>
+                                <input type="text" pInputText id="correo" [(ngModel)]="person.correo" autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty': submitted && !person.correo}" />
+                            </div>
+                            <div class="field col">
+                                <label for="telefono">Telefono</label>
+                                <input type="text" pInputText id="telefono" [(ngModel)]="person.telefono" autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty': submitted && !person.telefono}" />
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                            (click)="hideDialog()"></button>
+                        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                            (click)="savePerson()"></button>
+                    </ng-template>
+                </p-dialog>
+
+                <p-dialog [(visible)]="deletePersonDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+                    <div class="flex align-items-center justify-content-center">
+                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                        <span *ngIf="person">Are you sure you want to delete <b>{{ person.primerNombre }}</b>?</span>
                     </div>
-                    <span class="p-input-icon-left ml-auto">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
-                    </span>
-                </div>
-            </ng-template>
-        
-            <ng-template pTemplate="header">
-                <tr >
-                    <th style="width: 3rem">
-                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                    </th>
-                    <th class="text-center"style="min-width: 300px;" pSortableColumn="primerNombre">Usuario <p-sortIcon field="primerNombre"></p-sortIcon></th>
-                    <th class="text-center" style="width:20%;" pSortableColumn="usuario.activo">Estado <p-sortIcon field="usuario.activo"></p-sortIcon></th>
-                    <th></th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-request let-rowIndex="rowIndex">
-                
-                <tr>
-                    <td>
-                        <p-tableCheckbox [value]="request"></p-tableCheckbox>
-                    </td>
-                    <td class="flex align-items-center">
-                        <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; ">
-                            <img [src]="request.srcFoto" [appImageFallback]="'assets/layout/images/image-fallback-perfil.png'" style="width: 100%; height: auto;"/>
-                        </div>
-                        <div class="flex flex-column align-items-center justify-content-start ml-2">
-                            <span class="image-text ml-2 w-full">{{request.primerNombre}} {{request.primerApellido}}</span>
-                            <span class="image-text text-500 text-sm ml-2 w-full">{{request.tipoDocumento}}: {{request.numeroDocumento}}</span>
-                        </div>
-                    </td>
-                    <td>
-                
-                        <span [class]="'expiration-badge expiration-'+( request.usuario.activo | state).classStyle">{{ (request.usuario.activo | state).value}}</span>
-
-                    </td>
-                    <td class="p-0 text-center">
-                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editPerson(request)"></button>
-                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deletePerson(request)"></button>
-                        <!-- <app-menu-item [menuItems]="isTheRequester(request.idUsuario) && isRequester ? menuItemsRequestRequester : menuItemsRequestManagement" [id]="request.id" ></app-menu-item> -->
-                    </td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage">
-                <tr>
-                    <!-- <td colspan="4" class="text-center">{{message.NO_REGISTROS}}</td> -->
-                </tr>
-            </ng-template>
-        </p-table>
-
-
-        <!-- <app-form-person [person]="person" [submitted]="submitted" [personDialog]="personDialog"></app-form-person> -->
-
-        <p-dialog [(visible)]="personDialog" [style]="{width: '450px'}" header="Detalle Persona" [modal]="true" class="p-fluid">
-            <ng-template pTemplate="content">
-                <img [src]="person.srcFoto" [alt]="person.srcFoto" width="150" class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="person.srcFoto">
-               <div class="field grid">              
-                <div class="field col">
-                    <label for="primerNombre">Primer Nombre</label>
-                    <input type="text" pInputText id="primerNombre" [(ngModel)]="person.primerNombre" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.primerNombre}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.primerNombre">Primer Nombre is required.</small>
-                </div>
-                <div class="field col">
-                    <label for="segundoNombre">Segundo Nombre</label>
-                    <input type="text" pInputText id="segundoNombre" [(ngModel)]="person.segundoNombre" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.segundoNombre}"/>
-                </div>
-            </div>
-            <div class="field grid">
-                <div class="field col">
-                    <label for="primerApellido">Primer Apellido</label>
-                    <input type="text" pInputText id="primerApellido" [(ngModel)]="person.segundoNombre" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.segundoNombre}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.primerNombre">Primer Nombre is required.</small>
-                </div>
-                <div class="field col">
-                    <label for="primerApellido">Segundo Apellido</label>
-                    <input type="text" pInputText id="segundoApellido" [(ngModel)]="person.segundoNombre" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.segundoNombre}"/>
-                </div>
-            </div>
-            
-            <div class="field">
-                <label for="status">Tipo Documento</label>
-                <p-dropdown [(ngModel)]="person.tipoDocumento" inputId="inventoryStatus" optionValue="value" [options]="statuses" placeholder="Selecciona...">
-                    <ng-template pTemplate="selectedItem">
-                        <span *ngIf="person && person.tipoDocumento.descripcion" [class]="'product-badge status-' + person.tipoDocumento.descripcion.toString().toLowerCase()">{{person.tipoDocumento.descripcion}}</span>
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                            (click)="deletePersonDialog = false"></button>
+                        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                            (click)="confirmDelete()"></button>
                     </ng-template>
-                    <ng-template let-option pTemplate="item">
-                        <span [class]="'product-badge status-' + option.value">{{option.label}}</span>
+                </p-dialog>
+
+                <p-dialog [(visible)]="deletePeopleDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+                    <div class="flex align-items-center justify-content-center">
+                        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                        <span>Are you sure you want to delete selected products?</span>
+                    </div>
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                            (click)="deletePeopleDialog = false"></button>
+                        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                            (click)="confirmDeleteSelected()"></button>
                     </ng-template>
-                </p-dropdown>
+                </p-dialog>
             </div>
-            
-            <div class="field">
-                <label for="numeroDocumento">Numero Documento</label>
-                <input type="text" pInputText id="nuemroDocumento" [(ngModel)]="person.numeroDocumento" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.numeroDocumento}"/>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.numeroDocumento">Numero de Documento es requerido.</small>
-            </div>
-           
-            <div class="field grid">
-                <div class="field col">
-                    <label for="correo">Correo</label>
-                    <input type="text" pInputText id="correo" [(ngModel)]="person.correo" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.correo}"/>
-                </div>
-                <div class="field col">
-                    <label for="telefono">Telefono</label>
-                    <input type="text" pInputText id="telefono" [(ngModel)]="person.telefono" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !person.telefono}"/>
-                </div>
-            </div>
-            </ng-template>
-
-            <ng-template pTemplate="footer">
-                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="savePerson()"></button>
-            </ng-template>
-        </p-dialog>
-
-        <p-dialog [(visible)]="deletePersonDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
-            <div class="flex align-items-center justify-content-center">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="person">Are you sure you want to delete <b>{{person.primerNombre}}</b>?</span>
-            </div>
-            <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deletePersonDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
-            </ng-template>
-        </p-dialog>
-
-        <p-dialog [(visible)]="deletePeopleDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
-            <div class="flex align-items-center justify-content-center">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span>Are you sure you want to delete selected products?</span>
-            </div>
-            <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deletePeopleDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeleteSelected()"></button>
-            </ng-template>
-        </p-dialog>
+        </div>
     </div>
-</div>
+</ng-container>

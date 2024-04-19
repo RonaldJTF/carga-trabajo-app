@@ -38,10 +38,14 @@ import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
+import { MenuItemComponent } from './menu-item/menu-item.component';
+import { InputMaskModule } from 'primeng/inputmask';
+import { MultiSelectModule } from "primeng/multiselect";
 
 @NgModule({
   declarations: [
     FunctionalityComponent,
+    MenuItemComponent,
 
 
     FirstNamePipe, 
@@ -57,6 +61,7 @@ import { TagModule } from 'primeng/tag';
 
 
     ImageFallbackDirective,
+        MenuItemComponent,
   ],
   imports: [
     CommonModule,
@@ -80,12 +85,15 @@ import { TagModule } from 'primeng/tag';
     TableModule,
     MenuModule,
     DataViewModule,
-    TagModule
+    TagModule,
+    InputMaskModule,
+    MultiSelectModule,
   // LPR:FIN
 
   ], 
   exports: [
     FunctionalityComponent,
+    MenuItemComponent,
     
     ImageFallbackDirective,
     
@@ -121,7 +129,9 @@ import { TagModule } from 'primeng/tag';
     TableModule,
     MenuModule,
     DataViewModule,
-    TagModule
+    TagModule,
+    InputMaskModule,
+    MultiSelectModule,
     //LPR: FIN
   ], 
   providers: []

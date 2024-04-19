@@ -5,6 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { RegisterComponent } from './register/register.component';
 import { ListComponent } from './list/list.component';
 import { FormPersonComponent } from './form-person/form-person.component';
+import { FormUserPersonComponent } from './form-user-person/form-user-person.component';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { FormPersonComponent } from './form-person/form-person.component';
     UsersComponent,
     RegisterComponent,
     ListComponent,
-    FormPersonComponent
+    FormPersonComponent,
+    FormUserPersonComponent
   ],
   imports: [
     UsersRoutingModule,
