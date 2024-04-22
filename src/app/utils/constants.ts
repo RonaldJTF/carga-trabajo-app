@@ -33,9 +33,9 @@
 
   export const IMAGE_SIZE = {
     SMALL: 50,
-    MEDIUM: 100,
-    LARGE: 150,
-    EXTRA_LARGE: 180,
+    MEDIUM: 75,
+    LARGE: 100,
+    EXTRA_LARGE: 150,
   }
 
   export const CHART_SIZE = {

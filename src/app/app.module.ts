@@ -18,6 +18,8 @@ import { CryptojsService } from './services/cryptojs.service';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { DashboardModule } from './pages/dashboard/dashboard.module';
+import { structureReducer } from './store/structure.reducer';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { DashboardModule } from './pages/dashboard/dashboard.module';
     ToastModule,
     ConfirmDialogModule,
     QuillModule.forRoot(),
+    StoreModule.forRoot({ structure: structureReducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production

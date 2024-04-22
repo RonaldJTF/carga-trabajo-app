@@ -18,15 +18,19 @@ import { PrettyDatePipe } from '../pipes/pretty-date/pretty-date.pipe';
 import { TimeAgoPipe } from '../pipes/time-ago/time-ago.pipe';
 import { ImageFallbackDirective } from '../directives/image-fallback.directive';
 import { CommonModule } from '@angular/common';
-import { MenuModule } from 'primeng/menu';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { BadgeModule } from 'primeng/badge';
-import { TooltipModule } from 'primeng/tooltip';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { QuillModule } from 'ngx-quill';
-import { SidebarModule } from 'primeng/sidebar';
+import { DataViewModule } from 'primeng/dataview';
 import { AuthRoutingModule } from '../pages/account/auth/auth-routing.module';
 import { FunctionalityComponent } from './funcionality/functionality.component';
+import { GoToIfNotFoundComponent } from './go-to-if-not-found/go-to-if-not-found.component';
+import { MenuItemComponent } from './menu-item/menu-item.component';
+import { DividerModule } from 'primeng/divider';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PanelModule } from 'primeng/panel';
+import { MenuModule } from 'primeng/menu';
+import { TableModule } from 'primeng/table';
+import { TreeTableModule} from 'primeng/treetable';
+import { NoResultComponent } from './no-result/no-result.component';
+import { LabelValueChartComponent } from './charts/label-value-chart/label-value-chart.component';
 
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -45,8 +49,15 @@ import { MultiSelectModule } from "primeng/multiselect";
 @NgModule({
   declarations: [
     FunctionalityComponent,
+<<<<<<< HEAD
     MenuItemComponent,
 
+=======
+    GoToIfNotFoundComponent,
+    MenuItemComponent,
+    NoResultComponent,
+    LabelValueChartComponent,
+>>>>>>> F_1_1/Gestion_de_Estructuras
 
     FirstNamePipe, 
     StatePipe, 
@@ -58,7 +69,6 @@ import { MultiSelectModule } from "primeng/multiselect";
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
-
 
     ImageFallbackDirective,
         MenuItemComponent,
@@ -73,6 +83,7 @@ import { MultiSelectModule } from "primeng/multiselect";
     PasswordModule,
     ButtonModule,
     InputTextModule,
+<<<<<<< HEAD
 
   //LPR: Agregó
     ToastModule,
@@ -95,8 +106,25 @@ import { MultiSelectModule } from "primeng/multiselect";
     FunctionalityComponent,
     MenuItemComponent,
     
+=======
+    DataViewModule,
+    DividerModule,
+    OverlayPanelModule,
+    PanelModule,
+    MenuModule,
+    TableModule,
+    TreeTableModule,
+  ], 
+  exports: [
+    FunctionalityComponent,
+    GoToIfNotFoundComponent,
+    MenuItemComponent,
+    NoResultComponent,
+    LabelValueChartComponent,
+
+>>>>>>> F_1_1/Gestion_de_Estructuras
     ImageFallbackDirective,
-    
+   
     FirstNamePipe, 
     StatePipe, 
     FileSizePipe,
@@ -117,6 +145,7 @@ import { MultiSelectModule } from "primeng/multiselect";
     PasswordModule,
     ButtonModule,
     InputTextModule,
+<<<<<<< HEAD
 
     //LPR: Agregó
     ToastModule,
@@ -133,6 +162,15 @@ import { MultiSelectModule } from "primeng/multiselect";
     InputMaskModule,
     MultiSelectModule,
     //LPR: FIN
+=======
+    DataViewModule,
+    DividerModule,
+    OverlayPanelModule,
+    PanelModule,
+    MenuModule,
+    TableModule,
+    TreeTableModule,
+>>>>>>> F_1_1/Gestion_de_Estructuras
   ], 
   providers: []
 })
