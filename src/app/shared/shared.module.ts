@@ -30,7 +30,8 @@ import { TableModule } from 'primeng/table';
 import { TreeTableModule} from 'primeng/treetable';
 import { NoResultComponent } from './no-result/no-result.component';
 import { LabelValueChartComponent } from './charts/label-value-chart/label-value-chart.component';
-
+import { FileUploadModule } from 'primeng/fileupload'
+import { FormActionButtonComponent } from './form-action-button/form-action-button.component';
 import { ToolbarModule } from 'primeng/toolbar';
 import { RatingModule } from 'primeng/rating';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -48,6 +49,7 @@ import { MultiSelectModule } from "primeng/multiselect";
     MenuItemComponent,
     NoResultComponent,
     LabelValueChartComponent,
+    FormActionButtonComponent,
 
     FirstNamePipe, 
     StatePipe, 
@@ -92,6 +94,8 @@ import { MultiSelectModule } from "primeng/multiselect";
     TagModule,
     InputMaskModule,
     MultiSelectModule,
+    FileUploadModule,
+    InputTextareaModule,
   ], 
   exports: [
     FunctionalityComponent,
@@ -99,6 +103,7 @@ import { MultiSelectModule } from "primeng/multiselect";
     MenuItemComponent,
     NoResultComponent,
     LabelValueChartComponent,
+    FormActionButtonComponent,
 
     ImageFallbackDirective,
    
@@ -141,6 +146,8 @@ import { MultiSelectModule } from "primeng/multiselect";
     TagModule,
     InputMaskModule,
     MultiSelectModule,
+    FileUploadModule,
+    InputTextareaModule,
   ], 
   providers: []
 })
