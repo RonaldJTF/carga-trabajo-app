@@ -94,7 +94,7 @@ export class ListComponent implements OnInit, OnDestroy{
     }
 
     if(structure.tipologia?.tipologiaSiguiente){
-      extraMenuItemOfSubstructure.push({label: `Agregar ${structure.tipologia.tipologiaSiguiente.nombre ?? 'subestructura'}`, icon: 'pi pi-sitemap', command: (e) => {this.goToAddSubstructure(e.item.data)}})
+      extraMenuItemOfSubstructure.push({label: `Agregar ${structure.tipologia.tipologiaSiguiente.nombre ?? 'subestructura'}`, icon: 'pi pi-sitemap', data:structure, command: (e) => {this.goToAddSubstructure(e.item.data)}})
     }
 
     return [
@@ -133,7 +133,7 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   openNew() {
-    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true });
+    this.router.navigate(['create'], { relativeTo: this.route});
   }
 
   onGoToUpdate (id : any, event: Event): void{
@@ -171,15 +171,15 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   goToAddSubdependency(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idPadre: structure.id, idTipologia:structure.tipologia.id}, skipLocationChange: true });
+    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idPadre: structure.id, idTipologia:structure.tipologia.id}});
   }
 
   goToAddSubstructure(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idPadre: structure.id, idTipologia: structure.tipologia.idTipologiaSiguiente}, skipLocationChange: true });
+    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idPadre: structure.id, idTipologia: structure.tipologia.idTipologiaSiguiente}});
   }
 
   goToPage(path: string, structure: Structure){
-    this.router.navigate([path], { relativeTo: this.route, queryParams: {id: structure.id}, skipLocationChange: true });
+    this.router.navigate([path], { relativeTo: this.route, queryParams: {id: structure.id} });
   }
 
   deleteSelectedStructures(nodes: any, isDependency: boolean) {

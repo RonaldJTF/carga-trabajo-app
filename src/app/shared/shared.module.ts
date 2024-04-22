@@ -5,7 +5,6 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthModule } from 'src/app/pages/account/auth/auth.module';
 import { DarkenColorPipe } from '../pipes/darken-color/darken-color.pipe';
 import { LightenColorPipe } from '../pipes/lighten-color/lighten-color.pipe';
 import { FileSizePipe } from '../pipes/file-size/file-size.pipe';
@@ -31,6 +30,9 @@ import { TableModule } from 'primeng/table';
 import { TreeTableModule} from 'primeng/treetable';
 import { NoResultComponent } from './no-result/no-result.component';
 import { LabelValueChartComponent } from './charts/label-value-chart/label-value-chart.component';
+import { FileUploadModule } from 'primeng/fileupload'
+import { FormActionButtonComponent } from './form-action-button/form-action-button.component';
+import { InputTextareaModule } from "primeng/inputtextarea";
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     MenuItemComponent,
     NoResultComponent,
     LabelValueChartComponent,
+    FormActionButtonComponent,
 
     FirstNamePipe, 
     StatePipe, 
@@ -70,6 +73,8 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     MenuModule,
     TableModule,
     TreeTableModule,
+    FileUploadModule,
+    InputTextareaModule,
   ], 
   exports: [
     FunctionalityComponent,
@@ -77,6 +82,7 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     MenuItemComponent,
     NoResultComponent,
     LabelValueChartComponent,
+    FormActionButtonComponent,
 
     ImageFallbackDirective,
    
@@ -107,6 +113,8 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     MenuModule,
     TableModule,
     TreeTableModule,
+    FileUploadModule,
+    InputTextareaModule,
   ], 
   providers: []
 })

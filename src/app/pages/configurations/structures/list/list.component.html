@@ -57,7 +57,7 @@
                                 <ng-template pTemplate="caption" let-structure="rowData">
                                     <div class="flex flex-wrap justify-content-between p-3">
                                         <div class="flex align-items-center mb-2">
-                                            <button *ngFor="let action of dependency.tipologia.acciones" pButton pRipple icon="pi {{action.claseIcono}}" class="{{action.claseBoton}} mr-2" (click)="goToPage(action.path, dependency)" pTooltip="{{action.nombre}}" tooltipPosition="bottom"></button>
+                                            <button *ngFor="let action of dependency.tipologia.acciones" pButton pRipple icon="pi {{action.claseIcono}}" class="p-button-{{action.claseEstadoBoton}} mr-2" (click)="goToPage(action.path, dependency)" pTooltip="{{action.nombre}}" tooltipPosition="bottom"></button>
                                             <button pButton pRipple icon="pi pi-plus" class="p-button-success mr-2" (click)="goToAddSubdependency(dependency)" pTooltip="Nueva subdependencia" tooltipPosition="bottom"></button>
                                             <button pButton pRipple icon="pi pi-sitemap" class="p-button-secondary mr-2" (click)="goToAddSubstructure(dependency)" pTooltip="Agregar {{dependency.tipologia.tipologiaSiguiente.nombre}}" tooltipPosition="bottom"></button>
                                             <button pButton pRipple icon="pi pi-pencil" class="p-button-info mr-2" (click)="onGoToUpdate(dependency.id, $event)" pTooltip="Editar" tooltipPosition="bottom"></button>
@@ -81,8 +81,8 @@
                                     <tr *ngIf="rowGroupMetadata.includes(structure.id)">
                                         <td>
                                             <div class="flex flex-row align-items-center justify-content-center">
-                                                <div class="w-2rem h-2rem mr-2 flex align-items-center justify-content-center bg-{{structure.tipologia.color}}-100 border-circle">
-                                                    <i class="pi {{structure.tipologia.claseIcono}} text-md text-{{structure.tipologia.color}}-500"></i>
+                                                <div class="w-2rem h-2rem mr-2 flex align-items-center justify-content-center bg-{{structure.tipologia.nombreColor}}-100 border-circle">
+                                                    <i class="pi {{structure.tipologia.claseIcono}} text-md text-{{structure.tipologia.nombreColor}}-500"></i>
                                                 </div>
                                                 <span class="text-500">{{structure.tipologia.nombre}}(s)</span>
                                             </div>
@@ -163,8 +163,8 @@
             <img [src]="structure.srcIcono" [alt]="structure.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="w-5rem" />
         </ng-container>
         <ng-template #sNoIcon>
-            <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{structure.tipologia.color}}-100 border-circle">
-                <i class="pi pi-book text-4xl text-{{structure.tipologia.color}}-500"></i>
+            <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{structure.tipologia.nombreColor}}-100 border-circle">
+                <i class="pi pi-book text-4xl text-{{structure.tipologia.nombreColor}}-500"></i>
             </div>
         </ng-template>
         <span class="font-bold">{{structure.nombre}}</span>

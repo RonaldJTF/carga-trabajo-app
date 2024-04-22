@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { Structure } from '../models/structure';
 import { HttpResponse } from '@angular/common/http';
-import { structuresOfMock } from '../mock-data/structures';
+import { structureRegistroYControl, structuresOfMock } from '../mock-data/structures';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StructureService {
+
   private pathStructure: string = '/structure'
 
   structuresOfMock: Structure[] = structuresOfMock;
@@ -18,12 +19,41 @@ export class StructureService {
   ) { }
 
 
+  getStructureById(id: number) {
+    return new Observable<Structure>(observer => {
+      setTimeout(() => {
+        observer.next(structureRegistroYControl);
+        observer.complete();
+      }, 1000);
+    });
+  }
+
   getStructures(): Observable<Structure[]>{
     return new Observable<Structure[]>(observer => {
       setTimeout(() => {
         observer.next(this.structuresOfMock);
         observer.complete();
-      }, 3000);
+      }, 1000);
+    });
+  }
+
+  createStructure (payload: any) : Observable<HttpResponse<any>> {
+    //return this.webRequestService.postWithHeaders(this.pathStructure, payload)
+    return new Observable<any>(observer => {
+      setTimeout(() => {
+        observer.next(payload);
+        observer.complete();
+      }, 1000);
+    });
+  }
+
+  updateStructure (id: number, payload: any) : Observable<HttpResponse<any>> {
+    //return this.webRequestService.putWithHeaders(`${this.pathStructure}/${id}`, payload);
+    return new Observable<any>(observer => {
+      setTimeout(() => {
+        observer.next(payload);
+        observer.complete();
+      }, 1000);
     });
   }
 
