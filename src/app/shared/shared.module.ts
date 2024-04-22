@@ -5,7 +5,6 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthModule } from 'src/app/pages/account/auth/auth.module';
 import { DarkenColorPipe } from '../pipes/darken-color/darken-color.pipe';
 import { LightenColorPipe } from '../pipes/lighten-color/lighten-color.pipe';
 import { FileSizePipe } from '../pipes/file-size/file-size.pipe';
@@ -32,32 +31,23 @@ import { TreeTableModule} from 'primeng/treetable';
 import { NoResultComponent } from './no-result/no-result.component';
 import { LabelValueChartComponent } from './charts/label-value-chart/label-value-chart.component';
 
-import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { RatingModule } from 'primeng/rating';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
-import { TableModule } from 'primeng/table';
-import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
-import { MenuItemComponent } from './menu-item/menu-item.component';
 import { InputMaskModule } from 'primeng/inputmask';
 import { MultiSelectModule } from "primeng/multiselect";
 
 @NgModule({
   declarations: [
     FunctionalityComponent,
-<<<<<<< HEAD
-    MenuItemComponent,
-
-=======
     GoToIfNotFoundComponent,
     MenuItemComponent,
     NoResultComponent,
     LabelValueChartComponent,
->>>>>>> F_1_1/Gestion_de_Estructuras
 
     FirstNamePipe, 
     StatePipe, 
@@ -83,10 +73,13 @@ import { MultiSelectModule } from "primeng/multiselect";
     PasswordModule,
     ButtonModule,
     InputTextModule,
-<<<<<<< HEAD
-
-  //LPR: Agregó
-    ToastModule,
+    DataViewModule,
+    DividerModule,
+    OverlayPanelModule,
+    PanelModule,
+    MenuModule,
+    TableModule,
+    TreeTableModule,
     ToolbarModule,
     RatingModule,
     InputTextareaModule,
@@ -99,21 +92,6 @@ import { MultiSelectModule } from "primeng/multiselect";
     TagModule,
     InputMaskModule,
     MultiSelectModule,
-  // LPR:FIN
-
-  ], 
-  exports: [
-    FunctionalityComponent,
-    MenuItemComponent,
-    
-=======
-    DataViewModule,
-    DividerModule,
-    OverlayPanelModule,
-    PanelModule,
-    MenuModule,
-    TableModule,
-    TreeTableModule,
   ], 
   exports: [
     FunctionalityComponent,
@@ -122,7 +100,6 @@ import { MultiSelectModule } from "primeng/multiselect";
     NoResultComponent,
     LabelValueChartComponent,
 
->>>>>>> F_1_1/Gestion_de_Estructuras
     ImageFallbackDirective,
    
     FirstNamePipe, 
@@ -145,10 +122,13 @@ import { MultiSelectModule } from "primeng/multiselect";
     PasswordModule,
     ButtonModule,
     InputTextModule,
-<<<<<<< HEAD
-
-    //LPR: Agregó
-    ToastModule,
+    DataViewModule,
+    DividerModule,
+    OverlayPanelModule,
+    PanelModule,
+    MenuModule,
+    TableModule,
+    TreeTableModule,
     ToolbarModule,
     RatingModule,
     InputTextareaModule,
@@ -161,16 +141,6 @@ import { MultiSelectModule } from "primeng/multiselect";
     TagModule,
     InputMaskModule,
     MultiSelectModule,
-    //LPR: FIN
-=======
-    DataViewModule,
-    DividerModule,
-    OverlayPanelModule,
-    PanelModule,
-    MenuModule,
-    TableModule,
-    TreeTableModule,
->>>>>>> F_1_1/Gestion_de_Estructuras
   ], 
   providers: []
 })
