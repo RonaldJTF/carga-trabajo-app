@@ -47,10 +47,22 @@ export class ListComponent {
 
   ngOnInit() {
     this.items = [
-      {label: 'Asignar credenciales', icon: 'pi pi-key', command: (e) => this.onUserPerson(e)},
-      { label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editPerson(e) },
-      { label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDelete(e) }
-  ];
+      {
+        label: 'Asignar credenciales',
+        icon: 'pi pi-key',
+        command: (e) => this.onUserPerson(e),
+      },
+      {
+        label: 'Editar',
+        icon: 'pi pi-pencil',
+        command: (e) => this.editPerson(e),
+      },
+      {
+        label: 'Eliminar',
+        icon: 'pi pi-trash',
+        command: (e) => this.onDelete(e.item.id),
+      },
+    ];
     this.cols = [
       { field: 'person', header: 'Person' },
       { field: 'price', header: 'Price' },
@@ -76,39 +88,38 @@ export class ListComponent {
   openNew() {
     this.router.navigate(['configurations/users/person/'], {
       skipLocationChange: true,
-      });    
+    });
   }
 
-  deleteSelectedPeople() {
-    this.deletePeopleDialog = true;
-  }
-
+  
   editPerson(event: any) {
     this.router.navigate(['configurations/users/person/', event.item.id], {
       skipLocationChange: true,
-      });
+    });
+  }
+  
+  deleteSelectedPeople() {
+    this.deletePeopleDialog = true;
   }
 
   deletePerson(person: Person) {
     this.person = { ...person };
   }
 
-  onDelete(idPerson: any){
-    this.confirmationDialogService.showDeleteConfirmationDialog(
-      ()=>{
-        console.log(idPerson)
-        //this.deletePerson(idPerson);
-       this.people = this.people.filter(item => item.id!==idPerson);
-      }
-    )
+  onDelete(idPerson: string) {
+    this.confirmationDialogService.showDeleteConfirmationDialog(() => {
+      this.personService.delete(idPerson).subscribe((response) => {
+        if(response){
+          this.people = this.people.filter((item) => item.id !== idPerson);
+        }
+      });
+    });
   }
 
   confirmDeleteSelected() {
-    this.confirmationDialogService.showDeleteConfirmationDialog(
-      ()=>{
-        this.deletePerson(this.person);       
-      }
-    )
+    this.confirmationDialogService.showDeleteConfirmationDialog(() => {
+      this.deletePerson(this.person);
+    });
   }
 
   confirmDelete() {
@@ -160,8 +171,7 @@ export class ListComponent {
 
   onUserPerson(event: any) {
     this.router.navigate(['configurations/users/user/', event.item.id], {
-    skipLocationChange: true,
+      skipLocationChange: true,
     });
   }
-
 }

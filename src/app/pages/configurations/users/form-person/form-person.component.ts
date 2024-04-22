@@ -1,8 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Person } from '../../../../models/person';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PersonService } from 'src/app/services/person.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Person } from 'src/app/models/person';
+import { DocumentTypeService } from 'src/app/services/documenttype.service';
+import { DocumentType } from 'src/app/models/documenttype';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-form-person',
@@ -14,8 +17,6 @@ export class FormPersonComponent implements OnInit {
 
   @Input() personDialog: boolean;
 
-  statuses: any[] = [];
-
   person: Person = new Person();
 
   personCopy: Person = new Person();
@@ -26,20 +27,21 @@ export class FormPersonComponent implements OnInit {
 
   formPerson!: FormGroup;
 
+  documentTypes: DocumentType[] = [];
+
   constructor(
     private readonly route: ActivatedRoute,
+    private router: Router,
     private personService: PersonService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private documentTypeService: DocumentTypeService
   ) {}
 
   ngOnInit() {
+    
+    this.getDocumentTypes();
     this.buildForm();
 
-    this.statuses = [
-      { label: 'Pasaporte', value: 3 },
-      { label: 'Cedula de Ciudadania', value: 1 },
-      { label: 'Tarjeta de Indentidad', value: 2 },
-    ];
     this.route.params.subscribe((params) => {
       this.personId = params['id'];
     });
@@ -47,6 +49,17 @@ export class FormPersonComponent implements OnInit {
     if (this.personId != null) {
       this.getPerson(this.personId);
     }
+  }
+
+  getDocumentTypes(): void {
+    this.documentTypeService.getDocumentType().subscribe({
+      next: (item) => {
+        this.documentTypes = item;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   buildForm() {
@@ -112,6 +125,10 @@ export class FormPersonComponent implements OnInit {
   get telefonoNoValido() {
     return this.isValido('telefono');
   }
+  
+  compararTiposDocumentos(id1: number, id2: number): boolean {
+    return id1 === id2;
+  }
 
   getPerson(personId: number) {
     this.personService.getPerson(personId).subscribe({
@@ -131,7 +148,40 @@ export class FormPersonComponent implements OnInit {
   }
 
   savePerson() {
-   // this.submitted = true;
     console.log(this.person);
+
+    if (this.person && this.person.id) {
+      this.update();
+    } else {
+      this.create();
+    }
+  }
+
+  create(): void {
+    if (this.formPerson.valid) {
+      this.personService.create(this.person).subscribe((json) => {
+        this.formPerson.reset();
+        this.person = new Person();
+        this.goBack();
+      });
+    }
+  }
+
+  update(): void {
+    if (this.formPerson.valid) {
+      this.personService
+        .update(this.person.id, this.person)
+        .subscribe((json) => {
+          this.formPerson.reset();
+          this.person = new Person();
+          this.goBack();
+        });
+    }
+  }
+
+  goBack(){
+    this.router.navigate(['configurations/users'], {
+      skipLocationChange: true,
+    });
   }
 }

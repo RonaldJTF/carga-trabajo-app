@@ -1,4 +1,5 @@
-import { TipoDocumento } from "./tipodocumento";
+
+import { DocumentType } from "./documenttype";
 import { User } from "./user";
 
 export class Person{
@@ -7,7 +8,7 @@ export class Person{
     segundoNombre: string;
     primerApellido: string;
     segundoApellido: string;
-    tipoDocumento: TipoDocumento;
+    tipoDocumento: DocumentType;
     numeroDocumento: string;
     correo: string;
     genero: string;
