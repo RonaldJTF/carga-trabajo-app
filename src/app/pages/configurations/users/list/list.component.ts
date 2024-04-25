@@ -4,7 +4,9 @@ import { Person } from 'src/app/models/person';
 import { MenuItem, MessageService } from 'primeng/api';
 import { PersonService } from 'src/app/services/person.service';
 import { Router } from '@angular/router';
-import { ConfirmationDialogService } from '../../../../services/confirmation-dialog.service';
+import { IMAGE_SIZE } from 'src/app/utils/constants';
+import { MESSAGE } from 'src/labels/labels';
+import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
 
 @Component({
   selector: 'app-list',
@@ -12,6 +14,13 @@ import { ConfirmationDialogService } from '../../../../services/confirmation-dia
   styleUrls: ['./list.component.scss'],
 })
 export class ListComponent {
+
+  IMAGE_SIZE = IMAGE_SIZE;
+
+  MESSAGE = MESSAGE;
+  
+  loading: boolean = false;
+
   layout: string = 'list';
 
   personDialog: boolean = false;
@@ -55,12 +64,12 @@ export class ListComponent {
       {
         label: 'Editar',
         icon: 'pi pi-pencil',
-        command: (e) => this.editPerson(e),
+        command: (e) => this.editPerson(parseInt(e.item.id)),
       },
       {
         label: 'Eliminar',
         icon: 'pi pi-trash',
-        command: (e) => this.onDelete(e.item.id),
+        command: (e) => this.onDelete(parseInt(e.item.id)),
       },
     ];
     this.cols = [
@@ -75,6 +84,7 @@ export class ListComponent {
   }
 
   getPeople() {
+    this.loading = true;
     this.personService.getPeople().subscribe({
       next: (data) => {
         this.people = data;
@@ -82,6 +92,9 @@ export class ListComponent {
       error: (err) => {
         console.log(err);
       },
+      complete:()=>{
+        this.loading = false;
+      }
     });
   }
 
@@ -92,8 +105,8 @@ export class ListComponent {
   }
 
   
-  editPerson(event: any) {
-    this.router.navigate(['configurations/users/person/', event.item.id], {
+  editPerson(idPerson: number) {
+    this.router.navigate(['configurations/users/person/', idPerson], {
       skipLocationChange: true,
     });
   }
@@ -106,7 +119,7 @@ export class ListComponent {
     this.person = { ...person };
   }
 
-  onDelete(idPerson: string) {
+  onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.personService.delete(idPerson).subscribe((response) => {
         if(response){
@@ -134,7 +147,7 @@ export class ListComponent {
     //this.people;
   }
 
-  findIndexById(id: string): number {
+  findIndexById(id: number): number {
     let index = -1;
     for (let i = 0; i < this.people.length; i++) {
       if (this.people[i].id === id) {

@@ -3,6 +3,7 @@ import { Person } from '../models/person';
 import { Observable, catchError, map, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment.prod';
+import { WebRequestService } from './web-request.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -15,18 +16,21 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class PersonService {
-  
-  private pathPerson = '/personas';
+  private pathPerson = 'person';
   private URLBASE: string = environment.URLAPI;
 
   httpOptions = httpOptions.headers.set('Authorization', 'my-new-auth-token');
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private webRequestService: WebRequestService
+  ) {}
 
   getPeople(): Observable<Person[]> {
-    return this.http
-      .get(this.URLBASE.concat(this.pathPerson))
-      .pipe(map((response) => response as Person[]));
+    return this.webRequestService.get(this.pathPerson);
+    // return this.http
+    //   .get(this.URLBASE.concat(this.pathPerson))
+    //   .pipe(map((response) => response as Person[]));
   }
 
   getPerson(idPerson: number): Observable<Person> {
@@ -39,17 +43,22 @@ export class PersonService {
       );
   }
 
-  create(persona: Person): Observable<any> {
-    return this.http
-      .post<any>(`${this.URLBASE.concat(this.pathPerson)}`, persona, httpOptions)
-      .pipe(
-        catchError((e) => {
-          return throwError(() => new Error(e));
-        })
-      );
+  create(payload: Person): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathPerson, payload)
+    // return this.http
+    //   .post<any>(
+    //     `${this.URLBASE.concat(this.pathPerson)}`,
+    //     payload,
+    //     httpOptions
+    //   )
+    //   .pipe(
+    //     catchError((e) => {
+    //       return throwError(() => new Error(e));
+    //     })
+    //   );
   }
 
-  update(id: string, persona: Person): Observable<any> {
+  update(id: number, persona: Person): Observable<any> {
     return this.http
       .put<Person>(`${this.pathPerson}/${id}`, persona, httpOptions)
       .pipe(
@@ -59,14 +68,16 @@ export class PersonService {
       );
   }
 
-  delete(id: string): Observable<Person> {
+  delete(id: number): Observable<Person> {
     return this.http
-      .delete<Person>(`${this.URLBASE.concat(this.pathPerson)}/${id}`, httpOptions)
+      .delete<Person>(
+        `${this.URLBASE.concat(this.pathPerson)}/${id}`,
+        httpOptions
+      )
       .pipe(
         catchError((e) => {
           return throwError(() => new Error(e));
         })
       );
   }
-
 }

@@ -2,10 +2,25 @@
     <div class="col-12 md:col-4">
         <div class="card">
             <div class="flex flex-column align-items-center">
-                <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
-                    <img [src]="personCopy?.srcFoto"
-                        [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                        style="vertical-align: middle; width: 100%; height: auto;" />
+                <div class="_button-container">
+                    <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
+                        <img [src]="person?.srcFoto"
+                            [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                            style="vertical-align: middle; width: 100%; height: auto;" />
+                    </div>
+                    <button pButton pRipple type="button" icon="pi pi-camera"
+                        class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Detalle"
+                        tooltipPosition="bottom">
+                    </button>
+                </div>
+
+                <!-- <p-fileUpload mode="basic" [multiple]="true" chooseLabel="Elige una foto" accept="image/*"
+                    [maxFileSize]="1000000" (onSelect)="onFileSelected($event)"></p-fileUpload> -->
+                <div *ngIf="person != null">
+                    <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false"
+                        [multiple]="false" accept="image/*" [maxFileSize]="5000000" (onSelect)="onFileSelected($event)"
+                        (onRemove)="onRemoveFile($event)" chooseLabel="Elige una foto">
+                    </p-fileUpload>
                 </div>
 
                 <span class="font-bold">{{personCopy.primerNombre | uppercase}} {{personCopy.primerApellido |
@@ -25,7 +40,7 @@
                 <span *ngIf="person.paisResidencia">{{person.paisResidencia.nombre | capitalizeFirstLetter}}</span>
                 </span>
                 </span> 
-                <button pButton pRipple label="Ver más detalles" class="p-button-outlined p-button-info"></button>-->
+                <button pButton pRipple label="Ver más detalles" class="p-button-outlined p-button-info"></button>
 
                 <ng-container *ngIf="personCopy.srcFoto != null; else agregarFoto">
                     <div class="my-5">
@@ -38,7 +53,7 @@
                         <button pButton pRipple icon="pi pi-plus"
                             class="mr-2 p-button-rounded p-button-info p-button-outlined"></button>
                     </div>
-                </ng-template>
+                </ng-template>-->
             </div>
         </div>
     </div>
@@ -50,8 +65,8 @@
 
                     <div class="field p-fluid col-12 sm:col-6 m-0">
                         <label htmlFor="primerNombre" class="font-medium">Primer Nombre</label>
-                        <input type="text" id="primerNombre" pInputText
-                            [(ngModel)]="person.primerNombre" formControlName="primerNombre">
+                        <input type="text" id="primerNombre" pInputText [(ngModel)]="person.primerNombre"
+                            formControlName="primerNombre">
                         <div *ngIf="nombrePrimeroNoValido">
                             <div *ngIf="controls['primerNombre'].errors?.['required']">
                                 <small id="text-help" class="p-error">Ingrese nombre</small>
@@ -61,8 +76,8 @@
 
                     <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
                         <label htmlFor="segundoNombre" class="font-medium">Segundo Nombre</label>
-                        <input type="text" id="segundoNombre" pInputText
-                            [(ngModel)]="person.segundoNombre" formControlName="segundoNombre">
+                        <input type="text" id="segundoNombre" pInputText [(ngModel)]="person.segundoNombre"
+                            formControlName="segundoNombre">
                         <div *ngIf="nombreSegundoNoValido">
                             <div *ngIf="controls['segundoNombre'].errors?.['required']">
                                 <small id="text-help" class="p-error">Ingrese nombre</small>
@@ -75,8 +90,8 @@
 
                     <div class="field p-fluid col-12 sm:col-6 m-0">
                         <label class="font-medium" for="primerApellido">Primer Apellido</label>
-                        <input type="text" id="primerApellido" pInputText
-                            [(ngModel)]="person.primerApellido" formControlName="primerApellido">
+                        <input type="text" id="primerApellido" pInputText [(ngModel)]="person.primerApellido"
+                            formControlName="primerApellido">
                         <div *ngIf="apellidoPrimeroNoValido">
                             <div *ngIf="controls['primerApellido'].errors?.['required']">
                                 <small id="text-help" class="p-error">Ingrese apellido</small>
@@ -86,8 +101,8 @@
 
                     <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
                         <label class="font-medium" for="segundoApellido">Segundo Apellido</label>
-                        <input type="text" id="segundoApellido" pInputText
-                            [(ngModel)]="person.segundoApellido" formControlName="segundoApellido">
+                        <input type="text" id="segundoApellido" pInputText [(ngModel)]="person.segundoApellido"
+                            formControlName="segundoApellido">
                         <div *ngIf="apellidoSegundoNoValido">
                             <div *ngIf="controls['segundoApellido'].errors?.['required']">
                                 <small id="text-help" class="p-error">Ingrese apellido</small>
@@ -100,8 +115,8 @@
 
                     <div class="field p-fluid col-12 m-0">
                         <label class="font-medium" for="tipoDocumento">Tipo Documento</label>
-                        <p-dropdown inputId="tipoDocumento" [autoDisplayFirst]="false"
-                            [options]="documentTypes" [(ngModel)]="person.tipoDocumento" optionLabel="descripcion"
+                        <p-dropdown inputId="tipoDocumento" [autoDisplayFirst]="false" [options]="documentTypes"
+                            [(ngModel)]="person.tipoDocumento" optionLabel="descripcion"
                             formControlName="tipoDocumento"></p-dropdown>
                         <div *ngIf="tipoDocumentoNoValido">
                             <div *ngIf="controls['tipoDocumento'].errors?.['required']">
@@ -112,8 +127,8 @@
 
                     <div class="field p-fluid col-12 m-0 pt-0">
                         <label class="font-medium" for="numeroDocumento">Numero Documento</label>
-                        <p-inputNumber inputId="numeroDocumento"
-                            [(ngModel)]="person.numeroDocumento" formControlName="numeroDocumento"></p-inputNumber>
+                        <p-inputNumber inputId="numeroDocumento" [(ngModel)]="person.numeroDocumento"
+                            formControlName="numeroDocumento"></p-inputNumber>
                         <div *ngIf="numeroDocumentoNoValido">
                             <div *ngIf="controls['numeroDocumento'].errors?.['required']">
                                 <small id="text-help" class="p-error">Ingrese numero de documento</small>
@@ -128,12 +143,12 @@
                         <label class="font-medium" for="correo">Correo Electronico</label>
                         <span class="p-input-icon-right">
                             <i class="pi pi-at"></i>
-                            <input type="email" id="correo" pInputText [(ngModel)]="person.correo" formControlName="correo">
+                            <input type="email" id="correo" pInputText [(ngModel)]="person.correo"
+                                formControlName="correo">
                         </span>
-                            
                         <div *ngIf="correoNoValido">
                             <div *ngIf="controls['correo'].errors?.['required']">
-                                <small id="text-help" class="p-error">Ingrese correo valido</small>
+                                <small id="text-help" class="p-error">Ingrese un correo electronico</small>
                             </div>
                         </div>
                     </div>
@@ -142,20 +157,22 @@
                         <label class="font-medium" for="telefono">Telefono</label>
                         <span class="p-input-icon-right">
                             <i class="pi pi-phone"></i>
-                            <p-inputMask id="telefono" mask="(999) 999-9999"
-                                [(ngModel)]="person.telefono" placeholder="(999) 999-9999"></p-inputMask>
+                            <p-inputNumber [(ngModel)]="person.telefono" mode="decimal"
+                                inputId="withoutgrouping" [useGrouping]="false"
+                                formControlName="telefono"></p-inputNumber>
                         </span>
                         <div *ngIf="telefonoNoValido">
                             <div *ngIf="controls['telefono'].errors?.['required']">
-                                <small id="text-help" class="p-error">Ingrese correo valido</small>
+                                <small id="text-help" class="p-error">Ingrese un numero de telefono</small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <p-button [disabled]="!formPerson.valid" label="Guardar" [loading]="loading[3]"
-                        (onClick)="savePerson()"></p-button>
-                </div>
+                <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
+                    (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)" [showDeleteButton]="updateMode"
+                    [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
+                    [disabledCreateOrUpdateButton]="formPerson.invalid">
+                </app-form-action-button>
             </form>
         </div>
 

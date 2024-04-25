@@ -8,9 +8,11 @@
             <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
               style="vertical-align: middle; width: 100%; height: auto;" />
           </div>
-          <button  pButton pRipple type="button" icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button-info _button-icon"  pTooltip="Detalle" tooltipPosition="bottom"></button>
-          
-      </div>
+          <!-- <button pButton pRipple type="button" icon="pi pi-camera"
+            class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Detalle"
+            tooltipPosition="bottom">
+          </button> -->
+        </div>
         <span class="font-bold">{{person.primerNombre | uppercase}} {{person.primerApellido | uppercase}}</span>
         <span class="mb-3"><span>{{person.tipoDocumento}}:</span> {{person.numeroDocumento}}</span>
         <span class="mb-2 font-medium text-500 ">Información de contacto:</span>
@@ -27,51 +29,99 @@
               </span>
             </span> 
             <button pButton pRipple label="Ver más detalles" class="p-button-outlined p-button-info"></button>-->
-          </div>
+      </div>
     </div>
   </div>
 
-  <div class="col-12 md:col-8">
+  <div class="col-12 md:col-8" [formGroup]="formUser">
     <div class="grid">
       <div class="col-12">
         <div class="card">
           <h5 class="pb-3">Gestion de Acceso</h5>
+
           <div class="grid">
             <div class="field col">
-              <label for="inputgroup" class="font-medium">Usuario </label>
+              <label for="username" class="font-medium">Usuario </label>
               <div class="p-inputgroup">
                 <span class="p-inputgroup-addon">
                   <i class="pi pi-user"></i>
                 </span>
                 <span class="p-float-label">
-                  <input type="text" inputId="inputgroup" pInputText />
+                  <input type="text" inputId="username" pInputText formControlName="username" />
                 </span>
+              </div>
+              <div *ngIf="usuarioNoValido">
+                <div *ngIf="controls['username'].errors?.['required']">
+                  <small id="text-help" class="p-error">Ingrese un usuario</small>
+                </div>
               </div>
             </div>
             <div class="field col">
-              <label for="inputgroup" class="font-medium">Contraseña </label>
+              <label for="password" class="font-medium">Contraseña </label>
               <div class="p-inputgroup">
                 <span class="p-inputgroup-addon">
                   <i class="pi pi-key"></i>
                 </span>
                 <span class="p-float-label">
-                  <input type="text" inputId="inputgroup" pInputText />
+                  <input type="text" inputId="password" pInputText formControlName="password" />
                 </span>
+              </div>
+              <div *ngIf="paswordNoValido">
+                <div *ngIf="controls['password'].errors?.['required']">
+                  <small id="text-help" class="p-error">Ingrese una contraseña</small>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="grid p-fluid mt-3">
-            <div class="field col-12">
-              <label for="tipoDocumento" class="font-medium">Rol</label>
-              <p-dropdown inputId="tipoDocumento" [autoDisplayFirst]="false" [options]="rolesUser"
-                [(ngModel)]="person.tipoDocumento" optionLabel="label"></p-dropdown>
+          <div class="field grid">
+            <label htmlFor="activo" class="font-medium pl-3 mb-2 _inline-block-sm">Estado</label>
+            <div class="pl-3 _inline-block-sm">
+              <p-inputSwitch id="activo" formControlName="activo"></p-inputSwitch>
             </div>
           </div>
 
-          <div class="flex flex-wrap gap-2">
-            <p-button label="Guardar" [loading]="loading[3]" (onClick)="load(3)"></p-button>
+          <p-divider layout="horizontal" align="center" class="w-full">
+            <span class="text-500">Estados siguientes</span>
+          </p-divider>
+
+          <div *ngIf="userRolesFormControl.value?.length" class="flex justify-content-end mb-2">
+            <button pButton pRipple icon="pi pi-plus" class="p-button-success"
+              (click)="rolOptionsOverlayPanel.toggle($event)"></button>
           </div>
+
+          <p-overlayPanel #rolOptionsOverlayPanel [showCloseIcon]="true" [style]="{width: '250px'}">
+            <ng-template pTemplate>
+              <p-listbox [options]="rolOptions" optionLabel="label" [filter]="true" (onClick)="addRol($event)"
+                [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+              </p-listbox>
+            </ng-template>
+          </p-overlayPanel>
+
+          <div class="flex flex-column align-items-center mb-3">
+            <ul class="list-none p-0 m-0 w-full" *ngIf="userRolesFormControl.value?.length else sAddRol">
+              <li *ngFor="let rol of userRolesFormControl.value" class="flex align-items-center w-full ">
+                <span class="text-700 w-full">{{rol.nombre}}</span>
+                <div class=" ml-auto">
+                  <button pButton pRipple icon="pi pi-times" (click)="removeRol(rol.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+                </div>
+              </li>
+            </ul>
+
+            <ng-template #sAddRol>
+              <app-go-to-if-not-found [buttonLabel]="'Agregar rol'"
+                [message]="MESSAGE.NO_REGISTRO_ROLES"
+                (go)="rolOptionsOverlayPanel.toggle($event)"></app-go-to-if-not-found>
+            </ng-template>
+          </div>
+
+          <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
+            (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)" [showDeleteButton]="updateMode"
+            [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
+            [disabledCreateOrUpdateButton]="formUser.invalid">
+          </app-form-action-button>
+
+
         </div>
       </div>
       <!-- <div class="col-12">

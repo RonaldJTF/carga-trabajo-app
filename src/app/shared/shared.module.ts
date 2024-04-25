@@ -27,10 +27,10 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { PanelModule } from 'primeng/panel';
 import { MenuModule } from 'primeng/menu';
 import { TableModule } from 'primeng/table';
-import { TreeTableModule} from 'primeng/treetable';
+import { TreeTableModule } from 'primeng/treetable';
 import { NoResultComponent } from './no-result/no-result.component';
 import { LabelValueChartComponent } from './charts/label-value-chart/label-value-chart.component';
-import { FileUploadModule } from 'primeng/fileupload'
+import { FileUploadModule } from 'primeng/fileupload';
 import { FormActionButtonComponent } from './form-action-button/form-action-button.component';
 import { ToolbarModule } from 'primeng/toolbar';
 import { RatingModule } from 'primeng/rating';
@@ -40,7 +40,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { InputMaskModule } from 'primeng/inputmask';
-import { MultiSelectModule } from "primeng/multiselect";
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ListboxModule } from 'primeng/listbox';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @NgModule({
   declarations: [
@@ -51,8 +53,8 @@ import { MultiSelectModule } from "primeng/multiselect";
     LabelValueChartComponent,
     FormActionButtonComponent,
 
-    FirstNamePipe, 
-    StatePipe, 
+    FirstNamePipe,
+    StatePipe,
     FileSizePipe,
     SanitizeHtmlPipe,
     PrettyDatePipe,
@@ -63,7 +65,7 @@ import { MultiSelectModule } from "primeng/multiselect";
     DarkenColorPipe,
 
     ImageFallbackDirective,
-        MenuItemComponent,
+    MenuItemComponent,
   ],
   imports: [
     CommonModule,
@@ -96,7 +98,9 @@ import { MultiSelectModule } from "primeng/multiselect";
     MultiSelectModule,
     FileUploadModule,
     InputTextareaModule,
-  ], 
+    ListboxModule,
+    InputSwitchModule,
+  ],
   exports: [
     FunctionalityComponent,
     GoToIfNotFoundComponent,
@@ -106,9 +110,9 @@ import { MultiSelectModule } from "primeng/multiselect";
     FormActionButtonComponent,
 
     ImageFallbackDirective,
-   
-    FirstNamePipe, 
-    StatePipe, 
+
+    FirstNamePipe,
+    StatePipe,
     FileSizePipe,
     SanitizeHtmlPipe,
     PrettyDatePipe,
@@ -148,7 +152,9 @@ import { MultiSelectModule } from "primeng/multiselect";
     MultiSelectModule,
     FileUploadModule,
     InputTextareaModule,
-  ], 
-  providers: []
+    ListboxModule,
+    InputSwitchModule,
+  ],
+  providers: [],
 })
-export class SharedModule { }
+export class SharedModule {}

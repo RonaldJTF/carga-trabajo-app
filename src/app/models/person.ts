@@ -3,7 +3,7 @@ import { DocumentType } from "./documenttype";
 import { User } from "./user";
 
 export class Person{
-    id: string;
+    id: number;
     primerNombre: string ;
     segundoNombre: string;
     primerApellido: string;

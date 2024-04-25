@@ -10,7 +10,7 @@ import { structureRegistroYControl, structuresOfMock } from '../mock-data/struct
 })
 export class StructureService {
 
-  private pathStructure: string = '/structure'
+  private pathStructure: string = 'structure'
 
   structuresOfMock: Structure[] = structuresOfMock;
 
@@ -29,12 +29,13 @@ export class StructureService {
   }
 
   getStructures(): Observable<Structure[]>{
-    return new Observable<Structure[]>(observer => {
-      setTimeout(() => {
-        observer.next(this.structuresOfMock);
-        observer.complete();
-      }, 1000);
-    });
+    return this.webRequestService.get(this.pathStructure)
+    // return new Observable<Structure[]>(observer => {
+    //   setTimeout(() => {
+    //     observer.next(this.structuresOfMock);
+    //     observer.complete();
+    //   }, 1000);
+    // });
   }
 
   createStructure (payload: any) : Observable<HttpResponse<any>> {

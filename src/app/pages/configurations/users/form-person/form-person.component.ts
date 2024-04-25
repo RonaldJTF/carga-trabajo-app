@@ -27,7 +27,17 @@ export class FormPersonComponent implements OnInit {
 
   formPerson!: FormGroup;
 
+  formData: FormData = new FormData();
+
+  uploadedFiles: any[] = [];
+
   documentTypes: DocumentType[] = [];
+
+  creatingOrUpdating: boolean = false;
+
+  updateMode: boolean = false;
+
+  deleting: boolean = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -38,7 +48,6 @@ export class FormPersonComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    
     this.getDocumentTypes();
     this.buildForm();
 
@@ -47,6 +56,7 @@ export class FormPersonComponent implements OnInit {
     });
 
     if (this.personId != null) {
+      this.updateMode = true;
       this.getPerson(this.personId);
     }
   }
@@ -68,7 +78,7 @@ export class FormPersonComponent implements OnInit {
       segundoNombre: [''],
       primerApellido: ['', Validators.compose([Validators.required])],
       segundoApellido: [''],
-      tipoDocumento: ['', Validators.compose([Validators.required])],
+      tipoDocumento: [''],
       numeroDocumento: ['', Validators.compose([Validators.required])],
       correo: [
         '',
@@ -78,7 +88,7 @@ export class FormPersonComponent implements OnInit {
           Validators.maxLength(120),
         ]),
       ],
-      telefono: [''],
+      telefono: ['', Validators.required],
     });
   }
 
@@ -125,7 +135,7 @@ export class FormPersonComponent implements OnInit {
   get telefonoNoValido() {
     return this.isValido('telefono');
   }
-  
+
   compararTiposDocumentos(id1: number, id2: number): boolean {
     return id1 === id2;
   }
@@ -148,8 +158,6 @@ export class FormPersonComponent implements OnInit {
   }
 
   savePerson() {
-    console.log(this.person);
-
     if (this.person && this.person.id) {
       this.update();
     } else {
@@ -158,6 +166,8 @@ export class FormPersonComponent implements OnInit {
   }
 
   create(): void {
+    this.formData.append('person', JSON.stringify(this.person));
+
     if (this.formPerson.valid) {
       this.personService.create(this.person).subscribe((json) => {
         this.formPerson.reset();
@@ -170,7 +180,7 @@ export class FormPersonComponent implements OnInit {
   update(): void {
     if (this.formPerson.valid) {
       this.personService
-        .update(this.person.id, this.person)
+        .update(this.personId, this.person)
         .subscribe((json) => {
           this.formPerson.reset();
           this.person = new Person();
@@ -179,9 +189,89 @@ export class FormPersonComponent implements OnInit {
     }
   }
 
-  goBack(){
+  goBack() {
     this.router.navigate(['configurations/users'], {
       skipLocationChange: true,
     });
+  }
+
+  updatePerson(id: number, payload: any): void {
+    this.personService.update(id, payload).subscribe({
+      next: (e) => {
+        this.goBack();
+        this.creatingOrUpdating = false;
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
+    });
+  }
+
+  createPerson(payload: any): void {
+    this.formData.append('person', JSON.stringify(this.person));
+    // console.log(this.formData.get('file'));
+    // console.log("#################")
+    // console.log(this.formData.get('person'));
+    this.personService.create(payload).subscribe({
+      next: (e) => {
+        this.goBack();
+        this.creatingOrUpdating = false;
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
+    });
+  }
+
+  onSubmitPerson(event: Event): void {
+    event.preventDefault();
+
+    if (this.formPerson.invalid) {
+      this.formPerson.markAllAsTouched();
+    } else {
+      this.creatingOrUpdating = true;
+      this.updateMode
+        ? this.updatePerson(this.personId, this.formPerson.value)
+        : this.createPerson(this.formPerson.value);
+    }
+  }
+
+  onDeletePerson(event: Event): void {
+    event.preventDefault();
+    this.deleting = true;
+    this.personService.delete(this.personId).subscribe({
+      next: () => {
+        this.goBack();
+        this.deleting = false;
+      },
+      error: (error) => {
+        this.deleting = false;
+      },
+    });
+  }
+
+  onCancelPerson(event: Event): void {
+    event.preventDefault();
+    this.updateMode = false;
+    this.goBack();
+  }
+
+  onFileSelected(event: any): void {
+    this.formData = new FormData();
+    const file: File = event.files[0];
+    this.formData.append('file', file);
+  }
+
+  onSelectFile(event: any) {
+    this.uploadedFiles = [];
+    for (const file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+  }
+
+  onRemoveFile(event: any) {
+    this.uploadedFiles = this.uploadedFiles.filter(
+      (objeto) => objeto.name !== event.file.name
+    );
   }
 }
