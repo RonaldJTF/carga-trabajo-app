@@ -54,14 +54,14 @@
                                 <td class="flex align-items-center cursor-pointer" (click)="editPerson(request.id)">
                                     <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
                                         <img [src]="request.srcFoto"
-                                            [appImageFallback]="'assets/layout/images/image-fallback-perfil.png'"
+                                            [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
                                             style="width: 100%; height: auto" />
                                     </div>
                                     <div class="flex flex-column align-items-center justify-content-start ml-2">
                                         <span class="image-text ml-2 w-full">{{ request.primerNombre }}
                                             {{ request.primerApellido }}</span>
                                         <span class="image-text text-500 text-sm ml-2 w-full">
-                                            {{ request.tipoDocumento }}: {{ request.numeroDocumento }}
+                                            {{ request.tipoDocumento.abreviatura }}: {{ request.documento }}
                                         </span>
                                     </div>
                                 </td>
@@ -139,10 +139,10 @@
 
                             <div class="field">
                                 <label for="numeroDocumento">Numero Documento</label>
-                                <input type="text" pInputText id="nuemroDocumento" [(ngModel)]="person.numeroDocumento"
+                                <input type="text" pInputText id="nuemroDocumento" [(ngModel)]="person.documento"
                                     required autofocus
-                                    [ngClass]="{'ng-invalid ng-dirty': submitted && !person.numeroDocumento}" />
-                                <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.numeroDocumento">Numero
+                                    [ngClass]="{'ng-invalid ng-dirty': submitted && !person.documento}" />
+                                <small class="ng-dirty ng-invalid" *ngIf="submitted && !person.documento">Numero
                                     de
                                     Documento es requerido.</small>
                             </div>

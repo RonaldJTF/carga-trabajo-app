@@ -58,7 +58,7 @@ export class WebRequestService {
       params: params,
       headers: new HttpHeaders({
         ...headers,
-        Authorization: `Bearer ${this.storageService.getToken()}`,
+        //Authorization: `Bearer ${this.storageService.getToken()}`,
       }),
     });
   }

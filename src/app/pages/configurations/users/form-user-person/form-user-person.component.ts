@@ -10,6 +10,7 @@ import { SelectItem } from 'primeng/api';
 import { MESSAGE } from '../../../../../labels/labels';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { filter, map } from 'rxjs';
+import { Methods } from 'src/app/utils/methods';
 
 @Component({
   selector: 'app-form-user-person',
@@ -67,6 +68,7 @@ export class FormUserPersonComponent implements OnInit {
 
   createFormUser() {
     return this.formBuilder.group({
+      idPersona:[this.personId],
       username: ['', Validators.required],
       password: ['', Validators.required],
       activo: [false, Validators.required],
@@ -138,20 +140,22 @@ export class FormUserPersonComponent implements OnInit {
     this.loadRolesOptions();
   }
 
-  onSubmitPerson(event: Event): void {
+  onSubmitUser(event: Event): void {
     event.preventDefault();
+    const payload = this.formUser.value;
+    payload.activo = Methods.parseBooleanToString(payload.activo);
     if (this.formUser.invalid) {
       this.formUser.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
       this.updateMode
-        ? this.updateUser(this.personId, this.formUser.value)
-        : this.createUser(this.formUser.value);
+        ? this.updateUser(this.personId, payload)
+        : this.createUser(payload);
     }
   }
 
   updateUser(id: number, payload: any): void {
-    this.personService.update(id, payload).subscribe({
+    this.userService.update(id, payload).subscribe({
       next: (e) => {
         this.goBack();
         this.creatingOrUpdating = false;
@@ -164,8 +168,9 @@ export class FormUserPersonComponent implements OnInit {
 
   createUser(payload: any): void {
     console.log(payload);
-    this.personService.create(payload).subscribe({
+    this.userService.create(payload).subscribe({
       next: (e) => {
+        this.formUser.reset();
         this.goBack();
         this.creatingOrUpdating = false;
       },

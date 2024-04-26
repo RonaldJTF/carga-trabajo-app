@@ -62,7 +62,6 @@
             <form class="p-0" [formGroup]="formPerson">
                 <h5>Informacion De Persona </h5>
                 <div class="grid">
-
                     <div class="field p-fluid col-12 sm:col-6 m-0">
                         <label htmlFor="primerNombre" class="font-medium">Primer Nombre</label>
                         <input type="text" id="primerNombre" pInputText [(ngModel)]="person.primerNombre"
@@ -114,31 +113,49 @@
                 <div class="grid">
 
                     <div class="field p-fluid col-12 m-0">
-                        <label class="font-medium" for="tipoDocumento">Tipo Documento</label>
-                        <p-dropdown inputId="tipoDocumento" [autoDisplayFirst]="false" [options]="documentTypes"
-                            [(ngModel)]="person.tipoDocumento" optionLabel="descripcion"
-                            formControlName="tipoDocumento"></p-dropdown>
+                        <label class="font-medium" for="idTipoDocumento">Tipo Documento</label>
+                        <select class="form-control" [(ngModel)]="person.idTipoDocumento"
+                            [compareWith]="compararTiposDocumentos" id="idTipoDocumento" name="idTipoDocumento"
+                            formControlName="idTipoDocumento">
+                            <option *ngFor="let tipoDocumento of documentTypes" [value]="tipoDocumento.id">
+                                {{tipoDocumento.descripcion}}</option>
+                        </select>
+                        <!-- <p-dropdown inputId="idTipoDocumento" [autoDisplayFirst]="false" [options]="documentTypes"
+                            [(ngModel)]="person.idTipoDocumento" optionLabel="descripcion"
+                            formControlName="idTipoDocumento"></p-dropdown> -->
                         <div *ngIf="tipoDocumentoNoValido">
-                            <div *ngIf="controls['tipoDocumento'].errors?.['required']">
+                            <div *ngIf="controls['idTipoDocumento'].errors?.['required']">
                                 <small id="text-help" class="p-error">Seleccione el tipo de documento</small>
                             </div>
                         </div>
                     </div>
 
                     <div class="field p-fluid col-12 m-0 pt-0">
-                        <label class="font-medium" for="numeroDocumento">Numero Documento</label>
-                        <p-inputNumber inputId="numeroDocumento" [(ngModel)]="person.numeroDocumento"
-                            formControlName="numeroDocumento"></p-inputNumber>
+                        <label class="font-medium" for="documento">Numero Documento</label>
+                        <p-inputNumber inputId="documento" [(ngModel)]="person.documento"
+                            formControlName="documento"></p-inputNumber>
                         <div *ngIf="numeroDocumentoNoValido">
-                            <div *ngIf="controls['numeroDocumento'].errors?.['required']">
+                            <div *ngIf="controls['documento'].errors?.['required']">
                                 <small id="text-help" class="p-error">Ingrese numero de documento</small>
                             </div>
                         </div>
                     </div>
 
+                    <div class="field p-fluid col-12 m-0">
+                        <label class="font-medium" for="idGenero">Genero</label>
+                        <select class="form-control" [(ngModel)]="person.idGenero"
+                            [compareWith]="compararTiposDocumentos" id="idGenero" name="idGenero"
+                            formControlName="idGenero">
+                            <option *ngFor="let gender of genders" [value]="gender.id">
+                                {{gender.nombre}}</option>
+                        </select>
+                        <!-- <p-dropdown inputId="genero" [autoDisplayFirst]="false" [options]="genders"
+                            [(ngModel)]="person.genero" optionLabel="nombre"
+                            formControlName="genero"></p-dropdown>  -->
+                    </div>
+
                 </div>
                 <div class="grid">
-
                     <div class="field p-fluid col-12 sm:col-6 m-0">
                         <label class="font-medium" for="correo">Correo Electronico</label>
                         <span class="p-input-icon-right">
@@ -157,9 +174,8 @@
                         <label class="font-medium" for="telefono">Telefono</label>
                         <span class="p-input-icon-right">
                             <i class="pi pi-phone"></i>
-                            <p-inputNumber [(ngModel)]="person.telefono" mode="decimal"
-                                inputId="withoutgrouping" [useGrouping]="false"
-                                formControlName="telefono"></p-inputNumber>
+                            <p-inputNumber [(ngModel)]="person.telefono" mode="decimal" inputId="withoutgrouping"
+                                [useGrouping]="false" formControlName="telefono"></p-inputNumber>
                         </span>
                         <div *ngIf="telefonoNoValido">
                             <div *ngIf="controls['telefono'].errors?.['required']">

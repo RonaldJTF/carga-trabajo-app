@@ -14,7 +14,7 @@
           </button> -->
         </div>
         <span class="font-bold">{{person.primerNombre | uppercase}} {{person.primerApellido | uppercase}}</span>
-        <span class="mb-3"><span>{{person.tipoDocumento}}:</span> {{person.numeroDocumento}}</span>
+        <span class="mb-3"><span>{{person.tipoDocumento}}:</span> {{person.documento}}</span>
         <span class="mb-2 font-medium text-500 ">Información de contacto:</span>
         <span *ngIf="person.correo" class="w-full"><span class="text-500">Correo: </span> {{person.correo |
           lowercase}}</span>
@@ -115,7 +115,7 @@
             </ng-template>
           </div>
 
-          <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
+          <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitUser($event)"
             (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)" [showDeleteButton]="updateMode"
             [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
             [disabledCreateOrUpdateButton]="formUser.invalid">

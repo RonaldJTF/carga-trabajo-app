@@ -20,6 +20,8 @@ const httpOptions = {
 })
 export class UserService {
   private pathUser = 'user';
+  private pathRole = 'role';
+
   private URLBASE: string = environment.URLAPI;
 
   httpOptions = httpOptions.headers.set('Authorization', 'my-new-auth-token');
@@ -46,20 +48,11 @@ export class UserService {
   }
 
   loadRoles(): Observable<Rol[]> {
-    return this.http
-      .get(this.URLBASE.concat('/rol'))
-      .pipe(map((response) => response as Rol[]));
+    return this.webRequestService.get(this.pathRole);
   }
 
-  create(user: User): Observable<any> {
-    return this.webRequestService.post(this.pathUser, user);
-    // return this.http
-    //   .post<any>(`${this.URLBASE.concat(this.pathUser)}`, user, httpOptions)
-    //   .pipe(
-    //     catchError((e) => {
-    //       return throwError(() => new Error(e));
-    //     })
-    //   );
+  create(user: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathUser, user);
   }
 
   update(id: number, user: User): Observable<any> {

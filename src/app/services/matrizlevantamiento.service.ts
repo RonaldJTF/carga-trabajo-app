@@ -9,7 +9,7 @@ export class MatrizlevantamientoService {
 
   constructor(private webRequestService: WebRequestService) {}
 
-  gertExcel() {
+  geExcel() {
     return this.webRequestService.get(this.pathExcel);
   }
 }

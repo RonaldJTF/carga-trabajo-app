@@ -34,16 +34,17 @@ export class PersonService {
   }
 
   getPerson(idPerson: number): Observable<Person> {
-    return this.http
-      .get<Person>(`${this.URLBASE.concat(this.pathPerson)}/${idPerson}`)
-      .pipe(
-        catchError((e) => {
-          return throwError(() => new Error(e));
-        })
-      );
+    return this.webRequestService.get(`${this.pathPerson}/${idPerson}`);
+    // return this.http
+    //   .get<Person>(`${this.URLBASE.concat(this.pathPerson)}/${idPerson}`)
+    //   .pipe(
+    //     catchError((e) => {
+    //       return throwError(() => new Error(e));
+    //     })
+    //   );
   }
 
-  create(payload: Person): Observable<any> {
+  create(payload: any): Observable<any> {
     return this.webRequestService.postWithHeaders(this.pathPerson, payload)
     // return this.http
     //   .post<any>(
@@ -58,14 +59,15 @@ export class PersonService {
     //   );
   }
 
-  update(id: number, persona: Person): Observable<any> {
-    return this.http
-      .put<Person>(`${this.pathPerson}/${id}`, persona, httpOptions)
-      .pipe(
-        catchError((e) => {
-          return throwError(() => new Error(e));
-        })
-      );
+  update(idPerson: number, payload: any): Observable<any> {
+    return this.webRequestService.put(`${this.pathPerson}/${idPerson}`, payload)
+    // return this.http
+    //   .put<Person>(`${this.pathPerson}/${id}`, persona, httpOptions)
+    //   .pipe(
+    //     catchError((e) => {
+    //       return throwError(() => new Error(e));
+    //     })
+    //   );
   }
 
   delete(id: number): Observable<Person> {

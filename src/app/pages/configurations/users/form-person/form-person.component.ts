@@ -6,6 +6,8 @@ import { Person } from 'src/app/models/person';
 import { DocumentTypeService } from 'src/app/services/documenttype.service';
 import { DocumentType } from 'src/app/models/documenttype';
 import { Location } from '@angular/common';
+import { Gender } from 'src/app/models/gender';
+import { GenderService } from 'src/app/services/gender.service';
 
 @Component({
   selector: 'app-form-person',
@@ -33,6 +35,8 @@ export class FormPersonComponent implements OnInit {
 
   documentTypes: DocumentType[] = [];
 
+  genders: Gender[] = [];
+
   creatingOrUpdating: boolean = false;
 
   updateMode: boolean = false;
@@ -44,11 +48,13 @@ export class FormPersonComponent implements OnInit {
     private router: Router,
     private personService: PersonService,
     private formBuilder: FormBuilder,
-    private documentTypeService: DocumentTypeService
+    private documentTypeService: DocumentTypeService,
+    private genderService: GenderService
   ) {}
 
   ngOnInit() {
     this.getDocumentTypes();
+    this.getGenres();
     this.buildForm();
 
     this.route.params.subscribe((params) => {
@@ -72,14 +78,25 @@ export class FormPersonComponent implements OnInit {
     });
   }
 
+  getGenres(): void {
+    this.genderService.getDocumentType().subscribe({
+      next: (item) => {
+        this.genders = item;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+
   buildForm() {
     this.formPerson = this.formBuilder.group({
       primerNombre: ['', Validators.compose([Validators.required])],
       segundoNombre: [''],
       primerApellido: ['', Validators.compose([Validators.required])],
       segundoApellido: [''],
-      tipoDocumento: [''],
-      numeroDocumento: ['', Validators.compose([Validators.required])],
+      idTipoDocumento: [''],
+      documento: ['', Validators.compose([Validators.required])],
       correo: [
         '',
         Validators.compose([
@@ -89,6 +106,7 @@ export class FormPersonComponent implements OnInit {
         ]),
       ],
       telefono: ['', Validators.required],
+      idGenero: [''],
     });
   }
 
@@ -121,11 +139,11 @@ export class FormPersonComponent implements OnInit {
   }
 
   get tipoDocumentoNoValido() {
-    return this.isValido('tipoDocumento');
+    return this.isValido('idTipoDocumento');
   }
 
   get numeroDocumentoNoValido() {
-    return this.isValido('numeroDocumento');
+    return this.isValido('documento');
   }
 
   get correoNoValido() {
@@ -145,6 +163,7 @@ export class FormPersonComponent implements OnInit {
       next: (data) => {
         this.person = data;
         this.personCopy = this.person;
+        console.log(data);
       },
       error: (err) => {
         console.log(err.error);
@@ -208,10 +227,6 @@ export class FormPersonComponent implements OnInit {
   }
 
   createPerson(payload: any): void {
-    this.formData.append('person', JSON.stringify(this.person));
-    // console.log(this.formData.get('file'));
-    // console.log("#################")
-    // console.log(this.formData.get('person'));
     this.personService.create(payload).subscribe({
       next: (e) => {
         this.goBack();
@@ -225,14 +240,17 @@ export class FormPersonComponent implements OnInit {
 
   onSubmitPerson(event: Event): void {
     event.preventDefault();
-
+    this.formData.append(
+      'person',
+      JSON.stringify({ ...this.person, ...this.formPerson.value })
+    );
     if (this.formPerson.invalid) {
       this.formPerson.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
       this.updateMode
-        ? this.updatePerson(this.personId, this.formPerson.value)
-        : this.createPerson(this.formPerson.value);
+        ? this.updatePerson(this.personId, this.formData)
+        : this.createPerson(this.formData);
     }
   }
 
