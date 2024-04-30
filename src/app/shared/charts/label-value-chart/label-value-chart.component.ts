@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-label-value-chart',
@@ -10,4 +10,5 @@ export class LabelValueChartComponent {
   @Input() value: number | string;
   @Input() colorName: string = "primary";
   @Input() iconClass: string;
+  @ContentChild(TemplateRef) valueContentTemplate: TemplateRef<any>;
 }

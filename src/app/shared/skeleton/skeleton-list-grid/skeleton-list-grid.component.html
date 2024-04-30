@@ -1,0 +1,64 @@
+<div  *ngIf="isList" class="card p-0">
+    <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+        <div class="flex align-items-center mb-2">
+            <p-skeleton width="5rem" height="2.5rem" class="mr-2"></p-skeleton>
+            <p-skeleton width="5rem" height="2.5rem"></p-skeleton>
+        </div>
+        <div>
+            <p-skeleton width="18rem" height="2.5rem"></p-skeleton>
+        </div>
+    </div>
+    <div *ngFor="let _ of [1, 2, 3, 4]" class="col-12 w-full p-0" style="display: inline-block;">
+        <div class="pl-3 py-2">
+            <div class="flex align-items-center">
+                <p-skeleton width="1.5rem" height="1.5rem"></p-skeleton>
+                <div class="p-2 w-full">
+                    <p-skeleton width="75%" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton height=".5rem" width="50%"></p-skeleton>
+                </div>
+            </div>
+        </div>
+        <hr class="m-0">
+    </div>
+    <div class="flex justify-content-center my-2">
+        <p-skeleton width="1rem" height="1rem" shape="circle"></p-skeleton>
+        <p-skeleton width="1rem" height="1rem" shape="circle" class="mx-1"></p-skeleton>
+        <p-skeleton width="1rem" height="1rem" shape="circle" class="mx-1"></p-skeleton>
+    </div>
+</div>
+
+<div *ngIf="isGrid" class="card p-0">
+    <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+        <div class="flex align-items-center mb-2">
+            <p-skeleton width="5rem" height="2.5rem" class="mr-2"></p-skeleton>
+            <p-skeleton width="5rem" height="2.5rem"></p-skeleton>
+        </div>
+        <div>
+            <p-skeleton width="18rem" height="2.5rem"></p-skeleton>
+        </div>
+    </div>
+    <div *ngFor="let _ of [1, 2, 3, 4]" class="col-12 _adjust-auto" style="display: inline-block;">
+        <div class="card text-center p-1">
+            <div class="flex flex-column align-items-center mt-3">
+                <div class="p-2" style=" width: 100px; height: 100px;">
+                    <p-skeleton height="70px"></p-skeleton>
+                </div>
+            </div>
+            <div class="flex flex-column align-items-center">
+                <p-skeleton width="8rem" height="0.8rem" styleClass="mb-2"></p-skeleton>
+            </div>
+            <div class="flex flex-column align-items-center">
+                <p-skeleton width="5rem" height=".5rem" styleClass="mb-2"></p-skeleton>
+            </div>
+            <div class="flex justify-content-center mb-2">
+                <p-skeleton width="2rem" height="2rem" shape="circle"></p-skeleton>
+                <p-skeleton width="2rem" height="2rem" shape="circle" class="mx-1"></p-skeleton>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-center mb-2">
+        <p-skeleton width="1rem" height="1rem" shape="circle"></p-skeleton>
+        <p-skeleton width="1rem" height="1rem" shape="circle" class="mx-1"></p-skeleton>
+        <p-skeleton width="1rem" height="1rem" shape="circle" class="mx-1"></p-skeleton>
+    </div>
+</div>

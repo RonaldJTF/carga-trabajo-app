@@ -33,6 +33,14 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
 import { FileUploadModule } from 'primeng/fileupload'
 import { FormActionButtonComponent } from './form-action-button/form-action-button.component';
 import { InputTextareaModule } from "primeng/inputtextarea";
+import { TimeComponent } from './time/time.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { BadgeModule } from 'primeng/badge';
+import { PluralizePipe } from '../pipes/pluralize/pluralize.pipe';
+import { SkeletonModule } from 'primeng/skeleton';
+import { SkeletonListGridComponent } from './skeleton/skeleton-list-grid/skeleton-list-grid.component';
+import { TimeNamePipe } from '../pipes/time-name/time-name.pipe';
+import { ListboxModule } from 'primeng/listbox';
 
 @NgModule({
   declarations: [
@@ -42,6 +50,8 @@ import { InputTextareaModule } from "primeng/inputtextarea";
     NoResultComponent,
     LabelValueChartComponent,
     FormActionButtonComponent,
+    TimeComponent,
+    SkeletonListGridComponent,
 
     FirstNamePipe, 
     StatePipe, 
@@ -53,6 +63,8 @@ import { InputTextareaModule } from "primeng/inputtextarea";
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
+    PluralizePipe,
+    TimeNamePipe,
 
     ImageFallbackDirective,
   ],
@@ -75,6 +87,10 @@ import { InputTextareaModule } from "primeng/inputtextarea";
     TreeTableModule,
     FileUploadModule,
     InputTextareaModule,
+    DropdownModule,
+    BadgeModule,
+    SkeletonModule,
+    ListboxModule,
   ], 
   exports: [
     FunctionalityComponent,
@@ -83,6 +99,8 @@ import { InputTextareaModule } from "primeng/inputtextarea";
     NoResultComponent,
     LabelValueChartComponent,
     FormActionButtonComponent,
+    TimeComponent,
+    SkeletonListGridComponent,
 
     ImageFallbackDirective,
    
@@ -96,6 +114,8 @@ import { InputTextareaModule } from "primeng/inputtextarea";
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
+    PluralizePipe,
+    TimeNamePipe,
 
     CommonModule,
     ReactiveFormsModule,
@@ -115,6 +135,10 @@ import { InputTextareaModule } from "primeng/inputtextarea";
     TreeTableModule,
     FileUploadModule,
     InputTextareaModule,
+    DropdownModule,
+    BadgeModule,
+    SkeletonModule,
+    ListboxModule,
   ], 
   providers: []
 })

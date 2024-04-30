@@ -8,5 +8,5 @@ export class Typology{
     idTipologiaSiguiente?: number;
     tipologiaSiguiente?: Typology;
     acciones?: Action[];
-    esDependencia?: boolean;
+    esDependencia?: string;
 }

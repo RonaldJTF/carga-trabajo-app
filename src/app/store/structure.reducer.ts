@@ -6,12 +6,16 @@ export interface StructureState {
   items: Structure[];
   item: Structure;
   dependency: Structure;
+  mustRecharge: boolean;
+  expandedNodes: any[];
 }
   
 export const initialState: StructureState = {
   items: [],
   item: new Structure(),
   dependency: new Structure(),
+  mustRecharge: true,
+  expandedNodes: [],
 };
 
 export const structureReducer = createReducer(
@@ -22,15 +26,26 @@ export const structureReducer = createReducer(
     items: [... structures ?? []],
   })),
 
-
-  on(StructureActions.addToList, (state, { structure }) => ({
-    ...state,
-    items: [...state.items, structure],
-  })),
+  on(StructureActions.addToList, (state, { structure }) =>{
+    const items = JSON.parse(JSON.stringify(state.items));
+    let parentStructure = findStructure(structure.idPadre, items);
+    console.log(parentStructure)
+    if (parentStructure){
+      if (!parentStructure.subEstructuras){parentStructure.subEstructuras = []}
+      parentStructure.subEstructuras.push(structure)
+    }else{
+      items.push(structure);
+    }
+    return { ...state, 
+            items:[...items], 
+            dependency: findStructure(state.dependency?.id, items)
+          };  
+  }), 
 
 
   on(StructureActions.removeFromList, (state, { id }) => {
-    return { ...state, items: filtrarNodosArbol (state.items, [id])};
+    const items = filtrarNodosArbol (state.items, [id]);
+    return { ...state, items: items, dependency: findStructure(state.dependency?.id, items)};
   }),
 
 
@@ -45,13 +60,73 @@ export const structureReducer = createReducer(
 
 
   on(StructureActions.removeItemsFromList, (state, { structureIds }) => {
-    return { ...state, items: filtrarNodosArbol (state.items, structureIds)};
+    const items = filtrarNodosArbol (state.items, structureIds);
+    return { ...state, items: items, dependency: findStructure(state.dependency?.id, items)};
   }),
 
 
   on(StructureActions.removeDependencyIfWasDeleted, (state, { removedIds }) => ({
-    ...state, dependency: removedIds.includes(state.dependency.id) ? new Structure() : state.dependency,
+    ...state, dependency: removedIds.includes(state.dependency?.id) ? new Structure() : state.dependency,
   })),
+
+  on(StructureActions.updateItemIntoList, (state, { structure }) =>{
+    const items = JSON.parse(JSON.stringify(state.items));
+    let updatedStructure = findStructure(structure.id, items);
+    if (updatedStructure){
+      Object.assign(updatedStructure, structure);
+    }
+    return { ...state, 
+            items:items, 
+            dependency: findStructure(state.dependency?.id, items)
+          };  
+  }), 
+
+  on(StructureActions.setMustRecharge, (state, { mustRecharge }) => ({
+    ...state,
+    mustRecharge: mustRecharge,
+  })),
+
+ 
+  on(StructureActions.addToExpandedNodes, (state, { id }) =>{
+    return { ...state, expandedNodes:  [...state.expandedNodes, id],};  
+  }), 
+
+
+  on(StructureActions.removeFromExpandedNodes, (state, { id }) => {
+    return { ...state, expandedNodes: state.expandedNodes.filter(item => item != id),};
+  }),
+
+
+  on(StructureActions.setActivityToStructure, (state, { activity }) =>{
+    const items = JSON.parse(JSON.stringify(state.items));
+    let updatedStructure = findStructure(activity.idEstructura, items);
+    if (updatedStructure){  
+      if (!updatedStructure.actividad){
+        updatedStructure.actividad = activity;
+      }else{
+        Object.assign(updatedStructure.actividad, activity);
+      }
+    }
+    return { ...state, 
+            items:items, 
+            dependency: findStructure(state.dependency?.id, items)
+          };  
+  }), 
+
+
+  on(StructureActions.removeActivityFromStructure, (state, { idStructure }) =>{
+    const items = JSON.parse(JSON.stringify(state.items));
+    let updatedStructure = findStructure(idStructure, items);
+    if (updatedStructure){  
+      updatedStructure.actividad = null;
+    }
+    return { ...state, 
+            items:items, 
+            dependency: findStructure(state.dependency?.id, items)
+          };  
+  }), 
+
+
 );
 
 
@@ -70,4 +145,19 @@ function filtrarNodosArbol(listaNodos: Structure[], idsAEliminar:number[]) {
     }
   }
   return listaFiltrada;
+}
+
+
+function findStructure(id: number, structures: Structure[]): Structure{
+  if (structures && id){
+    for (let e of structures){
+      if (id == e.id){
+        return e;
+      }else{
+        let obj = findStructure(id, e.subEstructuras);
+        if (obj){return obj}
+      }
+    }
+  }
+  return null;
 }

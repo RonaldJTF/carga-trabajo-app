@@ -2,8 +2,12 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducers';
 import { Structure } from 'src/app/models/structure';
 import { StructureService } from 'src/app/services/structure.service';
+import * as StructureActions from "./../../../../store/structure.actions";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-structure',
@@ -22,8 +26,11 @@ export class StructureComponent implements OnInit {
   updateMode: boolean;
   creatingOrUpdating: boolean = false;
   deleting: boolean = false;
+  mustRecharge: boolean;
+  mustRechargeSubscription: Subscription;
 
   constructor(
+    private store: Store<AppState>,
     private structureService: StructureService,
     private location: Location,
     private router: Router,
@@ -33,9 +40,10 @@ export class StructureComponent implements OnInit {
 
   ngOnInit(): void {
     this.idPadre = this.route.snapshot.queryParams['idParent'];
-    this.idTipologia = this.route.snapshot.queryParams['idTypology'];
+    this.idTipologia = this.route.snapshot.queryParams['idTipology'];
     this.buildForm();
-    this.loadStructure(this.route.snapshot.params['id'])
+    this.loadStructure(this.route.snapshot.params['id']);
+    this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
   }
 
   buildForm(){
@@ -81,7 +89,9 @@ export class StructureComponent implements OnInit {
 
   updateStructure(id: number): void {
     this.structureService.updateStructure(id, this.formData).subscribe({
-      next: () => {
+      next: (e) => {
+        this.store.dispatch(StructureActions.updateItemIntoList({structure: e as Structure}));
+        this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
         this.location.back();
         this.creatingOrUpdating = false;
       },
@@ -93,7 +103,8 @@ export class StructureComponent implements OnInit {
 
   createStructure(): void {
     this.structureService.createStructure(this.formData).subscribe({
-      next: () => {
+      next: (e) => {
+        this.store.dispatch(StructureActions.addToList({structure: e as Structure}));
         this.location.back();
         this.creatingOrUpdating = false;
       },
@@ -106,8 +117,8 @@ export class StructureComponent implements OnInit {
   onSubmitStructure(event : Event): void {
     event.preventDefault();
     this.formData = new FormData();
-    this.formData.append('multipartFile', this.formStructure.value.file);
-    this.formData.append('structure', JSON.stringify(this.formStructure.value));
+    this.formData.append('file', this.uploadedFiles[0]);
+    this.formData.append('structure', JSON.stringify({...this.structure, ...this.formStructure.value}));
 
     if (this.formStructure.invalid) {
       this.formStructure.markAllAsTouched();
@@ -122,6 +133,7 @@ export class StructureComponent implements OnInit {
     this.deleting = true;
     this.structureService.deleteStructure(this.structure.id).subscribe({
       next: () => {
+        this.store.dispatch(StructureActions.removeFromList({id: this.structure.id}));
         this.location.back();
         this.deleting = false;
       },
