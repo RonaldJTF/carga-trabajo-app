@@ -11,6 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
 import { StructureService } from 'src/app/services/structure.service';
 import { TreeTable } from 'primeng/treetable';
+import { Methods } from 'src/app/utils/methods';
+import { AuthenticationService } from 'src/app/services/auth.service';
+import { CryptojsService } from 'src/app/services/cryptojs.service';
 
 @Component({
   selector: 'app-list',
@@ -24,8 +27,9 @@ export class ListComponent implements OnInit, OnDestroy{
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
 
+  isAdmin: boolean;
+  
   structures$: Observable<Structure[]>;
-  structure$: Observable<Structure>;
   dependency$: Observable<Structure>;
   dependencies$: Observable<TreeNode[]>;
   noDependencies$: Observable<TreeNode[]>;
@@ -35,31 +39,57 @@ export class ListComponent implements OnInit, OnDestroy{
 
   filteredValuesSubscription: Subscription;
   noDependenciesSubscription: Subscription;
+  mustRechargeSubscription: Subscription;
+  dependencySubscription: Subscription;
+  expandedNodesSubscription: Subscription;
+  structuresSubscription: Subscription;
 
   loading: boolean = false;
   rowGroupMetadata: number[] = [];
+  numberOfElementsByStructure: any = {};
+
+  dependencyMenuItems: MenuItem[] = [];
+  expandedNodes: number[];
+
+  menuItemsOfDownload: MenuItem[] = [
+    {label: 'PDF', icon: 'pi pi-file-pdf', id:"pdf", command: (e) => { this.download(e) }},
+    {label: 'Excel', icon: 'pi pi-file-excel', id:"excel", command: (e) => { this.download(e) }},
+  ]
 
   constructor(
     private store: Store<AppState>,
     private confirmationDialogService: ConfirmationDialogService,
     private structureService: StructureService,
+    private authService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
+    private cipher: CryptojsService
   ){}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.roleIsAdministrator();
     this.structures$ = this.store.select(state => state.structure.items);
-    this.structure$ = this.store.select(state => state.structure.item);
     this.dependency$ = this.store.select(state => state.structure.dependency);
-    this.dependencies$ = this.structures$.pipe(map(e => e?.map ( obj => this.transformToTreeNodeToDependency(obj))));
-    this.noDependencies$ = this.dependency$.pipe(map(e => e.subEstructuras?.map( obj => this.transformToTreeNodeToNoDependency(obj)).filter(o => o)));
-    this.noDependenciesSubscription = this.noDependencies$.subscribe( e=> {this.onGoToUpdateRowGroupMetaData(e)})
-    this.getStructures();
+    this.dependencies$ = this.structures$.pipe(map(e => e?.map ( obj => this.transformToTreeNode(obj, true))));
+    this.noDependencies$ = this.dependency$.pipe(map(e => e?.subEstructuras?.map( obj => this.transformToTreeNode(obj, false)).filter(o => o)));
+    this.noDependenciesSubscription = this.noDependencies$.subscribe( e=> {
+      if(e?.length){this.numberOfElementsByStructure[e[0].data.idPadre] = e.length;}
+      this.onGoToUpdateRowGroupMetaData(e);
+      this.getNumberOfElementsByStructure(e);
+    });
+    this.mustRechargeSubscription = this.store.select(state => state.structure.mustRecharge).subscribe(e => {
+      if (e){this.getStructures()}
+    });
+    this.dependencySubscription = this.store.select(state => state.structure.dependency).subscribe( e => this.dependencyMenuItems = this.getMenuItemsOfStructure(e));
+    this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
   }
 
   ngOnDestroy(): void {
     this.filteredValuesSubscription?.unsubscribe();
     this.noDependenciesSubscription?.unsubscribe();
+    this.mustRechargeSubscription?.unsubscribe();
+    this.dependencySubscription?.unsubscribe();
+    this.expandedNodesSubscription?.unsubscribe();
   }
 
   get totalSelected(): number{
@@ -67,38 +97,42 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   get totalSelectedStructuresNoDependency(): number{
-    return this.treeTableOfStructuresNoDependency?.selection?.length;
+    return this.treeTableOfStructuresNoDependency?.selection?.length ?? 0;
   }
 
-  private transformToTreeNodeToDependency(structure: Structure): TreeNode{
-    return structure.tipologia.esDependencia ? {
-      data: {...structure, menuItems: this.getMenuItemsOfStructure(structure)}, 
-      children: structure.subEstructuras?.map( e => this.transformToTreeNodeToDependency(e)).filter( e => e)
-    } : null;
+  private getNumberOfElementsByStructure(nodes: TreeNode[]){
+    nodes?.forEach( e=> {
+      this.numberOfElementsByStructure[e.data.id] = e.children?.length;
+      this.getNumberOfElementsByStructure(e.children)
+    })
   }
 
-  private transformToTreeNodeToNoDependency(structure: Structure): TreeNode{
-    return !structure.tipologia.esDependencia ? {
-      data: {...structure, menuItems: this.getMenuItemsOfStructure(structure)}, 
-      children: structure.subEstructuras?.map( e => this.transformToTreeNodeToNoDependency(e)).filter( e => e)
-    } : null;
+  private transformToTreeNode(structure: Structure, isDependency: boolean): TreeNode | null {
+    if (Methods.parseStringToBoolean(structure.tipologia.esDependencia) === isDependency) {
+      return {
+        data: { ...structure, menuItems: this.getMenuItemsOfStructure(structure) },
+        children: structure.subEstructuras?.map(e => this.transformToTreeNode(e, isDependency)).filter(e => e),
+        expanded: this.expandedNodes?.includes(structure.id)
+      };
+    }
+    return null;
   }
 
   private getMenuItemsOfStructure(structure: Structure): MenuItem []{
     let extraMenuItemsOfDependency = [];
     let extraMenuItemOfSubstructure = [];
 
-    if (structure.tipologia.esDependencia){
+    if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
       extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
-      extraMenuItemsOfDependency.push({label: 'Nueva subdependencia', icon: `pi pi-plus`, data:structure, command: (e) => this.goToAddSubdependency(e.item.data)})
+      extraMenuItemsOfDependency.push({label: 'Nueva sub' + structure.tipologia.nombre.toLowerCase(), icon: `pi pi-plus`, data:structure, command: (e) => this.goToAddSubdependency(e.item.data)})
     }
 
-    if(structure.tipologia?.tipologiaSiguiente){
-      extraMenuItemOfSubstructure.push({label: `Agregar ${structure.tipologia.tipologiaSiguiente.nombre ?? 'subestructura'}`, icon: 'pi pi-sitemap', data:structure, command: (e) => {this.goToAddSubstructure(e.item.data)}})
+    if(structure?.tipologia?.tipologiaSiguiente){
+      extraMenuItemOfSubstructure.push({label: `Agregar ${structure.tipologia.tipologiaSiguiente.nombre.toLowerCase()}`, icon: 'pi pi-sitemap', data:structure, command: (e) => {this.goToAddSubstructure(e.item.data)}})
     }
 
     return [
-      ...structure.tipologia.acciones.map(obj => ({label: obj.nombre, icon: `pi ${obj.claseIcono}`, command: (e) => {}})),
+      ...structure?.tipologia?.acciones?.map(obj => ({label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, command: (e) => {this.goToPage(e, structure)}})) ?? [],
       ...extraMenuItemsOfDependency,
       ...extraMenuItemOfSubstructure,
       {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)},
@@ -172,15 +206,18 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   goToAddSubdependency(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idPadre: structure.id, idTipologia:structure.tipologia.id}});
+    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idParent: structure.id, idTipology:structure.tipologia.id}});
   }
 
   goToAddSubstructure(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idPadre: structure.id, idTipologia: structure.tipologia.idTipologiaSiguiente}});
+    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idParent: structure.id, idTipology: structure.tipologia.idTipologiaSiguiente}});
   }
 
-  goToPage(path: string, structure: Structure){
-    this.router.navigate([path], { relativeTo: this.route, queryParams: {id: structure.id} });
+  goToPage(event: any, structure: Structure){
+    console.log(structure)
+    const path = event.item.data.path;
+    const idStructure = event.item.id;
+    this.router.navigate([path], { relativeTo: this.route, queryParams: {idStructure: idStructure, idActivity: structure?.actividad?.id} });
   }
 
   deleteSelectedStructures(nodes: any, isDependency: boolean) {
@@ -201,7 +238,7 @@ export class ListComponent implements OnInit, OnDestroy{
   
   onDeleteStructure(event: any): void {
     let id = parseInt(event.item.id);
-    let isDependency = event.item.data.tipologia.esDependencia;
+    let isDependency = Methods.parseStringToBoolean(event.item.data.tipologia.esDependencia);
     event.originalEvent.preventDefault();
     event.originalEvent.stopPropagation(); 
     this.confirmationDialogService.showDeleteConfirmationDialog(
@@ -224,4 +261,29 @@ export class ListComponent implements OnInit, OnDestroy{
     }
     return false;
   }
+
+  onNodeExpand(event) {
+    this.store.dispatch(StructureActions.addToExpandedNodes({id: event.node.data.id}));
+  }
+
+  onNodeCollapse(event) {
+    this.store.dispatch(StructureActions.removeFromExpandedNodes({id: event.node.data.id}));
+  }
+  
+  download(data: any){
+    const menuItem: MenuItem = this.menuItemsOfDownload.find(e => e.id === data.item.id);
+    const initialIcon = menuItem.icon;
+    const initialState = menuItem.disabled;
+
+    menuItem.icon = "pi pi-spin pi-spinner";
+    menuItem.disabled = true;
+
+    this.structureService.downloadReport(data.item.id).subscribe({
+      next: () => {
+        menuItem.icon = initialIcon;
+        menuItem.disabled = initialState;
+      }
+    });
+  }
+
 }

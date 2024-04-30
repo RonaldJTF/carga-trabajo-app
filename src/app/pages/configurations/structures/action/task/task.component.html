@@ -1,0 +1,79 @@
+
+<form class="p-0" [formGroup]="formActivity">
+    <div class="field p-fluid">
+        <label htmlFor="frecuencia" class="font-medium mb-0 ">Frecuencia</label>
+        <div class="text-sm text-500 mb-2">Valor expresado en repeticiones por mes</div>
+        <span class="p-input-icon-right">
+            <input pInputText id="frecuencia" type="number" aria-describedby="text-help" formControlName="frecuencia"/>
+            <i class="pi pi-history"></i>
+        </span>
+        <div *ngIf="formActivity.controls['frecuencia'].errors && (formActivity.controls['frecuencia'].touched||formActivity.controls['frecuencia'].dirty)">
+            <div *ngIf="formActivity.controls['frecuencia'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese una frecuencia</small>
+            </div>   
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="tiempoMaximo" class="font-medium">Tiempo Máximo</label>
+        <app-time formControlName="tiempoMaximo"></app-time>
+        <div *ngIf="formActivity.controls['tiempoMaximo'].errors && (formActivity.controls['tiempoMaximo'].touched||formActivity.controls['tiempoMaximo'].dirty)">
+            <div *ngIf="formActivity.controls['tiempoMaximo'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un tiempo máximo</small>
+            </div>
+            <div *ngIf="formActivity.controls['tiempoMaximo'].errors?.['min']">
+                <small id="text-help" class="p-error">Ingrese un tiempo mayor a 0</small>
+            </div>   
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="tiempoMinimo" class="font-medium">Tiempo Mínimo</label>
+        <app-time formControlName="tiempoMinimo"></app-time>
+        <div *ngIf="formActivity.controls['tiempoMinimo'].errors && (formActivity.controls['tiempoMinimo'].touched||formActivity.controls['tiempoMinimo'].dirty)">
+            <div *ngIf="formActivity.controls['tiempoMinimo'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un tiempo mínimo</small>
+            </div>   
+            <div *ngIf="formActivity.controls['tiempoMinimo'].errors?.['min']">
+                <small id="text-help" class="p-error">Ingrese un tiempo mayor a 0</small>
+            </div>   
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="tiempoPromedio" class="font-medium">Tiempo Promedio</label>
+        <app-time formControlName="tiempoPromedio"></app-time>
+        <div *ngIf="formActivity.controls['tiempoPromedio'].errors && (formActivity.controls['tiempoPromedio'].touched||formActivity.controls['tiempoPromedio'].dirty)">
+            <div *ngIf="formActivity.controls['tiempoPromedio'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un tiempo promedio</small>
+            </div>   
+            <div *ngIf="formActivity.controls['tiempoPromedio'].errors?.['min']">
+                <small id="text-help" class="p-error">Ingrese un tiempo mayor a 0</small>
+            </div>   
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="level" class="font-medium">Nivel</label>
+        <p-dropdown dataKey="id" optionLabel="descripcion" formControlName="nivel" [options]="levels" [showClear]="true"
+         [filter]="true" filterBy="descripcion" [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+        </p-dropdown>
+        <div *ngIf="formActivity.controls['nivel'].errors && (formActivity.controls['nivel'].touched||formActivity.controls['nivel'].dirty)">
+            <div *ngIf="formActivity.controls['nivel'].errors?.['required']">
+                <small id="text-help" class="p-error">Elija un nivel</small>
+            </div>
+        </div>
+    </div>
+    
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitActivity($event)"
+        (cancel)="onCancelActivity($event)"
+        (delete)="onDeleteActivity($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formActivity.invalid">
+    </app-form-action-button>
+
+</form>

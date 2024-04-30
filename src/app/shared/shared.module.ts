@@ -43,6 +43,12 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ListboxModule } from 'primeng/listbox';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { TimeComponent } from './time/time.component';
+import { SkeletonListGridComponent } from './skeleton/skeleton-list-grid/skeleton-list-grid.component';
+import { PluralizePipe } from '../pipes/pluralize/pluralize.pipe';
+import { TimeNamePipe } from '../pipes/time-name/time-name.pipe';
+import { BadgeModule } from 'primeng/badge';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @NgModule({
   declarations: [
@@ -52,6 +58,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     NoResultComponent,
     LabelValueChartComponent,
     FormActionButtonComponent,
+    TimeComponent,
+    SkeletonListGridComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -63,6 +71,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
+    PluralizePipe,
+    TimeNamePipe,
 
     ImageFallbackDirective,
     MenuItemComponent,
@@ -97,9 +107,10 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     InputMaskModule,
     MultiSelectModule,
     FileUploadModule,
-    InputTextareaModule,
     ListboxModule,
     InputSwitchModule,
+    BadgeModule,
+    SkeletonModule
   ],
   exports: [
     FunctionalityComponent,
@@ -108,6 +119,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     NoResultComponent,
     LabelValueChartComponent,
     FormActionButtonComponent,
+    TimeComponent,
+    SkeletonListGridComponent,
 
     ImageFallbackDirective,
 
@@ -121,6 +134,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
+    PluralizePipe,
+    TimeNamePipe,
 
     CommonModule,
     ReactiveFormsModule,
@@ -154,6 +169,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     InputTextareaModule,
     ListboxModule,
     InputSwitchModule,
+    BadgeModule,
+    SkeletonModule
   ],
   providers: [],
 })

@@ -46,6 +46,8 @@ export class ListComponent {
 
   items: MenuItem[] = [];
 
+  totalSelected: number;
+
   constructor(
     private messageService: MessageService,
     private personService: PersonService,
@@ -182,5 +184,9 @@ export class ListComponent {
     this.router.navigate(['configurations/users/user/', event.item.id], {
       skipLocationChange: true,
     });
+  }
+
+  desmarkAll(){
+    
   }
 }

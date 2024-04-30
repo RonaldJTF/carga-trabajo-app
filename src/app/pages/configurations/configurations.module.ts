@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+
 import { ConfigurationsRoutingModule } from './configurations-routing.module';
 
 
