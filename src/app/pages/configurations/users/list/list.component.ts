@@ -14,11 +14,10 @@ import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.
   styleUrls: ['./list.component.scss'],
 })
 export class ListComponent {
-
   IMAGE_SIZE = IMAGE_SIZE;
 
   MESSAGE = MESSAGE;
-  
+
   loading: boolean = false;
 
   layout: string = 'list';
@@ -57,7 +56,7 @@ export class ListComponent {
   ngOnInit() {
     this.items = [
       {
-        label: 'Asignar credenciales',
+        label: 'Gestionar Acceso',
         icon: 'pi pi-key',
         command: (e) => this.onUserPerson(e),
       },
@@ -92,9 +91,9 @@ export class ListComponent {
       error: (err) => {
         console.log(err);
       },
-      complete:()=>{
+      complete: () => {
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -104,13 +103,12 @@ export class ListComponent {
     });
   }
 
-  
   editPerson(idPerson: number) {
     this.router.navigate(['configurations/users/person/', idPerson], {
       skipLocationChange: true,
     });
   }
-  
+
   deleteSelectedPeople() {
     this.deletePeopleDialog = true;
   }
@@ -122,9 +120,7 @@ export class ListComponent {
   onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.personService.delete(idPerson).subscribe((response) => {
-        if(response){
-          this.people = this.people.filter((item) => item.id !== idPerson);
-        }
+        this.people = this.people.filter((item) => item.id != idPerson);
       });
     });
   }

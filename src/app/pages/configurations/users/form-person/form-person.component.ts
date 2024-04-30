@@ -215,6 +215,7 @@ export class FormPersonComponent implements OnInit {
   }
 
   updatePerson(id: number, payload: any): void {
+    payload.srcFoto = ''
     this.personService.update(id, payload).subscribe({
       next: (e) => {
         this.goBack();
@@ -240,10 +241,8 @@ export class FormPersonComponent implements OnInit {
 
   onSubmitPerson(event: Event): void {
     event.preventDefault();
-    this.formData.append(
-      'person',
-      JSON.stringify({ ...this.person, ...this.formPerson.value })
-    );
+    this.formData.append('person', JSON.stringify({ ...this.person, ...this.formPerson.value }));
+    console.log(this.formData.get('person'))
     if (this.formPerson.invalid) {
       this.formPerson.markAllAsTouched();
     } else {

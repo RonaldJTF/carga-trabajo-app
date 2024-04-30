@@ -58,8 +58,8 @@
                                             style="width: 100%; height: auto" />
                                     </div>
                                     <div class="flex flex-column align-items-center justify-content-start ml-2">
-                                        <span class="image-text ml-2 w-full">{{ request.primerNombre }}
-                                            {{ request.primerApellido }}</span>
+                                        <span class="image-text ml-2 w-full">
+                                            {{ request.primerNombre }} {{ request.segundoNombre }} {{ request.primerApellido }} {{ request.segundoApellido }}</span>
                                         <span class="image-text text-500 text-sm ml-2 w-full">
                                             {{ request.tipoDocumento.abreviatura }}: {{ request.documento }}
                                         </span>
@@ -67,7 +67,7 @@
                                 </td>
                                 <td>
                                     <span
-                                        [class]="'expiration-badge expiration-' + (request.usuario?.activo | state).classStyle">
+                                        [class]="'status-badge status-' + (request.usuario?.activo | state).classStyle">
                                         {{ (request.usuario?.activo | state).value }}
                                     </span>
                                 </td>

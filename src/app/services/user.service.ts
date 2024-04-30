@@ -48,7 +48,7 @@ export class UserService {
   }
 
   loadRoles(): Observable<Rol[]> {
-    return this.webRequestService.get(this.pathRole);
+    return this.webRequestService.getWithHeaders(this.pathRole);
   }
 
   create(user: any): Observable<any> {
@@ -56,22 +56,24 @@ export class UserService {
   }
 
   update(id: number, user: User): Observable<any> {
-    return this.http
-      .put<Person>(`${this.pathUser}/${id}`, user, httpOptions)
-      .pipe(
-        catchError((e) => {
-          return throwError(() => new Error(e));
-        })
-      );
+    return this.webRequestService.putWithHeaders(`${this.pathUser}/${id}`, user)
+    // return this.http
+    //   .put<Person>(`${this.pathUser}/${id}`, user, httpOptions)
+    //   .pipe(
+    //     catchError((e) => {
+    //       return throwError(() => new Error(e));
+    //     })
+    //   );
   }
 
   delete(id: number): Observable<User> {
-    return this.http
-      .delete<User>(`${this.URLBASE.concat(this.pathUser)}/${id}`, httpOptions)
-      .pipe(
-        catchError((e) => {
-          return throwError(() => new Error(e));
-        })
-      );
+    return this.webRequestService.deleteWithHeaders(`${this.pathUser}/${id}`)
+    // return this.http
+    //   .delete<User>(`${this.URLBASE.concat(this.pathUser)}/${id}`, httpOptions)
+    //   .pipe(
+    //     catchError((e) => {
+    //       return throwError(() => new Error(e));
+    //     })
+    //   );
   }
 }

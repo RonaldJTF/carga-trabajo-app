@@ -4,13 +4,18 @@ import { Person } from 'src/app/models/person';
 import { PersonService } from '../../../../services/person.service';
 import { UserService } from 'src/app/services/user.service';
 import { RolesUser } from 'src/app/models/rolesuser';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Rol } from 'src/app/models/rol';
 import { SelectItem } from 'primeng/api';
 import { MESSAGE } from '../../../../../labels/labels';
 import { OverlayPanel } from 'primeng/overlaypanel';
-import { filter, map } from 'rxjs';
 import { Methods } from 'src/app/utils/methods';
+import { useAnimation } from '@angular/animations';
 
 @Component({
   selector: 'app-form-user-person',
@@ -40,6 +45,8 @@ export class FormUserPersonComponent implements OnInit {
 
   deleting: boolean = false;
 
+  stateSwitch: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private readonly route: ActivatedRoute,
@@ -55,23 +62,23 @@ export class FormUserPersonComponent implements OnInit {
 
     this.formUser = this.createFormUser();
 
-    this.getPerson(this.personId);
+    this.getUserPerson(this.personId);
   }
 
   get userRoles(): Rol[] {
     return this.person.usuario?.roles;
   }
 
-  get userRolesFormControl(): FormControl{
-    return this.formUser.get("roles") as FormControl
+  get userRolesFormControl(): FormControl {
+    return this.formUser.get('roles') as FormControl;
   }
 
   createFormUser() {
     return this.formBuilder.group({
-      idPersona:[this.personId],
-      username: ['', Validators.required],
-      password: ['', Validators.required],
-      activo: [false, Validators.required],
+      idPersona: [this.personId],
+      username: [''],
+      password: [''],
+      activo: [false],
       roles: [],
     });
   }
@@ -96,10 +103,17 @@ export class FormUserPersonComponent implements OnInit {
     return this.isValido('password');
   }
 
-  getPerson(personId: number) {
+  getUserPerson(personId: number) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
+        console.log(data)
         this.person = data;
+        if (this.person.usuario) {
+          this.person.usuario.roles.map((rol)=>this.addRol(rol));
+          this.onValidacionCredenciales(data);
+          this.stateSwitch = Methods.parseStringToBoolean(this.person.usuario.activo);
+          this.updateMode = true;
+        }
         this.loadRoles();
       },
       error: (err) => {
@@ -109,13 +123,15 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   loadRolesOptions() {
-     this.rolOptions = this.roles?.map((objeto) => {
-       return {
-         label: objeto.nombre,
-         value: objeto,
-         disabled: this.userRolesFormControl.value?.some( e => e.id === objeto.id)
-       };
-     });
+    this.rolOptions = this.roles?.map((objeto) => {
+      return {
+        label: objeto.nombre,
+        value: objeto,
+        disabled: this.userRolesFormControl.value?.some(
+          (e) => e.id === objeto.id
+        ),
+      };
+    });
   }
 
   loadRoles() {
@@ -127,15 +143,19 @@ export class FormUserPersonComponent implements OnInit {
     });
   }
 
-  addRol(event: any) {
+  addRol(rol: any) {
     let temporalRoles: Rol[] = this.formUser.get('roles').value as Rol[];
-    this.formUser.get('roles').setValue([...(temporalRoles ?? []), event.value.value]);
+    this.formUser.get('roles').setValue([...(temporalRoles ?? []), rol]);
     this.rolOptionsOverlayPanel.hide();
     this.loadRolesOptions();
   }
 
   removeRol(id: number) {
-    this.formUser.get('roles').setValue([...(this.formUser.get('roles').value ?? []).filter(e => e.id !== id)]);
+    this.formUser
+      .get('roles')
+      .setValue([
+        ...(this.formUser.get('roles').value ?? []).filter((e) => e.id !== id),
+      ]);
     this.rolOptionsOverlayPanel.hide();
     this.loadRolesOptions();
   }
@@ -149,12 +169,13 @@ export class FormUserPersonComponent implements OnInit {
     } else {
       this.creatingOrUpdating = true;
       this.updateMode
-        ? this.updateUser(this.personId, payload)
+        ? this.updateUser(this.person.usuario.id, payload)
         : this.createUser(payload);
     }
   }
 
   updateUser(id: number, payload: any): void {
+    console.log(id)
     this.userService.update(id, payload).subscribe({
       next: (e) => {
         this.goBack();
@@ -180,10 +201,10 @@ export class FormUserPersonComponent implements OnInit {
     });
   }
 
-  onDeletePerson(event: Event): void {
+  onDeleteUserPerson(event: Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.personService.delete(this.personId).subscribe({
+    this.userService.delete(this.person.usuario.id).subscribe({
       next: () => {
         this.goBack();
         this.deleting = false;
@@ -194,7 +215,7 @@ export class FormUserPersonComponent implements OnInit {
     });
   }
 
-  onCancelPerson(event: Event): void {
+  onCancelUserPerson(event: Event): void {
     event.preventDefault();
     this.updateMode = false;
     this.goBack();
@@ -204,5 +225,59 @@ export class FormUserPersonComponent implements OnInit {
     this.router.navigate(['configurations/users'], {
       skipLocationChange: true,
     });
+  }
+
+  onValidacionCredenciales(person: Person): void {
+    if (person.usuario) {
+      this.quitarValidateRequiredUser();
+    } else {
+      this.addValidateRequiredUser();
+    }
+  }
+
+  addValidateRequiredUser(): void {
+    if (this.formUser) {
+      //Obtenemos el control ya instanciado en el formulario.
+      let userControl = this.formUser.get('username');
+      let passControl = this.formUser.get('password');
+
+      //Quitamos todas las validaciones del control.
+      userControl?.clearValidators();
+      passControl?.clearValidators();
+
+      //Agregamos la validacion:
+      userControl?.setValidators([Validators.required]);
+      passControl?.setValidators([Validators.required]);
+
+      //Para evitar problemas con la validacion marcamos el campo con
+      // dirty, de esta manera se ejecutan de nuevo las validaciones
+      userControl?.markAsDirty();
+      passControl?.markAsDirty();
+      //Recalculamos el estado del campo para que cambie el estado
+      // del formulario.
+      userControl?.updateValueAndValidity();
+      passControl?.updateValueAndValidity();
+    }
+  }
+
+  quitarValidateRequiredUser(): void {
+    if (this.formUser) {
+      //Obtenemos el control ya instanciado en el formulario.
+      let userControl = this.formUser.get('username');
+      let passControl = this.formUser.get('password');
+
+      //Quitamos todas las validaciones del control.
+      userControl?.clearValidators();
+      passControl?.clearValidators();
+
+      //Para evitar problemas con la validacion marcamos el campo con
+      // dirty, de esta manera se ejecutan de nuevo las validaciones
+      userControl?.markAsDirty();
+      passControl?.markAsDirty();
+      //Recalculamos el estado del campo para que cambie el estado
+      // del formulario.
+      userControl?.updateValueAndValidity();
+      passControl?.updateValueAndValidity();
+    }
   }
 }

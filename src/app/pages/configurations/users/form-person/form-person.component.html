@@ -114,15 +114,9 @@
 
                     <div class="field p-fluid col-12 m-0">
                         <label class="font-medium" for="idTipoDocumento">Tipo Documento</label>
-                        <select class="form-control" [(ngModel)]="person.idTipoDocumento"
-                            [compareWith]="compararTiposDocumentos" id="idTipoDocumento" name="idTipoDocumento"
-                            formControlName="idTipoDocumento">
-                            <option *ngFor="let tipoDocumento of documentTypes" [value]="tipoDocumento.id">
-                                {{tipoDocumento.descripcion}}</option>
-                        </select>
-                        <!-- <p-dropdown inputId="idTipoDocumento" [autoDisplayFirst]="false" [options]="documentTypes"
-                            [(ngModel)]="person.idTipoDocumento" optionLabel="descripcion"
-                            formControlName="idTipoDocumento"></p-dropdown> -->
+                        <p-dropdown inputId="idTipoDocumento" [autoDisplayFirst]="false" [options]="documentTypes"
+                            [(ngModel)]="person.idTipoDocumento" optionValue="id" optionLabel="descripcion"
+                            formControlName="idTipoDocumento"></p-dropdown>
                         <div *ngIf="tipoDocumentoNoValido">
                             <div *ngIf="controls['idTipoDocumento'].errors?.['required']">
                                 <small id="text-help" class="p-error">Seleccione el tipo de documento</small>
@@ -143,15 +137,9 @@
 
                     <div class="field p-fluid col-12 m-0">
                         <label class="font-medium" for="idGenero">Genero</label>
-                        <select class="form-control" [(ngModel)]="person.idGenero"
-                            [compareWith]="compararTiposDocumentos" id="idGenero" name="idGenero"
-                            formControlName="idGenero">
-                            <option *ngFor="let gender of genders" [value]="gender.id">
-                                {{gender.nombre}}</option>
-                        </select>
-                        <!-- <p-dropdown inputId="genero" [autoDisplayFirst]="false" [options]="genders"
-                            [(ngModel)]="person.genero" optionLabel="nombre"
-                            formControlName="genero"></p-dropdown>  -->
+                        <p-dropdown inputId="idGenero" [autoDisplayFirst]="false" [options]="genders"
+                            [(ngModel)]="person.idGenero" optionValue="id" optionLabel="nombre"
+                            formControlName="idGenero"></p-dropdown> 
                     </div>
 
                 </div>

@@ -4,6 +4,6 @@ export class User{
     id: number;
     username: string;
     password: string;
-    activo: boolean;
+    activo: string;
     roles: Rol[];
 }

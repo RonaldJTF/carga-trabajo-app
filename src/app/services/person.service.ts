@@ -27,14 +27,14 @@ export class PersonService {
   ) {}
 
   getPeople(): Observable<Person[]> {
-    return this.webRequestService.get(this.pathPerson);
+    return this.webRequestService.getWithHeaders(this.pathPerson);
     // return this.http
     //   .get(this.URLBASE.concat(this.pathPerson))
     //   .pipe(map((response) => response as Person[]));
   }
 
   getPerson(idPerson: number): Observable<Person> {
-    return this.webRequestService.get(`${this.pathPerson}/${idPerson}`);
+    return this.webRequestService.getWithHeaders(`${this.pathPerson}/${idPerson}`);
     // return this.http
     //   .get<Person>(`${this.URLBASE.concat(this.pathPerson)}/${idPerson}`)
     //   .pipe(
@@ -71,15 +71,16 @@ export class PersonService {
   }
 
   delete(id: number): Observable<Person> {
-    return this.http
-      .delete<Person>(
-        `${this.URLBASE.concat(this.pathPerson)}/${id}`,
-        httpOptions
-      )
-      .pipe(
-        catchError((e) => {
-          return throwError(() => new Error(e));
-        })
-      );
+    return this.webRequestService.deleteWithHeaders(`${this.pathPerson}/${id}`)
+    // return this.http
+    //   .delete<Person>(
+    //     `${this.URLBASE.concat(this.pathPerson)}/${id}`,
+    //     httpOptions
+    //   )
+    //   .pipe(
+    //     catchError((e) => {
+    //       return throwError(() => new Error(e));
+    //     })
+    //   );
   }
 }
