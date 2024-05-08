@@ -40,12 +40,12 @@ export class StructureService {
     return this.webRequestService.deleteWithHeaders(`${this.pathStructure}/${id}`)
   }
 
-  downloadReport(type: string): Observable<HttpResponse<any>>{
+  downloadReport(type: string, structureIds: number[]): Observable<HttpResponse<any>>{
     const options = {
       responseType: 'blob' as 'json',
       observe: 'response' as 'body'
     };
-    return this.webRequestService.getWithHeaders(`${this.pathStructure}/report`, {type: type}, null, options).pipe(
+    return this.webRequestService.getWithHeaders(`${this.pathStructure}/report`, {type: type, structureIds: JSON.stringify(structureIds)}, null, options).pipe(
       map(e => {
         this.handleFileDownload(e);
         return e;

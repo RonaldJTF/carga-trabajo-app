@@ -276,9 +276,13 @@ export class ListComponent implements OnInit, OnDestroy{
 
     menuItem.icon = "pi pi-spin pi-spinner";
     menuItem.disabled = true;
-
-    this.structureService.downloadReport(data.item.id).subscribe({
+    let structureIds = (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id);
+    this.structureService.downloadReport(data.item.id, structureIds).subscribe({
       next: () => {
+        menuItem.icon = initialIcon;
+        menuItem.disabled = initialState;
+      },
+      error: ()=>{
         menuItem.icon = initialIcon;
         menuItem.disabled = initialState;
       }
