@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
-import { Table } from 'primeng/table';
-import { Person } from 'src/app/models/person';
-import { MenuItem, MessageService } from 'primeng/api';
-import { PersonService } from 'src/app/services/person.service';
-import { Router } from '@angular/router';
-import { IMAGE_SIZE } from 'src/app/utils/constants';
-import { MESSAGE } from 'src/labels/labels';
-import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
+import {Component} from '@angular/core';
+import {Table} from 'primeng/table';
+import {Person} from 'src/app/models/person';
+import {MenuItem, MessageService} from 'primeng/api';
+import {PersonService} from 'src/app/services/person.service';
+import {Router} from '@angular/router';
+import {IMAGE_SIZE} from 'src/app/utils/constants';
+import {MESSAGE} from 'src/labels/labels';
+import {ConfirmationDialogService} from 'src/app/services/confirmation-dialog.service';
+import * as StructureActions from "../../../../store/structure.actions";
 
 @Component({
   selector: 'app-list',
@@ -22,10 +23,6 @@ export class ListComponent {
 
   layout: string = 'list';
 
-  personDialog: boolean = false;
-
-  deletePersonDialog: boolean = false;
-
   deletePeopleDialog: boolean = false;
 
   people: Person[] = [];
@@ -34,28 +31,23 @@ export class ListComponent {
 
   selectedPeople: Person[] = [];
 
-  submitted: boolean = false;
-
   cols: any[] = [];
-
-  statuses: any[] = [];
-
-  rowsPerPageOptions = [5, 10, 20];
-
-  cardMenu: MenuItem[] = [];
 
   items: MenuItem[] = [];
 
-  totalSelected: number;
-
   constructor(
-    private messageService: MessageService,
     private personService: PersonService,
     private confirmationDialogService: ConfirmationDialogService,
     private router: Router
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
+    this.intMenu();
+    this.getPeople();
+  }
+
+  intMenu() {
     this.items = [
       {
         label: 'Gestionar Acceso',
@@ -74,14 +66,12 @@ export class ListComponent {
       },
     ];
     this.cols = [
-      { field: 'person', header: 'Person' },
-      { field: 'price', header: 'Price' },
-      { field: 'category', header: 'Category' },
-      { field: 'rating', header: 'Reviews' },
-      { field: 'inventoryStatus', header: 'Status' },
+      {field: 'person', header: 'Person'},
+      {field: 'price', header: 'Price'},
+      {field: 'category', header: 'Category'},
+      {field: 'rating', header: 'Reviews'},
+      {field: 'inventoryStatus', header: 'Status'},
     ];
-
-    this.getPeople();
   }
 
   getPeople() {
@@ -112,37 +102,32 @@ export class ListComponent {
   }
 
   deleteSelectedPeople() {
-    this.deletePeopleDialog = true;
-  }
-
-  deletePerson(person: Person) {
-    this.person = { ...person };
+    let peopleIds: number[] = this.selectedPeople.map(item => item.id);
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.personService.deleteSelectedPeople(peopleIds)
+          .subscribe({
+            next: (e) => {
+              this.desmarkAll();
+              for (let idPerson of peopleIds) {
+                this.filterPeple(idPerson);
+              }
+            }
+          });
+      }
+    )
   }
 
   onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.personService.delete(idPerson).subscribe((response) => {
-        this.people = this.people.filter((item) => item.id != idPerson);
+        this.filterPeple(idPerson);
       });
     });
   }
 
-  confirmDeleteSelected() {
-    this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.deletePerson(this.person);
-    });
-  }
-
-  confirmDelete() {
-    this.deletePersonDialog = false;
-    this.people = this.people.filter((val) => val.id !== this.person.id);
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Product Deleted',
-      life: 3000,
-    });
-    //this.people;
+  filterPeple(idPerson: number) {
+    this.people = this.people.filter((item) => item.id != idPerson);
   }
 
   findIndexById(id: number): number {
@@ -171,22 +156,14 @@ export class ListComponent {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
-  hideDialog() {
-    this.personDialog = false;
-    this.submitted = false;
-  }
-
-  savePerson() {
-    this.submitted = true;
-  }
-
   onUserPerson(event: any) {
     this.router.navigate(['configurations/users/user/', event.item.id], {
       skipLocationChange: true,
     });
   }
 
-  desmarkAll(){
-    
+  desmarkAll() {
+    this.selectedPeople = [];
   }
+
 }

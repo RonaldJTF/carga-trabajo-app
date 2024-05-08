@@ -20,14 +20,14 @@
           lowercase}}</span>
         <span *ngIf="person.telefono" class="w-full"><span class="text-500">Teléfono: </span>
           {{person.telefono}}</span>
-        <!-- <span *ngIf="person.direccion" class="w-full text-left mb-2">
+        <!--<span *ngIf="person.direccion" class="w-full text-left mb-2">
               <span class="text-500">Dirección: </span> {{person.direccion | capitalizeFirstLetter}}
               <span *ngIf="person.ciudadResidencia || person.paisResidencia">-
                 <span *ngIf="person.ciudadResidencia">{{person.ciudadResidencia.nombre | capitalizeFirstLetter}}, </span>
                 <span *ngIf="person.ciudadResidencia?.departamento.nombre">{{person.ciudadResidencia.departamento.nombre | capitalizeFirstLetter}}, </span>
                 <span *ngIf="person.paisResidencia">{{person.paisResidencia.nombre | capitalizeFirstLetter}}</span>
               </span>
-            </span> 
+            </span>
             <button pButton pRipple label="Ver más detalles" class="p-button-outlined p-button-info"></button>-->
       </div>
     </div>
@@ -47,12 +47,12 @@
                   <i class="pi pi-user"></i>
                 </span>
                 <span class="p-float-label">
-                  <input type="text" inputId="username" pInputText formControlName="username" />
+                  <input type="text" id="username" inputId="username" pInputText formControlName="username" />
                 </span>
               </div>
               <div *ngIf="usuarioNoValido">
                 <div *ngIf="controls['username'].errors?.['required']">
-                  <small id="text-help" class="p-error">Ingrese un usuario</small>
+                  <small class="p-error">Ingrese un usuario</small>
                 </div>
               </div>
             </div>
@@ -63,12 +63,12 @@
                   <i class="pi pi-key"></i>
                 </span>
                 <span class="p-float-label">
-                  <input type="text" inputId="password" pInputText formControlName="password" />
+                  <input type="text" id="password" inputId="password" pInputText formControlName="password" />
                 </span>
               </div>
               <div *ngIf="paswordNoValido">
                 <div *ngIf="controls['password'].errors?.['required']">
-                  <small id="text-help" class="p-error">Ingrese una contraseña</small>
+                  <small class="p-error">Ingrese una contraseña</small>
                 </div>
               </div>
             </div>
@@ -121,28 +121,8 @@
             [disabledCreateOrUpdateButton]="formUser.invalid">
           </app-form-action-button>
 
-
         </div>
       </div>
-      <!-- <div class="col-12">
-        <div class="card">
-          <h5>Toolbar</h5>
-          <p-toolbar>
-            <div class="p-toolbar-group-left flex flex-wrap">
-              <button pButton type="button" label="New" icon="pi pi-plus" class="mr-2"></button>
-              <button pButton type="button" label="Open" icon="pi pi-folder-open"
-                class="p-button-secondary mr-2"></button>
-              <i class="pi pi-bars p-toolbar-separator"></i>
-              <button pButton type="button" icon="pi pi-check" class="p-button-success mr-2"></button>
-              <button pButton type="button" icon="pi pi-trash" class="p-button-warning mr-2"></button>
-              <button pButton type="button" icon="pi pi-print" class="p-button-danger"></button>
-            </div>
-
-            <div class="p-toolbar-group-right">
-            </div>
-          </p-toolbar>
-        </div>
-      </div> -->
     </div>
   </div>
 </div>

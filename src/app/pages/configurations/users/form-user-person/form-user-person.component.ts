@@ -1,21 +1,21 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Person } from 'src/app/models/person';
-import { PersonService } from '../../../../services/person.service';
-import { UserService } from 'src/app/services/user.service';
-import { RolesUser } from 'src/app/models/rolesuser';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Person} from 'src/app/models/person';
+import {PersonService} from '../../../../services/person.service';
+import {UserService} from 'src/app/services/user.service';
+import {RolesUser} from 'src/app/models/rolesuser';
 import {
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Rol } from 'src/app/models/rol';
-import { SelectItem } from 'primeng/api';
-import { MESSAGE } from '../../../../../labels/labels';
-import { OverlayPanel } from 'primeng/overlaypanel';
-import { Methods } from 'src/app/utils/methods';
-import { useAnimation } from '@angular/animations';
+import {Rol} from 'src/app/models/rol';
+import {SelectItem} from 'primeng/api';
+import {MESSAGE} from '../../../../../labels/labels';
+import {OverlayPanel} from 'primeng/overlaypanel';
+import {Methods} from 'src/app/utils/methods';
+import {useAnimation} from '@angular/animations';
 
 @Component({
   selector: 'app-form-user-person',
@@ -53,7 +53,8 @@ export class FormUserPersonComponent implements OnInit {
     private personService: PersonService,
     private userService: UserService,
     private router: Router
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -76,10 +77,10 @@ export class FormUserPersonComponent implements OnInit {
   createFormUser() {
     return this.formBuilder.group({
       idPersona: [this.personId],
-      username: [''],
-      password: [''],
+      username: ['', Validators.required],
+      password: ['', Validators.required],
       activo: [false],
-      roles: [],
+      roles: [[], Validators.required],
     });
   }
 
@@ -106,10 +107,9 @@ export class FormUserPersonComponent implements OnInit {
   getUserPerson(personId: number) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
-        console.log(data)
         this.person = data;
         if (this.person.usuario) {
-          this.person.usuario.roles.map((rol)=>this.addRol(rol));
+          this.person.usuario.roles.map((rol) => this.addRol(rol));
           this.onValidacionCredenciales(data);
           this.stateSwitch = Methods.parseStringToBoolean(this.person.usuario.activo);
           this.updateMode = true;
@@ -127,9 +127,7 @@ export class FormUserPersonComponent implements OnInit {
       return {
         label: objeto.nombre,
         value: objeto,
-        disabled: this.userRolesFormControl.value?.some(
-          (e) => e.id === objeto.id
-        ),
+        disabled: this.userRolesFormControl.value?.some((e) => e.id === objeto.id)
       };
     });
   }
@@ -151,11 +149,7 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   removeRol(id: number) {
-    this.formUser
-      .get('roles')
-      .setValue([
-        ...(this.formUser.get('roles').value ?? []).filter((e) => e.id !== id),
-      ]);
+    this.formUser.get('roles').setValue([...(this.formUser.get('roles').value ?? []).filter((e) => e.id !== id)]);
     this.rolOptionsOverlayPanel.hide();
     this.loadRolesOptions();
   }
@@ -175,7 +169,6 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   updateUser(id: number, payload: any): void {
-    console.log(id)
     this.userService.update(id, payload).subscribe({
       next: (e) => {
         this.goBack();
@@ -188,7 +181,6 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   createUser(payload: any): void {
-    console.log(payload);
     this.userService.create(payload).subscribe({
       next: (e) => {
         this.formUser.reset();
@@ -229,7 +221,7 @@ export class FormUserPersonComponent implements OnInit {
 
   onValidacionCredenciales(person: Person): void {
     if (person.usuario) {
-      this.quitarValidateRequiredUser();
+      this.removeValidateRequiredUser();
     } else {
       this.addValidateRequiredUser();
     }
@@ -260,7 +252,7 @@ export class FormUserPersonComponent implements OnInit {
     }
   }
 
-  quitarValidateRequiredUser(): void {
+  removeValidateRequiredUser(): void {
     if (this.formUser) {
       //Obtenemos el control ya instanciado en el formulario.
       let userControl = this.formUser.get('username');

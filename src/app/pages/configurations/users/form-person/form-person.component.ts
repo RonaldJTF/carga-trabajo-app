@@ -1,13 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PersonService } from 'src/app/services/person.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Person } from 'src/app/models/person';
-import { DocumentTypeService } from 'src/app/services/documenttype.service';
-import { DocumentType } from 'src/app/models/documenttype';
-import { Location } from '@angular/common';
-import { Gender } from 'src/app/models/gender';
-import { GenderService } from 'src/app/services/gender.service';
+import {Component, Input, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {PersonService} from 'src/app/services/person.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Person} from 'src/app/models/person';
+import {DocumentTypeService} from 'src/app/services/documenttype.service';
+import {DocumentType} from 'src/app/models/documenttype';
+import {Location} from '@angular/common';
+import {Gender} from 'src/app/models/gender';
+import {GenderService} from 'src/app/services/gender.service';
+import {Message} from "primeng/api";
 
 @Component({
   selector: 'app-form-person',
@@ -33,6 +34,8 @@ export class FormPersonComponent implements OnInit {
 
   uploadedFiles: any[] = [];
 
+  loadFile: boolean = false;
+
   documentTypes: DocumentType[] = [];
 
   genders: Gender[] = [];
@@ -43,6 +46,10 @@ export class FormPersonComponent implements OnInit {
 
   deleting: boolean = false;
 
+  fileInfo: string;
+
+  msgs: Message[] = [];
+
   constructor(
     private readonly route: ActivatedRoute,
     private router: Router,
@@ -50,7 +57,8 @@ export class FormPersonComponent implements OnInit {
     private formBuilder: FormBuilder,
     private documentTypeService: DocumentTypeService,
     private genderService: GenderService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.getDocumentTypes();
@@ -71,10 +79,7 @@ export class FormPersonComponent implements OnInit {
     this.documentTypeService.getDocumentType().subscribe({
       next: (item) => {
         this.documentTypes = item;
-      },
-      error: (err) => {
-        console.log(err);
-      },
+      }
     });
   }
 
@@ -82,10 +87,7 @@ export class FormPersonComponent implements OnInit {
     this.genderService.getDocumentType().subscribe({
       next: (item) => {
         this.genders = item;
-      },
-      error: (err) => {
-        console.log(err);
-      },
+      }
     });
   }
 
@@ -95,7 +97,7 @@ export class FormPersonComponent implements OnInit {
       segundoNombre: [''],
       primerApellido: ['', Validators.compose([Validators.required])],
       segundoApellido: [''],
-      idTipoDocumento: [''],
+      idTipoDocumento: ['', Validators.required],
       documento: ['', Validators.compose([Validators.required])],
       correo: [
         '',
@@ -106,7 +108,7 @@ export class FormPersonComponent implements OnInit {
         ]),
       ],
       telefono: ['', Validators.required],
-      idGenero: [''],
+      idGenero: ['', Validators.required],
     });
   }
 
@@ -154,34 +156,20 @@ export class FormPersonComponent implements OnInit {
     return this.isValido('telefono');
   }
 
-  compararTiposDocumentos(id1: number, id2: number): boolean {
-    return id1 === id2;
+  get generoNoValido() {
+    return this.isValido('idGenero');
   }
 
   getPerson(personId: number) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
         this.person = data;
-        this.personCopy = this.person;
-        console.log(data);
+        this.personCopy = data;
       },
       error: (err) => {
         console.log(err.error);
       },
     });
-  }
-
-  hideDialog() {
-    this.personDialog = false;
-    this.submitted = false;
-  }
-
-  savePerson() {
-    if (this.person && this.person.id) {
-      this.update();
-    } else {
-      this.create();
-    }
   }
 
   create(): void {
@@ -204,6 +192,7 @@ export class FormPersonComponent implements OnInit {
           this.formPerson.reset();
           this.person = new Person();
           this.goBack();
+          this.formPerson.reset();
         });
     }
   }
@@ -240,16 +229,14 @@ export class FormPersonComponent implements OnInit {
   }
 
   onSubmitPerson(event: Event): void {
+    this.formData.delete('person');
     event.preventDefault();
-    this.formData.append('person', JSON.stringify({ ...this.person, ...this.formPerson.value }));
-    console.log(this.formData.get('person'))
+    this.formData.append('person', JSON.stringify(this.formPerson.value));
     if (this.formPerson.invalid) {
       this.formPerson.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      this.updateMode
-        ? this.updatePerson(this.personId, this.formData)
-        : this.createPerson(this.formData);
+      this.updateMode ? this.updatePerson(this.personId, this.formData) : this.createPerson(this.formData);
     }
   }
 
@@ -260,10 +247,7 @@ export class FormPersonComponent implements OnInit {
       next: () => {
         this.goBack();
         this.deleting = false;
-      },
-      error: (error) => {
-        this.deleting = false;
-      },
+      }
     });
   }
 
@@ -271,6 +255,39 @@ export class FormPersonComponent implements OnInit {
     event.preventDefault();
     this.updateMode = false;
     this.goBack();
+  }
+
+  onFileSelect(input: HTMLInputElement): void {
+    this.formData.delete('file');
+    function formatBytes(bytes: number): string {
+      const UNITS = ['Bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+      const factor = 1024;
+      let index = 0;
+      while (bytes >= factor) {
+        bytes /= factor;
+        index++;
+      }
+      return `${parseFloat(bytes.toFixed(2))} ${UNITS[index]}`;
+    }
+
+    this.formData = new FormData();
+    const file = input.files[0];
+    this.formData.append('file', file);
+    this.fileInfo = `${file.name}`;
+    this.previewFoto(file);
+  }
+
+
+  previewFoto(file: File) {
+    const img = document.getElementById('avatarPerson') as HTMLImageElement;
+    if (file) {
+      img.src = URL.createObjectURL(file);
+      this.loadFile = true;
+    } else {
+      this.loadFile = false;
+      this.fileInfo = '';
+      img.src = this.person.srcFoto;
+    }
   }
 
   onFileSelected(event: any): void {

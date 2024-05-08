@@ -1,0 +1,17 @@
+<div class="grid grid-nogutter">
+    <div *ngFor="let item of inventory" class="col-12 md:col-6 lg:col-{{12/inventory.length}} p-1">
+        <app-label-value-chart label="{{item.nombre}}" [value]="item.cantidad" colorName="{{item.nombreColor}}"
+            iconClass="{{item.claseIcono}}">
+            <ng-template pTemplate="value-content" let-data>
+                <ng-container *ngTemplateOutlet="TemplateTime; context:{$implicit: data}"></ng-container>
+            </ng-template>
+        </app-label-value-chart>
+    </div>
+</div>
+
+<ng-template #TemplateTime let-time>
+    <div class="flex flex-row align-items-baseline">
+        <span class="text-500 text-2xl font-medium">{{time}}</span>
+        <span class="text-sm text-500 mr-2"> Existentes</span>
+    </div>
+</ng-template>

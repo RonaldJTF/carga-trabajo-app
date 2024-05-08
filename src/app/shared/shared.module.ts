@@ -49,6 +49,10 @@ import { PluralizePipe } from '../pipes/pluralize/pluralize.pipe';
 import { TimeNamePipe } from '../pipes/time-name/time-name.pipe';
 import { BadgeModule } from 'primeng/badge';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ChartModule } from 'primeng/chart';
+import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
+import { PolarChartComponent } from './charts/polar-chart/polar-chart.component'
+import {MessageModule} from "primeng/message";
 
 @NgModule({
   declarations: [
@@ -76,6 +80,8 @@ import { SkeletonModule } from 'primeng/skeleton';
 
     ImageFallbackDirective,
     MenuItemComponent,
+    BarChartComponent,
+    PolarChartComponent,
   ],
   imports: [
     CommonModule,
@@ -110,7 +116,9 @@ import { SkeletonModule } from 'primeng/skeleton';
     ListboxModule,
     InputSwitchModule,
     BadgeModule,
-    SkeletonModule
+    SkeletonModule,
+		ChartModule,
+    MessageModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -170,7 +178,11 @@ import { SkeletonModule } from 'primeng/skeleton';
     ListboxModule,
     InputSwitchModule,
     BadgeModule,
-    SkeletonModule
+    SkeletonModule,
+    ChartModule,
+    BarChartComponent,
+    PolarChartComponent,
+    MessageModule
   ],
   providers: [],
 })

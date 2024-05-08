@@ -13,7 +13,7 @@
     </button>
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
+        <!-- <button class="p-link layout-topbar-button">
             <i class="pi pi-calendar"></i>
             <span>Calendar</span>
         </button>
@@ -24,7 +24,7 @@
         <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
             <i class="pi pi-cog"></i>
             <span>Settings</span>
-        </button>
+        </button> -->
 		<div *ngIf="loguedPerson$ | async as person">
             <p-menu #menu [popup]="true" [model]="menuItems" [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
             <button class="p-link layout-topbar-button px-3" (click)="menu.toggle($event)" style="width: auto; border-radius: 12px;">

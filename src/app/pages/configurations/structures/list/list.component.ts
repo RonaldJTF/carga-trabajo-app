@@ -28,7 +28,7 @@ export class ListComponent implements OnInit, OnDestroy{
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
 
   isAdmin: boolean;
-  
+
   structures$: Observable<Structure[]>;
   dependency$: Observable<Structure>;
   dependencies$: Observable<TreeNode[]>;
@@ -144,7 +144,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.rowGroupMetadata = [];
     this.updateRowGroupMetaData(nodes ?? []);
   }
-  
+
   private updateRowGroupMetaData(nodes: TreeNode[]){
     nodes.forEach( (e, index) => {
       if (index == 0){
@@ -161,7 +161,6 @@ export class ListComponent implements OnInit, OnDestroy{
   getStructures(){
     this.loading = true;
     this.structureService.getStructures().subscribe( e => {
-      console.log(e)
       this.store.dispatch(StructureActions.setList({structures: e}));
       this.loading = false;
     })
@@ -173,7 +172,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
   onGoToUpdate (id : any, event: Event): void{
     event.preventDefault();
-    event.stopPropagation(); 
+    event.stopPropagation();
     this.router.navigate(['/configurations/structures', id])
   }
 
@@ -195,9 +194,8 @@ export class ListComponent implements OnInit, OnDestroy{
       }
     }
   }
-  
+
   desmarkAll(isDependency: boolean){
-    console.log(isDependency)
     if(isDependency){
       this.selectedNodesOfDependency = [];
     }else{
@@ -214,7 +212,7 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   goToPage(event: any, structure: Structure){
-    console.log(structure)
+    console.log(structure);
     const path = event.item.data.path;
     const idStructure = event.item.id;
     this.router.navigate([path], { relativeTo: this.route, queryParams: {idStructure: idStructure, idActivity: structure?.actividad?.id} });
@@ -235,12 +233,12 @@ export class ListComponent implements OnInit, OnDestroy{
       }
     )
   }
-  
+
   onDeleteStructure(event: any): void {
     let id = parseInt(event.item.id);
     let isDependency = Methods.parseStringToBoolean(event.item.data.tipologia.esDependencia);
     event.originalEvent.preventDefault();
-    event.originalEvent.stopPropagation(); 
+    event.originalEvent.stopPropagation();
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.structureService.deleteStructure(id)
@@ -253,7 +251,7 @@ export class ListComponent implements OnInit, OnDestroy{
         });
       }
     )
-  }  
+  }
 
   hasDetailToShow(structure : Structure){
     if (structure.actividad){
@@ -269,7 +267,7 @@ export class ListComponent implements OnInit, OnDestroy{
   onNodeCollapse(event) {
     this.store.dispatch(StructureActions.removeFromExpandedNodes({id: event.node.data.id}));
   }
-  
+
   download(data: any){
     const menuItem: MenuItem = this.menuItemsOfDownload.find(e => e.id === data.item.id);
     const initialIcon = menuItem.icon;

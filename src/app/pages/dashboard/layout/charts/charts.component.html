@@ -1,0 +1,42 @@
+<div class="grid p-fluid grid-nogutter p-1">
+  <div class="col-12 lg:col-6">
+    <div class="card m-1">
+      <div class="flex align-items-center mb-3">
+        <div
+          class="w-3rem h-3rem flex align-items-center justify-content-center bg-cyan-100 border-circle mr-3 flex-shrink-0">
+          <i class="pi pi-sitemap text-xl text-cyan-500"></i>
+        </div>
+        <div class="flex flex-column ">
+          <h5 class="m-0 text-700">Dependencia</h5>
+          <span class="text-500">Selecciona una dependencia</span>
+        </div>
+      </div>
+      <p-dropdown dataKey="id" optionLabel="nombre" [options]="structure" [(ngModel)]="dependence" [showClear]="false"
+                  [filter]="true" filterBy="nombre" (onChange)="dependenceSelected($event.value)"
+                  [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                  [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+      </p-dropdown>
+      <div class="flex flex-column align-items-center text-center my-3">
+        <ng-container *ngIf="dependence?.srcIcono else sNoIcon">
+          <img [src]="dependence.srcIcono" [alt]="dependence.nombre"
+               [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
+        </ng-container>
+        <ng-template #sNoIcon>
+          <div
+            class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependence?.tipologia.nombreColor}}-100 border-circle">
+            <i
+              class="pi {{dependence?.tipologia.claseIcono}} text-4xl text-{{dependence?.tipologia.nombreColor}}-500"></i>
+          </div>
+        </ng-template>
+        <span class="font-bold">{{ dependence?.nombre }}</span>
+        <span class="text-500">{{ dependence?.descripcion }}</span>
+        <span class="text-sm text-500">{{ dependence?.tipologia.nombre }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 lg:col-6">
+    <app-bar-chart [title]="'Total de horas asignadas por nivel'" [iconClass]="'pi-clock'" [colorName]="'red'"
+                   [labels]="levels" [dataOne]="timesTareas" [dataTwo]="personasRequeridas"></app-bar-chart>
+    <app-polar-chart [title]="'Personas requeridas por nivel'" [labels]="levels" [data]="personasRequeridas"></app-polar-chart>
+  </div>
+</div>

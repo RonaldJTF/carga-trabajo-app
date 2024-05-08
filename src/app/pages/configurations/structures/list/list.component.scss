@@ -26,14 +26,14 @@
 
 ._badge-container {
     position: relative;
-    display: inline-block; 
+    display: inline-block;
 }
 
 ._badge {
     cursor: pointer;
     position: absolute;
     top: -8px;
-    right: -8px; 
+    right: -8px;
     background-color: var(--primary-color);;
     color: white;
     border-radius: 50%;

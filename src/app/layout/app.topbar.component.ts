@@ -31,16 +31,16 @@ export class AppTopBarComponent implements OnInit{
     }
 
     menuItems: MenuItem[] = [
-        {
-            label: 'Profile',
-            icon: 'pi pi-user',
-            command: () => {
+        // {
+        //     label: 'Profile',
+        //     icon: 'pi pi-user',
+        //     command: () => {
                 
-            }
-        },
-        {
-            separator: true
-        },
+        //     }
+        // },
+        // {
+        //     separator: true
+        // },
         {
             label: 'Salir', 
             icon: 'pi pi-sign-out',

@@ -1,12 +1,51 @@
 ._button-container {
     position: relative;
-    display: inline-block; 
+    display: inline-block;
 }
 
 ._button-icon {
     position: absolute;
     top: -5px;
-    right: -20px; 
+    right: -20px;
     padding: 3px 8px;
     z-index: 1;
+    cursor: pointer;
+
+  input[type="file"] {
+    font-size: 100px;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+  }
 }
+
+._badge-container {
+  position: relative;
+  display: inline-block;
+}
+
+._badge {
+  cursor: pointer;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--primary-color);;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 8px;
+  font-size: 5px;
+  z-index: 1;
+
+  & .pi-times{
+    font-size: 10px;
+  }
+}
+
+:host ::ng-deep .p-datatable-header {
+  border: none;
+  background-color: transparent;
+  padding: 0px;
+}
+
+
