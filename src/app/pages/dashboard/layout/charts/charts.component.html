@@ -1,16 +1,23 @@
 <div class="grid p-fluid grid-nogutter p-1">
   <div class="col-12 lg:col-6">
     <div class="card m-1">
-      <div class="flex align-items-center mb-3">
-        <div
-          class="w-3rem h-3rem flex align-items-center justify-content-center bg-cyan-100 border-circle mr-3 flex-shrink-0">
-          <i class="pi pi-sitemap text-xl text-cyan-500"></i>
+      <div class="flex align-items-center justify-content-between mb-4">
+        <div class="flex align-items-center mb-3">
+          <div
+            class="w-3rem h-3rem flex align-items-center justify-content-center bg-cyan-100 border-circle mr-3 flex-shrink-0">
+            <i class="pi pi-sitemap text-xl text-cyan-500"></i>
+          </div>
+          <div class="flex flex-column ">
+            <h5 class="m-0 text-700">Dependencia</h5>
+            <span class="text-500">Selecciona una dependencia</span>
+          </div>
         </div>
-        <div class="flex flex-column ">
-          <h5 class="m-0 text-700">Dependencia</h5>
-          <span class="text-500">Selecciona una dependencia</span>
+        <div>
+          <button pButton type="button" icon="pi pi-download"
+                  class="p-button-rounded p-button-text p-button-plain" pTooltip="Descragar reporte" (click)="downloadReport()"></button>
         </div>
       </div>
+
       <p-dropdown dataKey="id" optionLabel="nombre" [options]="structure" [(ngModel)]="dependence" [showClear]="false"
                   [filter]="true" filterBy="nombre" (onChange)="dependenceSelected($event.value)"
                   [placeholder]="MESSAGE.SELECCIONA_OPCION"
@@ -37,6 +44,7 @@
   <div class="col-12 lg:col-6">
     <app-bar-chart [title]="'Total de horas asignadas por nivel'" [iconClass]="'pi-clock'" [colorName]="'red'"
                    [labels]="levels" [dataOne]="timesTareas" [dataTwo]="personasRequeridas"></app-bar-chart>
-    <app-polar-chart [title]="'Personas requeridas por nivel'" [labels]="levels" [data]="personasRequeridas"></app-polar-chart>
+    <app-polar-chart [title]="'Personas requeridas por nivel'" [labels]="levels"
+                     [data]="personasRequeridas"></app-polar-chart>
   </div>
 </div>

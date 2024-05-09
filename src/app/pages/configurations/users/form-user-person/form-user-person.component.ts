@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Person} from 'src/app/models/person';
 import {PersonService} from '../../../../services/person.service';
@@ -15,7 +15,7 @@ import {SelectItem} from 'primeng/api';
 import {MESSAGE} from '../../../../../labels/labels';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {Methods} from 'src/app/utils/methods';
-import {useAnimation} from '@angular/animations';
+import {User} from "../../../../models/user";
 
 @Component({
   selector: 'app-form-user-person',
@@ -111,8 +111,8 @@ export class FormUserPersonComponent implements OnInit {
         if (this.person.usuario) {
           this.person.usuario.roles.map((rol) => this.addRol(rol));
           this.onValidacionCredenciales(data);
-          this.stateSwitch = Methods.parseStringToBoolean(this.person.usuario.activo);
           this.updateMode = true;
+          this.assignValuesToForm(this.person.usuario);
         }
         this.loadRoles();
       },
@@ -120,6 +120,23 @@ export class FormUserPersonComponent implements OnInit {
         console.log(err.error);
       },
     });
+  }
+
+  assignValuesToForm(user: User) {
+    this.formUser.get('username').setValue(user.username);
+    this.formUser.get('password').setValue(user.password);
+    this.formUser.get('activo').setValue(Methods.parseStringToBoolean(user.activo));
+    this.disabledInput(user);
+  }
+
+  disabledInput(user: User) {
+    if (user) {
+      this.formUser.get('username')?.disable();
+      this.formUser.get('password')?.disable();
+
+      let inputPass = document.getElementById('password');
+      inputPass.setAttribute('type', 'password');
+    }
   }
 
   loadRolesOptions() {

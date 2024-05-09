@@ -8,7 +8,7 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 export class BarChartComponent implements OnChanges {
 
   @Input() labels: string[];
-  @Input() dataOne: number[];
+  @Input() dataOne: string[];
   @Input() dataTwo: number[];
   @Input() title: string;
   @Input() iconClass: string;

@@ -4,6 +4,8 @@ import {DashboardService} from "../../../../services/dashboard.service";
 import {StructureService} from "../../../../services/structure.service";
 import {Structure} from "../../../../models/structure";
 import {MESSAGE} from "../../../../../labels/labels";
+import {TypologyInventory} from "../../../../models/typologyinventory";
+import {Format} from "@angular-devkit/build-angular/src/builders/extract-i18n/schema";
 
 
 @Component({
@@ -13,36 +15,53 @@ import {MESSAGE} from "../../../../../labels/labels";
 })
 export class ChartsComponent implements OnInit {
 
+  protected readonly MESSAGE = MESSAGE;
+
   statistics: Activity[];
 
   structure: Structure[];
 
   levels: string[];
 
-  timesTareas: number[];
+  timesTareas: string[];
 
   personasRequeridas: number[];
 
   dependence: Structure;
 
+  inventory: TypologyInventory[];
+
+  dependenceIds: number[] = [];
+
   constructor(private dashboardService: DashboardService, private structureService: StructureService) {
   }
 
   ngOnInit() {
+    this.getInventarioTipologia();
     this.getStructure();
 
+  }
+
+  getInventarioTipologia() {
+    this.dashboardService.getInventory().subscribe({
+      next: (data) => {
+        this.inventory = data;
+      },
+    });
   }
 
   public getLevels(data: Activity[]) {
     this.levels = data?.map(item => item.nivel);
     this.timesTareas = data.map(item => this.minutesToHours(item.tiempoTotalTarea));
-    this.personasRequeridas = data.map(item => Math.floor(this.minutesToHours(item.tiempoTotalTarea)) / 167);
+
+    this.personasRequeridas = data.map(item => parseFloat(this.minutesToHours(item.tiempoTotalTarea)) / 167);
   }
 
   getStatistics(idDependence: number) {
     this.dashboardService.getStatistics(idDependence).subscribe({
       next: (data) => {
         this.statistics = data;
+        this.dependenceIds[0] = idDependence;
         this.getLevels(this.statistics);
       },
     });
@@ -58,11 +77,11 @@ export class ChartsComponent implements OnInit {
     })
   }
 
-  minutesToHours(minutes: number): number {
+  minutesToHours(minutes: number): string {
     if (isNaN(minutes) || minutes < 0) {
-      return 0;
+      return '';
     }
-    return Math.floor(minutes / 60);
+    return (minutes / 60).toFixed(2);
   }
 
   dependenceSelected(event: any) {
@@ -73,7 +92,7 @@ export class ChartsComponent implements OnInit {
   getProcesses(estructura: Structure): Structure[] {
     let processes: Structure[] = [];
     estructura.subEstructuras.forEach((subestructura) => {
-      // Verificar si la subestructura es de tipo "Dependencia"
+      // Verificar si la subestructura es de tipo "Proceso"
       if (subestructura.tipologia.nombre === "Proceso") {
         processes.push(subestructura);
       }
@@ -85,6 +104,8 @@ export class ChartsComponent implements OnInit {
     return processes;
   }
 
-  protected readonly MESSAGE = MESSAGE;
+  downloadReport() {
+    this.structureService.downloadReport('pdf', this.dependenceIds).subscribe({});
+  }
 }
 

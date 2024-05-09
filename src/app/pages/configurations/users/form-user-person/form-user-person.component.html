@@ -6,7 +6,7 @@
         <div class="_button-container">
           <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
             <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-              style="vertical-align: middle; width: 100%; height: auto;" />
+              style="vertical-align: middle; width: 100%; height: auto;"  alt=""/>
           </div>
           <!-- <button pButton pRipple type="button" icon="pi pi-camera"
             class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Detalle"
@@ -37,9 +37,9 @@
     <div class="grid">
       <div class="col-12">
         <div class="card">
-          <h5 class="pb-3">Gestion de Acceso</h5>
+          <h5 class="pb-3">Gestion De Acceso</h5>
 
-          <div class="grid" *ngIf="!person.usuario">
+          <div class="grid">
             <div class="field col">
               <label for="username" class="font-medium">Usuario </label>
               <div class="p-inputgroup">
@@ -47,7 +47,7 @@
                   <i class="pi pi-user"></i>
                 </span>
                 <span class="p-float-label">
-                  <input type="text" id="username" inputId="username" pInputText formControlName="username" />
+                  <input type="text" id="username" inputId="username" pInputText formControlName="username" [disabled]="true" />
                 </span>
               </div>
               <div *ngIf="usuarioNoValido">
@@ -77,7 +77,7 @@
           <div class="field grid">
             <label htmlFor="activo" class="font-medium pl-3 mb-2 _inline-block-sm">Estado</label>
             <div class="pl-3 _inline-block-sm">
-              <p-inputSwitch id="activo" [(ngModel)]="stateSwitch" formControlName="activo"></p-inputSwitch>
+              <p-inputSwitch id="activo" formControlName="activo"></p-inputSwitch>
             </div>
           </div>
 

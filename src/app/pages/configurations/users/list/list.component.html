@@ -65,8 +65,8 @@
                                     </div>
                                     <div class="flex flex-column align-items-center justify-content-start ml-2">
                                         <span class="image-text ml-2 w-full">
-                                            {{ person.primerNombre }} {{ person.segundoNombre }} {{
-                                            person.primerApellido }} {{ person.segundoApellido }}
+                                            {{ person.primerNombre | titlecase }} {{ person.segundoNombre | titlecase }} {{
+                                            person.primerApellido | titlecase }} {{ person.segundoApellido | titlecase }}
                                         </span>
                                         <span class="image-text text-500 text-sm ml-2 w-full">
                                             {{ person.tipoDocumento.abreviatura }}: {{ person.documento }}

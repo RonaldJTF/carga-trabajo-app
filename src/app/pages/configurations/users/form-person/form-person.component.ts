@@ -9,6 +9,8 @@ import {Location} from '@angular/common';
 import {Gender} from 'src/app/models/gender';
 import {GenderService} from 'src/app/services/gender.service';
 import {Message} from "primeng/api";
+import {User} from "../../../../models/user";
+import {Methods} from "../../../../utils/methods";
 
 @Component({
   selector: 'app-form-person',
@@ -164,12 +166,27 @@ export class FormPersonComponent implements OnInit {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
         this.person = data;
-        this.personCopy = data;
+        if (this.person){
+          this.personCopy = data;
+          this.assignValuesToForm(this.person);
+        }
       },
       error: (err) => {
         console.log(err.error);
       },
     });
+  }
+
+  assignValuesToForm(person: Person) {
+    this.formPerson.get('primerNombre').setValue(person.primerNombre);
+    this.formPerson.get('segundoNombre').setValue(person.segundoNombre);
+    this.formPerson.get('primerApellido').setValue(person.primerApellido);
+    this.formPerson.get('segundoApellido').setValue(person.segundoApellido);
+    this.formPerson.get('idTipoDocumento').setValue(person.idTipoDocumento);
+    this.formPerson.get('documento').setValue(person.documento);
+    this.formPerson.get('correo').setValue(person.correo);
+    this.formPerson.get('telefono').setValue(person.telefono);
+    this.formPerson.get('idGenero').setValue(person.idGenero);
   }
 
   create(): void {
