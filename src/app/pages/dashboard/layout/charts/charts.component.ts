@@ -68,7 +68,7 @@ export class ChartsComponent implements OnInit {
   }
 
   getStructure() {
-    this.structureService.getStructures().subscribe({
+    this.dashboardService.getDependencies().subscribe({
       next: (data) => {
         this.structure = data;
         this.dependence = this.structure[0];

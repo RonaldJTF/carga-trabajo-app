@@ -50,7 +50,7 @@ export class ListComponent {
   intMenu() {
     this.items = [
       {
-        label: 'Gestionar Acceso',
+        label: 'Gestionar acceso',
         icon: 'pi pi-key',
         command: (e) => this.onUserPerson(e),
       },
@@ -64,13 +64,6 @@ export class ListComponent {
         icon: 'pi pi-trash',
         command: (e) => this.onDelete(parseInt(e.item.id)),
       },
-    ];
-    this.cols = [
-      {field: 'person', header: 'Person'},
-      {field: 'price', header: 'Price'},
-      {field: 'category', header: 'Category'},
-      {field: 'rating', header: 'Reviews'},
-      {field: 'inventoryStatus', header: 'Status'},
     ];
   }
 
