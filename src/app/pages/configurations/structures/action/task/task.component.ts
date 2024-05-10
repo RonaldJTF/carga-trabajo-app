@@ -92,7 +92,7 @@ export class TaskComponent implements OnInit {
     this.structureService.updateActivity(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.setActivityToStructure({activity: e as Activity}));
-        this.location.back();
+        this.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -105,7 +105,7 @@ export class TaskComponent implements OnInit {
     this.structureService.createActivity(payload).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.setActivityToStructure({activity: e as Activity}));
-        this.location.back();
+        this.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -133,7 +133,7 @@ export class TaskComponent implements OnInit {
     this.structureService.deleteActivity(this.activity.id).subscribe({
       next: () => {
         this.store.dispatch(StructureActions.removeActivityFromStructure({idStructure: this.activity.idEstructura}));
-        this.location.back();
+        this.goBack();
         this.deleting = false;
       },
       error: (error) => {
@@ -144,6 +144,12 @@ export class TaskComponent implements OnInit {
 
   onCancelActivity(event : Event): void {
     event.preventDefault();
-    this.location.back();
+    this.goBack();
+  }
+
+  goBack() {
+    this.router.navigate(['configurations/structures'], {
+      skipLocationChange: true,
+    });
   }
 }

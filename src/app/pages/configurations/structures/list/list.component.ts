@@ -190,13 +190,13 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   openNew() {
-    this.router.navigate(['create'], { relativeTo: this.route});
+    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true});
   }
 
   onGoToUpdate (id : any, event: Event): void{
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate(['/configurations/structures', id])
+    this.router.navigate(['/configurations/structures', id], {skipLocationChange: true})
   }
 
   viewDependency(structure: Structure){
@@ -228,18 +228,18 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   goToAddSubdependency(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idParent: structure.id, idTipology:structure.tipologia.id}});
+    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true, queryParams: {idParent: structure.id, idTipology:structure.tipologia.id}});
   }
 
   goToAddSubstructure(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, queryParams: {idParent: structure.id, idTipology: structure.tipologia.idTipologiaSiguiente}});
+    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true, queryParams: {idParent: structure.id, idTipology: structure.tipologia.idTipologiaSiguiente}});
   }
 
   goToPage(event: any, structure: Structure){
     console.log(structure)
     const path = event.item.data.path;
     const idStructure = event.item.id;
-    this.router.navigate([path], { relativeTo: this.route, queryParams: {idStructure: idStructure, idActivity: structure?.actividad?.id} });
+    this.router.navigate([path], { relativeTo: this.route, skipLocationChange: true, queryParams: {idStructure: idStructure, idActivity: structure?.actividad?.id} });
   }
 
   deleteSelectedStructures(nodes: any, isDependency: boolean) {

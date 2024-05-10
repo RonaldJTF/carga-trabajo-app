@@ -15,7 +15,6 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./structure.component.scss']
 })
 export class StructureComponent implements OnInit {
-
   formStructure !: FormGroup;
   uploadedFiles: any[] = [];
   formData: FormData;
@@ -92,7 +91,7 @@ export class StructureComponent implements OnInit {
       next: (e) => {
         this.store.dispatch(StructureActions.updateItemIntoList({structure: e as Structure}));
         this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
-        this.location.back();
+        this.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -105,7 +104,7 @@ export class StructureComponent implements OnInit {
     this.structureService.createStructure(this.formData).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.addToList({structure: e as Structure}));
-        this.location.back();
+        this.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -134,7 +133,7 @@ export class StructureComponent implements OnInit {
     this.structureService.deleteStructure(this.structure.id).subscribe({
       next: () => {
         this.store.dispatch(StructureActions.removeFromList({id: this.structure.id}));
-        this.location.back();
+        this.goBack();
         this.deleting = false;
       },
       error: (error) => {
@@ -145,6 +144,12 @@ export class StructureComponent implements OnInit {
 
   onCancelStructure(event : Event): void {
     event.preventDefault();
-    this.location.back();
+    this.goBack();
+  }
+
+  goBack() {
+    this.router.navigate(['configurations/structures'], {
+      skipLocationChange: true,
+    });
   }
 }
