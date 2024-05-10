@@ -1,0 +1,13 @@
+<div [formGroup]="timeForm" class="flex flex-row justify-content-between align-items-center">
+    <span class="p-input-icon-left p-input-icon-right">
+        <i class="pi pi-clock"></i>
+        <input pInputText type="number" aria-describedby="text-help" formControlName="hours" (blur)="onTouched(); markAllAsTouched()" [ngClass]="{'ng-dirty': hasError}"/>
+        <i class="pi">Horas</i>
+    </span>
+    <i class="pi pi-arrows-h p-toolbar-separator mx-2"></i>     
+    <span class="p-input-icon-left p-input-icon-right">
+        <i class="pi pi-clock"></i>
+        <input pInputText type="number" aria-describedby="text-help" formControlName="minutes" (blur)="onTouched()" [class.ng-dirty]="hasError"/>
+        <i class="pi">Minutos</i>
+    </span>
+</div>

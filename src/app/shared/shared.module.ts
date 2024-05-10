@@ -5,7 +5,6 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthModule } from 'src/app/pages/account/auth/auth.module';
 import { DarkenColorPipe } from '../pipes/darken-color/darken-color.pipe';
 import { LightenColorPipe } from '../pipes/lighten-color/lighten-color.pipe';
 import { FileSizePipe } from '../pipes/file-size/file-size.pipe';
@@ -28,9 +27,33 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { PanelModule } from 'primeng/panel';
 import { MenuModule } from 'primeng/menu';
 import { TableModule } from 'primeng/table';
-import { TreeTableModule} from 'primeng/treetable';
+import { TreeTableModule } from 'primeng/treetable';
 import { NoResultComponent } from './no-result/no-result.component';
 import { LabelValueChartComponent } from './charts/label-value-chart/label-value-chart.component';
+import { FileUploadModule } from 'primeng/fileupload';
+import { FormActionButtonComponent } from './form-action-button/form-action-button.component';
+import { ToolbarModule } from 'primeng/toolbar';
+import { RatingModule } from 'primeng/rating';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DialogModule } from 'primeng/dialog';
+import { TagModule } from 'primeng/tag';
+import { InputMaskModule } from 'primeng/inputmask';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ListboxModule } from 'primeng/listbox';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TimeComponent } from './time/time.component';
+import { SkeletonListGridComponent } from './skeleton/skeleton-list-grid/skeleton-list-grid.component';
+import { PluralizePipe } from '../pipes/pluralize/pluralize.pipe';
+import { TimeNamePipe } from '../pipes/time-name/time-name.pipe';
+import { BadgeModule } from 'primeng/badge';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ChartModule } from 'primeng/chart';
+import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
+import { PolarChartComponent } from './charts/polar-chart/polar-chart.component'
+import {MessageModule} from "primeng/message";
+import { TieredMenuModule } from 'primeng/tieredmenu';
 
 @NgModule({
   declarations: [
@@ -39,9 +62,12 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     MenuItemComponent,
     NoResultComponent,
     LabelValueChartComponent,
+    FormActionButtonComponent,
+    TimeComponent,
+    SkeletonListGridComponent,
 
-    FirstNamePipe, 
-    StatePipe, 
+    FirstNamePipe,
+    StatePipe,
     FileSizePipe,
     SanitizeHtmlPipe,
     PrettyDatePipe,
@@ -50,8 +76,13 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
+    PluralizePipe,
+    TimeNamePipe,
 
     ImageFallbackDirective,
+    MenuItemComponent,
+    BarChartComponent,
+    PolarChartComponent,
   ],
   imports: [
     CommonModule,
@@ -70,18 +101,43 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     MenuModule,
     TableModule,
     TreeTableModule,
-  ], 
+    ToolbarModule,
+    RatingModule,
+    InputTextareaModule,
+    DropdownModule,
+    InputNumberModule,
+    DialogModule,
+    TableModule,
+    MenuModule,
+    DataViewModule,
+    TagModule,
+    InputMaskModule,
+    MultiSelectModule,
+    FileUploadModule,
+    ListboxModule,
+    InputSwitchModule,
+    BadgeModule,
+    SkeletonModule,
+		ChartModule,
+    MessageModule,
+
+    ListboxModule,
+    TieredMenuModule,
+  ],
   exports: [
     FunctionalityComponent,
     GoToIfNotFoundComponent,
     MenuItemComponent,
     NoResultComponent,
     LabelValueChartComponent,
+    FormActionButtonComponent,
+    TimeComponent,
+    SkeletonListGridComponent,
 
     ImageFallbackDirective,
-   
-    FirstNamePipe, 
-    StatePipe, 
+
+    FirstNamePipe,
+    StatePipe,
     FileSizePipe,
     SanitizeHtmlPipe,
     PrettyDatePipe,
@@ -90,6 +146,8 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     FileIconPipe,
     LightenColorPipe,
     DarkenColorPipe,
+    PluralizePipe,
+    TimeNamePipe,
 
     CommonModule,
     ReactiveFormsModule,
@@ -107,7 +165,31 @@ import { LabelValueChartComponent } from './charts/label-value-chart/label-value
     MenuModule,
     TableModule,
     TreeTableModule,
-  ], 
+    ToolbarModule,
+    RatingModule,
+    InputTextareaModule,
+    DropdownModule,
+    InputNumberModule,
+    DialogModule,
+    TableModule,
+    MenuModule,
+    DataViewModule,
+    TagModule,
+    InputMaskModule,
+    MultiSelectModule,
+    FileUploadModule,
+    InputTextareaModule,
+    ListboxModule,
+    InputSwitchModule,
+    BadgeModule,
+    SkeletonModule,
+    ChartModule,
+    BarChartComponent,
+    PolarChartComponent,
+    MessageModule,
+    ListboxModule,
+    TieredMenuModule,
+  ],
   providers: []
 })
 export class SharedModule { }

@@ -13,7 +13,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
       { path: '', 
         component: AppLayoutComponent, 
         children: [
-          {path: '', component: DashboardComponent},
+          //{path: '', component: DashboardComponent},
+          {path: '', loadChildren: ()=>import('./pages/dashboard/dashboard.module').then(m=>m.DashboardModule)},
           {path: 'configurations', loadChildren: ()=>import('./pages/configurations/configurations.module').then(m=>m.ConfigurationsModule)}
         ],
         canActivate: [authGuard]},

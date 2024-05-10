@@ -11,6 +11,7 @@ export class MenuItemComponent implements OnInit{
   @Input() id: number;
   @Input() value: any;
   @Input() stopPropagation: boolean = false;
+  @Input() buttonClass: string = "p-button-rounded p-button-text"
 
   items : MenuItem[];
 

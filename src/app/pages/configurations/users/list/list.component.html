@@ -1,0 +1,101 @@
+<ng-container *ngIf="!loading else sLoading">
+    <div *ngIf="!(people) else data">
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva persona'" (go)="openNew()"
+            [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+    </div>
+    <ng-template #data>
+        <div class="grid grid-nogutter">
+            <div class="col-12 p-2 mb-0">
+                <div class="card p-0">
+                    <p-table #dt [value]="people" rowGroupMode="subheader" sortField="order" sortMode="single"
+                        [paginator]="true" [rows]="10" [(selection)]="selectedPeople" selectionMode="multiple"
+                        [globalFilterFields]="['primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'tipoDocumento.descripcion','tipoDocumento.abreviatura', 'documento']"
+                        [paginator]="true" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-2">
+                                <div class="flex align-items-center flex-wrap">
+                                    <button pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                        <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                                    </button>
+                                    <div class="_badge-container m-1">
+                                        <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedPeople()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                            class="p-button-danger " [disabled]="!selectedPeople?.length">
+                                            <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                        </button>
+                                        <span *ngIf="selectedPeople?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedPeople.length}}</span>
+                                    </div>
+                                </div>
+                                <div class="m-1">
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
+                                    </span>
+                                </div>
+                            </div>
+                        </ng-template>
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width: 3rem">
+                                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                </th>
+                                <th class="text-center" style="min-width: 300px" pSortableColumn="primerNombre">
+                                    Usuario
+                                    <p-sortIcon field="primerNombre"></p-sortIcon>
+                                </th>
+                                <th class="text-center" style="width: 20%" pSortableColumn="usuario.activo">
+                                    Estado
+                                    <p-sortIcon field="usuario.activo"></p-sortIcon>
+                                </th>
+                                <th></th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-person let-rowIndex="rowIndex">
+                            <tr>
+                                <td>
+                                    <p-tableCheckbox [value]="person"></p-tableCheckbox>
+                                </td>
+                                <td class="flex align-items-center cursor-pointer" (click)="editPerson(person.id)">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
+                                        <img [src]="person.srcFoto"
+                                            [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                                            style="width: 100%; height: auto" />
+                                    </div>
+                                    <div class="flex flex-column align-items-center justify-content-start ml-2">
+                                        <span class="image-text ml-2 w-full">
+                                            {{ person.primerNombre | titlecase }} {{ person.segundoNombre | titlecase }} {{
+                                            person.primerApellido | titlecase }} {{ person.segundoApellido | titlecase }}
+                                        </span>
+                                        <span class="image-text text-500 text-sm ml-2 w-full">
+                                            {{ person.tipoDocumento.abreviatura }}: {{ person.documento }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        [class]="'status-badge status-' + (person.usuario?.activo | state).classStyle">
+                                        {{ (person.usuario?.activo | state).value }}
+                                    </span>
+                                </td>
+                                <td class="p-0 text-center">
+                                    <app-menu-item [menuItems]="items" [id]="person.id"></app-menu-item>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="4" class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</ng-container>
+
+<ng-template #sLoading>
+    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>

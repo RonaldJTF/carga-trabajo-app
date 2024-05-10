@@ -13,7 +13,7 @@
     </button>
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
+        <!-- <button class="p-link layout-topbar-button">
             <i class="pi pi-calendar"></i>
             <span>Calendar</span>
         </button>
@@ -24,14 +24,14 @@
         <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
             <i class="pi pi-cog"></i>
             <span>Settings</span>
-        </button>
+        </button> -->
 		<div *ngIf="loguedPerson$ | async as person">
             <p-menu #menu [popup]="true" [model]="menuItems" [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
             <button class="p-link layout-topbar-button px-3" (click)="menu.toggle($event)" style="width: auto; border-radius: 12px;">
                 <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; ">
                     <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"  style="vertical-align: middle; width: 100%; height: auto;"/>
                 </div>
-                <span style=" display: block;" class="px-2">{{person?.nombre | firstName : 'Desconocido'}}</span>
+                <span style=" display: block;" class="px-2">{{person['primerNombre'] | firstName : 'Desconocido'}}</span>
                 <i class="pi pi-angle-down"></i>
             </button>
         </div>

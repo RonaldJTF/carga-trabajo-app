@@ -44,7 +44,6 @@ import { StoreModule } from '@ngrx/store';
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, 
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true },
-    { provide: LOCALE_ID, useValue: 'es' },
   ],
   bootstrap: [AppComponent]
 })

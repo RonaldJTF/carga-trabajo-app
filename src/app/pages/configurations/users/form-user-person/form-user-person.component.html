@@ -1,0 +1,128 @@
+<div class="grid">
+
+  <div class="col-12 md:col-4">
+    <div class="card">
+      <div class="flex flex-column align-items-center">
+        <div class="_button-container">
+          <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
+            <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+              style="vertical-align: middle; width: 100%; height: auto;"  alt=""/>
+          </div>
+          <!-- <button pButton pRipple type="button" icon="pi pi-camera"
+            class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Detalle"
+            tooltipPosition="bottom">
+          </button> -->
+        </div>
+        <span class="font-bold">{{person.primerNombre | uppercase}} {{person.primerApellido | uppercase}}</span>
+        <span class="mb-3"><span>{{person.tipoDocumento?.abreviatura}}:</span> {{person.documento}}</span>
+        <span class="mb-2 font-medium text-500 ">Información de contacto:</span>
+        <span *ngIf="person.correo" class="w-full"><span class="text-500">Correo: </span> {{person.correo |
+          lowercase}}</span>
+        <span *ngIf="person.telefono" class="w-full"><span class="text-500">Teléfono: </span>
+          {{person.telefono}}</span>
+        <!--<span *ngIf="person.direccion" class="w-full text-left mb-2">
+              <span class="text-500">Dirección: </span> {{person.direccion | capitalizeFirstLetter}}
+              <span *ngIf="person.ciudadResidencia || person.paisResidencia">-
+                <span *ngIf="person.ciudadResidencia">{{person.ciudadResidencia.nombre | capitalizeFirstLetter}}, </span>
+                <span *ngIf="person.ciudadResidencia?.departamento.nombre">{{person.ciudadResidencia.departamento.nombre | capitalizeFirstLetter}}, </span>
+                <span *ngIf="person.paisResidencia">{{person.paisResidencia.nombre | capitalizeFirstLetter}}</span>
+              </span>
+            </span>
+            <button pButton pRipple label="Ver más detalles" class="p-button-outlined p-button-info"></button>-->
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 md:col-8" [formGroup]="formUser">
+    <div class="grid">
+      <div class="col-12">
+        <div class="card">
+          <h5 class="pb-3">Gestion De Acceso</h5>
+
+          <div class="grid">
+            <div class="field col">
+              <label for="username" class="font-medium">Usuario </label>
+              <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-user"></i>
+                </span>
+                <span class="p-float-label">
+                  <input type="text" id="username" inputId="username" pInputText formControlName="username" [disabled]="true" />
+                </span>
+              </div>
+              <div *ngIf="usuarioNoValido">
+                <div *ngIf="controls['username'].errors?.['required']">
+                  <small class="p-error">Ingrese un usuario</small>
+                </div>
+              </div>
+            </div>
+            <div class="field col">
+              <label for="password" class="font-medium">Contraseña </label>
+              <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-key"></i>
+                </span>
+                <span class="p-float-label">
+                  <input type="text" id="password" inputId="password" pInputText formControlName="password" />
+                </span>
+              </div>
+              <div *ngIf="paswordNoValido">
+                <div *ngIf="controls['password'].errors?.['required']">
+                  <small class="p-error">Ingrese una contraseña</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field grid">
+            <label htmlFor="activo" class="font-medium pl-3 mb-2 _inline-block-sm">Estado</label>
+            <div class="pl-3 _inline-block-sm">
+              <p-inputSwitch id="activo" formControlName="activo"></p-inputSwitch>
+            </div>
+          </div>
+
+          <p-divider layout="horizontal" align="center" class="w-full">
+            <span class="text-500">Roles de acceso</span>
+          </p-divider>
+
+          <div *ngIf="userRolesFormControl.value?.length" class="flex justify-content-end mb-2">
+            <button pButton pRipple icon="pi pi-plus" class="p-button-success"
+              (click)="rolOptionsOverlayPanel.toggle($event)"></button>
+          </div>
+
+          <p-overlayPanel #rolOptionsOverlayPanel [showCloseIcon]="true" [style]="{width: '250px'}">
+            <ng-template pTemplate>
+              <p-listbox [options]="rolOptions" optionLabel="label" [filter]="true" (onClick)="addRol($event.value.value)"
+                [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+              </p-listbox>
+            </ng-template>
+          </p-overlayPanel>
+
+          <div class="flex flex-column align-items-center mb-3">
+            <ul class="list-none p-0 m-0 w-full" *ngIf="userRolesFormControl.value?.length else sAddRol">
+              <li *ngFor="let rol of userRolesFormControl.value" class="flex align-items-center w-full ">
+                <span class="text-700 w-full">{{rol.nombre}}</span>
+                <div class=" ml-auto">
+                  <button pButton pRipple icon="pi pi-times" (click)="removeRol(rol.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+                </div>
+              </li>
+            </ul>
+
+            <ng-template #sAddRol>
+              <app-go-to-if-not-found [buttonLabel]="'Agregar rol'"
+                [message]="MESSAGE.NO_REGISTRO_ROLES"
+                (go)="rolOptionsOverlayPanel.toggle($event)"></app-go-to-if-not-found>
+            </ng-template>
+          </div>
+
+          <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitUser($event)"
+            (cancel)="onCancelUserPerson($event)" (delete)="onDeleteUserPerson($event)" [showDeleteButton]="updateMode"
+            [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
+            [disabledCreateOrUpdateButton]="formUser.invalid">
+          </app-form-action-button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

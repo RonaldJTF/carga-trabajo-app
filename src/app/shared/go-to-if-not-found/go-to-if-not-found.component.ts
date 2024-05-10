@@ -11,6 +11,7 @@ export class GoToIfNotFoundComponent {
   @Input() imageSize: number = 50;
   @Input() icon: string = 'pi-plus';
   @Input() message: string;
+  @Input() showButton: boolean = true;
 
   @Output() go: EventEmitter<Event> = new EventEmitter<Event>();
 

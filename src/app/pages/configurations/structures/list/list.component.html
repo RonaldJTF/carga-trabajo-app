@@ -1,26 +1,34 @@
 <ng-container *ngIf="!loading else sLoading">
     <div *ngIf="!((structures$ | async).length) else data">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva dependencia'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva dependencia'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
     </div>
     <ng-template #data>
         <div class="grid grid-nogutter">
             <div *ngIf="dependencies$ | async as dependencies" class="col-12 p-2 mb-0 " [ngClass]="{'md:col-6': (dependency$ | async)?.id}">
                 <div class="card p-0 ">
-                    <p-treeTable  #treeTableDependency [value]="dependencies" selectionMode="checkbox" [(selection)]="selectedNodesOfDependency"
+                    <p-treeTable  #treeTableDependency [value]="dependencies" selectionMode="checkbox" [(selection)]="selectedNodesOfDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                      [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px">
                         <ng-template pTemplate="caption">
-                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
-                                <div class="flex align-items-center mb-2">
-                                    <button pButton pRipple icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom"></button>
-                                    <div class="_badge-container">
+                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-2">
+                                <div class="flex align-items-center flex-wrap">
+                                    <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                        <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                                    </button>
+                                    <div *ngIf="isAdmin" class="_badge-container m-1">
                                         <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfDependency, true)" pTooltip="Eliminar" tooltipPosition="bottom"
-                                            class="p-button-danger" [disabled]="!totalSelected">
+                                            class="p-button-danger " [disabled]="!totalSelected">
+                                            <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
                                         </button>
-                                        <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge"
-                                            pTooltip="Click para desmarcar">{{totalSelected}}</span>
+                                        <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" pTooltip="Click para desmarcar">{{totalSelected}}</span>
+                                    </div>
+                                    <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>  
+                                    <p-menu #menu [popup]="true" [model]="menuItemsOfDownload"  [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
+                                    <div class="_badge-container m-1">
+                                        <button type="button" pRipple pButton style="position: relative;" icon="pi pi-angle-down" class="m-1  p-button-rounded p-button-info p-button-text" label="Descargar" (click)="menu.toggle($event)"></button>
+                                        <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" style="top: 0px; right: -5px; "  pTooltip="Click para desmarcar">{{totalSelected}}</span>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="m-1">
                                     <span class="p-input-icon-left">
                                         <i class="pi pi-search"></i>
                                         <input type="search" pInputText placeholder="Buscar"  (input)="onFilter($event, true)">
@@ -37,14 +45,19 @@
                                         <div class="font-medium" [ngClass]="{'text-500': structure.idPadre, 'text-primary': structure.id == (dependency$ | async)?.id}">{{structure.nombre}}</div>
                                         <div class="text-500">{{structure.descripcion}}</div>
                                     </div>
-                                    <div style="margin-left: auto; ">
+                                    <div *ngIf="structure.menuItems?.length" style="margin-left: auto; ">
                                         <app-menu-item [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
                                     </div>
                                 </td>
                             </tr>
                         </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
+                            </tr>
+                        </ng-template>
                     </p-treeTable>
-                    <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de dependencias</div>
+                    <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de {{dependencies[0].data.tipologia.nombre  | lowercase | pluralize}}</div>
                 </div>
             </div>
             <div *ngIf="dependency$ | async as dependency" class="col-12 md:col-6 p-2 mb-0 ">
@@ -52,22 +65,20 @@
                     <ng-container *ngTemplateOutlet="TemplateStructureInformation; context:{structure: dependency}"></ng-container>
                     <div *ngIf="noDependencies$ | async as structures else sNoStructuresNoDependency" class="w-full mb-3">
                         <ng-container  *ngIf="structures?.length  else sNoStructuresNoDependency" >
-                            <p-treeTable #treeTableOfStructuresNoDependency [value]="structures" selectionMode="checkbox" [(selection)]="selectedNodesOfStructuresNoDependency" 
+                            <p-treeTable #treeTableOfStructuresNoDependency [value]="structures" selectionMode="checkbox" [(selection)]="selectedNodesOfStructuresNoDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                                 [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="375px">
                                 <ng-template pTemplate="caption" let-structure="rowData">
-                                    <div class="flex flex-wrap justify-content-between p-3">
-                                        <div class="flex align-items-center mb-2">
-                                            <button *ngFor="let action of dependency.tipologia.acciones" pButton pRipple icon="pi {{action.claseIcono}}" class="{{action.claseBoton}} mr-2" (click)="goToPage(action.path, dependency)" pTooltip="{{action.nombre}}" tooltipPosition="bottom"></button>
-                                            <button pButton pRipple icon="pi pi-plus" class="p-button-success mr-2" (click)="goToAddSubdependency(dependency)" pTooltip="Nueva subdependencia" tooltipPosition="bottom"></button>
-                                            <button pButton pRipple icon="pi pi-sitemap" class="p-button-secondary mr-2" (click)="goToAddSubstructure(dependency)" pTooltip="Agregar {{dependency.tipologia.tipologiaSiguiente.nombre}}" tooltipPosition="bottom"></button>
-                                            <button pButton pRipple icon="pi pi-pencil" class="p-button-info mr-2" (click)="onGoToUpdate(dependency.id, $event)" pTooltip="Editar" tooltipPosition="bottom"></button>
-                                            <div class="_badge-container">
+                                    <div class="flex flex-wrap justify-content-between p-2">
+                                        <div  class="flex align-items-center mb-2">
+                                            <div *ngIf="isAdmin" class="_badge-container mr-2">
                                                 <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfStructuresNoDependency, false)" pTooltip="Eliminar" tooltipPosition="bottom"
                                                     class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency">
                                                 </button>
                                                 <span *ngIf="totalSelectedStructuresNoDependency"  (click)="desmarkAll(false)" class="_badge"
                                                     pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
                                             </div>
+                                            <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>                                            
+                                            <app-menu-item *ngIf="dependencyMenuItems?.length" [menuItems]="dependencyMenuItems" [id]="dependency.id" [buttonClass]="'p-button-outlined'"></app-menu-item>  
                                         </div>
                                         <div>
                                             <span class="p-input-icon-left">
@@ -79,19 +90,22 @@
                                 </ng-template>
                                 <ng-template pTemplate="body" let-rowNode let-structure="rowData">
                                     <tr *ngIf="rowGroupMetadata.includes(structure.id)">
-                                        <td>
-                                            <div class="flex flex-row align-items-center justify-content-center">
-                                                <div class="w-2rem h-2rem mr-2 flex align-items-center justify-content-center bg-{{structure.tipologia.color}}-100 border-circle">
-                                                    <i class="pi {{structure.tipologia.claseIcono}} text-md text-{{structure.tipologia.color}}-500"></i>
+                                        <td class="flex flex-row align-items-center">
+                                            <div class="flex flex-row align-items-center justify-content-center w-full">
+                                                <div class="w-2rem h-2rem mr-2 flex align-items-center justify-content-center bg-{{structure.tipologia.nombreColor}}-100 border-circle">
+                                                    <i class="pi {{structure.tipologia.claseIcono}} text-md text-{{structure.tipologia.nombreColor}}-500"></i>
                                                 </div>
-                                                <span class="text-500">{{structure.tipologia.nombre}}(s)</span>
+                                                <span class="text-500">{{structure.tipologia.nombre | pluralize : numberOfElementsByStructure[structure.idPadre]}}</span>
+                                            </div>
+                                            <div style="margin-left: auto; ">
+                                                <p-badge [value]="numberOfElementsByStructure[structure.idPadre]" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr >
                                         <td class="flex flex-row align-items-center">
                                             <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
-                                            <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+                                            <p-treeTableCheckbox  *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
                                             <div (click)="viewStructureDetails(structure)" class="flex flex-column">
                                                 <div class="font-medium">{{structure.nombre}}</div>
                                                 <div class="text-500">{{structure.descripcion}}</div>
@@ -99,9 +113,8 @@
                                             <div style="margin-left: auto; ">
                                                 <div class="flex align-items-center ml-3">
                                                     <button *ngIf="hasDetailToShow(structure)" (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                                                    <app-menu-item  [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
+                                                    <app-menu-item *ngIf="structure.menuItems?.length" [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
                                                 </div>
-                                                
                                                 <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{'max-width': '75%'}">
                                                     <ng-template pTemplate>
                                                         <div class="flex align-items-center mb-3">
@@ -115,17 +128,33 @@
                                                         </div>
                                                         <ng-container *ngTemplateOutlet="TemplateStructureInformation; context:{structure: structure}"></ng-container>
                                                         <div *ngIf="structure.actividad as activity" class="grid grid-nogutter">
-                                                            <div class="col-12 sm:col-6 md:col-3 p-1">
+                                                            <div class="col-12 md:col-6 lg:col-3 p-1">
                                                                 <app-label-value-chart label="Frecuencia" [value]="activity.frecuencia" colorName="cyan" iconClass="pi-history"></app-label-value-chart>
                                                             </div>
-                                                            <div class="col-12 sm:col-6 md:col-3  p-1">
-                                                                <app-label-value-chart label="Tiempo mínimo" [value]="activity.tiempoMinimo" colorName="red" iconClass="pi-clock"></app-label-value-chart>
+                                                            <div class="col-12 md:col-6 lg:col-3  p-1">
+                                                                <app-label-value-chart label="Tiempo mínimo" [value]="activity.tiempoMinimo" colorName="red" iconClass="pi-clock">
+                                                                    <ng-template pTemplate="value-content" let-data>
+                                                                        <ng-container *ngTemplateOutlet="TemplateTime; context:{$implicit: data}"></ng-container>
+                                                                    </ng-template>
+                                                                </app-label-value-chart>
                                                             </div>
-                                                            <div class="col-12 sm:col-6 md:col-3  p-1">
-                                                                <app-label-value-chart label="Tiempo máximo" [value]="activity.tiempoMaximo" colorName="green" iconClass="pi-clock"></app-label-value-chart>
+                                                            <div class="col-12 md:col-6 lg:col-3  p-1">
+                                                                <app-label-value-chart label="Tiempo máximo" [value]="activity.tiempoMaximo" colorName="green" iconClass="pi-clock">
+                                                                    <ng-template pTemplate="value-content" let-data>
+                                                                        <ng-container *ngTemplateOutlet="TemplateTime; context:{$implicit: data}"></ng-container>
+                                                                    </ng-template>
+                                                                </app-label-value-chart>
                                                             </div>
-                                                            <div class="col-12 sm:col-6 md:col-3  p-1">
-                                                                <app-label-value-chart label="Tiempo promedio" [value]="activity.tiempoPromedio" colorName="blue" iconClass="pi-clock"></app-label-value-chart>
+                                                            <div class="col-12 md:col-6 lg:col-3  p-1">
+                                                                <app-label-value-chart label="Tiempo promedio" [value]="activity.tiempoPromedio" colorName="blue" iconClass="pi-clock">
+                                                                    <ng-template pTemplate="value-content" let-data>
+                                                                        <ng-container *ngTemplateOutlet="TemplateTime; context:{$implicit: data}"></ng-container>
+                                                                    </ng-template>
+                                                                </app-label-value-chart>
+                                                            </div>
+                                                            <div class="col-12 flex flex-column border-round-xl text-center surface-100 py-2  mt-2">
+                                                                <span class="text-xl text-700 font-medium"> {{activity.nivel.descripcion}}</span>
+                                                                <span class="text-500 text-sm">Nivel</span>
                                                             </div>
                                                         </div>
                                                     </ng-template>
@@ -140,15 +169,19 @@
                                     </tr>
                                 </ng-template>
                             </p-treeTable>
-                            <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de {{dependency.tipologia?.tipologiaSiguiente.nombre}}(s)</div>
+                            <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de {{dependency.tipologia?.tipologiaSiguiente.nombre | lowercase | pluralize}}</div>
                         </ng-container>
                     </div>
                     <ng-template #sNoStructuresNoDependency>
-                        <app-go-to-if-not-found 
-                            buttonLabel="Agregar {{dependency.tipologia?.tipologiaSiguiente.nombre}}" 
+                        <div class="mb-3">
+                            <app-go-to-if-not-found
+                            (go)="goToAddSubstructure(dependency)"
+                            buttonLabel="Agregar {{dependency.tipologia?.tipologiaSiguiente.nombre | lowercase}}" 
                             [imageSize]="IMAGE_SIZE.MEDIUM"
+                            [showButton]="isAdmin"
                             [message]="MESSAGE.NADA_CONFIGURADO">
                         </app-go-to-if-not-found>
+                        </div>
                     </ng-template>
                 </div>
             </div>
@@ -160,19 +193,28 @@
 <ng-template #TemplateStructureInformation let-structure="structure">
     <div class="flex flex-column align-items-center text-center my-3">
         <ng-container *ngIf="structure.srcIcono else sNoIcon">
-            <img [src]="structure.srcIcono" [alt]="structure.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="w-5rem" />
+            <img [src]="structure.srcIcono" [alt]="structure.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem" />
         </ng-container>
         <ng-template #sNoIcon>
-            <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{structure.tipologia.color}}-100 border-circle">
-                <i class="pi pi-book text-4xl text-{{structure.tipologia.color}}-500"></i>
+            <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{structure.tipologia.nombreColor}}-100 border-circle">
+                <i class="pi {{structure.tipologia.claseIcono}} text-4xl text-{{structure.tipologia.nombreColor}}-500"></i>
             </div>
         </ng-template>
         <span class="font-bold">{{structure.nombre}}</span>
         <span class="text-500">{{structure.descripcion}}</span>
-        <span class="text-xs text-500">{{structure.tipologia?.nombre}}</span>
+        <span class="text-sm text-500">{{structure.tipologia?.nombre}}</span>
+    </div>
+</ng-template>
+
+<ng-template #TemplateTime let-time>
+    <div class="flex flex-row align-items-baseline">
+            <span class="text-500 text-2xl font-medium">{{time | number:'1.0-2'}}</span>
+            <span class="text-xs text-500 mr-2">min</span>
+            <span class="text-500 text-2xl font-medium">{{(time / 60) | number:'1.0-2'}}</span>
+            <span class="text-xs text-500">h</span>
     </div>
 </ng-template>
 
 <ng-template #sLoading>
-    <div>Loading...</div>
+    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
