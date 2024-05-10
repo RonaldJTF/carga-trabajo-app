@@ -186,7 +186,7 @@ export class FormPersonComponent implements OnInit {
   goBack() {
     this.router.navigate(['configurations/users'], {
       skipLocationChange: true,
-    }).then(r => console.log(r));
+    }).then();
   }
 
   updatePerson(id: number, payload: any): void {

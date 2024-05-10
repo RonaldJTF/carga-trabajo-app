@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {LayoutService} from '../service/app.layout.service';
 import {MenuService} from '../app.menu.service';
 import {StorageService} from '../../services/storage.service';
@@ -7,10 +7,12 @@ import {StorageService} from '../../services/storage.service';
   selector: 'app-config',
   templateUrl: './app.config.component.html',
 })
-export class AppConfigComponent {
+export class AppConfigComponent implements OnInit {
   @Input() minimal: boolean = false;
 
   scales: number[] = [12, 13, 14, 15, 16];
+
+  typeConfigList: string[]= ['menuMode', 'scale', 'ripple', 'inputStyle'];
 
   constructor(
     public layoutService: LayoutService,
@@ -20,6 +22,13 @@ export class AppConfigComponent {
 
   ngOnInit() {
     this.getThemeLocalStorage();
+    this.initConfig();
+  }
+
+  initConfig(): void {
+    this.typeConfigList.forEach(item => {
+      this.getConfigLocalStorage(item);
+    })
   }
 
   get visible(): boolean {
@@ -30,12 +39,28 @@ export class AppConfigComponent {
     this.layoutService.state.configSidebarVisible = _val;
   }
 
+  get inputStyle(): string {
+    return this.layoutService.config.inputStyle;
+  }
+
+  set inputStyle(_val: string) {
+    this.setConfigLocalStorage('inputStyle', _val);
+  }
+
+  get ripple(): boolean {
+    return this.layoutService.config.ripple;
+  }
+
+  set ripple(_val: boolean) {
+    this.setConfigLocalStorage('ripple', _val);
+  }
+
   get scale(): number {
     return this.layoutService.config.scale;
   }
 
   set scale(_val: number) {
-    this.layoutService.config.scale = _val;
+    this.setConfigLocalStorage('scale', _val);
   }
 
   get menuMode(): string {
@@ -43,7 +68,26 @@ export class AppConfigComponent {
   }
 
   set menuMode(_val: string) {
-    this.layoutService.config.menuMode = _val;
+    this.setConfigLocalStorage('menuMode', _val);
+  }
+
+  setConfigLocalStorage(key: string, value: any) {
+    const storedConfig = this.storageService.getLocalStorage(key);
+    if (storedConfig) {
+      this.storageService.removeLocalStorageItem(key);
+    }
+    this.storageService.setLocalStorage(key, value);
+    this.getConfigLocalStorage(key);
+  }
+
+  getConfigLocalStorage(config: string) {
+    const storedConfig = this.storageService.getLocalStorage(config);
+    if (storedConfig) {
+      this.layoutService.config[config] = storedConfig;
+    }
+    if (config === 'scale'){
+      this.applyScale();
+    }
   }
 
   onConfigButtonClick() {

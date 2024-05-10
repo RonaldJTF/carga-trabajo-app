@@ -54,7 +54,8 @@ import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
 import { PolarChartComponent } from './charts/polar-chart/polar-chart.component'
 import {MessageModule} from "primeng/message";
 import { TieredMenuModule } from 'primeng/tieredmenu';
-import { TreeSelectModule } from 'primeng/treeselect';
+import {RippleModule} from "primeng/ripple";
+import {TreeSelectModule} from "primeng/treeselect";
 
 @NgModule({
   declarations: [
@@ -123,7 +124,8 @@ import { TreeSelectModule } from 'primeng/treeselect';
     MessageModule,
     ListboxModule,
     TieredMenuModule,
-    TreeSelectModule,    
+    RippleModule,
+    TreeSelectModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -190,6 +192,7 @@ import { TreeSelectModule } from 'primeng/treeselect';
     MessageModule,
     ListboxModule,
     TieredMenuModule,
+    RippleModule,
     TreeSelectModule,
   ],
   providers: []
