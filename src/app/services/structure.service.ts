@@ -45,7 +45,7 @@ export class StructureService {
       responseType: 'blob' as 'json',
       observe: 'response' as 'body'
     };
-    return this.webRequestService.getWithHeaders(`${this.pathStructure}/report`, {type: type, structureIds: JSON.stringify(structureIds)}, null, options).pipe(
+    return this.webRequestService.getWithHeaders(`${this.pathStructure}/report`, {type: type, structureIds: JSON.stringify(structureIds ?? [])}, null, options).pipe(
       map(e => {
         this.handleFileDownload(e);
         return e;

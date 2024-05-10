@@ -41,6 +41,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { SkeletonListGridComponent } from './skeleton/skeleton-list-grid/skeleton-list-grid.component';
 import { TimeNamePipe } from '../pipes/time-name/time-name.pipe';
 import { ListboxModule } from 'primeng/listbox';
+import { TieredMenuModule } from 'primeng/tieredmenu';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { ListboxModule } from 'primeng/listbox';
     BadgeModule,
     SkeletonModule,
     ListboxModule,
+    TieredMenuModule,
   ], 
   exports: [
     FunctionalityComponent,
@@ -139,6 +141,7 @@ import { ListboxModule } from 'primeng/listbox';
     BadgeModule,
     SkeletonModule,
     ListboxModule,
+    TieredMenuModule,
   ], 
   providers: []
 })

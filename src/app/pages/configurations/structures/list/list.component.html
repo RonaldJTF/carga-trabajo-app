@@ -45,7 +45,7 @@
                                         <div class="font-medium" [ngClass]="{'text-500': structure.idPadre, 'text-primary': structure.id == (dependency$ | async)?.id}">{{structure.nombre}}</div>
                                         <div class="text-500">{{structure.descripcion}}</div>
                                     </div>
-                                    <div *ngIf="isAdmin" style="margin-left: auto; ">
+                                    <div *ngIf="structure.menuItems?.length" style="margin-left: auto; ">
                                         <app-menu-item [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
                                     </div>
                                 </td>
@@ -70,17 +70,15 @@
                                 <ng-template pTemplate="caption" let-structure="rowData">
                                     <div class="flex flex-wrap justify-content-between p-2">
                                         <div  class="flex align-items-center mb-2">
-                                           <ng-container *ngIf="isAdmin">
-                                                <div class="_badge-container mr-2">
-                                                    <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfStructuresNoDependency, false)" pTooltip="Eliminar" tooltipPosition="bottom"
-                                                        class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency">
-                                                    </button>
-                                                    <span *ngIf="totalSelectedStructuresNoDependency"  (click)="desmarkAll(false)" class="_badge"
-                                                        pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
-                                                </div>
-                                                <i class="pi pi-bars p-toolbar-separator mr-2"></i>                                            
-                                                <app-menu-item [menuItems]="dependencyMenuItems" [id]="dependency.id" [buttonClass]="'p-button-outlined'"></app-menu-item>  
-                                            </ng-container>
+                                            <div *ngIf="isAdmin" class="_badge-container mr-2">
+                                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfStructuresNoDependency, false)" pTooltip="Eliminar" tooltipPosition="bottom"
+                                                    class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency">
+                                                </button>
+                                                <span *ngIf="totalSelectedStructuresNoDependency"  (click)="desmarkAll(false)" class="_badge"
+                                                    pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
+                                            </div>
+                                            <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>                                            
+                                            <app-menu-item *ngIf="dependencyMenuItems?.length" [menuItems]="dependencyMenuItems" [id]="dependency.id" [buttonClass]="'p-button-outlined'"></app-menu-item>  
                                         </div>
                                         <div>
                                             <span class="p-input-icon-left">
@@ -115,7 +113,7 @@
                                             <div style="margin-left: auto; ">
                                                 <div class="flex align-items-center ml-3">
                                                     <button *ngIf="hasDetailToShow(structure)" (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                                                    <app-menu-item *ngIf="isAdmin"  [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
+                                                    <app-menu-item *ngIf="structure.menuItems?.length" [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
                                                 </div>
                                                 <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{'max-width': '75%'}">
                                                     <ng-template pTemplate>
