@@ -10,6 +10,7 @@ export class PolarChartComponent implements OnChanges {
   @Input() labels: string[];
   @Input() data: number[];
   @Input() title: string;
+  @Input() subtitle: string;
 
   polarData: any;
   polarOptions: any;

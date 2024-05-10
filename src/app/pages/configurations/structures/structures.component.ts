@@ -12,9 +12,9 @@ export class StructuresComponent implements OnInit{
 
   ngOnInit(): void {
       this.functionality =  {
-        label: 'Estructuras', 
-        icon: 'pi pi-sitemap', 
-        description: 'Gestión de estructuras de dependencias, procesos, procedimientos y actividades',
+        label: 'Estructuras',
+        icon: 'pi pi-sitemap',
+        description: 'Gestión de dependencias, procesos, procedimientos y actividades',
         color: "blue",
     }
   }

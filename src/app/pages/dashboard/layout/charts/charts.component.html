@@ -1,20 +1,20 @@
 <div class="grid p-fluid grid-nogutter p-1">
   <div class="col-12 lg:col-6">
-    <div class="card m-1">
+    <div class="card m-1 p-3">
       <div class="flex align-items-center justify-content-between mb-4">
-        <div class="flex align-items-center mb-3">
+        <div class="flex align-items-center">
           <div
             class="w-3rem h-3rem flex align-items-center justify-content-center bg-cyan-100 border-circle mr-3 flex-shrink-0">
             <i class="pi pi-sitemap text-xl text-cyan-500"></i>
           </div>
           <div class="flex flex-column ">
             <h5 class="m-0 text-700">Dependencia</h5>
-            <span class="text-500">Selecciona una dependencia</span>
+            <span class="text-500">Análisis por dependecia</span>
           </div>
         </div>
         <div>
-          <button pButton type="button" icon="pi pi-download"
-                  class="p-button-rounded p-button-text p-button-plain" pTooltip="Descragar reporte" (click)="downloadReport()"></button>
+          <button pButton type="button" icon="pi pi-cloud-download"
+                  class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar" (click)="downloadReport()"></button>
         </div>
       </div>
 
@@ -42,9 +42,9 @@
     </div>
   </div>
   <div class="col-12 lg:col-6">
-    <app-bar-chart [title]="'Total de horas asignadas por nivel'" [iconClass]="'pi-clock'" [colorName]="'red'"
+    <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel profesional'" [iconClass]="'pi-clock'" [colorName]="'red'"
                    [labels]="levels" [dataOne]="timesTareas" [dataTwo]="personasRequeridas"></app-bar-chart>
-    <app-polar-chart [title]="'Personas requeridas por nivel'" [labels]="levels"
+    <app-polar-chart title="Personal requerido" [subtitle]="'Personal total requerido por cada nivel profesional'" [labels]="levels"
                      [data]="personasRequeridas"></app-polar-chart>
   </div>
 </div>

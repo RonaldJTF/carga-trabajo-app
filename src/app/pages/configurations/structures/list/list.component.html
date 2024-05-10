@@ -9,7 +9,7 @@
                     <p-treeTable  #treeTableDependency [value]="dependencies" selectionMode="checkbox" [(selection)]="selectedNodesOfDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                      [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px">
                         <ng-template pTemplate="caption">
-                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-2">
+                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
                                 <div class="flex align-items-center flex-wrap">
                                     <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
                                         <span class="p-button-label hidden-lg pl-2">Nuevo</span>
@@ -21,7 +21,7 @@
                                         </button>
                                         <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" pTooltip="Click para desmarcar">{{totalSelected}}</span>
                                     </div>
-                                    <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>  
+                                    <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
                                     <p-menu #menu [popup]="true" [model]="menuItemsOfDownload"  [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
                                     <div class="_badge-container m-1">
                                         <button type="button" pRipple pButton style="position: relative;" icon="pi pi-angle-down" class="m-1  p-button-rounded p-button-info p-button-text" label="Descargar" (click)="menu.toggle($event)"></button>
@@ -68,7 +68,7 @@
                             <p-treeTable #treeTableOfStructuresNoDependency [value]="structures" selectionMode="checkbox" [(selection)]="selectedNodesOfStructuresNoDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                                 [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="375px">
                                 <ng-template pTemplate="caption" let-structure="rowData">
-                                    <div class="flex flex-wrap justify-content-between p-2">
+                                    <div class="flex flex-wrap justify-content-between p-3">
                                         <div  class="flex align-items-center mb-2">
                                             <div *ngIf="isAdmin" class="_badge-container mr-2">
                                                 <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfStructuresNoDependency, false)" pTooltip="Eliminar" tooltipPosition="bottom"
@@ -77,8 +77,8 @@
                                                 <span *ngIf="totalSelectedStructuresNoDependency"  (click)="desmarkAll(false)" class="_badge"
                                                     pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
                                             </div>
-                                            <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>                                            
-                                            <app-menu-item *ngIf="dependencyMenuItems?.length" [menuItems]="dependencyMenuItems" [id]="dependency.id" [buttonClass]="'p-button-outlined'"></app-menu-item>  
+                                            <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>
+                                            <app-menu-item *ngIf="dependencyMenuItems?.length" [menuItems]="dependencyMenuItems" [id]="dependency.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
                                         </div>
                                         <div>
                                             <span class="p-input-icon-left">
@@ -176,7 +176,7 @@
                         <div class="mb-3">
                             <app-go-to-if-not-found
                             (go)="goToAddSubstructure(dependency)"
-                            buttonLabel="Agregar {{dependency.tipologia?.tipologiaSiguiente.nombre | lowercase}}" 
+                            buttonLabel="Agregar {{dependency.tipologia?.tipologiaSiguiente.nombre | lowercase}}"
                             [imageSize]="IMAGE_SIZE.MEDIUM"
                             [showButton]="isAdmin"
                             [message]="MESSAGE.NADA_CONFIGURADO">
@@ -186,12 +186,12 @@
                 </div>
             </div>
         </div>
-        
+
     </ng-template>
 </ng-container>
 
 <ng-template #TemplateStructureInformation let-structure="structure">
-    <div class="flex flex-column align-items-center text-center my-3">
+    <div class="flex flex-column align-items-center text-center p-3">
         <ng-container *ngIf="structure.srcIcono else sNoIcon">
             <img [src]="structure.srcIcono" [alt]="structure.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem" />
         </ng-container>

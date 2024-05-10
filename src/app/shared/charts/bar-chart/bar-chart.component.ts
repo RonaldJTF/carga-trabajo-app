@@ -11,6 +11,7 @@ export class BarChartComponent implements OnChanges {
   @Input() dataOne: string[];
   @Input() dataTwo: number[];
   @Input() title: string;
+  @Input() subtitle: string;
   @Input() iconClass: string;
   @Input() colorName: string = "primary";
 

@@ -124,7 +124,7 @@ export class FormUserPersonComponent implements OnInit {
 
   assignValuesToForm(user: User) {
     this.formUser.get('username').setValue(user.username);
-    this.formUser.get('password').setValue(user.password);
+    this.formUser.get('password').setValue("***********");
     this.formUser.get('activo').setValue(Methods.parseStringToBoolean(user.activo));
     this.disabledInput(user);
   }

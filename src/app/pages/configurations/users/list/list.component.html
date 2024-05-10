@@ -13,7 +13,7 @@
                         [paginator]="true" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                         currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
                         <ng-template pTemplate="caption">
-                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-2">
+                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
                                 <div class="flex align-items-center flex-wrap">
                                     <button pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
                                         <span class="p-button-label hidden-lg pl-2">Nuevo</span>
@@ -74,10 +74,13 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span
+                                    <span *ngIf="person.usuario else noUser"
                                         [class]="'status-badge status-' + (person.usuario?.activo | state).classStyle">
                                         {{ (person.usuario?.activo | state).value }}
                                     </span>
+                                  <ng-template #noUser>
+                                    <span class="badge badge-blue">Sin usuario</span>
+                                  </ng-template>
                                 </td>
                                 <td class="p-0 text-center">
                                     <app-menu-item [menuItems]="items" [id]="person.id"></app-menu-item>
