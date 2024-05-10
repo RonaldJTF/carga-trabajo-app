@@ -53,6 +53,7 @@ import { ChartModule } from 'primeng/chart';
 import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
 import { PolarChartComponent } from './charts/polar-chart/polar-chart.component'
 import {MessageModule} from "primeng/message";
+import { TieredMenuModule } from 'primeng/tieredmenu';
 
 @NgModule({
   declarations: [
@@ -119,6 +120,9 @@ import {MessageModule} from "primeng/message";
     SkeletonModule,
 		ChartModule,
     MessageModule,
+
+    ListboxModule,
+    TieredMenuModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -182,8 +186,10 @@ import {MessageModule} from "primeng/message";
     ChartModule,
     BarChartComponent,
     PolarChartComponent,
-    MessageModule
+    MessageModule,
+    ListboxModule,
+    TieredMenuModule,
   ],
-  providers: [],
+  providers: []
 })
-export class SharedModule {}
+export class SharedModule { }

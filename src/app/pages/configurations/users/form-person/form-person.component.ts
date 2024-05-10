@@ -5,12 +5,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Person} from 'src/app/models/person';
 import {DocumentTypeService} from 'src/app/services/documenttype.service';
 import {DocumentType} from 'src/app/models/documenttype';
-import {Location} from '@angular/common';
 import {Gender} from 'src/app/models/gender';
 import {GenderService} from 'src/app/services/gender.service';
-import {Message} from "primeng/api";
-import {User} from "../../../../models/user";
-import {Methods} from "../../../../utils/methods";
 
 @Component({
   selector: 'app-form-person',
@@ -49,8 +45,6 @@ export class FormPersonComponent implements OnInit {
   deleting: boolean = false;
 
   fileInfo: string;
-
-  msgs: Message[] = [];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -166,7 +160,7 @@ export class FormPersonComponent implements OnInit {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
         this.person = data;
-        if (this.person){
+        if (this.person) {
           this.personCopy = data;
           this.assignValuesToForm(this.person);
         }
@@ -189,45 +183,20 @@ export class FormPersonComponent implements OnInit {
     this.formPerson.get('idGenero').setValue(person.idGenero);
   }
 
-  create(): void {
-    this.formData.append('person', JSON.stringify(this.person));
-
-    if (this.formPerson.valid) {
-      this.personService.create(this.person).subscribe((json) => {
-        this.formPerson.reset();
-        this.person = new Person();
-        this.goBack();
-      });
-    }
-  }
-
-  update(): void {
-    if (this.formPerson.valid) {
-      this.personService
-        .update(this.personId, this.person)
-        .subscribe((json) => {
-          this.formPerson.reset();
-          this.person = new Person();
-          this.goBack();
-          this.formPerson.reset();
-        });
-    }
-  }
-
   goBack() {
     this.router.navigate(['configurations/users'], {
       skipLocationChange: true,
-    });
+    }).then(r => console.log(r));
   }
 
   updatePerson(id: number, payload: any): void {
     payload.srcFoto = ''
     this.personService.update(id, payload).subscribe({
-      next: (e) => {
+      next: () => {
         this.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });
@@ -235,11 +204,11 @@ export class FormPersonComponent implements OnInit {
 
   createPerson(payload: any): void {
     this.personService.create(payload).subscribe({
-      next: (e) => {
+      next: () => {
         this.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });

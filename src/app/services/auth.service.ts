@@ -98,8 +98,8 @@ export class AuthenticationService {
     return  this.getRolesUser().includes("ROLE_ADMIN");
   }
 
-  roleIsFunctionary(): boolean{
-    return  this.getRolesUser().includes("ROLE_FUNCIONARIO");
+  roleIsOperator(): boolean{
+    return  this.getRolesUser().includes("ROLE_OPERADOR");
   }
 
 }
