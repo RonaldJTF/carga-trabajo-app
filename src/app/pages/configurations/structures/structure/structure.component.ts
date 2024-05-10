@@ -5,9 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
 import { Structure } from 'src/app/models/structure';
-import { StructureService } from 'src/app/services/structure.service';
 import * as StructureActions from "./../../../../store/structure.actions";
 import { Subscription } from 'rxjs';
+import { StructureService } from 'src/app/services/structure.service';
 
 @Component({
   selector: 'app-structure',

@@ -6,10 +6,10 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
 import { Activity } from 'src/app/models/activity';
 import { Level } from 'src/app/models/level';
-import { LevelService } from 'src/app/services/level.service';
-import { StructureService } from 'src/app/services/structure.service';
 import * as StructureActions from "./../../../../../store/structure.actions";
 import { MESSAGE } from 'src/labels/labels';
+import { StructureService } from 'src/app/services/structure.service';
+import { LevelService } from 'src/app/services/level.service';
 
 @Component({
   selector: 'app-task',

@@ -18,8 +18,16 @@ import { CryptojsService } from './services/cryptojs.service';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { DashboardModule } from './pages/dashboard/dashboard.module';
-import { structureReducer } from './store/structure.reducer';
 import { StoreModule } from '@ngrx/store';
+import { StructureService } from './services/structure.service';
+import { structureReducer } from './store/structure.reducer';
+import { LevelService } from './services/level.service';
+import { DashboardService } from './services/dashboard.service';
+import { DocumentTypeService } from './services/documenttype.service';
+import { GenderService } from './services/gender.service';
+import { PersonService } from './services/person.service';
+import { UserService } from './services/user.service';
+import { MatrizlevantamientoService } from './services/matrizlevantamiento.service';
 
 @NgModule({
   declarations: [
@@ -42,6 +50,8 @@ import { StoreModule } from '@ngrx/store';
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, 
+    StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService, 
+    UserService, MatrizlevantamientoService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true },
   ],

@@ -18,26 +18,49 @@
         </div>
       </div>
 
-      <p-dropdown dataKey="id" optionLabel="nombre" [options]="structure" [(ngModel)]="dependence" [showClear]="false"
-                  [filter]="true" filterBy="nombre" (onChange)="dependenceSelected($event.value)"
-                  [placeholder]="MESSAGE.SELECCIONA_OPCION"
-                  [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
-      </p-dropdown>
-      <div class="flex flex-column align-items-center text-center my-3">
-        <ng-container *ngIf="dependence?.srcIcono else sNoIcon">
-          <img [src]="dependence.srcIcono" [alt]="dependence.nombre"
+      <p-treeSelect [options]="structureOptions" [(ngModel)]="dependency" [showClear]="false"
+                    [filter]="true" (onNodeSelect)="onChangeDependency()"  containerStyleClass="w-full"
+                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
+                    <ng-template let-node pTemplate="default">
+                      <div class="flex align-items-center cursor-pointer">
+                        <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                            <img [src]="node.data.srcIcono"
+                                [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                                style="width: 100%; height: auto" />
+                        </div>
+                        <ng-template #sNoItemIcon>
+                            <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                                <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                            </div>
+                        </ng-template>
+                        <div class="flex flex-column align-items-center justify-content-start ml-2">
+                            <span class="image-text ml-2 w-full">
+                                {{node.label}}
+                            </span>
+                            <span class="image-text text-500 text-sm ml-2 w-full">
+                                {{node.data.descripcion}}
+                            </span>
+                        </div>
+                      </div>
+                  </ng-template>
+        </p-treeSelect>
+
+
+      <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center text-center my-3">
+        <ng-container *ngIf="dependency?.srcIcono else sNoIcon">
+          <img [src]="dependency.srcIcono" [alt]="dependency.nombre"
                [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
         </ng-container>
         <ng-template #sNoIcon>
           <div
-            class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependence?.tipologia.nombreColor}}-100 border-circle">
+            class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependency?.tipologia.nombreColor}}-100 border-circle">
             <i
-              class="pi {{dependence?.tipologia.claseIcono}} text-4xl text-{{dependence?.tipologia.nombreColor}}-500"></i>
+              class="pi {{dependency?.tipologia.claseIcono}} text-4xl text-{{dependency?.tipologia.nombreColor}}-500"></i>
           </div>
         </ng-template>
-        <span class="font-bold">{{ dependence?.nombre }}</span>
-        <span class="text-500">{{ dependence?.descripcion }}</span>
-        <span class="text-sm text-500">{{ dependence?.tipologia.nombre }}</span>
+        <span class="font-bold">{{ dependency?.nombre }}</span>
+        <span class="text-500">{{ dependency?.descripcion }}</span>
+        <span class="text-sm text-500">{{ dependency?.tipologia.nombre }}</span>
       </div>
     </div>
   </div>

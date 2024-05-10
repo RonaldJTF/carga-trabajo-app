@@ -12,7 +12,7 @@ export class DashboardService {
 
   private pathStructure: string = 'inventory';
   private pathStatistics: string = 'statistics';
-  private pathAlldependencies: string = 'all-dependencies';
+  private pathDependencies: string = 'structure';
 
   constructor(private webRequestService: WebRequestService) {}
 
@@ -25,7 +25,7 @@ export class DashboardService {
   }
 
   getDependencies(): Observable<Structure[]>{
-    return this.webRequestService.getWithHeaders(this.pathAlldependencies);
+    return this.webRequestService.getWithHeaders(this.pathDependencies);
   }
 
 }

@@ -9,11 +9,10 @@ import { MESSAGE } from 'src/labels/labels';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
-import { StructureService } from 'src/app/services/structure.service';
 import { TreeTable } from 'primeng/treetable';
 import { Methods } from 'src/app/utils/methods';
 import { AuthenticationService } from 'src/app/services/auth.service';
-import { CryptojsService } from 'src/app/services/cryptojs.service';
+import { StructureService } from 'src/app/services/structure.service';
 
 @Component({
   selector: 'app-list',
@@ -63,8 +62,7 @@ export class ListComponent implements OnInit, OnDestroy{
     private structureService: StructureService,
     private authService: AuthenticationService,
     private router: Router,
-    private route: ActivatedRoute,
-    private cipher: CryptojsService
+    private route: ActivatedRoute
   ){}
 
   ngOnInit(): void {
@@ -145,10 +143,9 @@ export class ListComponent implements OnInit, OnDestroy{
         extraMenuItemOfSubstructure.push({label: `Agregar ${structure.tipologia.tipologiaSiguiente.nombre.toLowerCase()}`, icon: 'pi pi-sitemap', data:structure, command: (e) => {this.goToAddSubstructure(e.item.data)}})
       }
     }else if(this.isOperator){
-      console.log("ES OPERADOR")
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
-        extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download', items: [
+        extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download', command: (e) => {console.log("OMEEEEEEEEEEE")},  items: [
           {label: 'PDF', icon: 'pi pi-file-pdf', id:"pdf", command: (e) => { this.download(e, structure.id) }},
           {label: 'Excel', icon: 'pi pi-file-excel', id:"excel", command: (e) => { this.download(e, structure.id) }},
         ]})

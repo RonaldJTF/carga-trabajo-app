@@ -5,8 +5,8 @@ import {StructureService} from "../../../../services/structure.service";
 import {Structure} from "../../../../models/structure";
 import {MESSAGE} from "../../../../../labels/labels";
 import {TypologyInventory} from "../../../../models/typologyinventory";
-import {Format} from "@angular-devkit/build-angular/src/builders/extract-i18n/schema";
-
+import { TreeNode } from 'primeng/api';
+import { Methods } from 'src/app/utils/methods';
 
 @Component({
   selector: 'app-charts',
@@ -19,7 +19,7 @@ export class ChartsComponent implements OnInit {
 
   statistics: Activity[];
 
-  structure: Structure[];
+  //structure: Structure[];
 
   levels: string[];
 
@@ -27,11 +27,11 @@ export class ChartsComponent implements OnInit {
 
   personasRequeridas: number[];
 
-  dependence: Structure;
+  dependency: TreeNode<Structure>;
 
   inventory: TypologyInventory[];
 
-  dependenceIds: number[] = [];
+  structureOptions: TreeNode<Structure>[] = [];
 
   constructor(private dashboardService: DashboardService, private structureService: StructureService) {
   }
@@ -61,7 +61,6 @@ export class ChartsComponent implements OnInit {
     this.dashboardService.getStatistics(idDependence).subscribe({
       next: (data) => {
         this.statistics = data;
-        this.dependenceIds[0] = idDependence;
         this.getLevels(this.statistics);
       },
     });
@@ -70,11 +69,29 @@ export class ChartsComponent implements OnInit {
   getStructure() {
     this.dashboardService.getDependencies().subscribe({
       next: (data) => {
-        this.structure = data;
-        this.dependence = this.structure[0];
-        this.getStatistics(this.dependence.id);
+        this.builtNodes(data, this.structureOptions);
+        this.dependency = this.structureOptions[0];
+        this.getStatistics(this.dependency.data.id);
       }
     })
+  }
+
+  builtNodes(structures: Structure[], nodes: TreeNode<Structure>[]){
+    for (let structure of structures){
+      if (Methods.parseStringToBoolean(structure.tipologia.esDependencia) ){
+        let node: TreeNode<Structure> = {
+          data: structure,
+          label: structure.nombre,
+          children: []
+        };
+  
+        if (structure.subEstructuras?.length){
+          this.builtNodes(structure.subEstructuras, node.children)
+        }
+  
+        nodes.push(node);
+      }
+    }
   }
 
   minutesToHours(minutes: number): string {
@@ -84,28 +101,12 @@ export class ChartsComponent implements OnInit {
     return (minutes / 60).toFixed(2);
   }
 
-  dependenceSelected(event: any) {
-    this.getStatistics(event.id);
-    //this.getProcesses(event);
+  onChangeDependency() {
+    this.getStatistics(this.dependency.data.id);
   }
-
-  getProcesses(estructura: Structure): Structure[] {
-    let processes: Structure[] = [];
-    estructura.subEstructuras.forEach((subestructura) => {
-      // Verificar si la subestructura es de tipo "Proceso"
-      if (subestructura.tipologia.nombre === "Proceso") {
-        processes.push(subestructura);
-      }
-      // Si la subestructura tiene más subestructuras, llamar recursivamente a esta función
-      if (subestructura.subEstructuras.length > 0) {
-        processes = processes.concat(this.getProcesses(subestructura));
-      }
-    });
-    return processes;
-  }
-
+  
   downloadReport() {
-    this.structureService.downloadReport('pdf', this.dependenceIds).subscribe({});
+    this.structureService.downloadReport('pdf', this.dependency.data.id).subscribe({});
   }
 }
 
