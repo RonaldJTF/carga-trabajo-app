@@ -10,6 +10,7 @@ import { DashboardService } from 'src/app/services/dashboard.service';
 export class HeardPageComponent {
 
   inventory: TypologyInventory[];
+  loading: boolean = false;
 
   constructor(private dashboardService: DashboardService) {}
 
@@ -18,9 +19,11 @@ export class HeardPageComponent {
   }
 
   getInventarioTipologia() {
+    this.loading = true;
     this.dashboardService.getInventory().subscribe({
       next: (data) => {
         this.inventory = data;
+        this.loading = false;
       },
     });
   }

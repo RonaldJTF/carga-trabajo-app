@@ -146,7 +146,7 @@
                                                                 </app-label-value-chart>
                                                             </div>
                                                             <div class="col-12 md:col-6 lg:col-3  p-1">
-                                                                <app-label-value-chart label="Tiempo promedio" [value]="activity.tiempoPromedio" colorName="blue" iconClass="pi-clock">
+                                                                <app-label-value-chart label="Tiempo usual" [value]="activity.tiempoPromedio" colorName="blue" iconClass="pi-clock">
                                                                     <ng-template pTemplate="value-content" let-data>
                                                                         <ng-container *ngTemplateOutlet="TemplateTime; context:{$implicit: data}"></ng-container>
                                                                     </ng-template>
@@ -154,7 +154,7 @@
                                                             </div>
                                                             <div class="col-12 flex flex-column border-round-xl text-center surface-100 py-2  mt-2">
                                                                 <span class="text-xl text-700 font-medium"> {{activity.nivel.descripcion}}</span>
-                                                                <span class="text-500 text-sm">Nivel</span>
+                                                                <span class="text-500 text-sm">Nivel de ocupación</span>
                                                             </div>
                                                         </div>
                                                     </ng-template>

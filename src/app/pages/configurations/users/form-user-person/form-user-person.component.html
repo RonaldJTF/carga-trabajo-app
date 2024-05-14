@@ -8,10 +8,6 @@
             <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
               style="vertical-align: middle; width: 100%; height: auto;"  alt=""/>
           </div>
-          <!-- <button pButton pRipple type="button" icon="pi pi-camera"
-            class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Detalle"
-            tooltipPosition="bottom">
-          </button> -->
         </div>
         <span class="font-bold">{{person.primerNombre | uppercase}} {{person.primerApellido | uppercase}}</span>
         <span class="mb-3"><span>{{person.tipoDocumento?.abreviatura}}:</span> {{person.documento}}</span>
@@ -20,15 +16,6 @@
           lowercase}}</span>
         <span *ngIf="person.telefono" class="w-full"><span class="text-500">Teléfono: </span>
           {{person.telefono}}</span>
-        <!--<span *ngIf="person.direccion" class="w-full text-left mb-2">
-              <span class="text-500">Dirección: </span> {{person.direccion | capitalizeFirstLetter}}
-              <span *ngIf="person.ciudadResidencia || person.paisResidencia">-
-                <span *ngIf="person.ciudadResidencia">{{person.ciudadResidencia.nombre | capitalizeFirstLetter}}, </span>
-                <span *ngIf="person.ciudadResidencia?.departamento.nombre">{{person.ciudadResidencia.departamento.nombre | capitalizeFirstLetter}}, </span>
-                <span *ngIf="person.paisResidencia">{{person.paisResidencia.nombre | capitalizeFirstLetter}}</span>
-              </span>
-            </span>
-            <button pButton pRipple label="Ver más detalles" class="p-button-outlined p-button-info"></button>-->
       </div>
     </div>
   </div>
@@ -38,10 +25,9 @@
       <div class="col-12">
         <div class="card">
           <h5 class="pb-3">Gestión de acceso</h5>
-
           <div class="grid">
             <div class="field col">
-              <label for="username" class="font-medium">Usuario </label>
+              <label for="username" class="font-medium">Usuario</label>
               <div class="p-inputgroup">
                 <span class="p-inputgroup-addon">
                   <i class="pi pi-user"></i>
@@ -57,7 +43,7 @@
               </div>
             </div>
             <div class="field col">
-              <label for="password" class="font-medium">Contraseña </label>
+              <label for="password" class="font-medium">Contraseña</label>
               <div class="p-inputgroup">
                 <span class="p-inputgroup-addon">
                   <i class="pi pi-key"></i>
@@ -120,7 +106,6 @@
             [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
             [disabledCreateOrUpdateButton]="formUser.invalid">
           </app-form-action-button>
-
         </div>
       </div>
     </div>

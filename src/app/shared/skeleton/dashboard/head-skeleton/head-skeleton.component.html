@@ -1,0 +1,15 @@
+<div class="grid grid-nogutter">
+    <div *ngFor="let item of [1, 2, 3, 4]" class="col-12 md:col-6 lg:col-3 p-1">
+        <div class="card p-3 h-full">
+            <div class="flex justify-content-between">
+                <div class="mr-2 w-full">
+                    <p-skeleton width="50%" height="1rem" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton width="75%" height="0.5rem"></p-skeleton>
+                </div>
+                <div>
+                    <p-skeleton width="2.5rem" height="2.5rem"></p-skeleton>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

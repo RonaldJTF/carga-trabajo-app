@@ -10,7 +10,7 @@
           </div>
           <button pButton pRipple type="button" icon="pi pi-camera"
                   class="p-button-rounded p-button-text p-button-info _button-icon"
-                  pTooltip="Seleccionar Foto" tooltipPosition="bottom">
+                  pTooltip="Seleccionar foto" tooltipPosition="bottom">
             <input class="cursor-pointer" id="foto" type="file" #fileInput (change)="onFileSelect(fileInput)"/>
           </button>
         </div>
@@ -31,15 +31,6 @@
           <span class="text-500">Correo: </span>{{ personCopy.correo | lowercase }}</span>
         <span *ngIf="personCopy.telefono" class="w-full">
           <span class="text-500">Teléfono: </span>{{ personCopy.telefono }}</span>
-        <!-- <span *ngIf="person.direccion" class="w-full text-left mb-2">
-              <span class="text-500">Dirección: </span> {{person.direccion | capitalizeFirstLetter}}
-              <span *ngIf="person.ciudadResidencia || person.paisResidencia">-
-                <span *ngIf="person.ciudadResidencia">{{person.ciudadResidencia.nombre | capitalizeFirstLetter}}, </span>
-                <span *ngIf="person.ciudadResidencia?.departamento.nombre">{{person.ciudadResidencia.departamento.nombre | capitalizeFirstLetter}}, </span>
-                <span *ngIf="person.paisResidencia">{{person.paisResidencia.nombre | capitalizeFirstLetter}}</span>
-              </span>
-            </span>
-            <button pButton pRipple label="Ver más detalles" class="p-button-outlined p-button-info"></button>-->
       </div>
     </div>
   </div>
@@ -53,7 +44,7 @@
             <input type="text" id="primerNombre" pInputText formControlName="primerNombre">
             <div *ngIf="nombrePrimeroNoValido">
               <div *ngIf="controls['primerNombre'].errors?.['required']">
-                <small class="p-error">Ingrese nombre</small>
+                <small class="p-error">Ingrese un primer nombre</small>
               </div>
             </div>
           </div>
@@ -61,68 +52,52 @@
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
             <label htmlFor="segundoNombre" class="font-medium">Segundo nombre</label>
             <input type="text" id="segundoNombre" pInputText formControlName="segundoNombre">
-            <div *ngIf="nombreSegundoNoValido">
-              <div *ngIf="controls['segundoNombre'].errors?.['required']">
-                <small class="p-error">Ingrese nombre</small>
-              </div>
-            </div>
           </div>
         </div>
 
         <div class="grid">
-
           <div class="field p-fluid col-12 sm:col-6 m-0">
             <label class="font-medium" for="primerApellido">Primer apellido</label>
             <input type="text" id="primerApellido" pInputText formControlName="primerApellido">
             <div *ngIf="apellidoPrimeroNoValido">
               <div *ngIf="controls['primerApellido'].errors?.['required']">
-                <small class="p-error">Ingrese apellido</small>
+                <small class="p-error">Ingrese un primer apellido</small>
               </div>
             </div>
           </div>
-
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
             <label class="font-medium" for="segundoApellido">Segundo apellido</label>
             <input type="text" id="segundoApellido" pInputText formControlName="segundoApellido">
-            <div *ngIf="apellidoSegundoNoValido">
-              <div *ngIf="controls['segundoApellido'].errors?.['required']">
-                <small class="p-error">Ingrese apellido</small>
-              </div>
-            </div>
           </div>
-
         </div>
         <div class="grid">
-
           <div class="field p-fluid col-12 m-0">
-            <label class="font-medium" for="idTipoDocumento">Tipo documento</label>
+            <label class="font-medium" for="idTipoDocumento">Tipo de documento</label>
             <p-dropdown id="idTipoDocumento" inputId="idTipoDocumento" [autoDisplayFirst]="false"
-                        [options]="documentTypes" optionValue="id" optionLabel="descripcion"
+                        [options]="documentTypes" optionValue="id" optionLabel="descripcion" [filter]="true" [showClear]="true"
                         formControlName="idTipoDocumento"></p-dropdown>
             <div *ngIf="tipoDocumentoNoValido">
               <div *ngIf="controls['idTipoDocumento'].errors?.['required']">
-                <small class="p-error">Seleccione el tipo de documento</small>
+                <small class="p-error">Seleccione un tipo de documento</small>
               </div>
             </div>
           </div>
-
           <div class="field p-fluid col-12 m-0 pt-0">
-            <label class="font-medium" for="documento">Numero documento</label>
+            <label class="font-medium" for="documento">Número de documento</label>
             <p-inputNumber id="documento" inputId="documento" formControlName="documento"></p-inputNumber>
             <div *ngIf="numeroDocumentoNoValido">
               <div *ngIf="controls['documento'].errors?.['required']">
-                <small class="p-error">Ingrese numero de documento</small>
+                <small class="p-error">Ingrese un número de documento</small>
               </div>
             </div>
           </div>
-
           <div class="field p-fluid col-12 m-0 pt-0">
-            <label class="font-medium" for="idGenero">Genero</label>
+            <label class="font-medium" for="idGenero">Género</label>
             <p-dropdown id="idGenero" inputId="idGenero" [autoDisplayFirst]="false" [options]="genders" optionValue="id"
-                        optionLabel="nombre" formControlName="idGenero"></p-dropdown>
+                        optionLabel="nombre" [filter]="true" [showClear]="true" formControlName="idGenero"></p-dropdown>
             <div *ngIf="generoNoValido">
               <div *ngIf="controls['idGenero'].errors?.['required']">
-                <small class="p-error">Seleccione genero</small>
+                <small class="p-error">Seleccione un género</small>
               </div>
             </div>
           </div>
@@ -130,20 +105,20 @@
         </div>
         <div class="grid">
           <div class="field p-fluid col-12 sm:col-6 m-0">
-            <label class="font-medium" for="correo">Correo electronico</label>
+            <label class="font-medium" for="correo">Correo electrónico</label>
             <span class="p-input-icon-right">
-                            <i class="pi pi-at"></i>
-                            <input type="email" id="correo" pInputText formControlName="correo">
-                        </span>
+                <i class="pi pi-at"></i>
+                <input type="email" id="correo" pInputText formControlName="correo">
+            </span>
             <div *ngIf="correoNoValido">
               <div *ngIf="controls['correo'].errors?.['required']">
-                <small class="p-error">Ingrese un correo electronico</small>
+                <small class="p-error">Ingrese un correo electrónico</small>
               </div>
             </div>
           </div>
 
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-            <label class="font-medium" for="telefono">Telefono</label>
+            <label class="font-medium" for="telefono">Teléfono</label>
             <span class="p-input-icon-right">
               <i class="pi pi-phone"></i>
               <p-inputNumber id="telefono"
@@ -154,7 +129,7 @@
             </span>
             <div *ngIf="telefonoNoValido">
               <div *ngIf="controls['telefono'].errors?.['required']">
-                <small class="p-error">Ingrese un numero de telefono</small>
+                <small class="p-error">Ingrese un número de teléfono</small>
               </div>
             </div>
           </div>

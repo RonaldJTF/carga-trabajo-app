@@ -1,11 +1,11 @@
-<div class="grid p-fluid grid-nogutter p-1">
+<div *ngIf="!loading else sLoading" class="grid p-fluid grid-nogutter p-1">
   <div class="col-12 lg:col-6">
     <div class="card m-1 p-3">
       <div class="flex align-items-center justify-content-between mb-4">
         <div class="flex align-items-center">
           <div
-            class="w-3rem h-3rem flex align-items-center justify-content-center bg-cyan-100 border-circle mr-3 flex-shrink-0">
-            <i class="pi pi-sitemap text-xl text-cyan-500"></i>
+            class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+            <i class="pi pi-sitemap text-xl text-blue-500"></i>
           </div>
           <div class="flex flex-column ">
             <h5 class="m-0 text-700">Dependencia</h5>
@@ -18,32 +18,32 @@
         </div>
       </div>
 
-      <p-treeSelect [options]="structureOptions" [(ngModel)]="dependency" [showClear]="false"
+      <p-treeSelect *ngIf="structureOptions?.length" [options]="structureOptions" [(ngModel)]="dependency" [showClear]="false"
                     [filter]="true" (onNodeSelect)="onChangeDependency()"  containerStyleClass="w-full"
                     [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
-                    <ng-template let-node pTemplate="default">
-                      <div class="flex align-items-center cursor-pointer">
-                        <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
-                            <img [src]="node.data.srcIcono"
-                                [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                                style="width: 100%; height: auto" />
-                        </div>
-                        <ng-template #sNoItemIcon>
-                            <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                                <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
-                            </div>
-                        </ng-template>
-                        <div class="flex flex-column align-items-center justify-content-start ml-2">
-                            <span class="image-text ml-2 w-full">
-                                {{node.label}}
-                            </span>
-                            <span class="image-text text-500 text-sm ml-2 w-full">
-                                {{node.data.descripcion}}
-                            </span>
-                        </div>
-                      </div>
-                  </ng-template>
-        </p-treeSelect>
+          <ng-template let-node pTemplate="default">
+              <div class="flex align-items-center cursor-pointer">
+                <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                    <img [src]="node.data.srcIcono"
+                        [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                        style="width: 100%; height: auto" />
+                </div>
+                <ng-template #sNoItemIcon>
+                    <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                        <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                    </div>
+                </ng-template>
+                <div class="flex flex-column align-items-center justify-content-start ml-2">
+                    <span class="image-text ml-2 w-full">
+                        {{node.label}}
+                    </span>
+                    <span class="image-text text-500 text-sm ml-2 w-full">
+                        {{node.data.descripcion}}
+                    </span>
+                </div>
+              </div>
+          </ng-template>
+      </p-treeSelect>
 
 
       <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center text-center my-3">
@@ -66,9 +66,13 @@
 
   </div>
   <div class="col-12 lg:col-6">
-    <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel profesional'" [iconClass]="'pi-clock'" [colorName]="'red'"
-                   [labels]="levels" [dataOne]="timesTareas" [dataTwo]="personasRequeridas"></app-bar-chart>
-    <app-polar-chart title="Personal requerido" [subtitle]="'Personal total requerido por cada nivel profesional'" [labels]="levels"
+    <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel de ocupación'" [iconClass]="'pi-clock'" [colorName]="'blue'"
+                   [labels]="levels" [data]="timesTareas"></app-bar-chart>
+    <app-polar-chart title="Personal requerido" [subtitle]="'Personal total requerido por cada nivel de ocupación'" [labels]="levels"
                      [data]="personasRequeridas"></app-polar-chart>
   </div>
 </div>
+
+<ng-template #sLoading>
+  <app-body-skeleton></app-body-skeleton>
+</ng-template>

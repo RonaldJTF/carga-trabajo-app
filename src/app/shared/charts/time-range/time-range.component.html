@@ -1,0 +1,22 @@
+<div class="card h-full p-3 " >
+    <h6 class="text-center text-800">Resumen de tiempos</h6>
+    <div class="flex justify-content-center">
+        <div style="width: 250px;" id="time-range-chart"></div>
+    </div>
+    <div class="flex flex-row justify-content-between" >
+        <ng-container *ngTemplateOutlet="TemplateTimeItem; context:{$implicit: {icon: 'pi-clock', color: 'red', shortName: 'Tmín', largeName: 'Tiempo mínimo'}} "></ng-container>
+        <ng-container *ngTemplateOutlet="TemplateTimeItem; context:{$implicit: {icon: 'pi-clock', color: 'green', shortName: 'Tmáx', largeName: 'Tiempo máximo'}} "></ng-container>
+        <ng-container *ngTemplateOutlet="TemplateTimeItem; context:{$implicit: {icon: 'pi-clock', color: 'blue', shortName: 'Tusual', largeName: 'Tiempo usual'}} "></ng-container>
+    </div>
+</div>
+
+<ng-template #TemplateTimeItem let-item>
+    <div class="flex mb-auto flex-wrap">
+        <span class="text-xs font-bold mr-2">
+            {{item.shortName}}: 
+        </span>
+        <span class="text-500 text-xs">
+            {{item.largeName}}
+        </span>
+    </div>
+</ng-template>

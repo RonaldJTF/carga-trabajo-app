@@ -56,6 +56,9 @@ import {MessageModule} from "primeng/message";
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import {RippleModule} from "primeng/ripple";
 import {TreeSelectModule} from "primeng/treeselect";
+import { TimeRangeComponent } from './charts/time-range/time-range.component';
+import { HeadSkeletonComponent } from './skeleton/dashboard/head-skeleton/head-skeleton.component';
+import { BodySkeletonComponent } from './skeleton/dashboard/body-skeleton/body-skeleton.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +70,12 @@ import {TreeSelectModule} from "primeng/treeselect";
     FormActionButtonComponent,
     TimeComponent,
     SkeletonListGridComponent,
+    TimeRangeComponent,
+    MenuItemComponent,
+    BarChartComponent,
+    PolarChartComponent,
+    HeadSkeletonComponent,
+    BodySkeletonComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -82,9 +91,6 @@ import {TreeSelectModule} from "primeng/treeselect";
     TimeNamePipe,
 
     ImageFallbackDirective,
-    MenuItemComponent,
-    BarChartComponent,
-    PolarChartComponent,
   ],
   imports: [
     CommonModule,
@@ -136,6 +142,12 @@ import {TreeSelectModule} from "primeng/treeselect";
     FormActionButtonComponent,
     TimeComponent,
     SkeletonListGridComponent,
+    TimeRangeComponent,
+    MenuItemComponent,
+    BarChartComponent,
+    PolarChartComponent,
+    HeadSkeletonComponent,
+    BodySkeletonComponent,
 
     ImageFallbackDirective,
 
@@ -187,8 +199,6 @@ import {TreeSelectModule} from "primeng/treeselect";
     BadgeModule,
     SkeletonModule,
     ChartModule,
-    BarChartComponent,
-    PolarChartComponent,
     MessageModule,
     ListboxModule,
     TieredMenuModule,

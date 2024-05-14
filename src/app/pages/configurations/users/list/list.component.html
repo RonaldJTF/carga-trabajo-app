@@ -74,12 +74,12 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span *ngIf="person.usuario else noUser"
+                                    <span *ngIf="person.usuario else noUser" style="white-space: nowrap;"
                                         [class]="'status-badge status-' + (person.usuario?.activo | state).classStyle">
                                         {{ (person.usuario?.activo | state).value }}
                                     </span>
                                   <ng-template #noUser>
-                                    <span class="badge badge-blue">Sin usuario</span>
+                                    <span class="badge badge-blue" style="white-space: nowrap;">Sin usuario</span>
                                   </ng-template>
                                 </td>
                                 <td class="p-0 text-center">

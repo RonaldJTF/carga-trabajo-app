@@ -182,6 +182,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.loading = true;
     this.structureService.getStructures().subscribe( e => {
       this.store.dispatch(StructureActions.setList({structures: e}));
+      this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
       this.loading = false;
     })
   }

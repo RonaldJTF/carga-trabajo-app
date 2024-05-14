@@ -1,4 +1,4 @@
-<div class="grid grid-nogutter">
+<div *ngIf="!loading else sLoading" class="grid grid-nogutter">
     <div *ngFor="let item of inventory" class="col-12 md:col-6 lg:col-{{12/inventory.length}} p-1">
         <app-label-value-chart label="{{item.nombre}}" [value]="item.cantidad" colorName="{{item.nombreColor}}"
             iconClass="{{item.claseIcono}}">
@@ -11,7 +11,11 @@
 
 <ng-template #Template let-item>
     <div class="flex flex-row align-items-baseline">
-        <span class="text-500 text-2xl font-medium">{{item}}</span>
-        <span class="text-sm text-500 mr-2"> Existentes</span>
+        <span class="text-500 text-2xl font-medium mr-2">{{item}}</span>
+        <span class="text-sm text-500"> Existentes</span>
     </div>
+</ng-template>
+
+<ng-template #sLoading>
+    <app-head-skeleton></app-head-skeleton>
 </ng-template>

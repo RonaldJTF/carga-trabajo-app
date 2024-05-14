@@ -8,8 +8,7 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 export class BarChartComponent implements OnChanges {
 
   @Input() labels: string[];
-  @Input() dataOne: string[];
-  @Input() dataTwo: number[];
+  @Input() data: string[];
   @Input() title: string;
   @Input() subtitle: string;
   @Input() iconClass: string;
@@ -34,17 +33,11 @@ export class BarChartComponent implements OnChanges {
       labels: this.labels,
       datasets: [
         {
-          label: 'Total horas',
+          label: 'Total de horas',
           backgroundColor: documentStyle.getPropertyValue('--primary-500'),
           borderColor: documentStyle.getPropertyValue('--primary-500'),
-          data: this.dataOne,
+          data: this.data,
         },
-       /*{
-          label: 'Personas Requeridas',
-          backgroundColor: documentStyle.getPropertyValue('--primary-200'),
-          borderColor: documentStyle.getPropertyValue('--primary-200'),
-          data: this.dataTwo,
-        },*/
       ],
     };
 

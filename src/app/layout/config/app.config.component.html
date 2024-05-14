@@ -17,7 +17,7 @@
   </div>
 
   <ng-container *ngIf="!minimal">
-    <h5>Input Style</h5>
+    <h5>Estilos de entrada</h5>
     <div class="flex">
       <div class="field-radiobutton flex-1">
         <p-radioButton id="outlined_input" name="inputStyle" value="outlined" [(ngModel)]="inputStyle" inputId="outlined_input"></p-radioButton>
@@ -28,12 +28,12 @@
         <label for="filled_input">Relleno</label>
       </div>
     </div>
-    <h5>Efecto onda</h5>
+    <h5>Efecto de onda</h5>
     <p-inputSwitch [(ngModel)]="ripple"></p-inputSwitch>
   </ng-container>
 
   <ng-container *ngIf="!minimal">
-    <h5>Menu</h5>
+    <h5>Menú</h5>
     <div class="field-radiobutton">
       <p-radioButton id="modeStatic" name="menuMode" value="static" [(ngModel)]="menuMode" inputId="mode1"></p-radioButton>
       <label for="modeStatic">Visible</label>

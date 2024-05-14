@@ -18,20 +18,13 @@ export class ChartsComponent implements OnInit {
   protected readonly MESSAGE = MESSAGE;
 
   statistics: Activity[];
-
-  //structure: Structure[];
-
   levels: string[];
-
   timesTareas: string[];
-
   personasRequeridas: number[];
-
-  dependency: TreeNode<Structure>;
-
+  dependency: TreeNode<Structure> = {};
   inventory: TypologyInventory[];
-
   structureOptions: TreeNode<Structure>[] = [];
+  loading: boolean = false;
 
   constructor(private dashboardService: DashboardService, private structureService: StructureService) {
   }
@@ -39,7 +32,6 @@ export class ChartsComponent implements OnInit {
   ngOnInit() {
     this.getInventarioTipologia();
     this.getStructure();
-
   }
 
   getInventarioTipologia() {
@@ -67,11 +59,13 @@ export class ChartsComponent implements OnInit {
   }
 
   getStructure() {
+    this.loading = true;
     this.structureService.getStructures().subscribe({
       next: (data) => {
         this.builtNodes(data, this.structureOptions);
         this.dependency = this.structureOptions[0];
         this.getStatistics(this.dependency.data.id);
+        this.loading = false;
       }
     })
   }
@@ -84,11 +78,9 @@ export class ChartsComponent implements OnInit {
           label: structure.nombre,
           children: []
         };
-  
         if (structure.subEstructuras?.length){
           this.builtNodes(structure.subEstructuras, node.children)
         }
-  
         nodes.push(node);
       }
     }

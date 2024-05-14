@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -10,13 +10,15 @@ import * as StructureActions from "./../../../../../store/structure.actions";
 import { MESSAGE } from 'src/labels/labels';
 import { StructureService } from 'src/app/services/structure.service';
 import { LevelService } from 'src/app/services/level.service';
+import { ValidateRange } from 'src/app/validations/validateRange';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
   styleUrls: ['./task.component.scss']
 })
-export class TaskComponent implements OnInit {
+export class TaskComponent implements OnInit, OnDestroy {
 
   MESSAGE = MESSAGE; 
 
@@ -28,7 +30,11 @@ export class TaskComponent implements OnInit {
   creatingOrUpdating: boolean = false;
   deleting: boolean = false;
 
+  tiempoMaximoSubscription: Subscription;
+  tiempoMinimoSubscription: Subscription;
+
   levels: Level[];
+  updatingValueValidity = false;
 
   constructor(
     private store: Store<AppState>,
@@ -45,14 +51,61 @@ export class TaskComponent implements OnInit {
     this.idEstructura = this.route.snapshot.queryParams['idStructure'];
     this.loadActivity(this.route.snapshot.queryParams['idActivity']);
     this.loadNivels();
+
+    this.tiempoMaximoSubscription = this.formActivity.get('tiempoMaximo').valueChanges.subscribe(_ => {
+      if (!this.updatingValueValidity) {
+        this.updatingValueValidity = true;
+        this.tiempoPromedio.updateValueAndValidity();
+        this.tiempoMinimo.updateValueAndValidity();
+        this.updatingValueValidity = false;
+      }
+    });
+
+    this.tiempoMinimoSubscription = this.formActivity.get('tiempoMinimo').valueChanges.subscribe(_ => {
+      if (!this.updatingValueValidity) {
+        this.updatingValueValidity = true;
+        this.tiempoPromedio.updateValueAndValidity();
+        this.tiempoMaximo.updateValueAndValidity();
+        this.updatingValueValidity = false;
+      }
+    });
+  }
+
+  ngOnDestroy(){
+    this.tiempoMaximoSubscription?.unsubscribe();
+    this.tiempoMinimoSubscription?.unsubscribe();
+  }
+
+  get tiempoMaximo(): FormControl{
+    return this.formActivity.get('tiempoMaximo') as FormControl;
+  }
+  get tiempoMinimo(): FormControl{
+    return this.formActivity.get('tiempoMinimo') as FormControl;
+  }
+  get tiempoPromedio(): FormControl{
+    return this.formActivity.get('tiempoPromedio') as FormControl;
+  }
+
+  get tiempoMaximoInHours(): number{
+    return this.tiempoMaximo.value !==null ? parseFloat((this.tiempoMaximo.value/60).toFixed(2)) : null;
+  }
+
+  get tiempoMinimoInHours(): number{
+    return this.tiempoMinimo.value !==null ? parseFloat((this.tiempoMinimo.value/60).toFixed(2)) : null;
+  }
+  get tiempoPromedioInHours(): number{
+    return this.tiempoPromedio.value !==null ? parseFloat((this.tiempoPromedio.value/60).toFixed(2)) : null;
   }
 
   buildForm(){
     this.formActivity= this.formBuilder.group({
       frecuencia: [null, Validators.compose([Validators.required, Validators.min(0)])],
-      tiempoMaximo: [null, Validators.compose([Validators.required, Validators.min(0)])],
-      tiempoMinimo: [null, Validators.compose([Validators.required, Validators.min(0)])],
-      tiempoPromedio: [null, Validators.compose([Validators.required, Validators.min(0)])],
+      tiempoMaximo: [null, Validators.compose([Validators.required, Validators.min(0), ValidateRange.validateUpper('tiempoMinimo')])],
+      tiempoMinimo: [null, Validators.compose([Validators.required, Validators.min(0), ValidateRange.validateLower('tiempoMaximo')])],
+      tiempoPromedio: [null, Validators.compose([
+        Validators.required, Validators.min(0),
+        ValidateRange.validateBetween('tiempoMinimo', 'tiempoMaximo')
+      ])],
       nivel: [null, Validators.required],
     })
   }
