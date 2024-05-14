@@ -1,6 +1,6 @@
 <div *ngIf="!loading else sLoading" class="grid grid-nogutter">
     <div *ngFor="let item of inventory" class="col-12 md:col-6 lg:col-{{12/inventory.length}} p-1">
-        <app-label-value-chart label="{{item.nombre}}" [value]="item.cantidad" colorName="{{item.nombreColor}}"
+        <app-label-value-chart label="{{item.nombre | pluralize}}" [value]="item.cantidad" colorName="{{item.nombreColor}}"
             iconClass="{{item.claseIcono}}">
             <ng-template pTemplate="value-content" let-data>
                 <ng-container *ngTemplateOutlet="Template; context:{$implicit: data}"></ng-container>
@@ -11,8 +11,8 @@
 
 <ng-template #Template let-item>
     <div class="flex flex-row align-items-baseline">
-        <span class="text-500 text-2xl font-medium mr-2">{{item}}</span>
-        <span class="text-sm text-500"> Existentes</span>
+        <span class="text-500 text-2xl font-medium mr-1">{{item}}</span>
+        <span class="text-sm text-500">{{'Existente' | pluralize : item}}</span>
     </div>
 </ng-template>
 
