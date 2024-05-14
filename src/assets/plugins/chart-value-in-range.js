@@ -82,7 +82,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                     var g = enter.append("g")
                         .attr("class", d => `${chart._lineTrackCssClass} ${d.valueErrorClass ?? ''}`)
                         .on("click", function (e, d) {
-                            chart.onClick(d);
+                            //chart.onClick(d);
                         })
                         .style("cursor", "pointer");
                     
@@ -107,7 +107,6 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             return `translate(${x},${y})`;
                         });
                     scaleName
-                        .append("g")
                         .append("text")
                         .attr("class", "scale-name")
                         .style("font-size", chart.fontSize)
@@ -125,25 +124,23 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             return `translate(${x},${y})`;
                         });
                     maximumValue
-                        .append("g")
-                        .attr("transform", "translate(0, 10)")
                         .append("text")
+                        .attr("transform", "translate(0, 10)")
                         .style("font-size", chart.fontSize)
                         .text(d => d.maxValue)
                         .attr("text-anchor", "middle")
                         .attr("dominant-baseline", "text-before-edge")
                     maximumValue
-                        .append("g")
-                        .attr("transform", `translate(0, ${chart.fontSize*1.75})`)
                         .append("text")
+                        .attr("transform", `translate(0, ${chart.fontSize*1.75})`)
                         .attr("class", "value-label")
                         .style("font-size", chart.fontSize)
                         .text(d => d.maxValueLabel)
                         .attr("text-anchor", "middle")
                         .attr("dominant-baseline", "text-before-edge")
-                    maximumValue.append("g")
-                        .attr("transform", "translate(0, 5)")
+                    maximumValue
                         .append("polygon")
+                        .attr("transform", "translate(0, 5)")
                         .attr("class", "middle-value-icon")
                         .attr("points", "0,-5 5, 5 -5, 5")
                         .attr('fill', "#ccc")    
@@ -158,25 +155,23 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             return `translate(${x},${y})`;
                         });
                     minimumValue
-                        .append("g")
-                        .attr("transform", "translate(0, 10)")
                         .append("text")
+                        .attr("transform", "translate(0, 10)")
                         .style("font-size", chart.fontSize)
                         .text(d => d.minValue)
                         .attr("text-anchor", "middle")
                         .attr("dominant-baseline", "text-before-edge")
                     minimumValue
-                        .append("g")
-                        .attr("transform", `translate(0, ${chart.fontSize*1.75})`)
                         .append("text")
+                        .attr("transform", `translate(0, ${chart.fontSize*1.75})`)
                         .attr("class", "value-label")
                         .style("font-size", chart.fontSize)
                         .text(d => d.minValueLabel)
                         .attr("text-anchor", "middle")
                         .attr("dominant-baseline", "text-before-edge")
-                    minimumValue.append("g")
-                        .attr("transform", "translate(0, 5)")
+                    minimumValue
                         .append("polygon")
+                        .attr("transform", "translate(0, 5)")
                         .attr("class", "middle-value-icon")
                         .attr("points", "0,-5 5, 5 -5, 5")
                         .attr('fill', "#ccc")
@@ -194,23 +189,35 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             return `translate(${x},${y})`;
                         });
                     middleValue
-                        .append("g")
-                        .attr("transform", `translate(0, ${-1.75*chart.fontSize})`)
                         .append("text")
+                        .attr("transform", `translate(0, ${-1.75*chart.fontSize})`)
                         .attr("class", "value-label")
                         .style("font-size", chart.fontSize)
                         .text(d => d.middleValueLabel)
                         .attr("text-anchor", "middle")
                         .attr("dominant-baseline", "text-after-edge")
                     middleValue
-                        .append("g")
-                        .attr("transform", "translate(0, -10)")
                         .append("text")
+                        .attr("transform", "translate(0, -10)")
                         .style("font-size", chart.fontSize)
                         .text(d => d.middleValue)
                         .attr("text-anchor", "middle")
-                        .attr("dominant-baseline", "text-after-edge")
-                    
+                        .attr("dominant-baseline", "text-after-edge")                    
+                    //Line    
+                    middleValue.append("line")
+                        .attr("class", "middle-value-line")
+                        .attr("y1", 0)
+                        .attr("y2", chart.itemHeight)
+                        .attr('stroke', "#aaa")
+                        .attr('stroke-width', 5)
+                    //Position icon
+                    middleValue
+                        .append("polygon")
+                        .attr("transform", "translate(0, -5)")
+                        .attr("class", "middle-value-icon")
+                        .attr("points", "0,5 5, -5 -5, -5")
+                        .attr('fill', "#ccc")
+                    //Transition
                     middleValue.transition()
                         .duration(1000)
                         .delay( 100 )
@@ -221,24 +228,8 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             d.y = y;
                             return `translate(${x},${y})`;
                         });
-                    //Line    
-                    middleValue.append("line")
-                        .attr("class", "middle-value-line")
-                        .attr("y1", 0)
-                        .attr("y2", chart.itemHeight)
-                        .attr('stroke', "#aaa")
-                        .attr('stroke-width', 5)
-                    //Position icon
-                    middleValue
-                        .append("g")
-                        .attr("transform", "translate(0, -5)")
-                        .append("polygon")
-                        .attr("class", "middle-value-icon")
-                        .attr("points", "0,5 5, -5 -5, -5")
-                        .attr('fill', "#ccc")
-
-                    g.append("title")
-                        .text(d => `${chart._keyAccessor(d)} : ${chart._valueAccessor(d)}`);
+                    /*g.append("title")
+                        .text(d => `${chart._keyAccessor(d)} : ${chart._valueAccessor(d)}`);*/
                 },
                 update => {},
                 exit => {
