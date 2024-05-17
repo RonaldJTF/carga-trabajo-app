@@ -13,7 +13,6 @@ import { TreeTable } from 'primeng/treetable';
 import { Methods } from 'src/app/utils/methods';
 import { AuthenticationService } from 'src/app/services/auth.service';
 import { StructureService } from 'src/app/services/structure.service';
-
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
