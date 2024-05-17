@@ -84,7 +84,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                         .on("click", function (e, d) {
                             //chart.onClick(d);
                         })
-                        .style("cursor", "pointer");
+                        //.style("cursor", "pointer");
                     
                     g.append("rect")
                         .attr("x", d => d.x)
@@ -228,8 +228,8 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             d.y = y;
                             return `translate(${x},${y})`;
                         });
-                    /*g.append("title")
-                        .text(d => `${chart._keyAccessor(d)} : ${chart._valueAccessor(d)}`);*/
+                    g.append("title")
+                        .text(d => `${chart._keyAccessor(d)} : ${chart._valueAccessor(d)}`)
                 },
                 update => {},
                 exit => {

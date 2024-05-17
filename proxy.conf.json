@@ -1,6 +1,6 @@
 {
     "/api": {
-      "target": "http://localhost:9019",
+      "target": "http://172.26.123.123:9500/carga-trabajo-services",
       "secure": false,
       "pathRewrite": {
         "^/api": ""

@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    URLAPI: "http://localhost:9019/api",
+    URLAPI: "http://172.26.123.123:9500/carga-trabajo-services/api",
 };
