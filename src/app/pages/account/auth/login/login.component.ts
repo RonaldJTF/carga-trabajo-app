@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { AuthenticationService } from 'src/app/services/auth.service';
 import { StorageService } from 'src/app/services/storage.service';
+import {CryptojsService} from "../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-login',
@@ -24,7 +25,8 @@ export class LoginComponent {
     private formBuilder : FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    public layoutService: LayoutService
+    public layoutService: LayoutService,
+    private cryptoService: CryptojsService,
   ){this.createLoginForm();}
 
   ngOnInit(): void {
@@ -104,7 +106,8 @@ export class LoginComponent {
       return;
     } else {
       this.loader = true;
-      const { username, password } = this.formLogin.value;
+      let { username, password } = this.formLogin.value;
+      password = this.cryptoService.encryptString(password);
       const payload = { username, password };
       this.authenticationService.login(payload).subscribe({
         next: (response: any) => {

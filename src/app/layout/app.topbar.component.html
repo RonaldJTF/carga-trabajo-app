@@ -31,7 +31,7 @@
                 <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; ">
                     <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"  style="vertical-align: middle; width: 100%; height: auto;"/>
                 </div>
-                <span style=" display: block;" class="px-2">{{person['primerNombre'] | firstName : 'Desconocido'}}</span>
+                <span style=" display: block;" class="px-2">{{person['primerNombre'] | firstName : 'Desconocido'}} {{person['primerApellido']}}</span>
                 <i class="pi pi-angle-down"></i>
             </button>
         </div>

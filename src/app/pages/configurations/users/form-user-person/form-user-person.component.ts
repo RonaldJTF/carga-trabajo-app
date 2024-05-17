@@ -15,6 +15,7 @@ import {MESSAGE} from '../../../../../labels/labels';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {Methods} from 'src/app/utils/methods';
 import {User} from "../../../../models/user";
+import {CryptojsService} from "../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-form-user-person',
@@ -47,7 +48,8 @@ export class FormUserPersonComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private personService: PersonService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private cryptoService: CryptojsService,
   ) {
   }
 
@@ -166,6 +168,7 @@ export class FormUserPersonComponent implements OnInit {
     event.preventDefault();
     const payload = this.formUser.value;
     payload.activo = Methods.parseBooleanToString(payload.activo);
+    payload.password = this.cryptoService.encryptString(payload.password);
     if (this.formUser.invalid) {
       this.formUser.markAllAsTouched();
     } else {

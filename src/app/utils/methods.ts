@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup } from "@angular/for
 export class Methods {
   static parseStringToBoolean(s: string | undefined) : boolean{
     if (s == '1') {
-      return true; 
+      return true;
     } else {
       return false;
     }
@@ -11,7 +11,7 @@ export class Methods {
 
   static parseBooleanToString(input: boolean | undefined) : string{
     if (input) {
-      return "1"; 
+      return "1";
     } else {
       return "0";
     }
@@ -37,7 +37,7 @@ export class Methods {
 
   static hasErrors(control: AbstractControl): boolean {
     return control.invalid && (control.dirty || control.touched);
-  } 
+  }
 
   static hasErrorsFormArray(formArray: FormArray): boolean {
     for (const control of formArray.controls) {
@@ -72,7 +72,7 @@ export class Methods {
     if (day < 10) {
       day = '0' + day;
     }
-    
+
     if (month < 10) {
         month = `0${month}`;
     }
@@ -98,7 +98,7 @@ export class Methods {
     var newColor = '#' + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
     return newColor;
   }
-  
+
   static darkenColor(color, factor) {
     var r = parseInt(color.slice(1, 3), 16);
     var g = parseInt(color.slice(3, 5), 16);

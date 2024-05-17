@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import {Injectable} from '@angular/core';
+import {ConfirmationService} from 'primeng/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfirmationDialogService {
-  constructor(
-    private confirmationService: ConfirmationService,
-  ) {}
+  constructor(private confirmationService: ConfirmationService) {
+  }
 
   private showConfirmationDialog(
     message: string,
@@ -28,7 +27,7 @@ export class ConfirmationDialogService {
     });
   }
 
-  showDeleteConfirmationDialog( acceptAction: () => void): void {
+  showDeleteConfirmationDialog(acceptAction: () => void): void {
     this.showConfirmationDialog(
       '¿Está seguro de eliminar el registro?',
       'Confirmación',

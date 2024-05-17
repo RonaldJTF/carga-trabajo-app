@@ -94,6 +94,7 @@ export class LayoutService {
     }
 
     onConfigUpdate() {
+      console.log(this.config);
         this.configUpdate.next(this.config);
     }
 

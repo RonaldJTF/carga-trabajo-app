@@ -15,10 +15,7 @@ export class AppConfigComponent implements OnInit {
 
   typeConfigList: string[] = ['menuMode', 'scale', 'ripple', 'inputStyle'];
 
-  constructor(
-    public layoutService: LayoutService,
-    private storageService: StorageService
-  ) {
+  constructor(public layoutService: LayoutService, private storageService: StorageService) {
   }
 
   ngOnInit() {
@@ -78,7 +75,10 @@ export class AppConfigComponent implements OnInit {
   }
 
   getConfigLocalStorage(config: string) {
-    this.layoutService.config[config] = this.storageService.getLocalStorage(config);
+    let configOption = this.storageService.getLocalStorage(config);
+    if (configOption) {
+      this.layoutService.config[config] = configOption;
+    }
     if (config === 'scale') {
       this.applyScale();
     }
