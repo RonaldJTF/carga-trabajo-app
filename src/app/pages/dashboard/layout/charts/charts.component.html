@@ -13,7 +13,7 @@
           </div>
         </div>
         <div>
-          <button pButton type="button" icon="pi pi-cloud-download"
+          <button pRipple pButton type="button" icon="pi pi-cloud-download"
                   class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar" (click)="downloadReport()"></button>
         </div>
       </div>
@@ -22,11 +22,11 @@
                     [filter]="true" (onNodeSelect)="onChangeDependency()"  containerStyleClass="w-full"
                     [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
           <ng-template let-node pTemplate="default">
-              <div class="flex align-items-center cursor-pointer">
+              <div class="flex align-items-center cursor-pointer" pRipple>
                 <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
                     <img [src]="node.data.srcIcono"
                         [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                        style="width: 100%; height: auto" />
+                        style="width: 100%; height: auto" alt="" />
                 </div>
                 <ng-template #sNoItemIcon>
                     <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">

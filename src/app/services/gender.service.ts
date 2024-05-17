@@ -16,6 +16,5 @@ export class GenderService {
 
   getDocumentType(): Observable<Gender[]> {
     return this.webRequestService.getWithHeaders(this.pathGender);
-    // return this.http.get(this.URLBASE.concat(this.pathTipoDocumento)).pipe(map((response) => response as DocumentType[]));
   }
 }

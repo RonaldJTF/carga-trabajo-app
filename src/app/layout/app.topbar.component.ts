@@ -41,7 +41,7 @@ export class AppTopBarComponent implements OnInit {
 
   menuItems: MenuItem[] = [
     {
-      label: 'Profile',
+      label: 'Perfil',
       icon: 'pi pi-user',
       command: () => {
         let idPerson: number;

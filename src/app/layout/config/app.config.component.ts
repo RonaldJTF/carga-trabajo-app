@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {LayoutService} from '../service/app.layout.service';
 import {MenuService} from '../app.menu.service';
 import {StorageService} from '../../services/storage.service';
@@ -8,11 +8,12 @@ import {StorageService} from '../../services/storage.service';
   templateUrl: './app.config.component.html',
 })
 export class AppConfigComponent implements OnInit {
+
   @Input() minimal: boolean = false;
 
   scales: number[] = [12, 13, 14, 15, 16];
 
-  typeConfigList: string[]= ['menuMode', 'scale', 'ripple', 'inputStyle'];
+  typeConfigList: string[] = ['menuMode', 'scale', 'ripple', 'inputStyle'];
 
   constructor(
     public layoutService: LayoutService,
@@ -72,20 +73,13 @@ export class AppConfigComponent implements OnInit {
   }
 
   setConfigLocalStorage(key: string, value: any) {
-    const storedConfig = this.storageService.getLocalStorage(key);
-    if (storedConfig) {
-      this.storageService.removeLocalStorageItem(key);
-    }
-    this.storageService.setLocalStorage(key, value);
+    this.storageService.clearAndSetItemInLocalStorage(key, value);
     this.getConfigLocalStorage(key);
   }
 
   getConfigLocalStorage(config: string) {
-    const storedConfig = this.storageService.getLocalStorage(config);
-    if (storedConfig) {
-      this.layoutService.config[config] = storedConfig;
-    }
-    if (config === 'scale'){
+    this.layoutService.config[config] = this.storageService.getLocalStorage(config);
+    if (config === 'scale') {
       this.applyScale();
     }
   }

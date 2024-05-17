@@ -50,11 +50,11 @@ export class AuthenticationService {
       const currentTime = Math.floor(new Date().getTime() / 1000);
       const decodedToken: any = jwt_decode(token);
       if (decodedToken.exp < currentTime) {
-          this.messageService.add({ 
-            severity: 'info', 
-            summary: 'Sesión finalizada', 
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Sesión finalizada',
             detail: 'Tu sesión ha finalizado. Por favor, vuelve a iniciar sesión.',
-            life: 3000 
+            life: 3000
           })
           this.logout()
         return; // El token ha expirado
@@ -85,9 +85,9 @@ export class AuthenticationService {
     }
     return null;
   }
-  
+
   logout() {
-    this.storageService.clearLocalStorage();
+    //this.storageService.clearLocalStorage();
     this.storageService.clearSessionStorage();
     this.loguedPerson_.next(null);
     this.lastUrl = this.router.url;

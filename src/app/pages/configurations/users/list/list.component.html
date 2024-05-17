@@ -9,8 +9,7 @@
                 <div class="card p-0">
                     <p-table #dt [value]="people" rowGroupMode="subheader" sortField="order" sortMode="single"
                         [paginator]="true" [rows]="10" [(selection)]="selectedPeople" selectionMode="multiple"
-                        [globalFilterFields]="['primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'tipoDocumento.descripcion','tipoDocumento.abreviatura', 'documento']"
-                        [paginator]="true" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                        [globalFilterFields]="['primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'tipoDocumento.descripcion','tipoDocumento.abreviatura', 'documento']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                         currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
                         <ng-template pTemplate="caption">
                             <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
@@ -57,11 +56,11 @@
                                 <td>
                                     <p-tableCheckbox [value]="person"></p-tableCheckbox>
                                 </td>
-                                <td class="flex align-items-center cursor-pointer" (click)="editPerson(person.id)">
+                                <td pRipple class="flex align-items-center cursor-pointer" (click)="editPerson(person.id)">
                                     <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
                                         <img [src]="person.srcFoto"
                                             [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                                            style="width: 100%; height: auto" />
+                                            style="width: 100%; height: auto"  alt=""/>
                                     </div>
                                     <div class="flex flex-column align-items-center justify-content-start ml-2">
                                         <span class="image-text ml-2 w-full">

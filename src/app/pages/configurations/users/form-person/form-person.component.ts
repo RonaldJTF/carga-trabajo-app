@@ -24,13 +24,9 @@ export class FormPersonComponent implements OnInit {
 
   personId: number = null;
 
-  loading = [false, false, false, false];
-
   formPerson!: FormGroup;
 
   formData: FormData = new FormData();
-
-  uploadedFiles: any[] = [];
 
   loadFile: boolean = false;
 
@@ -276,22 +272,4 @@ export class FormPersonComponent implements OnInit {
     }
   }
 
-  onFileSelected(event: any): void {
-    this.formData = new FormData();
-    const file: File = event.files[0];
-    this.formData.append('file', file);
-  }
-
-  onSelectFile(event: any) {
-    this.uploadedFiles = [];
-    for (const file of event.files) {
-      this.uploadedFiles.push(file);
-    }
-  }
-
-  onRemoveFile(event: any) {
-    this.uploadedFiles = this.uploadedFiles.filter(
-      (objeto) => objeto.name !== event.file.name
-    );
-  }
 }

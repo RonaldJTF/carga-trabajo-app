@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -49,8 +49,8 @@ import { MatrizlevantamientoService } from './services/matrizlevantamiento.servi
     }),
   ],
   providers: [
-    MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, 
-    StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService, 
+    MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService,
+    StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService,
     UserService, MatrizlevantamientoService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true },

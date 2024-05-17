@@ -1,11 +1,13 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
+import {LayoutService} from "../../../layout/service/app.layout.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements OnChanges {
+export class BarChartComponent implements OnChanges, OnDestroy {
 
   @Input() labels: string[];
   @Input() data: string[];
@@ -17,26 +19,33 @@ export class BarChartComponent implements OnChanges {
   barData: any;
   barOptions: any;
 
+  subscription!: Subscription;
+
+  constructor(private layoutService: LayoutService) {
+    this.subscription = this.layoutService.configUpdate$.subscribe(() => {
+      this.initChart();
+    });
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     this.initChart();
   }
 
   initChart() {
+
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
-    const textColorSecondary = documentStyle.getPropertyValue(
-      '--text-color-secondary'
-    );
+    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
     this.barData = {
       labels: this.labels,
       datasets: [
         {
-          label: 'Total de horas',
+          label: 'Total horas',
           backgroundColor: documentStyle.getPropertyValue('--primary-500'),
           borderColor: documentStyle.getPropertyValue('--primary-500'),
-          data: this.data,
+          data: this.data
         },
       ],
     };
@@ -46,7 +55,7 @@ export class BarChartComponent implements OnChanges {
         legend: {
           labels: {
             fontColor: textColor,
-          },
+          }
         },
       },
       scales: {
@@ -79,4 +88,9 @@ export class BarChartComponent implements OnChanges {
     };
   }
 
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

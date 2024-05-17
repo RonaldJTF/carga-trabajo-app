@@ -3,7 +3,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Person} from 'src/app/models/person';
 import {PersonService} from '../../../../services/person.service';
 import {UserService} from 'src/app/services/user.service';
-import {RolesUser} from 'src/app/models/rolesuser';
 import {
   FormBuilder,
   FormControl,
@@ -31,8 +30,6 @@ export class FormUserPersonComponent implements OnInit {
 
   personId: number = null;
 
-  rolesUser: RolesUser[] = [];
-
   formUser: FormGroup;
 
   roles: Rol[];
@@ -44,8 +41,6 @@ export class FormUserPersonComponent implements OnInit {
   updateMode: boolean = false;
 
   deleting: boolean = false;
-
-  stateSwitch: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -64,10 +59,6 @@ export class FormUserPersonComponent implements OnInit {
     this.formUser = this.createFormUser();
 
     this.getUserPerson(this.personId);
-  }
-
-  get userRoles(): Rol[] {
-    return this.person.usuario?.roles;
   }
 
   get userRolesFormControl(): FormControl {
@@ -187,11 +178,11 @@ export class FormUserPersonComponent implements OnInit {
 
   updateUser(id: number, payload: any): void {
     this.userService.update(id, payload).subscribe({
-      next: (e) => {
+      next: () => {
         this.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });
@@ -199,12 +190,12 @@ export class FormUserPersonComponent implements OnInit {
 
   createUser(payload: any): void {
     this.userService.create(payload).subscribe({
-      next: (e) => {
+      next: () => {
         this.formUser.reset();
         this.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });
@@ -218,7 +209,7 @@ export class FormUserPersonComponent implements OnInit {
         this.goBack();
         this.deleting = false;
       },
-      error: (error) => {
+      error: () => {
         this.deleting = false;
       },
     });
@@ -246,47 +237,35 @@ export class FormUserPersonComponent implements OnInit {
 
   addValidateRequiredUser(): void {
     if (this.formUser) {
-      //Obtenemos el control ya instanciado en el formulario.
-      let userControl = this.formUser.get('username');
-      let passControl = this.formUser.get('password');
+      const controls = ['username', 'password'];
 
-      //Quitamos todas las validaciones del control.
-      userControl?.clearValidators();
-      passControl?.clearValidators();
+      controls.forEach(controlName => {
+        const control = this.formUser.get(controlName);
 
-      //Agregamos la validacion:
-      userControl?.setValidators([Validators.required]);
-      passControl?.setValidators([Validators.required]);
-
-      //Para evitar problemas con la validacion marcamos el campo con
-      // dirty, de esta manera se ejecutan de nuevo las validaciones
-      userControl?.markAsDirty();
-      passControl?.markAsDirty();
-      //Recalculamos el estado del campo para que cambie el estado
-      // del formulario.
-      userControl?.updateValueAndValidity();
-      passControl?.updateValueAndValidity();
+        if (control) {
+          control.clearValidators();
+          control.setValidators([Validators.required]);
+          control.markAsDirty();
+          control.updateValueAndValidity();
+        }
+      });
     }
   }
 
   removeValidateRequiredUser(): void {
     if (this.formUser) {
-      //Obtenemos el control ya instanciado en el formulario.
-      let userControl = this.formUser.get('username');
-      let passControl = this.formUser.get('password');
+      const controls = ['username', 'password'];
 
-      //Quitamos todas las validaciones del control.
-      userControl?.clearValidators();
-      passControl?.clearValidators();
+      controls.forEach(controlName => {
+        const  control = this.formUser.get(controlName);
 
-      //Para evitar problemas con la validacion marcamos el campo con
-      // dirty, de esta manera se ejecutan de nuevo las validaciones
-      userControl?.markAsDirty();
-      passControl?.markAsDirty();
-      //Recalculamos el estado del campo para que cambie el estado
-      // del formulario.
-      userControl?.updateValueAndValidity();
-      passControl?.updateValueAndValidity();
+        if (control){
+          control.clearValidators();
+          control.markAsDirty();
+          control.updateValueAndValidity();
+        }
+      })
     }
   }
+
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
@@ -31,7 +31,6 @@ export class LoginComponent {
     this.hasLogin();
     this.returnUrl = this.route.snapshot.queryParams["returnUrl"] || "/";
   }
-
 
   createLoginForm(): void {
     this.formLogin = this.formBuilder.group({
@@ -120,4 +119,5 @@ export class LoginComponent {
       });
     }
   }
+
 }
