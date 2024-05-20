@@ -7,6 +7,7 @@ import {DocumentTypeService} from 'src/app/services/documenttype.service';
 import {DocumentType} from 'src/app/models/documenttype';
 import {Gender} from 'src/app/models/gender';
 import {GenderService} from 'src/app/services/gender.service';
+import {MESSAGE} from "../../../../../labels/labels";
 
 @Component({
   selector: 'app-form-person',
@@ -90,7 +91,7 @@ export class FormPersonComponent implements OnInit {
       primerApellido: ['', Validators.compose([Validators.required])],
       segundoApellido: [''],
       idTipoDocumento: ['', Validators.required],
-      documento: ['', Validators.compose([Validators.required])],
+      documento: [null, Validators.compose([Validators.required, Validators.min(0)])],
       correo: [
         '',
         Validators.compose([
@@ -99,7 +100,7 @@ export class FormPersonComponent implements OnInit {
           Validators.maxLength(120),
         ]),
       ],
-      telefono: ['', Validators.required],
+      telefono: [null,Validators.min(0)],
       idGenero: ['', Validators.required],
     });
   }
@@ -160,10 +161,7 @@ export class FormPersonComponent implements OnInit {
           this.personCopy = data;
           this.assignValuesToForm(this.person);
         }
-      },
-      error: (err) => {
-        console.log(err.error);
-      },
+      }
     });
   }
 
@@ -272,4 +270,5 @@ export class FormPersonComponent implements OnInit {
     }
   }
 
+  protected readonly MESSAGE = MESSAGE;
 }

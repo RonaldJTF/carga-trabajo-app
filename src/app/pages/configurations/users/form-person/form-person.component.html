@@ -11,7 +11,8 @@
           <button pButton pRipple type="button" icon="pi pi-camera"
                   class="p-button-rounded p-button-text p-button-info _button-icon"
                   pTooltip="Seleccionar foto" tooltipPosition="bottom">
-            <input class="cursor-pointer" id="foto" type="file" #fileInput (change)="onFileSelect(fileInput)"/>
+            <input class="cursor-pointer" id="foto" type="file" #fileInput (change)="onFileSelect(fileInput)"
+                   style="z-index: 1000"/>
           </button>
         </div>
         <div *ngIf="loadFile" class="_badge-container m-1">
@@ -74,8 +75,10 @@
           <div class="field p-fluid col-12 m-0">
             <label class="font-medium" for="idTipoDocumento">Tipo de documento</label>
             <p-dropdown id="idTipoDocumento" inputId="idTipoDocumento" [autoDisplayFirst]="false"
-                        [options]="documentTypes" optionValue="id" optionLabel="descripcion" [filter]="true" [showClear]="true"
-                        formControlName="idTipoDocumento"></p-dropdown>
+                        [options]="documentTypes" optionValue="id" optionLabel="descripcion" [filter]="true"
+                        [showClear]="true"
+                        formControlName="idTipoDocumento" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
             <div *ngIf="tipoDocumentoNoValido">
               <div *ngIf="controls['idTipoDocumento'].errors?.['required']">
                 <small class="p-error">Seleccione un tipo de documento</small>
@@ -94,7 +97,9 @@
           <div class="field p-fluid col-12 m-0 pt-0">
             <label class="font-medium" for="idGenero">Género</label>
             <p-dropdown id="idGenero" inputId="idGenero" [autoDisplayFirst]="false" [options]="genders" optionValue="id"
-                        optionLabel="nombre" [filter]="true" [showClear]="true" formControlName="idGenero"></p-dropdown>
+                        optionLabel="nombre" [filter]="true" [showClear]="true" formControlName="idGenero"
+                        [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
+                        [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
             <div *ngIf="generoNoValido">
               <div *ngIf="controls['idGenero'].errors?.['required']">
                 <small class="p-error">Seleccione un género</small>

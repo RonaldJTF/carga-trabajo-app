@@ -9,7 +9,7 @@ export interface StructureState {
   mustRecharge: boolean;
   expandedNodes: any[];
 }
-  
+
 export const initialState: StructureState = {
   items: [],
   item: new Structure(),
@@ -29,18 +29,17 @@ export const structureReducer = createReducer(
   on(StructureActions.addToList, (state, { structure }) =>{
     const items = JSON.parse(JSON.stringify(state.items));
     let parentStructure = findStructure(structure.idPadre, items);
-    console.log(parentStructure)
     if (parentStructure){
       if (!parentStructure.subEstructuras){parentStructure.subEstructuras = []}
       parentStructure.subEstructuras.push(structure)
     }else{
       items.push(structure);
     }
-    return { ...state, 
-            items:[...items], 
+    return { ...state,
+            items:[...items],
             dependency: findStructure(state.dependency?.id, items)
-          };  
-  }), 
+          };
+  }),
 
 
   on(StructureActions.removeFromList, (state, { id }) => {
@@ -75,21 +74,21 @@ export const structureReducer = createReducer(
     if (updatedStructure){
       Object.assign(updatedStructure, structure);
     }
-    return { ...state, 
-            items:items, 
+    return { ...state,
+            items:items,
             dependency: findStructure(state.dependency?.id, items)
-          };  
-  }), 
+          };
+  }),
 
   on(StructureActions.setMustRecharge, (state, { mustRecharge }) => ({
     ...state,
     mustRecharge: mustRecharge,
   })),
 
- 
+
   on(StructureActions.addToExpandedNodes, (state, { id }) =>{
-    return { ...state, expandedNodes:  [...state.expandedNodes, id],};  
-  }), 
+    return { ...state, expandedNodes:  [...state.expandedNodes, id],};
+  }),
 
 
   on(StructureActions.removeFromExpandedNodes, (state, { id }) => {
@@ -100,31 +99,31 @@ export const structureReducer = createReducer(
   on(StructureActions.setActivityToStructure, (state, { activity }) =>{
     const items = JSON.parse(JSON.stringify(state.items));
     let updatedStructure = findStructure(activity.idEstructura, items);
-    if (updatedStructure){  
+    if (updatedStructure){
       if (!updatedStructure.actividad){
         updatedStructure.actividad = activity;
       }else{
         Object.assign(updatedStructure.actividad, activity);
       }
     }
-    return { ...state, 
-            items:items, 
+    return { ...state,
+            items:items,
             dependency: findStructure(state.dependency?.id, items)
-          };  
-  }), 
+          };
+  }),
 
 
   on(StructureActions.removeActivityFromStructure, (state, { idStructure }) =>{
     const items = JSON.parse(JSON.stringify(state.items));
     let updatedStructure = findStructure(idStructure, items);
-    if (updatedStructure){  
+    if (updatedStructure){
       updatedStructure.actividad = null;
     }
-    return { ...state, 
-            items:items, 
+    return { ...state,
+            items:items,
             dependency: findStructure(state.dependency?.id, items)
-          };  
-  }), 
+          };
+  }),
 
 
 );

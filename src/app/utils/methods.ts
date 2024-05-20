@@ -1,7 +1,8 @@
-import { AbstractControl, FormArray, FormControl, FormGroup } from "@angular/forms";
+import {AbstractControl, FormArray, FormControl, FormGroup} from "@angular/forms";
 
 export class Methods {
-  static parseStringToBoolean(s: string | undefined) : boolean{
+
+  static parseStringToBoolean(s: string | undefined): boolean {
     if (s == '1') {
       return true;
     } else {
@@ -9,7 +10,7 @@ export class Methods {
     }
   }
 
-  static parseBooleanToString(input: boolean | undefined) : string{
+  static parseBooleanToString(input: boolean | undefined): string {
     if (input) {
       return "1";
     } else {
@@ -17,7 +18,7 @@ export class Methods {
     }
   }
 
-  static generateRandomColor(): string{
+  static generateRandomColor(): string {
     const colors = ["red", "blue", "green", "yellow", "orange", "purple"];
     return colors[Math.floor(Math.random() * colors.length)];
   }
@@ -74,7 +75,7 @@ export class Methods {
     }
 
     if (month < 10) {
-        month = `0${month}`;
+      month = `0${month}`;
     }
 
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;

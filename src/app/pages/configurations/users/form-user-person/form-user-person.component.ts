@@ -108,10 +108,7 @@ export class FormUserPersonComponent implements OnInit {
           this.assignValuesToForm(this.person.usuario);
         }
         this.loadRoles();
-      },
-      error: (err) => {
-        console.log(err.error);
-      },
+      }
     });
   }
 

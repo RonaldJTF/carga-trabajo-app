@@ -144,7 +144,7 @@ export class ListComponent implements OnInit, OnDestroy{
     }else if(this.isOperator){
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
-        extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download', command: (e) => {console.log("OMEEEEEEEEEEE")},  items: [
+        extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download',  items: [
           {label: 'PDF', icon: 'pi pi-file-pdf', id:"pdf", command: (e) => { this.download(e, structure.id) }},
           {label: 'Excel', icon: 'pi pi-file-excel', id:"excel", command: (e) => { this.download(e, structure.id) }},
         ]})
@@ -216,7 +216,6 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   desmarkAll(isDependency: boolean){
-    console.log(isDependency)
     if(isDependency){
       this.selectedNodesOfDependency = [];
     }else{
@@ -233,7 +232,6 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   goToPage(event: any, structure: Structure){
-    console.log(structure)
     const path = event.item.data.path;
     const idStructure = event.item.id;
     this.router.navigate([path], { relativeTo: this.route, skipLocationChange: true, queryParams: {idStructure: idStructure, idActivity: structure?.actividad?.id} });

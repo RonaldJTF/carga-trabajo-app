@@ -17,6 +17,7 @@
     opacity: 0;
     position: absolute;
     top: 0;
+    cursor: pointer;
   }
 }
 
@@ -48,4 +49,7 @@
   padding: 0px;
 }
 
+:host ::ng-deep  .p-dropdown-empty-message{
+  text-align: center;
+}
 

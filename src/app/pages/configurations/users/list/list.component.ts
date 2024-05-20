@@ -73,9 +73,6 @@ export class ListComponent {
       next: (data) => {
         this.people = data;
       },
-      error: (err) => {
-        console.log(err);
-      },
       complete: () => {
         this.loading = false;
       },

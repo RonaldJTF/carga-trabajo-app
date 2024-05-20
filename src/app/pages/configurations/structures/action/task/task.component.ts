@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
 })
 export class TaskComponent implements OnInit, OnDestroy {
 
-  MESSAGE = MESSAGE; 
+  MESSAGE = MESSAGE;
 
   formActivity !: FormGroup;
   idEstructura: number;
@@ -137,7 +137,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     this.formActivity.get('tiempoMaximo').setValue(this.activity.tiempoMaximo);
     this.formActivity.get('tiempoMinimo').setValue(this.activity.tiempoMinimo);
     this.formActivity.get('tiempoPromedio').setValue(this.activity.tiempoPromedio);
-    this.formActivity.get('nivel').setValue({id: this.activity.idNivel});
+    this.formActivity.get('nivel').setValue({...this.activity.nivel, id: this.activity.idNivel});
 
   }
 
@@ -166,7 +166,7 @@ export class TaskComponent implements OnInit, OnDestroy {
       },
     });
   }
-  
+
   onSubmitActivity(event : Event): void {
     let payload = {...this.activity, ...this.formActivity.value}
     payload.idNivel = payload.nivel?.id

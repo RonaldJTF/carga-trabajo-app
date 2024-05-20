@@ -43,7 +43,7 @@ export class ChartsComponent implements OnInit {
   }
 
   public getLevels(data: Activity[]) {
-    this.levels = data?.map(item => item.nivel);
+    this.levels = data?.map(item => item.nivel?.descripcion);
     this.timesTareas = data.map(item => this.minutesToHours(item.tiempoTotalTarea));
 
     this.personasRequeridas = data.map(item => parseFloat(this.minutesToHours(item.tiempoTotalTarea)) / 167);
@@ -96,7 +96,7 @@ export class ChartsComponent implements OnInit {
   onChangeDependency() {
     this.getStatistics(this.dependency.data.id);
   }
-  
+
   downloadReport() {
     this.structureService.downloadReport('pdf', this.dependency.data.id).subscribe({});
   }

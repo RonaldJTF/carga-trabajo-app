@@ -1,13 +1,13 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {LayoutService} from '../service/app.layout.service';
-import {MenuService} from '../app.menu.service';
 import {StorageService} from '../../services/storage.service';
+import {ThemeService} from "../service/theme.service";
 
 @Component({
   selector: 'app-config',
   templateUrl: './app.config.component.html',
 })
-export class AppConfigComponent implements OnInit {
+export class AppConfigComponent {
 
   @Input() minimal: boolean = false;
 
@@ -15,11 +15,11 @@ export class AppConfigComponent implements OnInit {
 
   typeConfigList: string[] = ['menuMode', 'scale', 'ripple', 'inputStyle'];
 
-  constructor(public layoutService: LayoutService, private storageService: StorageService) {
+  constructor(public layoutService: LayoutService, private storageService: StorageService, private themeService: ThemeService) {
   }
 
   ngOnInit() {
-    this.getThemeLocalStorage();
+   // this.getThemeLocalStorage();
     this.initConfig();
   }
 
@@ -89,58 +89,20 @@ export class AppConfigComponent implements OnInit {
   }
 
   changeTheme(theme: string, colorScheme: string) {
-    const storedTheme = this.storageService.getLocalStorage('theme');
-    const storedColorScheme = this.storageService.getLocalStorage('colorSchema');
+    let storedTheme = this.storageService.getLocalStorage('theme');
+    let storedColorScheme = this.storageService.getLocalStorage('colorScheme');
 
     if (storedTheme && storedColorScheme) {
       this.storageService.removeLocalStorageItem('theme');
-      this.storageService.removeLocalStorageItem('colorSchema');
+      this.storageService.removeLocalStorageItem('colorScheme');
     }
 
     this.storageService.setLocalStorage('theme', theme);
-    this.storageService.setLocalStorage('colorSchema', colorScheme);
+    this.storageService.setLocalStorage('colorScheme', colorScheme);
 
     if (storedTheme !== theme) {
-      this.getThemeLocalStorage();
+      this.themeService.getThemeLocalStorage();
     }
-  }
-
-  getThemeLocalStorage() {
-    const storedTheme = this.storageService.getLocalStorage('theme');
-    const storedColorScheme = this.storageService.getLocalStorage('colorSchema');
-
-    if (storedTheme && storedColorScheme) {
-      const themeLink = <HTMLLinkElement>document.getElementById('theme-css');
-      const newHref = themeLink.getAttribute('href')!.replace(
-        this.layoutService.config.theme,
-        storedTheme
-      );
-
-      if (this.layoutService.config.theme !== storedTheme) {
-        this.replaceThemeLink(newHref, () => {
-          this.layoutService.config.theme = storedTheme;
-          this.layoutService.config.colorScheme = storedColorScheme;
-          this.layoutService.onConfigUpdate();
-        });
-      }
-    }
-  }
-
-  replaceThemeLink(href: string, onComplete: Function) {
-    const id = 'theme-css';
-    const themeLink = <HTMLLinkElement>document.getElementById('theme-css');
-    const cloneLinkElement = <HTMLLinkElement>themeLink.cloneNode(true);
-
-    cloneLinkElement.setAttribute('href', href);
-    cloneLinkElement.setAttribute('id', id + '-clone');
-
-    themeLink.parentNode!.insertBefore(cloneLinkElement, themeLink.nextSibling);
-
-    cloneLinkElement.addEventListener('load', () => {
-      themeLink.remove();
-      cloneLinkElement.setAttribute('id', id);
-      onComplete();
-    });
   }
 
   decrementScale() {

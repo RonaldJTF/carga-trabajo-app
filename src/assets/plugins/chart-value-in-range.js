@@ -50,7 +50,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
 
                 d.x_minValue = d.x;
                 d.y_minValue = d.y + chart.itemHeight;
-                
+
                 d.x_maxValue = d.x + chart.itemWidth;
                 d.y_maxValue = d.y + chart.itemHeight;
 
@@ -65,7 +65,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                 if (d.maxValue < d.minValue || d.middleValue>d.maxValue  || d.middleValue<d.minValue ){
                     d.valueErrorClass = "value-in-range-error";
                 }
-                
+
             }
         );
         return data;
@@ -74,7 +74,6 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
     _drawChart() {
         var chart = this;
         let da = chart._calculateChartParams(chart.group().top(Infinity))
-        console.log(chart._g.selectAll("." + chart._lineTrackCssClass))
         chart._g.selectAll("." + chart._lineTrackCssClass)
             .data(chart.data())
             .join(
@@ -85,7 +84,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             //chart.onClick(d);
                         })
                         //.style("cursor", "pointer");
-                    
+
                     g.append("rect")
                         .attr("x", d => d.x)
                         .attr("y", d => d.y)
@@ -96,7 +95,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                         .attr("fill",  "#eee")
                         .attr("rx",  chart.itemRadiusBorder)
                         .attr('ry',  chart.itemRadiusBorder)
-                    
+
                     /***************SCALE NAME******************/
                     let scaleName = g.append("g")
                         .attr('transform', d => {
@@ -143,7 +142,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                         .attr("transform", "translate(0, 5)")
                         .attr("class", "middle-value-icon")
                         .attr("points", "0,-5 5, 5 -5, 5")
-                        .attr('fill', "#ccc")    
+                        .attr('fill', "#ccc")
 
                     /**************MINIMUM VALUE****************/
                     let minimumValue = g.append("g")
@@ -202,8 +201,8 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                         .style("font-size", chart.fontSize)
                         .text(d => d.middleValue)
                         .attr("text-anchor", "middle")
-                        .attr("dominant-baseline", "text-after-edge")                    
-                    //Line    
+                        .attr("dominant-baseline", "text-after-edge")
+                    //Line
                     middleValue.append("line")
                         .attr("class", "middle-value-line")
                         .attr("y1", 0)
@@ -228,8 +227,8 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                             d.y = y;
                             return `translate(${x},${y})`;
                         });
-                    g.append("title")
-                        .text(d => `${chart._keyAccessor(d)} : ${chart._valueAccessor(d)}`)
+                    //g.append("title")
+                    //   .text(d => `${chart._keyAccessor(d)} : ${chart._valueAccessor(d)}`)
                 },
                 update => {},
                 exit => {

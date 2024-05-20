@@ -1,3 +1,5 @@
+import {Level} from "./level";
+
 export class Activity {
   id?: number;
   frecuencia?: number;
@@ -7,6 +9,6 @@ export class Activity {
   idNivel?: number;
   idEstructura?: number;
   descripcion?: string;
-  nivel?: string;
+  nivel?: Level;
   tiempoTotalTarea?: number
 }
