@@ -1,0 +1,30 @@
+<form class="p-0" [formGroup]="form">
+
+  <div class="field p-fluid">
+    <label htmlFor="nombre" class="font-medium">Nombre</label>
+    <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+    <div *ngIf="nombreNoValido">
+      <div *ngIf="controls['nombre'].errors?.['required']">
+        <small class="p-error">Ingrese un nombre</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="field p-fluid">
+    <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+    <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
+              formControlName="descripcion"></textarea>
+    <div *ngIf="descripcionNoValido">
+      <div *ngIf="controls['descripcion'].errors?.['required']">
+        <small class="p-error">Ingrese una descripcion</small>
+      </div>
+    </div>
+  </div>
+
+  <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmit($event)"
+                          (cancel)="onCancel($event)" (delete)="onDelete($event)"
+                          [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
+                          [deleting]="deleting" [disabledCreateOrUpdateButton]="form.invalid">
+  </app-form-action-button>
+
+</form>
