@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-activity',
-  templateUrl: './activity.component.html',
-  styleUrls: ['./activity.component.scss']
+  templateUrl: './task.component.html',
+  styleUrls: ['./task.component.scss']
 })
-export class ActivityComponent {
+export class TaskComponent {
 
 }

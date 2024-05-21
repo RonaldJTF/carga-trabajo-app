@@ -4,7 +4,7 @@ import { StagesRoutingModule } from './stages-routing.module';
 import {SharedModule} from "../../../../shared/shared.module";
 import {ListComponent} from "./list/list.component";
 import {StageComponent} from "./stage/stage.component";
-import {ActivityComponent} from "./activity/activity.component";
+import {TaskComponent} from "./task/task.component";
 import { StagesComponent } from './stages.component';
 
 
@@ -12,7 +12,7 @@ import { StagesComponent } from './stages.component';
   declarations: [
     ListComponent,
     StageComponent,
-    ActivityComponent,
+    TaskComponent,
     StagesComponent
   ],
   imports: [

@@ -28,6 +28,7 @@ import { GenderService } from './services/gender.service';
 import { PersonService } from './services/person.service';
 import { UserService } from './services/user.service';
 import { MatrizlevantamientoService } from './services/matrizlevantamiento.service';
+import {workplanReducer} from "./store/workplan.reducer";
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { MatrizlevantamientoService } from './services/matrizlevantamiento.servi
     ToastModule,
     ConfirmDialogModule,
     QuillModule.forRoot(),
-    StoreModule.forRoot({ structure: structureReducer}),
+    StoreModule.forRoot({ structure: structureReducer, workplan: workplanReducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production

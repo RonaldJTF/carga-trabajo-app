@@ -31,6 +31,7 @@ export class AppMenuComponent implements OnInit {
           items: [
             { label: 'Usuarios', icon: 'pi pi-user', color:'cyan', description: 'Gestión de usuarios', routerLink: ['/configurations/users'], visible: this.isAdmin },
             { label: 'Estructuras', icon: 'pi pi-sitemap', color:'blue', description: 'Gestión de dependencias, procesos, procedimientos y actividades',  routerLink: ['/configurations/structures'] },
+            { label: 'Planes de trabajo', icon: 'pi pi-calendar', color:'green', description: 'Gestión de planes de trabajos',  routerLink: ['/configurations/workplans'] },
           ],
         },
       ];

@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 
 import { ActionRoutingModule } from './action-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { TaskComponent } from './task/task.component';
+import { ActivityComponent } from './activity/activity.component';
 
 
 @NgModule({
   declarations: [
-    TaskComponent
+    ActivityComponent
   ],
   imports: [
     ActionRoutingModule,

@@ -100,7 +100,7 @@ export class FormPersonComponent implements OnInit {
           Validators.maxLength(120),
         ]),
       ],
-      telefono: [null,Validators.min(0)],
+      telefono: [null, Validators.compose([Validators.min(0), Validators.max(9999999999)])],
       idGenero: ['', Validators.required],
     });
   }
@@ -239,6 +239,7 @@ export class FormPersonComponent implements OnInit {
 
   onFileSelect(input: HTMLInputElement): void {
     this.formData.delete('file');
+
     function formatBytes(bytes: number): string {
       const UNITS = ['Bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
       const factor = 1024;

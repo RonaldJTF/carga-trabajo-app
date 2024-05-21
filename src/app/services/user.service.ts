@@ -1,4 +1,3 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {User} from '../models/user';
@@ -12,9 +11,7 @@ export class UserService {
   private pathUser = 'user';
   private pathRole = 'role';
 
-  constructor(
-    private webRequestService: WebRequestService
-  ) {
+  constructor(private webRequestService: WebRequestService) {
   }
 
   loadRoles(): Observable<Rol[]> {

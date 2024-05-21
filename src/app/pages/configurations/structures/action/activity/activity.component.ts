@@ -14,11 +14,11 @@ import { ValidateRange } from 'src/app/validations/validateRange';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-task',
-  templateUrl: './task.component.html',
-  styleUrls: ['./task.component.scss']
+  selector: 'app-activity',
+  templateUrl: './activity.component.html',
+  styleUrls: ['./activity.component.scss']
 })
-export class TaskComponent implements OnInit, OnDestroy {
+export class ActivityComponent implements OnInit, OnDestroy {
 
   MESSAGE = MESSAGE;
 

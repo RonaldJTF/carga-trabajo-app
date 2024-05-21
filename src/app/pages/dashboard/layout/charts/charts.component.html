@@ -14,35 +14,41 @@
         </div>
         <div>
           <button pRipple pButton type="button" icon="pi pi-cloud-download"
-                  class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar" (click)="downloadReport()"></button>
+                  class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar"
+                  (click)="downloadReport()"></button>
         </div>
       </div>
 
-      <p-treeSelect *ngIf="structureOptions?.length" [options]="structureOptions" [(ngModel)]="dependency" [showClear]="false"
-                    [filter]="true" (onNodeSelect)="onChangeDependency()"  containerStyleClass="w-full"
-                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
-          <ng-template let-node pTemplate="default">
-              <div class="flex align-items-center cursor-pointer" pRipple>
-                <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
-                    <img [src]="node.data.srcIcono"
-                        [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                        style="width: 100%; height: auto" alt="" />
-                </div>
-                <ng-template #sNoItemIcon>
-                    <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                        <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
-                    </div>
-                </ng-template>
-                <div class="flex flex-column align-items-center justify-content-start ml-2">
-                    <span class="image-text ml-2 w-full">
-                        {{node.label}}
-                    </span>
-                    <span class="image-text text-500 text-sm ml-2 w-full">
-                        {{node.data.descripcion}}
-                    </span>
-                </div>
+      <p-treeSelect *ngIf="structureOptions?.length" [options]="structureOptions" [(ngModel)]="dependency"
+                    [showClear]="false"
+                    [filter]="true" (onNodeSelect)="onChangeDependency()" containerStyleClass="w-full"
+                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
+                    [filterInputAutoFocus]="true">
+        <ng-template let-node pTemplate="default">
+          <div class="flex align-items-center cursor-pointer" pRipple>
+            <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
+                 style="border-radius: 50%; overflow: hidden;">
+              <img [src]="node.data.srcIcono"
+                   [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                   style="width: 100%; height: auto" alt=""/>
+            </div>
+            <ng-template #sNoItemIcon>
+              <div
+                class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                <i
+                  class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
               </div>
-          </ng-template>
+            </ng-template>
+            <div class="flex flex-column align-items-center justify-content-start ml-2">
+                    <span class="image-text ml-2 w-full">
+                        {{ node.label }}
+                    </span>
+              <span class="image-text text-500 text-sm ml-2 w-full">
+                        {{ node.data.descripcion }}
+                    </span>
+            </div>
+          </div>
+        </ng-template>
       </p-treeSelect>
 
 
@@ -66,10 +72,10 @@
 
   </div>
   <div class="col-12 lg:col-6">
-    <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel de ocupación'" [iconClass]="'pi-clock'" [colorName]="'blue'"
-                   [labels]="levels" [data]="timesTareas"></app-bar-chart>
-    <app-polar-chart title="Personal requerido" [subtitle]="'Personal total requerido por cada nivel de ocupación'" [labels]="levels"
-                     [data]="personasRequeridas"></app-polar-chart>
+    <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel de ocupación'"
+                   [iconClass]="'pi-clock'" [colorName]="'blue'" [labels]="levels" [data]="timesTareas"></app-bar-chart>
+    <app-polar-chart [title]="'Personal requerido'" [subtitle]="'Personal total requerido por cada nivel de ocupación'"
+                     [labels]="levels" [data]="personasRequeridas"></app-polar-chart>
   </div>
 </div>
 

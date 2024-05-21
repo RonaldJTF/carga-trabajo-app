@@ -126,15 +126,15 @@
             <label class="font-medium" for="telefono">Teléfono</label>
             <span class="p-input-icon-right">
               <i class="pi pi-phone"></i>
-              <p-inputNumber id="telefono"
-                             mode="decimal"
-                             inputId="withoutgrouping"
-                             [useGrouping]="false"
+              <p-inputNumber id="telefono" mode="decimal" inputId="withoutgrouping" [useGrouping]="false"
                              formControlName="telefono"></p-inputNumber>
             </span>
             <div *ngIf="telefonoNoValido">
               <div *ngIf="controls['telefono'].errors?.['required']">
                 <small class="p-error">Ingrese un número de teléfono</small>
+              </div>
+              <div *ngIf="controls['telefono'].errors?.['max']">
+                <small class="p-error">Número de teléfono demasiado largo</small>
               </div>
             </div>
           </div>

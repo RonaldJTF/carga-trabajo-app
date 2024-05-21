@@ -8,7 +8,9 @@ import { environment } from "../../environments/environment";
   providedIn: 'root'
 })
 export class WebRequestService {
+
   URLBASE: string = environment.URLAPI;
+
   constructor(
     private http: HttpClient,
     private storageService: StorageService

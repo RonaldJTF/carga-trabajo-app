@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {StageComponent} from "./stage/stage.component";
-import {ActivityComponent} from "./activity/activity.component";
+import {TaskComponent} from "./task/task.component";
 import {StagesComponent} from "./stages.component";
 import {ListComponent} from "./list/list.component";
 
@@ -10,8 +10,8 @@ const routes: Routes = [
       {path: '', component: ListComponent},
       {path: 'create', component: StageComponent},
       {path: ':id', component: StageComponent},
-      {path: 'activity/create', component: ActivityComponent},
-      {path: 'activity/:id', component: ActivityComponent},
+      {path: 'activity/create', component: TaskComponent},
+      {path: 'activity/:id', component: TaskComponent},
     ]
   }
 ];

@@ -42,8 +42,8 @@ export class ChartsComponent implements OnInit {
     });
   }
 
-  public getLevels(data: Activity[]) {
-    this.levels = data?.map(item => item.nivel?.descripcion);
+  public getLevels(data: any[]) {
+    this.levels = data?.map((item: any) => item.nivel);
     this.timesTareas = data.map(item => this.minutesToHours(item.tiempoTotalTarea));
 
     this.personasRequeridas = data.map(item => parseFloat(this.minutesToHours(item.tiempoTotalTarea)) / 167);

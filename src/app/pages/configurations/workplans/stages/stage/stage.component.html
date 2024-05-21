@@ -1,1 +1,5 @@
-<p>stage works!</p>
+<app-form-workplan [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting" [idObject]="idStage"
+                       [updateMode]="updateMode" [object]="stage" (notifyCancelar)="onCancelStage($event)"
+                       (notifyCreate)="createStage($event)" (notifyDelete)="onDeleteStage($event)"
+                       (notifyUpdate)="updateStage($event)">
+</app-form-workplan>
