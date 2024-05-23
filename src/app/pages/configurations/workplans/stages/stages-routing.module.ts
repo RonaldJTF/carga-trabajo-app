@@ -10,8 +10,8 @@ const routes: Routes = [
       {path: '', component: ListComponent},
       {path: 'create', component: StageComponent},
       {path: ':id', component: StageComponent},
-      {path: 'activity/create', component: TaskComponent},
-      {path: 'activity/:id', component: TaskComponent},
+      {path: 'task/create', component: TaskComponent},
+      {path: 'task/:id', component: TaskComponent},
     ]
   }
 ];

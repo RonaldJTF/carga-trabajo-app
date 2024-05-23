@@ -1,18 +1,19 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-form-workplan',
   templateUrl: './form-workplan.component.html',
   styleUrls: ['./form-workplan.component.scss']
 })
-export class FormWorkplanComponent implements OnInit, OnChanges {
+export class FormWorkplanComponent implements OnInit {
 
   @Input() idObject: number;
   @Input() updateMode: boolean;
   @Input() deleting: boolean = false;
   @Input() creatingOrUpdating: boolean = false;
   @Input() object: any;
+  @Input() stage: boolean = false;
 
   @Output() notifyCancelar = new EventEmitter();
   @Output() notifyDelete = new EventEmitter();
@@ -29,10 +30,6 @@ export class FormWorkplanComponent implements OnInit, OnChanges {
     if (this.object) {
       this.assignValuesToForm(this.object);
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
   }
 
   buildForm() {
@@ -67,8 +64,14 @@ export class FormWorkplanComponent implements OnInit, OnChanges {
     object.id ? this.form.get('id').setValue(object.id) : null;
     object.nombre ? this.form.get('nombre').setValue(object.nombre) : null;
     object.descripcion ? this.form.get('descripcion').setValue(object.descripcion) : null;
-    object.idPlanTrabajo ? this.form.get('idPlanTrabajo').setValue(object.idPlanTrabajo) : null;
-    object.idPadre ? this.form.get('idPadre').setValue(object.idPadre) : null;
+    object.idPlanTrabajo && this.stage ? this.addAttribute(object) : null;
+  }
+
+  addAttribute(object: any) {
+    this.form = this.formBuilder.group({
+      idPantarbajo: new FormControl(object.idPantarbajo, Validators.required),
+      idPadre: new FormControl(object.idPadre, Validators.required)
+    })
   }
 
   onSubmit(event: Event): void {

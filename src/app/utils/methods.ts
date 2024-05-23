@@ -110,4 +110,25 @@ export class Methods {
     var newColor = '#' + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
     return newColor;
   }
+
+  static formatDateWithTimezone(date: Date) {
+    const pad = (number: number) => number < 10 ? '0' + number : number;
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    // Obtener el desplazamiento de la zona horaria en minutos y convertirlo a formato ±HHmm
+    const timezoneOffset = date.getTimezoneOffset();
+    const offsetSign = timezoneOffset > 0 ? '-' : '+';
+    const offsetHours = pad(Math.floor(Math.abs(timezoneOffset) / 60));
+    const offsetMinutes = pad(Math.abs(timezoneOffset) % 60);
+
+    const timezone = `${offsetSign}${offsetHours}${offsetMinutes}`;
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezone}`;
+  };
 }

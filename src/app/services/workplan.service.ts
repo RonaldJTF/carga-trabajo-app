@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {WebRequestService} from "./web-request.service";
 import {Stage, Workplan} from "../models/workplan";
+import {Task} from "../models/task";
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class WorkplanService {
 
   private pathWorkplain = 'workplan';
   private pathStage = 'stage';
+  private pathTask = 'task';
 
   constructor(private webRequestService: WebRequestService) {
   }
@@ -54,5 +56,26 @@ export class WorkplanService {
 
   deleteStage(idStage: number): Observable<Stage> {
     return this.webRequestService.deleteWithHeaders(`${this.pathStage}/${idStage}`);
+  }
+
+  // Servicios: TAREA
+  getTasks(): Observable<Task[]> {
+    return this.webRequestService.getWithHeaders(this.pathTask);
+  }
+
+  getTask(idTask: number): Observable<Task> {
+    return this.webRequestService.getWithHeaders(`${this.pathTask}/${idTask}`);
+  }
+
+  createTask(task: Task): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathTask, task);
+  }
+
+  updateTask(id: number, task: Task): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathTask}/${id}`, task);
+  }
+
+  deleteTask(idTask: number): Observable<Task> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathTask}/${idTask}`);
   }
 }

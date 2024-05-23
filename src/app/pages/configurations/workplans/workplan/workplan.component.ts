@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Workplan} from "../../../../models/workplan";
 import {WorkplanService} from "../../../../services/workplan.service";
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-workplan',
@@ -56,40 +57,41 @@ export class WorkplanComponent implements OnInit {
   }
 
   updateWorkplan(event: Workplan): void {
+    console.log(event);
     this.creatingOrUpdating = true;
-    this.workplanService.updateWorkplan(event.id, event).subscribe({
+    this.workplanService.updateWorkplan(event.id, event).pipe(
+      finalize(() => {
+        this.creatingOrUpdating = false;
+      })).subscribe({
       next: () => {
         this.goBack();
-      },
-      complete: () => {
-        this.creatingOrUpdating = false;
       }
     });
   }
 
   createWorkplan(event: Workplan): void {
+    console.log(event);
     this.creatingOrUpdating = true;
-    this.workplanService.createWorkplan(event).subscribe({
+    this.workplanService.createWorkplan(event).pipe(
+      finalize(() => {
+        this.creatingOrUpdating = false;
+      })).subscribe({
       next: () => {
         this.goBack();
-      },
-      complete: () => {
-        this.creatingOrUpdating = false;
       }
     });
   }
 
-  onDeleteWorkplan(event: Event): void {
-    event.preventDefault();
+  onDeleteWorkplan(event: Workplan): void {
     this.deleting = true;
-    this.workplanService.deleteWorkplan(this.workplan.id).subscribe({
+    this.workplanService.deleteWorkplan(event.id).pipe(
+      finalize(() => {
+        this.deleting = false;
+      })).subscribe({
       next: () => {
         //this.store.dispatch(StructureActions.removeFromList({id: this.workplain.id}));
         this.goBack();
-      },
-      complete: () => {
-        this.deleting = false;
-      },
+      }
     });
   }
 

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {WorkplanService} from "../../../../../services/workplan.service";
 import {Stage} from "../../../../../models/workplan";
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-stage',
@@ -43,25 +44,27 @@ export class StageComponent implements OnInit {
   }
 
   updateStage(event: Stage): void {
+    console.log(event);
     this.creatingOrUpdating = true;
-    this.workplanService.updateStage(event.id, event).subscribe({
+    this.workplanService.updateStage(event.id, event).pipe(
+      finalize(() => {
+        this.creatingOrUpdating = false;
+      })).subscribe({
       next: () => {
         this.goBack();
-      },
-      complete: () => {
-        this.creatingOrUpdating = false;
       }
     });
   }
 
   createStage(event: Stage): void {
+    console.log(event);
     this.creatingOrUpdating = true;
-    this.workplanService.createStage(event).subscribe({
+    this.workplanService.createStage(event).pipe(
+      finalize(() => {
+        this.creatingOrUpdating = false;
+      })).subscribe({
       next: () => {
         this.goBack();
-      },
-      complete: () => {
-        this.creatingOrUpdating = false;
       }
     });
   }
@@ -73,13 +76,13 @@ export class StageComponent implements OnInit {
   }
 
   onDeleteStage(event: Stage) {
-    console.log(event);
-    this.workplanService.deleteStage(event.id).subscribe({
+    this.deleting = true;
+    this.workplanService.deleteStage(event.id).pipe(
+      finalize(() => {
+        this.deleting = false;
+      })).subscribe({
       next: () => {
         this.goBack();
-      },
-      complete: () => {
-        this.deleting = false;
       }
     })
   }

@@ -7,7 +7,7 @@ export class FirstNamePipe implements PipeTransform {
 
   transform(nameIn: string, nameOut: string): string {
     if (nameIn != undefined && nameIn != ""){
-      return nameIn.split(" ")[0];;
+      return nameIn.split(" ")[0];
     }
     return nameOut;
   }

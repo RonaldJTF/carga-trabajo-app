@@ -41,7 +41,7 @@
                                 <td class="flex flex-row align-items-center">
                                     <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                                     <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
-                                    <div  (click)="viewDependency(structure)" class="flex flex-column cursor-pointer">
+                                    <div pRipple (click)="viewDependency(structure)" class="flex flex-column cursor-pointer">
                                         <div class="font-medium" [ngClass]="{'text-500': structure.idPadre, 'text-primary': structure.id == (dependency$ | async)?.id}">{{structure.nombre}}</div>
                                         <div class="text-500">{{structure.descripcion}}</div>
                                     </div>

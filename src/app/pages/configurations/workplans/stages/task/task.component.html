@@ -1,1 +1,62 @@
-<p>activity works!</p>
+<form class="p-0" [formGroup]="formTask">
+
+  <div class="field p-fluid">
+    <label htmlFor="nombre" class="font-medium">Nombre</label>
+    <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+    <div *ngIf="nombreNoValido">
+      <div *ngIf="controls['nombre'].errors?.['required']">
+        <small class="p-error">Ingrese un nombre</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="field p-fluid">
+    <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+    <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
+              formControlName="descripcion"></textarea>
+    <div *ngIf="descripcionNoValido">
+      <div *ngIf="controls['descripcion'].errors?.['required']">
+        <small class="p-error">Ingrese una descripcion</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="field p-fluid">
+    <label htmlFor="fecha" class="font-medium">Fecha de realización</label>
+    <p-calendar [showClear]="true" [showIcon]="true" inputId="fecha" formControlName="rangeDates" dateFormat="dd-mm-yy"
+                selectionMode="range" [showTime]="true" [showSeconds]="true" icon="pi pi-calendar"></p-calendar>
+    <div *ngIf="fechaRangoNoValido">
+      <div *ngIf="controls['fechaRango'].errors?.['required']">
+        <small class="p-error">Ingrese un rango de fecha</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="field p-fluid">
+    <label htmlFor="responsable" class="font-medium">Responsable</label>
+    <input pInputText id="responsable" type="text" aria-describedby="text-help" formControlName="responsable"/>
+    <div *ngIf="responsableNoValido">
+      <div *ngIf="controls['responsable'].errors?.['required']">
+        <small class="p-error">Ingrese un responsable</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="field p-fluid">
+    <label htmlFor="entregable"><span class="font-medium">Entregable</span></label>
+    <textarea id="entregable" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
+              formControlName="entregable"></textarea>
+    <div *ngIf="entregableNoValido">
+      <div *ngIf="controls['entregable'].errors?.['required']">
+        <small class="p-error">Ingrese el entregable</small>
+      </div>
+    </div>
+  </div>
+
+  <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitTask($event)"
+                          (cancel)="onCancelTask($event)" (delete)="onDeleteTask($event)"
+                          [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
+                          [deleting]="deleting" [disabledCreateOrUpdateButton]="formTask.invalid">
+  </app-form-action-button>
+
+</form>

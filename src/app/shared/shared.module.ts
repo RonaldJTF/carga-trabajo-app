@@ -60,6 +60,7 @@ import {TimeRangeComponent} from './charts/time-range/time-range.component';
 import {HeadSkeletonComponent} from './skeleton/dashboard/head-skeleton/head-skeleton.component';
 import {BodySkeletonComponent} from './skeleton/dashboard/body-skeleton/body-skeleton.component';
 import {FormWorkplanComponent} from './form-workplan/form-workplan.component';
+import {CalendarModule} from "primeng/calendar";
 
 @NgModule({
   declarations: [
@@ -134,6 +135,7 @@ import {FormWorkplanComponent} from './form-workplan/form-workplan.component';
     TieredMenuModule,
     RippleModule,
     TreeSelectModule,
+    CalendarModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -206,7 +208,8 @@ import {FormWorkplanComponent} from './form-workplan/form-workplan.component';
     TieredMenuModule,
     RippleModule,
     TreeSelectModule,
-    FormWorkplanComponent
+    FormWorkplanComponent,
+    CalendarModule
   ],
   providers: []
 })

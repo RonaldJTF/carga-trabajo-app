@@ -134,7 +134,7 @@ export class FormUserPersonComponent implements OnInit {
       return {
         label: objeto.nombre,
         value: objeto,
-        disabled: this.userRolesFormControl.value?.some((e) => e.id === objeto.id)
+        disabled: this.userRolesFormControl.value?.some((e: any) => e.id === objeto.id)
       };
     });
   }
@@ -156,7 +156,7 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   removeRol(id: number) {
-    this.formUser.get('roles').setValue([...(this.formUser.get('roles').value ?? []).filter((e) => e.id !== id)]);
+    this.formUser.get('roles').setValue([...(this.formUser.get('roles').value ?? []).filter((e: any) => e.id !== id)]);
     this.rolOptionsOverlayPanel.hide();
     this.loadRolesOptions();
   }
@@ -224,7 +224,7 @@ export class FormUserPersonComponent implements OnInit {
   goBack() {
     this.router.navigate(['configurations/users'], {
       skipLocationChange: true,
-    });
+    }).then();
   }
 
   onValidacionCredenciales(person: Person): void {
