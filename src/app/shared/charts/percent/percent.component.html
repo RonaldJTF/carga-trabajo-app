@@ -1,0 +1,13 @@
+<div class="flex {{styleClass}}">
+    <div  *ngIf="labelPosition=='left'" class="mx-1 my-auto">
+        <ng-container *ngTemplateOutlet="TemplateOfValue"></ng-container>
+    </div>
+    <div #svgContainer class="flex align-items-center"></div>
+    <div  *ngIf="labelPosition=='right'" class="mx-1 my-auto">
+        <ng-container *ngTemplateOutlet="TemplateOfValue"></ng-container>
+    </div>
+</div>
+
+<ng-template #TemplateOfValue>
+    <span class="{{shape == 'circle' ? 'badge ' +  (value <= 0 ? 'badge-red' : 'badge-blue') : 'text-500'}}">{{value}}%</span>
+</ng-template>

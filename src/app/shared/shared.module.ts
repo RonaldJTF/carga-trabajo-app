@@ -59,8 +59,9 @@ import {TreeSelectModule} from "primeng/treeselect";
 import {TimeRangeComponent} from './charts/time-range/time-range.component';
 import {HeadSkeletonComponent} from './skeleton/dashboard/head-skeleton/head-skeleton.component';
 import {BodySkeletonComponent} from './skeleton/dashboard/body-skeleton/body-skeleton.component';
-import {FormWorkplanComponent} from './form-workplan/form-workplan.component';
+import { PercentComponent } from './charts/percent/percent.component';
 import {CalendarModule} from "primeng/calendar";
+import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.pipe';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import {CalendarModule} from "primeng/calendar";
     PolarChartComponent,
     HeadSkeletonComponent,
     BodySkeletonComponent,
+    PercentComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -91,9 +93,9 @@ import {CalendarModule} from "primeng/calendar";
     DarkenColorPipe,
     PluralizePipe,
     TimeNamePipe,
+    ActivityExpirationPipe,
 
     ImageFallbackDirective,
-    FormWorkplanComponent,
   ],
   imports: [
     CommonModule,
@@ -152,6 +154,7 @@ import {CalendarModule} from "primeng/calendar";
     PolarChartComponent,
     HeadSkeletonComponent,
     BodySkeletonComponent,
+    PercentComponent,
 
     ImageFallbackDirective,
 
@@ -167,6 +170,7 @@ import {CalendarModule} from "primeng/calendar";
     DarkenColorPipe,
     PluralizePipe,
     TimeNamePipe,
+    ActivityExpirationPipe,
 
     CommonModule,
     ReactiveFormsModule,
@@ -208,7 +212,6 @@ import {CalendarModule} from "primeng/calendar";
     TieredMenuModule,
     RippleModule,
     TreeSelectModule,
-    FormWorkplanComponent,
     CalendarModule
   ],
   providers: []

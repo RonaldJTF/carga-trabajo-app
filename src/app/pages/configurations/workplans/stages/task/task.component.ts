@@ -1,11 +1,14 @@
 import {Component, OnInit} from '@angular/core';
+import * as StageActions from "./../../../../../store/stage.actions";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {WorkplanService} from "../../../../../services/workplan.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Task} from "../../../../../models/task";
 import {PrimeNGConfig} from "primeng/api";
 import {Methods} from "../../../../../utils/methods";
 import {finalize} from "rxjs";
+import { Task } from 'src/app/models/workplan';
+import { AppState } from 'src/app/app.reducers';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-activity',
@@ -15,6 +18,8 @@ import {finalize} from "rxjs";
 export class TaskComponent implements OnInit {
 
   idTask: number;
+
+  idStage: number;
 
   updateMode: boolean;
 
@@ -28,10 +33,17 @@ export class TaskComponent implements OnInit {
 
   es: any;
 
-  constructor(private formBuilder: FormBuilder, private workplanService: WorkplanService, private router: Router, private readonly route: ActivatedRoute, private primengConfig: PrimeNGConfig) {
+  constructor(
+    private store: Store<AppState>,
+    private formBuilder: FormBuilder, 
+    private workplanService: WorkplanService, 
+    private router: Router, 
+    private readonly route: ActivatedRoute, 
+    private primengConfig: PrimeNGConfig) {
   }
 
   ngOnInit(): void {
+    this.idStage = this.route.snapshot.queryParams['idStage'];
     this.getParams();
     this.setTraslationCalendar();
     this.buildForm();
@@ -40,7 +52,6 @@ export class TaskComponent implements OnInit {
   getParams() {
     this.route.params.subscribe((params) => {
       this.idTask = params['id'];
-
     });
     if (this.idTask != null) {
       this.updateMode = true;
@@ -50,11 +61,11 @@ export class TaskComponent implements OnInit {
 
   setTraslationCalendar() {
     this.primengConfig.setTranslation({
-      dayNames: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"],
-      dayNamesShort: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
+      dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+      dayNamesShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
       dayNamesMin: ["DO", "LU", "MA", "MI", "JU", "VI", "SA"],
-      monthNames: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
-      monthNamesShort: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
+      monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+      monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
       today: 'Hoy',
       clear: 'Limpiar',
     });
@@ -117,7 +128,7 @@ export class TaskComponent implements OnInit {
   assignValuesToForm(task: Task) {
     this.formTask.get('id').setValue(task.id);
     this.formTask.get('nombre').setValue(task.nombre);
-    this.formTask.get('descripcion').setValue(task.description);
+    this.formTask.get('descripcion').setValue(task.descripcion);
     this.formTask.get('rangeDates').setValue([new Date(this.task.fechaInicio), new Date(this.task.fechaFin)]);
     this.formTask.get('entregable').setValue(task.entregable);
     this.formTask.get('responsable').setValue(task.responsable);
@@ -125,7 +136,6 @@ export class TaskComponent implements OnInit {
   }
 
   onSubmitTask(event: Event): void {
-
     const payload = {
       ...this.task,
       ...this.formTask.value,
@@ -143,41 +153,44 @@ export class TaskComponent implements OnInit {
   }
 
   updateTask(id: number, payload: Task): void {
-    this.workplanService.updateTask(id, payload).pipe(
-      finalize(() => {
-        this.creatingOrUpdating = false;
-      })).subscribe({
-      next: () => {
-        //this.store.dispatch(StructureActions.updateItemIntoList({structure: e as Structure}));
-        //this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
+    this.workplanService.updateTask(id, payload).subscribe({
+      next: (e) => {
+        this.store.dispatch(StageActions.updateTaskFromStage({task: e}));
         this.goBack();
-      }
+        this.creatingOrUpdating = false;
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
     });
   }
 
   createTask(payload: Task): void {
-    this.workplanService.createTask(payload).pipe(
-      finalize(() => {
-        this.creatingOrUpdating = false;
-      })).subscribe({
-      next: () => {
-        //this.store.dispatch(StructureActions.addToList({structure: e as Structure}));
+    payload.idEtapa = this.idStage;
+    this.workplanService.createTask(payload).subscribe({
+      next: (e) => {
+        this.store.dispatch(StageActions.addTaskToStage({task: e as Task}));
         this.goBack();
-      }
+        this.creatingOrUpdating = false;
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
     });
   }
 
   onDeleteTask(event: Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.workplanService.deleteTask(this.idTask).pipe(
-      finalize(() => {
-        this.deleting = false;
-      })).subscribe({
+    this.workplanService.deleteTask(this.task.id).subscribe({
       next: () => {
-        //this.store.dispatch(StructureActions.removeFromList({id: this.structure.id}));
+        this.store.dispatch(StageActions.removeTasksFromStage({taskIds: [this.task.id]}));
         this.goBack();
-      }
+        this.deleting = false;
+      },
+      error: (error) => {
+        this.deleting = false;
+      },
     });
   }
 
@@ -187,9 +200,9 @@ export class TaskComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['configurations/workplan/stages'], {
+    this.router.navigate(['configurations/workplans/stages'], {
       skipLocationChange: true,
-    }).then();
+    });
   }
 
 }

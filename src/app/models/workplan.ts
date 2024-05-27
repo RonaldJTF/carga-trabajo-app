@@ -5,6 +5,7 @@ export class Workplan {
   nombre: string;
   descripcion: string;
   etapas: Stage[];
+  avance: number;
 }
 
 export class Stage {
@@ -13,7 +14,9 @@ export class Stage {
   descripcion: string;
   idPadre: number;
   idPlanTrabajo: number;
+  subEtapas: Stage[];
   tareas: Task[];
+  avance: number;
 }
 
 export class Task{
@@ -24,10 +27,10 @@ export class Task{
   descripcion: string;
   entregable: string;
   responsable: string;
-  idEtapas: number;
+  idEtapa: number;
   activo: string;
   seguimientos: FollowUp[];
-
+  avance: number;
 }
 
 export class FollowUp{

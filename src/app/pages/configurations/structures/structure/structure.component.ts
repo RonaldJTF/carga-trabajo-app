@@ -25,8 +25,6 @@ export class StructureComponent implements OnInit {
   updateMode: boolean;
   creatingOrUpdating: boolean = false;
   deleting: boolean = false;
-  mustRecharge: boolean;
-  mustRechargeSubscription: Subscription;
 
   constructor(
     private store: Store<AppState>,

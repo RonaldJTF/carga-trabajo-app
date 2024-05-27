@@ -200,10 +200,6 @@ export class ListComponent implements OnInit, OnDestroy{
     this.store.dispatch(StructureActions.setDependency({structure: structure}));
   }
 
-  viewStructureDetails(structure: Structure){
-    this.store.dispatch(StructureActions.setStructure({structure: structure}));
-  }
-
   onFilter(event: Event, isDependency: boolean) {
     if(isDependency){
       this.treeTableDependency.filterGlobal((event.target as HTMLInputElement).value, 'contains');

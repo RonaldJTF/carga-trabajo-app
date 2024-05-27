@@ -1,1 +1,82 @@
-<p>list works!</p>
+<ng-container *ngIf="!loading else sLoading">
+    <div *ngIf="!workplans.length else data">
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo plan de trabajo'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+    </div>
+    <ng-template #data>
+        <div class="card p-0 pb-2">
+            <p-table #dt [value]="workplans" rowGroupMode="subheader" sortMode="single"
+                [paginator]="true" [rows]="10" [(selection)]="selectedWorkplans" selectionMode="multiple"
+                [globalFilterFields]="['nombre', 'descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+                        <div class="flex align-items-center flex-wrap">
+                            <button pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                            </button>
+                            <div class="_badge-container m-1">
+                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedWorkplans()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                    class="p-button-danger " [disabled]="!selectedWorkplans?.length">
+                                    <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                </button>
+                                <span *ngIf="selectedWorkplans?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedWorkplans.length}}</span>
+                            </div>
+                        </div>
+                        <div class="m-1">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th class="text-center" style="min-width: 300px" pSortableColumn="nombre">
+                            Plan de trabajo
+                            <p-sortIcon field="nombre"></p-sortIcon>
+                        </th>
+                        <th class="text-center" style="width: 20%" pSortableColumn="avance">
+                            Avance
+                            <p-sortIcon field="avance"></p-sortIcon>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-workplan let-rowIndex="rowIndex">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="workplan"></p-tableCheckbox>
+                        </td>
+                        <td pRipple class="cursor-pointer" (click)="onManagementStage(workplan.id, $event)">
+                            <div class="flex flex-column align-items-center justify-content-start">
+                                <span class="image-text w-full">{{workplan.nombre}}</span>
+                                <span class="image-text text-500 text-sm w-full">{{workplan.descripcion}}</span>
+                            </div>
+                        </td>
+                        <td style="white-space: nowrap;">
+                            <app-percent [shape]="'linear'" [labelPosition]="'right'" [size]="80" [value]="workplan.avance ?? 0"></app-percent>
+                        </td>
+                        <td class="text-center">
+                            <app-menu-item [menuItems]="menuitems" [id]="workplan.id"></app-menu-item>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4" class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </ng-template>
+</ng-container>
+
+<ng-template #sLoading>
+    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>

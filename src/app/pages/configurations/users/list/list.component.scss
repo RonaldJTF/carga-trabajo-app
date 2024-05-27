@@ -21,3 +21,8 @@
     background-color: transparent;
     padding: 0px;
 }
+
+:host ::ng-deep .p-paginator{
+    border: none;
+    padding-bottom: 0px;
+}

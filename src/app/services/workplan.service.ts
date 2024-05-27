@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {WebRequestService} from "./web-request.service";
-import {Stage, Workplan} from "../models/workplan";
-import {Task} from "../models/task";
+import {Stage, Task, Workplan} from "../models/workplan";
 
 @Injectable({
   providedIn: 'root'
@@ -37,45 +36,58 @@ export class WorkplanService {
     return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}/${idWorkplan}`);
   }
 
+  deleteSelectedWorkplans(payload: number[]):  Observable<Workplan[]> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}`, undefined, payload);
+  }
+
   // Servicios: ETAPA
-  getStages(): Observable<Stage[]> {
-    return this.webRequestService.getWithHeaders(this.pathStage);
+  getStages(idWorkplan: number): Observable<Stage[]> {
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplain}/${this.pathStage}`, {idPlanTrabajo: idWorkplan});
   }
 
   getStage(idStage: number): Observable<Stage> {
-    return this.webRequestService.getWithHeaders(`${this.pathStage}/${idStage}`);
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplain}/${this.pathStage}/${idStage}`);
   }
 
   createStage(stage: Stage): Observable<any> {
-    return this.webRequestService.postWithHeaders(this.pathStage, stage);
+    return this.webRequestService.postWithHeaders(`${this.pathWorkplain}/${this.pathStage}`, stage);
   }
 
   updateStage(id: number, stage: Stage): Observable<any> {
-    return this.webRequestService.putWithHeaders(`${this.pathStage}/${id}`, stage);
+    return this.webRequestService.putWithHeaders(`${this.pathWorkplain}/${this.pathStage}/${id}`, stage);
   }
 
   deleteStage(idStage: number): Observable<Stage> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathStage}/${idStage}`);
+    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}/${this.pathStage}/${idStage}`);
+  }
+
+  deleteSelectedStages(payload: number[]):  Observable<Stage[]> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}/${this.pathStage}`, undefined, payload);
   }
 
   // Servicios: TAREA
   getTasks(): Observable<Task[]> {
-    return this.webRequestService.getWithHeaders(this.pathTask);
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplain}/${this.pathTask}`);
   }
 
   getTask(idTask: number): Observable<Task> {
-    return this.webRequestService.getWithHeaders(`${this.pathTask}/${idTask}`);
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplain}/${this.pathTask}/${idTask}`);
   }
 
   createTask(task: Task): Observable<any> {
-    return this.webRequestService.postWithHeaders(this.pathTask, task);
+    return this.webRequestService.postWithHeaders(`${this.pathWorkplain}/${this.pathTask}`, task);
   }
 
   updateTask(id: number, task: Task): Observable<any> {
-    return this.webRequestService.putWithHeaders(`${this.pathTask}/${id}`, task);
+    return this.webRequestService.putWithHeaders(`${this.pathWorkplain}/${this.pathTask}/${id}`, task);
   }
 
   deleteTask(idTask: number): Observable<Task> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathTask}/${idTask}`);
+    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}/${this.pathTask}/${idTask}`);
   }
+
+  deleteSelectedTasks(payload: number[]):  Observable<Task[]> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}/${this.pathTask}`, undefined, payload);
+  }
+
 }

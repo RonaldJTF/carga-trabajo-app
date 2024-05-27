@@ -29,6 +29,9 @@ import { PersonService } from './services/person.service';
 import { UserService } from './services/user.service';
 import { MatrizlevantamientoService } from './services/matrizlevantamiento.service';
 import {workplanReducer} from "./store/workplan.reducer";
+import { WorkplanService } from './services/workplan.service';
+import { stageReducer } from './store/stage.reducer';
+import { MediaService } from './services/media.service';
 
 @NgModule({
   declarations: [
@@ -43,16 +46,16 @@ import {workplanReducer} from "./store/workplan.reducer";
     ToastModule,
     ConfirmDialogModule,
     QuillModule.forRoot(),
-    StoreModule.forRoot({ structure: structureReducer, workplan: workplanReducer}),
+    StoreModule.forRoot({ structure: structureReducer, workplan: workplanReducer, stage: stageReducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production
     }),
   ],
   providers: [
-    MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService,
+    MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService,
-    UserService, MatrizlevantamientoService,
+    UserService, MatrizlevantamientoService, WorkplanService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true },
   ],

@@ -1,8 +1,13 @@
 import {Component, OnInit} from '@angular/core';
+import * as StageActions from "./../../../../../store/stage.actions";
+import * as WorkplanActions from "./../../../../../store/workplan.actions";
 import {ActivatedRoute, Router} from "@angular/router";
 import {WorkplanService} from "../../../../../services/workplan.service";
 import {Stage} from "../../../../../models/workplan";
-import {finalize} from "rxjs";
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducers';
+import { Location } from '@angular/common';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-stage',
@@ -10,87 +15,121 @@ import {finalize} from "rxjs";
   styleUrls: ['./stage.component.scss']
 })
 export class StageComponent implements OnInit {
-
-  idStage: number;
-
-  updateMode: boolean = false;
-
-  creatingOrUpdating: boolean = false;
-
-  deleting: boolean = false;
-
+  formStage !: FormGroup;
   stage: Stage;
+  updateMode: boolean;
+  creatingOrUpdating: boolean = false;
+  deleting: boolean = false;
+  
+  idWorkplan: number;
+  idParent: number;
 
-  constructor(private route: ActivatedRoute, private workplanService: WorkplanService, private router: Router) {
-  }
+  constructor(
+    private store: Store<AppState>,
+    private workplanService: WorkplanService,
+    private location: Location,
+    private router: Router,
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder
+  ){}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.idStage = params['id'];
-    });
+    this.idWorkplan = this.route.snapshot.queryParams['idWorkplan'];
+    this.idParent = this.route.snapshot.queryParams['idParent'];
+    this.buildForm();
+    this.loadStage(this.route.snapshot.params['id']);
+  }
 
-    if (this.idStage != null) {
+  buildForm(){
+    this.formStage= this.formBuilder.group({
+      nombre: ['', Validators.required],
+      descripcion: ''
+    })
+  }
+
+  loadStage(id: number){
+    if (id == undefined){
+      this.updateMode = false;
+    }else{
+      this.workplanService.getStage(id).subscribe({
+        next: (e) => {
+          this.stage = e;
+          this.assignValuesToForm();
+        },
+      });
       this.updateMode = true;
-      this.getStage(this.idStage);
     }
   }
 
-  getStage(idStage: number) {
-    this.workplanService.getStage(idStage).subscribe({
-      next: (data) => {
-        this.stage = data;
-      }
-    })
+  assignValuesToForm(){
+    this.formStage.get('nombre').setValue(this.stage.nombre);
+    this.formStage.get('descripcion').setValue(this.stage.descripcion);
   }
 
-  updateStage(event: Stage): void {
-    console.log(event);
-    this.creatingOrUpdating = true;
-    this.workplanService.updateStage(event.id, event).pipe(
-      finalize(() => {
-        this.creatingOrUpdating = false;
-      })).subscribe({
-      next: () => {
+  updateStage(payload: Stage, id: number): void {
+    delete payload.subEtapas;
+    delete payload.tareas;
+    this.workplanService.updateStage(id, payload).subscribe({
+      next: (e) => {
+        this.store.dispatch(StageActions.updateFromList({stage: e}));
         this.goBack();
-      }
+        this.creatingOrUpdating = false;
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
     });
   }
 
-  createStage(event: Stage): void {
-    console.log(event);
-    this.creatingOrUpdating = true;
-    this.workplanService.createStage(event).pipe(
-      finalize(() => {
-        this.creatingOrUpdating = false;
-      })).subscribe({
-      next: () => {
+  createStage(payload: Stage): void {
+    payload.idPlanTrabajo = this.idWorkplan;
+    payload.idPadre = this.idParent;
+    this.workplanService.createStage(payload).subscribe({
+      next: (e) => {
+        this.store.dispatch(StageActions.addToList({stage: e}));
         this.goBack();
-      }
+        this.creatingOrUpdating = false;
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
     });
   }
-
-  onCancelStage(event: boolean) {
-    if (event) {
-      this.goBack();
+  
+  onSubmitStage(event : Event): void {
+    event.preventDefault();
+    let payload = {...this.stage, ...this.formStage.value};
+    if (this.formStage.invalid) {
+      this.formStage.markAllAsTouched();
+    } else {
+      this.creatingOrUpdating = true;
+      this.updateMode ? this.updateStage(payload, this.stage.id) : this.createStage(payload);
     }
   }
 
-  onDeleteStage(event: Stage) {
+  onDeleteStage(event : Event): void {
+    event.preventDefault();
     this.deleting = true;
-    this.workplanService.deleteStage(event.id).pipe(
-      finalize(() => {
-        this.deleting = false;
-      })).subscribe({
+    this.workplanService.deleteStage(this.stage.id).subscribe({
       next: () => {
+        this.store.dispatch(StageActions.removeFromList({id: this.stage.id}));
         this.goBack();
-      }
-    })
+        this.deleting = false;
+      },
+      error: (error) => {
+        this.deleting = false;
+      },
+    });
+  }
+
+  onCancelStage(event : Event): void {
+    event.preventDefault();
+    this.goBack();
   }
 
   goBack() {
     this.router.navigate(['configurations/workplans/stages'], {
       skipLocationChange: true,
-    }).then();
+    });
   }
-
 }

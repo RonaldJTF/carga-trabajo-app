@@ -7,7 +7,6 @@ import {Router} from '@angular/router';
 import {IMAGE_SIZE} from 'src/app/utils/constants';
 import {MESSAGE} from 'src/labels/labels';
 import {ConfirmationDialogService} from 'src/app/services/confirmation-dialog.service';
-import * as StructureActions from "../../../../store/structure.actions";
 
 @Component({
   selector: 'app-list',
@@ -130,16 +129,6 @@ export class ListComponent {
     }
 
     return index;
-  }
-
-  createId(): string {
-    let id = '';
-    const chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
   }
 
   onGlobalFilter(table: Table, event: Event) {

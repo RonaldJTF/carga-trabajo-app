@@ -4,7 +4,7 @@
     </div>
     <ng-template #data>
         <div class="grid grid-nogutter">
-            <div *ngIf="dependencies$ | async as dependencies" class="col-12 p-2 mb-0 " [ngClass]="{'md:col-6': (dependency$ | async)?.id}">
+            <div *ngIf="dependencies$ | async as dependencies" class="col-12" [ngClass]="{'md:col-6 md:pr-2': (dependency$ | async)?.id}">
                 <div class="card p-0 ">
                     <p-treeTable  #treeTableDependency [value]="dependencies" selectionMode="checkbox" [(selection)]="selectedNodesOfDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                      [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px">
@@ -60,7 +60,7 @@
                     <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de {{dependencies[0].data.tipologia.nombre  | lowercase | pluralize}}</div>
                 </div>
             </div>
-            <div *ngIf="dependency$ | async as dependency" class="col-12 md:col-6 p-2 mb-0 ">
+            <div *ngIf="dependency$ | async as dependency" class="col-12 pl-0 mt-2 md:mt-0 md:pl-2 md:col-6">
                 <div *ngIf="dependency.id" class="card p-0">
                     <ng-container *ngTemplateOutlet="TemplateStructureInformation; context:{structure: dependency}"></ng-container>
                     <div *ngIf="noDependencies$ | async as structures else sNoStructuresNoDependency" class="w-full mb-3">
@@ -106,7 +106,7 @@
                                         <td class="flex flex-row align-items-center">
                                             <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                                             <p-treeTableCheckbox  *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
-                                            <div (click)="viewStructureDetails(structure)" class="flex flex-column">
+                                            <div class="flex flex-column">
                                                 <div class="font-medium">{{structure.nombre}}</div>
                                                 <div class="text-500">{{structure.descripcion}}</div>
                                             </div>
@@ -186,7 +186,6 @@
                 </div>
             </div>
         </div>
-
     </ng-template>
 </ng-container>
 
@@ -208,10 +207,10 @@
 
 <ng-template #TemplateTime let-time>
     <div class="flex flex-row align-items-baseline">
-            <span class="text-500 text-2xl font-medium">{{time | number:'1.0-2'}}</span>
-            <span class="text-xs text-500 mr-2">min</span>
-            <span class="text-500 text-2xl font-medium">{{(time / 60) | number:'1.0-2'}}</span>
-            <span class="text-xs text-500">h</span>
+        <span class="text-500 text-2xl font-medium">{{time | number:'1.0-2'}}</span>
+        <span class="text-xs text-500 mr-2">min</span>
+        <span class="text-500 text-2xl font-medium">{{(time / 60) | number:'1.0-2'}}</span>
+        <span class="text-xs text-500">h</span>
     </div>
 </ng-template>
 

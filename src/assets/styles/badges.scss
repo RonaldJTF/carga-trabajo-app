@@ -3,7 +3,7 @@
     padding: .25em .5rem;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 12px;
+    font-size: .875rem;
     letter-spacing: .3px;
 }
 
@@ -31,7 +31,7 @@
     padding: .25em .5rem;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 12px;
+    font-size: .875rem;
     letter-spacing: .3px;
 }
 
@@ -56,7 +56,7 @@
     padding: .25em .5rem;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 12px;
+    font-size: .875rem;
     letter-spacing: .3px;
 }
 
@@ -81,7 +81,7 @@
     padding: .25em .5rem;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 12px;
+    font-size: .875rem;
     letter-spacing: .3px;
 }
 
@@ -109,7 +109,7 @@
     border-radius: var(--border-radius);
     padding: .25em .5rem;
     font-weight: 700;
-    font-size: 12px;
+    font-size: .875rem;
     letter-spacing: .3px;
 }
 
@@ -123,6 +123,39 @@
         color: #C63737;
     }
     &.editable-unknown {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+}
+
+
+.activity-expiration-badge {
+    border-radius: var(--border-radius);
+    padding: .25em .5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: .875rem;
+    letter-spacing: .3px;
+}
+
+.activity-expiration-badge {
+    &.activity-expiration-in-process {
+        background: #d8bfe7;
+        color: #672183;
+    }
+    &.activity-expiration-completed {
+        background: #C8E6C9;
+        color: #256029;
+    }
+    &.activity-expiration-delayed {
+        background: #FFCDD2;
+        color: #C63737;
+    }
+    &.activity-expiration-waiting {
+        background: #B3E5FC;
+        color: #23547B;
+    }
+    &.activity-expiration-unknown {
         background: #cfcfcf;
         color: #4f4f4f;
     }

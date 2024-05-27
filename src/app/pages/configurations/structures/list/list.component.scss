@@ -1,29 +1,3 @@
-@media (min-width: 500px) {
-    ._adjust-auto {
-        width: 100%;
-    }
-}
-
-@media (min-width: 800px) {
-    ._adjust-auto {
-        width: 50%;
-    }
-}
-
-
-@media (min-width: 1350px) {
-    ._adjust-auto {
-        width: 33%;
-    }
-}
-
-@media (min-width: 1650px) {
-    ._adjust-auto {
-        width: 25%;
-    }
-}
-
-
 ._badge-container {
     position: relative;
     display: inline-block;

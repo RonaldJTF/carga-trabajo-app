@@ -41,7 +41,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               this.messageService.add({ severity: 'error', summary: 'No encontrado', life: 3000, });
             }
           }
-          console.log(errorMsg);
+          console.log(error);
           return throwError(errorMsg);
         })
       )

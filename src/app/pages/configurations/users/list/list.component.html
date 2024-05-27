@@ -4,8 +4,8 @@
                             [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
   </div>
   <ng-template #data>
-    <div class="card p-0 m-2">
-      <p-table #dt [value]="people" rowGroupMode="subheader" sortField="order" sortMode="single"
+    <div class="card p-0 pb-2">
+      <p-table #dt [value]="people" rowGroupMode="subheader" sortMode="single"
                [paginator]="true" [rows]="10" [(selection)]="selectedPeople" selectionMode="multiple"
                [globalFilterFields]="['primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'tipoDocumento.descripcion','tipoDocumento.abreviatura', 'documento']"
                [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
