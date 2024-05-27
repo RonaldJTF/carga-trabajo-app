@@ -5,8 +5,8 @@
   </div>
   <ng-template #data>
     <div class="card p-0 pb-2">
-      <p-table #dt [value]="people" rowGroupMode="subheader" sortMode="single"
-               [paginator]="true" [rows]="10" [(selection)]="selectedPeople" selectionMode="multiple"
+      <p-table #dt [value]="people" rowGroupMode="subheader" sortMode="single" [paginator]="true" [rows]="10"
+               [(selection)]="selectedPeople" selectionMode="multiple"
                [globalFilterFields]="['primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'tipoDocumento.descripcion','tipoDocumento.abreviatura', 'documento']"
                [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id"
@@ -19,8 +19,7 @@
                 <span class="p-button-label hidden-lg pl-2">Nuevo</span>
               </button>
               <div class="_badge-container m-1">
-                <button pButton pRipple icon="pi pi-trash" style="position: relative;"
-                        (click)="deleteSelectedPeople()"
+                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedPeople()"
                         pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger "
                         [disabled]="!selectedPeople?.length">
                   <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>

@@ -1,8 +1,5 @@
 import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import * as d3 from 'd3';
-import * as crossfilter from 'crossfilter';
-import * as dc from 'dc';
-import * as chartValueInRange from 'src/assets/plugins/chart-percent.js'
 
 @Component({
   selector: 'app-percent',
@@ -22,7 +19,7 @@ export class PercentComponent {
   private _initialized: boolean = false;
   private colorScale = d3.scaleLinear().domain([0,50,100]).range([d3.hsl("#EF4444CC"),d3.hsl("#FAC600CC"),d3.hsl("#22C55ECC")]).clamp(true)
   constructor(private elementRef: ElementRef) { }
-  
+
   ngAfterViewInit(): void {
     this._initialized = true;
     this.generate();
@@ -52,12 +49,12 @@ export class PercentComponent {
     const height = this.size;
     const rExternal = this.size/2;
     const rInternal = this.labelPosition == 'center' ? rExternal*.7 : rExternal*0.6;
-    
+
     let labelXPosition = width/2;
     let labelYPosition = height/2;
     let arcXPosition = width/2;
     let arcYPosition = height/2;
-    
+
     var svg = d3.select(this.svgContainer.nativeElement).append('svg')
         .attr('width', width)
         .attr('height', height);
@@ -74,7 +71,7 @@ export class PercentComponent {
       })
       .attr("fill", "#ccc")
       .attr('transform', 'translate('+ arcXPosition +',' + arcYPosition +')')
-    
+
     g.append("g")
       .append("path")
       .attr("class", 'arc')
@@ -90,8 +87,8 @@ export class PercentComponent {
         return function (t) {
           return arc_ar(interpolate(t));
         };
-      })	
-    
+      })
+
     if (this.labelPosition == 'center'){
       g.append("text")
         .attr('class', 'label-circle')
@@ -99,7 +96,7 @@ export class PercentComponent {
         .text(this.value + "%")
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
-        .style("font-size", `${this.fontSize ?? '12'}pt`)	
+        .style("font-size", `${this.fontSize ?? '12'}pt`)
 		}
   }
 
@@ -107,10 +104,10 @@ export class PercentComponent {
     const fontHeight = this.fontSize*1.3;
     const width = this.size;
     const height = this.labelPosition == 'center' ? fontHeight + 5 : 8;
-    
+
     let labelXPosition = width/2;
     let labelYPosition = height/2;
-    
+
     var svg = d3.select(this.svgContainer.nativeElement).append('svg')
         .attr('width', width)
         .attr('height', height);
@@ -159,7 +156,7 @@ export class PercentComponent {
           }
         };
       });
-    
+
     if (this.labelPosition == 'center'){
       g.append("text")
         .attr('class', 'label-linear')
@@ -167,8 +164,8 @@ export class PercentComponent {
         .text(this.value + "%")
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
-        .style("font-size", `${this.fontSize}pt`)	
+        .style("font-size", `${this.fontSize}pt`)
     }
   }
-   
+
 }

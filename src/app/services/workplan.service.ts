@@ -42,7 +42,7 @@ export class WorkplanService {
 
   // Servicios: ETAPA
   getStages(idWorkplan: number): Observable<Stage[]> {
-    return this.webRequestService.getWithHeaders(`${this.pathWorkplain}/${this.pathStage}`, {idPlanTrabajo: idWorkplan});
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplain}/${this.pathStage}`, idWorkplan ? {idPlanTrabajo: idWorkplan} : {});
   }
 
   getStage(idStage: number): Observable<Stage> {

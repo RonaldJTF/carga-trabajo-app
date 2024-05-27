@@ -1,243 +1,386 @@
-<ng-container *ngIf="!loading else sLoading">
-    <div *ngIf="!((stages$ | async).length) else data">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva etapa'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
-    </div>
-    <ng-template #data>
-        <div class="grid grid-nogutter">
-            <div *ngIf="stages$ | async as stages" class="col-12" [ngClass]="{'md:col-6 md:pr-2': (stage$ | async)?.id}">
-                <div class="card p-0 ">
-                    <p-treeTable #treeTableOfStage [value]="stages" selectionMode="checkbox" [(selection)]="selectedNodesOfStage" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
-                     [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{'min-width':'400px'}">
-                        <ng-template pTemplate="caption">
-                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
-                                <div class="flex align-items-center flex-wrap">
-                                    <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
-                                        <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-                                    </button>
-                                    <div *ngIf="isAdmin" class="_badge-container m-1">
-                                        <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStages()" pTooltip="Eliminar" tooltipPosition="bottom"
-                                            class="p-button-danger " [disabled]="!totalSelectedStages">
-                                            <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
-                                        </button>
-                                        <span *ngIf="totalSelectedStages"  (click)="desmarkAllStages()" class="_badge" pTooltip="Click para desmarcar">{{totalSelectedStages}}</span>
-                                    </div>
-                                    <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
-                                    <p-menu #menu [popup]="true" [model]="menuItemsOfDownload"  [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
-                                    <div class="_badge-container m-1">
-                                        <button type="button" pRipple pButton style="position: relative;" icon="pi pi-angle-down" class="m-1  p-button-rounded p-button-info p-button-text" label="Descargar" (click)="menu.toggle($event)"></button>
-                                        <span *ngIf="totalSelectedStages"  (click)="desmarkAllStages()" class="_badge" style="top: 0px; right: -5px; "  pTooltip="Click para desmarcar">{{totalSelectedStages}}</span>
-                                    </div>
-                                </div>
-                                <div class="m-1">
-                                    <span class="p-input-icon-left">
-                                        <i class="pi pi-search"></i>
-                                        <input type="search" pInputText placeholder="Buscar"  (input)="onFilterStage($event)">
-                                    </span>
-                                </div>
-                            </div>
-                        </ng-template>
-                        <ng-template pTemplate="header" let-columns>
-                            <tr>
-                                <th class="text-center" style="min-width: 300px">
-                                    Etapa
-                                </th>
-                                <th class="text-center w-5rem" >
-                                    Avance
-                                </th>
-                                <th class="w-7rem"></th>
-                            </tr>
-                            <tr><th class="text-center surface-card text-500 font-medium" colspan="3">{{workplan.nombre | uppercase}}</th></tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-rowNode let-stage="rowData">
-                            <tr >
-                                <td style="min-width: 300px">
-                                    <div class="flex flex-row align-items-center">
-                                        <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
-                                        <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
-                                        <div  (click)="viewStage(stage)" class="flex flex-column cursor-pointer">
-                                            <div class="font-medium" [ngClass]="{'text-500': stage.idPadre, 'text-primary': stage.id == (stage$ | async)?.id}">{{stage.nombre}}</div>
-                                            <div class="text-500">{{stage.descripcion}}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="w-7rem" style="white-space: nowrap;">
-                                    <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="stage.avance ?? 0" styleClass="justify-content-start"></app-percent>
-                                </td>
-                                <td class="text-center w-5rem">
-                                    <app-menu-item [menuItems]="stage.menuItems" [id]="stage.id"></app-menu-item>
-                                </td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
-                            </tr>
-                        </ng-template>
-                    </p-treeTable>
-                    <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de etapas del plan de trabajo</div>
+<ng-container *ngIf="!loading; else sLoading">
+  <div *ngIf="!(stages$ | async).length; else data">
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva etapa'" (go)="openNew()"
+                            [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"
+                            [showButton]="isAdmin"></app-go-to-if-not-found>
+  </div>
+  <ng-template #data>
+    <div class="grid grid-nogutter">
+      <div *ngIf="stages$ | async as stages" class="col-12" [ngClass]="{ 'md:col-6 md:pr-2': (stage$ | async)?.id }">
+        <div class="card p-0">
+          <p-treeTable #treeTableOfStage [value]="stages" selectionMode="checkbox" [(selection)]="selectedNodesOfStage"
+                       (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
+                       [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true"
+                       scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
+            <ng-template pTemplate="caption">
+              <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+                <div class="flex align-items-center flex-wrap">
+                  <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1"
+                          (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                    <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                  </button>
+                  <div *ngIf="isAdmin" class="_badge-container m-1">
+                    <button pButton pRipple icon="pi pi-trash" style="position: relative"
+                            (click)="deleteSelectedStages()" pTooltip="Eliminar" tooltipPosition="bottom"
+                            class="p-button-danger" [disabled]="!totalSelectedStages">
+                      <span class="p-button-label pl-2 hidden-lg">Eliminar</span>
+                    </button>
+                    <span *ngIf="totalSelectedStages" (click)="desmarkAllStages()" class="_badge"
+                          pTooltip="Click para desmarcar">{{ totalSelectedStages }}</span>
+                  </div>
+                  <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
+                  <p-menu #menu [popup]="true" [model]="menuItemsOfDownload" [appendTo]="'body'" [baseZIndex]="1000"
+                          [styleClass]="'my-1'"></p-menu>
+                  <div class="_badge-container m-1">
+                    <button type="button" pRipple pButton style="position: relative" icon="pi pi-angle-down"
+                            class="m-1 p-button-rounded p-button-info p-button-text" label="Descargar"
+                            (click)="menu.toggle($event)"></button>
+                    <span *ngIf="totalSelectedStages" (click)="desmarkAllStages()" class="_badge"
+                          style="top: 0px; right: -5px" pTooltip="Click para desmarcar">{{ totalSelectedStages }}</span>
+                  </div>
                 </div>
-            </div>
-            <div *ngIf="stage$ | async as stage"  class="col-12 pl-0 mt-2 md:mt-0 md:pl-2 md:col-6">
-                <div *ngIf="stage.id" class="card p-0">
-                    <ng-container *ngIf="!(stage.subEtapas?.length) else sStageInformation">
-                        <div class="flex p-3">
-                            <div class="flex {{stage.descripcion ? ' align-items-top ' : ' align-items-center '}} ">
-                                <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                    <i  class="pi pi-sitemap text-xl text-blue-500"></i>
-                                </div>
-                                <div class="flex flex-column ">
-                                    <span class="font-medium">{{stage.nombre | uppercase}}</span>
-                                <span class="text-500">{{stage.descripcion}}</span>
-                                </div>
-                            </div>
-                            <div class="ml-auto pl-2">
-                                <app-percent [value]="stage.avance ?? 0" shape="circle" labelPosition="center" [size]="60" ></app-percent>
-                            </div>
-                        </div>
-                        <div *ngIf="tasks$ | async as tasks else sNoTasks" class="w-full mb-3">
-                            <ng-container  *ngIf="tasks?.length  else sNoTasks" >
-                                <p-table #dt [value]="tasks" sortMode="single" [(selection)]="selectedTasks" selectionMode="multiple"
-                                    [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px"  [tableStyle]="{'min-width':'400px'}">
-                                    <ng-template pTemplate="caption">
-                                        <div class="flex flex-wrap justify-content-between p-3">
-                                            <div  class="flex align-items-center mb-2">
-                                                <div *ngIf="isAdmin" class="_badge-container mr-2">
-                                                    <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedTasks()" pTooltip="Eliminar" tooltipPosition="bottom"
-                                                        class="p-button-danger" [disabled]="!selectedTasks?.length">
-                                                    </button>
-                                                    <span *ngIf="selectedTasks?.length"  (click)="desmarkAllTasks()" class="_badge"
-                                                        pTooltip="Click para desmarcar">{{selectedTasks.length}}</span>
-                                                </div>
-                                                <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>
-                                                <app-menu-item *ngIf="stage['menuItems']?.length"  [menuItems]="stage['menuItems']" [id]="stage.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
-                                            </div>
-                                            <div>
-                                                <span class="p-input-icon-left">
-                                                    <i class="pi pi-search"></i>
-                                                    <input type="search" pInputText placeholder="Buscar"  (input)="onFilterTask(dt, $event)">
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </ng-template>
-    
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th style="width: 3rem">
-                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                                            </th>
-                                            <th class="text-center" pSortableColumn="nombre">
-                                                Tarea
-                                                <p-sortIcon field="nombre"></p-sortIcon>
-                                            </th>
-                                            <th class="text-center w-5rem" style="white-space: nowrap;" pSortableColumn="avance">
-                                                Avance
-                                                <p-sortIcon field="avance"></p-sortIcon>
-                                            </th>
-                                            <th class="w-5rem text-right">
-                                                <p-inputSwitch id="showMore" [(ngModel)]="showMoreDetailOfTasks" (onChange)="onChangeShowMoreDetail($event)"  pTooltip="Más detalles" tooltipPosition="bottom" ></p-inputSwitch>
-                                            </th>
-                                        </tr>
-                                    </ng-template>
-    
-                                   <ng-template pTemplate="body" let-task let-rowIndex="rowIndex">
-                                        <tr>
-                                            <td>
-                                                <p-tableCheckbox [value]="task"></p-tableCheckbox>
-                                            </td>
-                                            <td>
-                                                <div class="flex flex-column justify-content-start">
-                                                    <span class="w-full">{{task.nombre}}</span>
-                                                    <span class="text-500 text-sm w-full">{{task.descripcion}}</span>
-                                                    <ng-container *ngIf="showMoreDetailOfTasks">
-                                                        <div class="text-sm text-500">
-                                                            <i class="pi pi-users text-lg"></i>
-                                                            <span class="text-left font-medium ml-1">Responsables: </span>
-                                                            <span class="text-left">{{task.responsable}}</span>
-                                                        </div>
-                                                        <div  class="text-sm text-500">
-                                                            <i class="pi pi-file text-lg"></i>
-                                                            <span class="text-left font-medium ml-1">Entregables: </span>
-                                                            <span class="text-left">{{task.entregable}}</span>
-                                                        </div>
-                                                        <div class="mb-1 text-xs text-blue-500">Desde el {{task.fechaInicio | prettyDate : 'datetime'}} hasta el  {{task.fechaFin | prettyDate : 'datetime'}}</div>
-                                                        <span style="font-size: .75rem" [class]="'mr-auto activity-expiration-badge activity-expiration-'+( [task.fechaInicio, task.fechaFin] | activityExpiration : task.avance).classStyle">{{ ([task.fechaInicio, task.fechaFin] | activityExpiration : task.avance).value}}</span>
-                                                    </ng-container>
-                                                </div>
-                                            </td>
-                                            <td style="white-space: nowrap;">
-                                                <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="task.avance ?? 0"  styleClass="justify-content-start"></app-percent>
-                                            </td>
-                                            <td  class="text-center">
-                                                <div  class="flex align-items-center justify-content-end">
-                                                    <button (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                                                    <app-menu-item [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
-                                                </div>
-                                                <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{'max-width': '75%'}">
-                                                    <ng-template pTemplate>
-                                                        <div class="flex align-items-center mb-3">
-                                                            <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                                                <i  class="pi pi-info-circle text-xl text-blue-500"></i>
-                                                            </div>
-                                                            <div class="flex flex-column ">
-                                                                <h5 class="m-0 text-700">Detalle</h5>
-                                                                <span class="text-500">Detalle de la tarea</span>
-                                                            </div>
-                                                        </div>
-                                                    </ng-template>
-                                                </p-overlayPanel>
-                                            </td>
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="emptymessage">
-                                        <tr>
-                                            <td colspan="4" class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
-                                        </tr>
-                                    </ng-template>
-                                </p-table>
-                                <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de tareas</div>
-                            </ng-container>
-                        </div>
-                        <ng-template #sNoTasks>
-                            <div class="mb-3">
-                                <app-go-to-if-not-found
-                                (go)="goToAddTask(stage)"
-                                buttonLabel="Agregar tarea"
-                                [imageSize]="IMAGE_SIZE.MEDIUM"
-                                [showButton]="isAdmin"
-                                [message]="MESSAGE.NADA_CONFIGURADO">
-                            </app-go-to-if-not-found>
-                            </div>
-                        </ng-template>
-                    </ng-container>
-                    <ng-template #sStageInformation>
-                        <div class="flex flex-column align-items-center text-center p-3">
-                            <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-blue-100 border-circle">
-                                <i class="pi pi-sitemap text-4xl text-blue-500"></i>
-                            </div>
-                            <span class="font-bold">{{stage.nombre}}</span>
-                            <span class="text-500">{{stage.descripcion}}</span>
-                            <span class="text-sm text-500 mb-3">Etapa</span>
-                            <app-percent [value]="stage.avance ?? 0" shape="circle" labelPosition="center" [size]="100" [fontSize]="18"></app-percent>
-                            <span class="text-500 mb-2">Porcentaje de avance</span>
-                            <button pButton pRipple type="button"  class="p-button-text _button-go" (click)="goToAddSubstage(stage)" >
-                                <i class="pi pr-2 pi-plus"></i>
-                                <span>Agregar subetapa</span>
-                            </button>
-                        </div>
-                    </ng-template>
+                <div class="m-1">
+                  <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input type="search" pInputText placeholder="Buscar" (input)="onFilterStage($event)"/>
+                  </span>
                 </div>
-            </div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th class="text-center" style="min-width: 300px">Etapa</th>
+                <th class="text-center w-5rem">Avance</th>
+                <th class="w-7rem"></th>
+              </tr>
+              <tr>
+                <th class="text-center surface-card text-500 font-medium" colspan="3">
+                  {{ workplan.nombre | uppercase }}
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowNode let-stage="rowData">
+              <tr>
+                <td style="min-width: 300px">
+                  <div class="flex flex-row align-items-center">
+                    <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                    <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+                    <div (click)="viewStage(stage)" class="flex flex-column cursor-pointer">
+                      <div class="font-medium" [ngClass]="{
+                          'text-500': stage.idPadre,
+                          'text-primary': stage.id == (stage$ | async)?.id
+                        }">
+                        {{ stage.nombre }}
+                      </div>
+                      <div class="text-500">{{ stage.descripcion }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="w-7rem" style="white-space: nowrap">
+                  <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="stage.avance ?? 0"
+                               styleClass="justify-content-start"></app-percent>
+                </td>
+                <td class="text-center w-5rem">
+                  <app-menu-item [menuItems]="stage.menuItems" [id]="stage.id"></app-menu-item>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td class="text-center">{{ MESSAGE.NO_REGISTROS }}</td>
+              </tr>
+            </ng-template>
+          </p-treeTable>
+          <div class="text-500 text-sm mx-2 mb-2 my-3">
+            Lista de etapas del plan de trabajo
+          </div>
         </div>
-    </ng-template>
+      </div>
+      <div *ngIf="stage$ | async as stage" class="col-12 pl-0 mt-2 md:mt-0 md:pl-2 md:col-6">
+        <div *ngIf="stage.id" class="card p-0">
+          <ng-container *ngIf="!stage.subEtapas?.length; else sStageInformation">
+            <div class="flex p-3">
+              <div class="flex {{
+                  stage.descripcion
+                    ? ' align-items-top '
+                    : ' align-items-center '
+                }} ">
+                <div
+                  class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                  <i class="pi pi-sitemap text-xl text-blue-500"></i>
+                </div>
+                <div class="flex flex-column">
+                  <span class="font-medium">{{
+                      stage.nombre | uppercase
+                    }}</span>
+                  <span class="text-500">{{ stage.descripcion }}</span>
+                </div>
+              </div>
+              <div class="ml-auto pl-2">
+                <app-percent [value]="stage.avance ?? 0" shape="circle" labelPosition="center"
+                             [size]="60"></app-percent>
+              </div>
+            </div>
+            <div *ngIf="tasks$ | async as tasks; else sNoTasks" class="w-full mb-3">
+              <ng-container *ngIf="tasks?.length; else sNoTasks">
+                <ng-container *ngIf="selectedViewMode === 'diary'">
+                  <p-table #dt [value]="tasks" sortMode="single" [(selection)]="selectedTasks" selectionMode="multiple"
+                           [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll"
+                           [scrollable]="true"
+                           scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
+                    <ng-template pTemplate="caption">
+                      <div class="flex flex-wrap justify-content-between p-3">
+                        <div class="flex align-items-center mb-2">
+                          <div *ngIf="isAdmin" class="_badge-container mr-2">
+                            <button pButton pRipple icon="pi pi-trash" style="position: relative"
+                                    (click)="deleteSelectedTasks()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                    class="p-button-danger" [disabled]="!selectedTasks?.length"></button>
+                            <span *ngIf="selectedTasks?.length" (click)="desmarkAllTasks()" class="_badge"
+                                  pTooltip="Click para desmarcar">{{ selectedTasks.length }}</span>
+                          </div>
+                          <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>
+                          <app-menu-item *ngIf="stage['menuItems']?.length" [menuItems]="stage['menuItems']"
+                                         [id]="stage.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
+                        </div>
+                        <div class="flex align-items-center flex-wrap">
+                          <span class="p-input-icon-left mr-2 mb-2">
+                            <i class="pi pi-search"></i>
+                            <input type="search" pInputText placeholder="Buscar" (input)="onFilterTask(dt, $event)"/>
+                          </span>
+                          <p-selectButton styleClass="mb-2" [options]="stateOptions" [(ngModel)]="selectedViewMode"
+                                          (ngModelChange)="onTemplateChange($event)">
+                            <ng-template let-item pTemplate>
+                              <i [class]="item.icon"></i>
+                            </ng-template>
+                          </p-selectButton>
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th style="width: 3rem">
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th class="text-center" pSortableColumn="nombre">
+                          Tarea
+                          <p-sortIcon field="nombre"></p-sortIcon>
+                        </th>
+                        <th class="text-center w-5rem" style="white-space: nowrap" pSortableColumn="avance">
+                          Avance
+                          <p-sortIcon field="avance"></p-sortIcon>
+                        </th>
+                        <th class="w-5rem text-right">
+                          <p-inputSwitch id="showMore" [(ngModel)]="showMoreDetailOfTasks"
+                                         (onChange)="onChangeShowMoreDetail($event)" pTooltip="Más detalles"
+                                         tooltipPosition="bottom"></p-inputSwitch>
+                        </th>
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-task let-rowIndex="rowIndex">
+                      <tr>
+                        <td>
+                          <p-tableCheckbox [value]="task"></p-tableCheckbox>
+                        </td>
+                        <td>
+                          <div class="flex flex-column justify-content-start">
+                            <span class="w-full">{{ task.nombre }}</span>
+                            <span class="text-500 text-sm w-full">{{
+                                task.descripcion
+                              }}</span>
+                            <ng-container *ngIf="showMoreDetailOfTasks">
+                              <div class="text-sm text-500">
+                                <i class="pi pi-users text-lg"></i>
+                                <span class="text-left font-medium ml-1">Responsables:
+                                </span>
+                                <span class="text-left">{{
+                                    task.responsable
+                                  }}</span>
+                              </div>
+                              <div class="text-sm text-500">
+                                <i class="pi pi-file text-lg"></i>
+                                <span class="text-left font-medium ml-1">Entregables:
+                                </span>
+                                <span class="text-left">{{
+                                    task.entregable
+                                  }}</span>
+                              </div>
+                              <div class="mb-1 text-xs text-blue-500">
+                                Desde el
+                                {{
+                                  task.fechaInicio | prettyDate : "datetime"
+                                }}
+                                hasta el
+                                {{ task.fechaFin | prettyDate : "datetime" }}
+                              </div>
+                              <span style="font-size: 0.75rem" [class]="             'mr-auto activity-expiration-badge activity-expiration-' +                                  (
+                                    [task.fechaInicio, task.fechaFin]
+                                    | activityExpiration : task.avance
+                                  ).classStyle
+                                ">{{
+                                  (
+                                    [task.fechaInicio, task.fechaFin]
+                                      | activityExpiration : task.avance
+                                  ).value
+                                }}</span>
+                            </ng-container>
+                          </div>
+                        </td>
+                        <td style="white-space: nowrap">
+                          <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30"
+                                       [value]="task.avance ?? 0" styleClass="justify-content-start"></app-percent>
+                        </td>
+                        <td class="text-center">
+                          <div class="flex align-items-center justify-content-end">
+                            <button (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle"
+                                    class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
+                                    pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                            <app-menu-item [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
+                          </div>
+                          <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
+                            <ng-template pTemplate>
+                              <div class="flex align-items-center mb-3">
+                                <div
+                                  class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                                  <i class="pi pi-info-circle text-xl text-blue-500"></i>
+                                </div>
+                                <div class="flex flex-column">
+                                  <h5 class="m-0 text-700">Detalle</h5>
+                                  <span class="text-500">Detalle de la tarea</span>
+                                </div>
+                              </div>
+                              <ng-container *ngTemplateOutlet="
+                                  TemplateFollowUpInformation;
+                                  context: { task: task }
+                                "></ng-container>
+                              <div *ngIf="task.seguimientos as seguimientos" class="grid grid-nogutter">
+                                <ng-container *ngTemplateOutlet="
+                                    TemplateFollowUpList;
+                                    context: { followUp: seguimientos }
+                                  "></ng-container>
+                              </div>
+                            </ng-template>
+                          </p-overlayPanel>
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="4" class="text-center">
+                          {{ MESSAGE.NO_REGISTROS }}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  <div class="text-500 text-sm mx-2 mb-2 my-3">
+                    Lista de tareas
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="selectedViewMode === 'calendar'">
+                  <ng-container *ngTemplateOutlet="
+                      TemplateCalendarView;
+                      context: { stage: stage }
+                    "></ng-container>
+                </ng-container>
+              </ng-container>
+            </div>
+            <ng-template #sNoTasks>
+              <div class="mb-3">
+                <app-go-to-if-not-found (go)="goToAddTask(stage)" buttonLabel="Agregar tarea"
+                                        [imageSize]="IMAGE_SIZE.MEDIUM" [showButton]="isAdmin"
+                                        [message]="MESSAGE.NADA_CONFIGURADO">
+                </app-go-to-if-not-found>
+              </div>
+            </ng-template>
+          </ng-container>
+          <ng-template #sStageInformation>
+            <div class="flex flex-column align-items-center text-center p-3">
+              <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-blue-100 border-circle">
+                <i class="pi pi-sitemap text-4xl text-blue-500"></i>
+              </div>
+              <span class="font-bold">{{ stage.nombre }}</span>
+              <span class="text-500">{{ stage.descripcion }}</span>
+              <span class="text-sm text-500 mb-3">Etapa</span>
+              <app-percent [value]="stage.avance ?? 0" shape="circle" labelPosition="center" [size]="100"
+                           [fontSize]="18"></app-percent>
+              <span class="text-500 mb-2">Porcentaje de avance</span>
+              <button pButton pRipple type="button" class="p-button-text _button-go" (click)="goToAddSubstage(stage)">
+                <i class="pi pr-2 pi-plus"></i>
+                <span>Agregar subetapa</span>
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 </ng-container>
 
 <div class="flex flex-wrap justify-content-end m-0 p-0 mt-3">
-    <button pButton pRipple icon="pi pi-undo" class="p-button-secondary" (click)="goBack()">
-        <span class="hidden-xs p-button-label pl-2">Volver</span>
-    </button>
-</div>    
+  <button pButton pRipple icon="pi pi-undo" class="p-button-secondary" (click)="goBack()">
+    <span class="hidden-xs p-button-label pl-2">Volver</span>
+  </button>
+</div>
 
 <ng-template #sLoading>
-    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+  <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
 
+<ng-template #TemplateFollowUpInformation let-task="task">
+  <div class="flex flex-row align-items-center">
+    <div class="flex flex-column">
+      <div class="font-medium">{{ task.nombre | uppercase }}</div>
+      <div class="text-500">{{ task.descripcion }}</div>
+    </div>
+    <div class="ml-auto pl-2">
+      <app-percent [value]="task.avance ?? 0" [size]="50" [shape]="'circle'" labelPosition="center"></app-percent>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #TemplateFollowUpList let-followUp="followUp">
+  <p-table #dt [value]="followUp" responsiveLayout="scroll" [tableStyle]="{ 'min-width': '500px' }"
+           scrollHeight="500px">
+    <ng-template pTemplate="body" let-detail let-rowIndex="rowIndex">
+      <tr>
+        <td>
+          <div class="flex flex-row align-items-center">
+            <div class="flex flex-column align-items-center justify-content-start">
+              <span class="w-full text-500 font-medium">{{
+                  detail.fecha
+                }}</span>
+              <span class="text-blue-500 text-xs w-full">{{
+                  detail.fecha | timeAgo
+                }}</span>
+            </div>
+            <div class="ml-auto flex align-items-center pl-2">
+              <app-percent [size]="80" shape="linear" labelPosition="right"
+                           [value]="detail.porcentajeAvance"></app-percent>
+              <app-menu-item [menuItems]="menuItemsOfFollowUp" [id]="detail.id"></app-menu-item>
+            </div>
+          </div>
+          <div class="text-500 my-2 text-justify">{{ detail.observacion }}</div>
+          <div>
+            <div *ngIf="detail.archivos?.length > 0"
+                 class="col-12 flex flex-column border-round-xl text-center surface-100 py-2 mt-">
+              <span class="text-500">Anexos</span>
+              <div pRipple *ngFor="let file of detail.archivos" (click)="downloadFile(file.id, $event)"
+                   class="flex justify-content-between align-items-center text-center hover:text-primary cursor-pointer p-2">
+                <img [src]="file.mimetype | fileIcon" class="mr-2" height="32px" alt=""/>
+                <span class="flex-grow-1 text-left">{{ file.nombre }}</span>
+                <span class="ml-auto w-7rem">{{ file.tamanio | fileSize : "Desconocido" }}
+                </span>
+                <button pButton pRipple (click)="downloadFile(file.id, $event)" type="button"
+                        icon="pi pi-cloud-download" class="p-button-rounded p-button-text" pTooltip="Descargar"
+                        tooltipPosition="bottom"></button>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-template>
+
+<ng-template #TemplateCalendarView></ng-template>

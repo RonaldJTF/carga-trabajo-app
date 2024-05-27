@@ -28,6 +28,9 @@ export class ListComponent implements OnInit, OnDestroy{
 
   @ViewChild('treeTableOfStage') treeTableOfStage: TreeTable;
 
+  stateOptions: any[] = [{icon: 'pi pi-list', value: 'diary'}, {icon: 'pi pi-calendar', value: 'calendar'}];
+  selectedViewMode: 'diary' | 'calendar' = "diary";
+
   isAdmin: boolean;
   isOperator: boolean;
 
@@ -39,8 +42,7 @@ export class ListComponent implements OnInit, OnDestroy{
   selectedTasks: Task[] = [];
 
   loading: boolean = false;
-  rowGroupMetadata: number[] = [];
-  
+
   expandedNodes: number[];
   showMoreDetailOfTasks: boolean;
 
@@ -61,6 +63,15 @@ export class ListComponent implements OnInit, OnDestroy{
     {label: 'Excel', icon: 'pi pi-file-excel', id:"excel", command: (e) => { this.download(e) }},
   ]
 
+  menuItemsOfFollowUp: MenuItem[] = [
+    {
+      label: 'Eliminar',
+      icon: 'pi pi-trash',
+      command: (e) => {
+      },
+    },
+  ];
+
   constructor(
     private store: Store<AppState>,
     private confirmationDialogService: ConfirmationDialogService,
@@ -74,12 +85,12 @@ export class ListComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.isAdmin = this.authService.roleIsAdministrator();
     this.isOperator = this.authService.roleIsOperator();
-    
+
     this.workplanSubscription = this.store.select(state => state.workplan.item).subscribe(e => this.workplan = e);
     this.stages$ = this.store.select(state => state.stage.items).pipe(map(e => e?.map( obj => this.transformToTreeNode(obj))));
     this.stage$ = this.store.select(state => state.stage.item).pipe(map(e => ({...e, menuItems: this.getMenuItemsOfStructure(e)})));
     this.tasks$ = this.stage$.pipe(map(e => e.tareas));
-    
+
     this.showMoreDetailOfTasksSubscription = this.store.select(state => state.stage.showMoreDetailOfTasks).subscribe(e => this.showMoreDetailOfTasks = e);
     this.mustRechargeSubscription = this.store.select(state => state.stage.mustRecharge).subscribe(e => {
       if (e){this.getStages()}
@@ -140,7 +151,7 @@ export class ListComponent implements OnInit, OnDestroy{
   openNew() {
     this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true, queryParams: {idWorkplan: this.workplan.id}});
   }
-  
+
   onGoToUpdate (id : any, event: Event): void{
     event.preventDefault();
     event.stopPropagation();
@@ -310,6 +321,10 @@ export class ListComponent implements OnInit, OnDestroy{
     this.router.navigate(['configurations/workplans'], {
       skipLocationChange: true,
     });
+  }
+
+  onTemplateChange(event: "diary" | "calendar") {
+    this.selectedViewMode = event;
   }
 
 }

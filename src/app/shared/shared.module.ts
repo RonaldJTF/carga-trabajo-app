@@ -62,6 +62,7 @@ import {BodySkeletonComponent} from './skeleton/dashboard/body-skeleton/body-ske
 import { PercentComponent } from './charts/percent/percent.component';
 import {CalendarModule} from "primeng/calendar";
 import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.pipe';
+import {SelectButtonModule} from "primeng/selectbutton";
 
 @NgModule({
   declarations: [
@@ -138,6 +139,7 @@ import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.
     RippleModule,
     TreeSelectModule,
     CalendarModule,
+    SelectButtonModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -212,7 +214,8 @@ import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.
     TieredMenuModule,
     RippleModule,
     TreeSelectModule,
-    CalendarModule
+    CalendarModule,
+    SelectButtonModule
   ],
   providers: []
 })
