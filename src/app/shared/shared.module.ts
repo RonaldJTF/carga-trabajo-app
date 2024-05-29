@@ -66,6 +66,10 @@ import {SelectButtonModule} from "primeng/selectbutton";
 import {SliderModule} from "primeng/slider";
 import {ShowFormValueDirective} from "../directives/show-form-value.directive";
 import {KnobModule} from "primeng/knob";
+import { CalendarComponent } from './calendar/calendar.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calendar-menu-item.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +88,7 @@ import {KnobModule} from "primeng/knob";
     HeadSkeletonComponent,
     BodySkeletonComponent,
     PercentComponent,
+    CalendarComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -101,6 +106,7 @@ import {KnobModule} from "primeng/knob";
 
     ImageFallbackDirective,
     ShowFormValueDirective,
+      CalendarMenuItemComponent,
   ],
   imports: [
     CommonModule,
@@ -145,6 +151,8 @@ import {KnobModule} from "primeng/knob";
     CalendarModule,
     SelectButtonModule,
     SliderModule,
+    FullCalendarModule,
+    SpeedDialModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -162,6 +170,7 @@ import {KnobModule} from "primeng/knob";
     HeadSkeletonComponent,
     BodySkeletonComponent,
     PercentComponent,
+    CalendarComponent,
 
     ImageFallbackDirective,
     ShowFormValueDirective,
@@ -222,6 +231,8 @@ import {KnobModule} from "primeng/knob";
     CalendarModule,
     SelectButtonModule,
     SliderModule,
+    FullCalendarModule,
+    SpeedDialModule,
   ],
   providers: []
 })

@@ -116,4 +116,7 @@ export class WorkplanService {
     return this.webRequestService.deleteWithHeaders(`${this.pathFollowUp}/${payload}`, undefined, payload);
   }
 
+  updateDates(id: number, task: any): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathTask}/dates/${id}`, task);
+  }
 }

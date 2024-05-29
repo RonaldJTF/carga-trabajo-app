@@ -54,9 +54,9 @@
                             <p-tableCheckbox [value]="workplan"></p-tableCheckbox>
                         </td>
                         <td pRipple class="cursor-pointer" (click)="onManagementStage(workplan.id, $event)">
-                            <div class="flex flex-column align-items-center justify-content-start">
-                                <span class="image-text w-full">{{workplan.nombre}}</span>
-                                <span class="image-text text-500 text-sm w-full">{{workplan.descripcion}}</span>
+                            <div class="flex flex-column justify-content-start">
+                                <span class="font-medium">{{ workplan.nombre }}</span>
+                                <span class="text-500">{{workplan.descripcion}}</span>
                             </div>
                         </td>
                         <td style="white-space: nowrap;">

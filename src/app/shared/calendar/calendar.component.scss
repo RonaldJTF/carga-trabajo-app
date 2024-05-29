@@ -1,0 +1,9 @@
+:host ::ng-deep .fc-toolbar-title{
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    color: var(--surface-500);
+}
+:host ::ng-deep .fc-header-toolbar{
+    margin-bottom: 0.5rem !important;
+}

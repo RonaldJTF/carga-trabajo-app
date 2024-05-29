@@ -24,7 +24,7 @@
   <div class="field p-fluid">
     <label htmlFor="fecha" class="font-medium">Fecha de realización</label>
     <p-calendar [showClear]="true" [showIcon]="true" inputId="fecha" formControlName="rangeDates" dateFormat="dd-mm-yy"
-                selectionMode="range" [showTime]="true" [showSeconds]="true" icon="pi pi-calendar"></p-calendar>
+                selectionMode="range" [showTime]="false" [showSeconds]="false" icon="pi pi-calendar"></p-calendar>
     <div *ngIf="fechaRangoNoValido">
       <div *ngIf="controls['fechaRango'].errors?.['required']">
         <small class="p-error">Ingrese un rango de fecha</small>

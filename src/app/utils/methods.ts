@@ -81,6 +81,40 @@ export class Methods {
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   }
 
+  static formatToString(date: Date, format: 'yyyy-mm-dd' | 'yyyy-mm-dd HH:MM:SS') {
+    const year = date.getFullYear();
+    let month: any = date.getMonth() + 1;
+    let day: any = date.getDate();
+    let hour: any = date.getHours();
+    let minute: any = date.getMinutes();
+    let second: any = date.getSeconds();
+
+    if (second < 10) {
+      second = '0' + second;
+    }
+
+    if (minute < 10) {
+      minute = '0' + minute;
+    }
+
+    if (hour < 10) {
+      hour = '0' + hour;
+    }
+
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    if (month < 10) {
+      month = `0${month}`;
+    }
+
+    if(format == 'yyyy-mm-dd'){
+      return `${year}-${month}-${day}`;
+    }
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  }
+
   static getExtensionOfMimetype(mimetype: string) {
     const parts = mimetype.split('/');
     if (parts.length === 2) {

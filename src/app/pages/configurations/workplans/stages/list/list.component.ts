@@ -15,6 +15,7 @@ import {MESSAGE} from 'src/labels/labels';
 import {Table} from 'primeng/table';
 import {MediaService} from 'src/app/services/media.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-stage-list',
@@ -34,6 +35,11 @@ export class ListComponent implements OnInit, OnDestroy {
   MESSAGE = MESSAGE;
 
   @ViewChild('treeTableOfStage') treeTableOfStage: TreeTable;
+  @ViewChild('detailOfTaskOverlayPanel') detailOfTaskOverlayPanel: OverlayPanel;
+
+  taskOfCalendar: Task = new Task();
+  tasksSubscription: Subscription;
+  tasks: Task[] = [];
 
   stateOptions: any[] = [{icon: 'pi pi-list', value: 'diary'}, {icon: 'pi pi-calendar', value: 'calendar'}];
   selectedViewMode: 'diary' | 'calendar' = "diary";
@@ -44,7 +50,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   stage$: Observable<Stage>;
   stages$: Observable<TreeNode[]>;
-  tasks$: Observable<Task[]>;
 
   selectedNodesOfStage: TreeNode | TreeNode[] | null;
   selectedTasks: Task[] = [];
@@ -64,6 +69,12 @@ export class ListComponent implements OnInit, OnDestroy {
   workplan: Workplan;
 
   menuItemsOfTask: MenuItem[] = [
+    {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdateTask(e.item.id, e.originalEvent)},
+    {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDeleteTask(e)}
+  ];
+
+  menuItemsOfTaskInCalendar: MenuItem[] = [
+    {label: 'Gestionar seguimiento', icon: 'pi pi-cog', command: (e) => this.goToManagementFollowUp(e.item.id, e.originalEvent)},
     {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdateTask(e.item.id, e.originalEvent)},
     {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDeleteTask(e)}
   ]
@@ -109,7 +120,6 @@ export class ListComponent implements OnInit, OnDestroy {
       ...e,
       menuItems: this.getMenuItemsOfStructure(e)
     })));
-    this.tasks$ = this.stage$.pipe(map(e => e.tareas));
 
     this.showMoreDetailOfTasksSubscription = this.store.select(state => state.stage.showMoreDetailOfTasks).subscribe(e => this.showMoreDetailOfTasks = e);
     this.mustRechargeSubscription = this.store.select(state => state.stage.mustRecharge).subscribe(e => {
@@ -118,7 +128,8 @@ export class ListComponent implements OnInit, OnDestroy {
       }
     });
     this.expandedNodesSubscription = this.store.select(state => state.stage.expandedNodes).subscribe(e => this.expandedNodes = e);
-
+    this.tasksSubscription = this.stage$.subscribe( e => this.tasks = e.tareas);
+    
     this.buildForm();
 
     this.advanceSubscription = this.formFollowUp.get('porcentajeAvance').valueChanges.subscribe(value => {
@@ -128,7 +139,6 @@ export class ListComponent implements OnInit, OnDestroy {
     this.advanceSliderSubscription = this.formFollowUp.get('porcentajeAvanceSlider').valueChanges.subscribe(value => {
       this.formFollowUp.get('porcentajeAvance').setValue(value, { emitEvent: false });
       if(this.formFollowUp.get('porcentajeAvance')?.invalid){
-        console.log('omeeeeeeeeeeeeee')
         this.formFollowUp.get('porcentajeAvance').markAsDirty();
         this.formFollowUp.get('porcentajeAvance').markAllAsTouched();
       }
@@ -140,6 +150,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.workplanSubscription?.unsubscribe();
     this.expandedNodesSubscription?.unsubscribe();
     this.showMoreDetailOfTasksSubscription?.unsubscribe();
+    this.tasksSubscription?.unsubscribe();
     this.advanceSubscription?.unsubscribe();
     this.advanceSliderSubscription?.unsubscribe();
   }
@@ -400,7 +411,6 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   onChangeShowMoreDetail(event: any) {
-    console.log("onchangeeeeeeee")
     this.store.dispatch(StageActions.setShowMoreDetailOfTasks({showMoreDetailOfTasks: event.checked}));
   }
 
@@ -566,4 +576,28 @@ export class ListComponent implements OnInit, OnDestroy {
     });
   }
 
+  goToManagementFollowUp(idTask: any, event: Event){
+    this.detailOfTaskOverlayPanel.toggle(event)
+    this.taskOfCalendar = this.tasks.find(item => item.id == idTask);
+  } 
+
+  managementFollowUp(data: any){
+    this.detailOfTaskOverlayPanel.hide()
+    this.detailOfTaskOverlayPanel.show(data.originalEvent)
+    this.taskOfCalendar = this.tasks.find(item => item.id == data.id);
+  } 
+
+  updateDates(data: any){
+    data.originalEvent.preventDefault();
+    this.workplanService.updateDates(data.id, {fechaInicio: data.start, fechaFin: data.end}).subscribe({
+      next: (e) => {
+        //this.store.dispatch(StageActions.updateFromList({stage: e}));
+        //this.goBack();
+        //this.creatingOrUpdating = false;
+      },
+      error: (error) => {
+        //this.creatingOrUpdating = false;
+      },
+    });
+  }
 }
