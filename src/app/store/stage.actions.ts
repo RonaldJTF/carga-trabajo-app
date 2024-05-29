@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {Stage, Task} from "../models/workplan";
+import {FollowUp, Stage, Task} from "../models/workplan";
 
 export const setList = createAction('[Configuration of Stage] Set the stages', props<{ stages: Stage[] }>());
 export const addToList = createAction('[Configuration of Stage] Add item to the stages', props<{ stage: Stage }>());
@@ -17,3 +17,6 @@ export const addTaskToStage = createAction('[Configuration of Stage] Add task to
 export const removeTasksFromStage = createAction('[Configuration of Stage] Remove tasks from Stage', props<{ taskIds: number[] }>());
 export const updateTaskFromStage = createAction('[Configuration of Stage] Update a task into stage', props<{ task: Task }>());
 export const setShowMoreDetailOfTasks = createAction('[Configuration of Stage] set if task must more details', props<{ showMoreDetailOfTasks: boolean }>());
+
+export const addFollowUpToTask = createAction('[Configuration of Stage] Add follow-up to task', props<{ idTask: number, followUp: FollowUp }>());
+export const removeFollowUpFromTask = createAction('[Configuration of Stage] Remove follow-up from task', props<{ idTask: number, idFollowUp: number}>());

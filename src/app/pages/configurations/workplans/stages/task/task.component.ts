@@ -5,7 +5,6 @@ import {WorkplanService} from "../../../../../services/workplan.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PrimeNGConfig} from "primeng/api";
 import {Methods} from "../../../../../utils/methods";
-import {finalize} from "rxjs";
 import { Task } from 'src/app/models/workplan';
 import { AppState } from 'src/app/app.reducers';
 import { Store } from '@ngrx/store';
@@ -35,10 +34,10 @@ export class TaskComponent implements OnInit {
 
   constructor(
     private store: Store<AppState>,
-    private formBuilder: FormBuilder, 
-    private workplanService: WorkplanService, 
-    private router: Router, 
-    private readonly route: ActivatedRoute, 
+    private formBuilder: FormBuilder,
+    private workplanService: WorkplanService,
+    private router: Router,
+    private readonly route: ActivatedRoute,
     private primengConfig: PrimeNGConfig) {
   }
 
@@ -159,7 +158,7 @@ export class TaskComponent implements OnInit {
         this.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });
@@ -173,7 +172,7 @@ export class TaskComponent implements OnInit {
         this.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });
@@ -188,7 +187,7 @@ export class TaskComponent implements OnInit {
         this.goBack();
         this.deleting = false;
       },
-      error: (error) => {
+      error: () => {
         this.deleting = false;
       },
     });

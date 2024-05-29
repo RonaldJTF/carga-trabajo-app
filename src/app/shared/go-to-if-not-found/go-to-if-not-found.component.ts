@@ -12,6 +12,7 @@ export class GoToIfNotFoundComponent {
   @Input() icon: string = 'pi-plus';
   @Input() message: string;
   @Input() showButton: boolean = true;
+  @Input() showImage: boolean = true;
 
   @Output() go: EventEmitter<Event> = new EventEmitter<Event>();
 

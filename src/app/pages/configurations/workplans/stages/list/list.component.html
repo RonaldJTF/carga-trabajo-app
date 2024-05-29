@@ -100,19 +100,13 @@
         <div *ngIf="stage.id" class="card p-0">
           <ng-container *ngIf="!stage.subEtapas?.length; else sStageInformation">
             <div class="flex p-3">
-              <div class="flex {{
-                  stage.descripcion
-                    ? ' align-items-top '
-                    : ' align-items-center '
-                }} ">
+              <div class="flex {{ stage.descripcion ? ' align-items-top ' : ' align-items-center ' }} ">
                 <div
                   class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
                   <i class="pi pi-sitemap text-xl text-blue-500"></i>
                 </div>
                 <div class="flex flex-column">
-                  <span class="font-medium">{{
-                      stage.nombre | uppercase
-                    }}</span>
+                  <span class="font-medium">{{ stage.nombre | uppercase }}</span>
                   <span class="text-500">{{ stage.descripcion }}</span>
                 </div>
               </div>
@@ -250,15 +244,17 @@
                                   <span class="text-500">Detalle de la tarea</span>
                                 </div>
                               </div>
-                              <ng-container *ngTemplateOutlet="
-                                  TemplateFollowUpInformation;
-                                  context: { task: task }
-                                "></ng-container>
+                              <ng-container
+                                *ngTemplateOutlet="TemplateFollowUpInformation; context: { task: task }"></ng-container>
                               <div *ngIf="task.seguimientos as seguimientos" class="grid grid-nogutter">
-                                <ng-container *ngTemplateOutlet="
-                                    TemplateFollowUpList;
-                                    context: { followUp: seguimientos }
-                                  "></ng-container>
+                                <ng-container *ngIf="selectedViewFollowUp === 'list'">
+                                  <ng-container
+                                    *ngTemplateOutlet="TemplateFollowList; context: { follow: seguimientos }"></ng-container>
+                                </ng-container>
+                                <ng-container *ngIf="selectedViewFollowUp === 'form'">
+                                  <ng-container
+                                    *ngTemplateOutlet="TemplateFollowUpForm, context: {task: task}"></ng-container>
+                                </ng-container>
                               </div>
                             </ng-template>
                           </p-overlayPanel>
@@ -337,40 +333,45 @@
       <app-percent [value]="task.avance ?? 0" [size]="50" [shape]="'circle'" labelPosition="center"></app-percent>
     </div>
   </div>
+  <div>
+    <!--<button *ngIf="isAdmin && selectedViewFollowUp === 'list'" pButton pRipple icon="pi pi-plus"
+            class="p-button-rounded p-button-text p-button-success p-button-outlined m-1"
+            (click)="newFollowUp()" pTooltip="Nuevo seguimiento" tooltipPosition="bottom">
+    </button>-->
+    <app-go-to-if-not-found *ngIf="isAdmin && selectedViewFollowUp === 'list'" [showImage]="false"
+                            [buttonLabel]="'Crear nuevo seguimiento'" (go)="newFollowUp(task)"
+                            [showButton]="isAdmin"></app-go-to-if-not-found>
+  </div>
 </ng-template>
 
-<ng-template #TemplateFollowUpList let-followUp="followUp">
-  <p-table #dt [value]="followUp" responsiveLayout="scroll" [tableStyle]="{ 'min-width': '500px' }"
-           scrollHeight="500px">
-    <ng-template pTemplate="body" let-detail let-rowIndex="rowIndex">
+<ng-template #TemplateFollowList let-follow="follow">
+  <p-table #dt [value]="follow" responsiveLayout="scroll" [tableStyle]="{ 'min-width': '500px' }"
+           scrollHeight="500px" class="w-full">
+
+    <ng-template pTemplate="body" let-followUp let-rowIndex="rowIndex">
       <tr>
         <td>
           <div class="flex flex-row align-items-center">
             <div class="flex flex-column align-items-center justify-content-start">
-              <span class="w-full text-500 font-medium">{{
-                  detail.fecha
-                }}</span>
-              <span class="text-blue-500 text-xs w-full">{{
-                  detail.fecha | timeAgo
-                }}</span>
+              <span class="w-full text-500 font-medium">{{ followUp.fecha | date: 'dd/MM/yyyy, h:mm a' }}</span>
+              <span class="text-blue-500 text-xs w-full">{{ followUp.fecha | timeAgo }}</span>
             </div>
             <div class="ml-auto flex align-items-center pl-2">
               <app-percent [size]="80" shape="linear" labelPosition="right"
-                           [value]="detail.porcentajeAvance"></app-percent>
-              <app-menu-item [menuItems]="menuItemsOfFollowUp" [id]="detail.id"></app-menu-item>
+                           [value]="followUp.porcentajeAvance"></app-percent>
+              <app-menu-item [menuItems]="menuItemsOfFollowUp" [id]="followUp.id" [value]="followUp"></app-menu-item>
             </div>
           </div>
-          <div class="text-500 my-2 text-justify">{{ detail.observacion }}</div>
+          <div class="text-500 my-2 text-justify">{{ followUp.observacion }}</div>
           <div>
-            <div *ngIf="detail.archivos?.length > 0"
+            <div *ngIf="followUp.archivos?.length > 0"
                  class="col-12 flex flex-column border-round-xl text-center surface-100 py-2 mt-">
               <span class="text-500">Anexos</span>
-              <div pRipple *ngFor="let file of detail.archivos" (click)="downloadFile(file.id, $event)"
+              <div pRipple *ngFor="let file of followUp.archivos" (click)="downloadFile(file.id, $event)"
                    class="flex justify-content-between align-items-center text-center hover:text-primary cursor-pointer p-2">
                 <img [src]="file.mimetype | fileIcon" class="mr-2" height="32px" alt=""/>
                 <span class="flex-grow-1 text-left">{{ file.nombre }}</span>
-                <span class="ml-auto w-7rem">{{ file.tamanio | fileSize : "Desconocido" }}
-                </span>
+                <span class="ml-auto w-7rem">{{ file.tamanio | fileSize : "Desconocido" }}</span>
                 <button pButton pRipple (click)="downloadFile(file.id, $event)" type="button"
                         icon="pi pi-cloud-download" class="p-button-rounded p-button-text" pTooltip="Descargar"
                         tooltipPosition="bottom"></button>
@@ -381,6 +382,58 @@
       </tr>
     </ng-template>
   </p-table>
+</ng-template>
+
+<ng-template #TemplateFollowUpForm let-task="task">
+  <form [formGroup]="formFollowUp" class="w-full" style="min-width: 500px">
+
+    <p-divider layout="horizontal" align="center" class="w-full">
+      <span class="text-500">Registro de seguimiento</span>
+    </p-divider>
+
+    <div class="field p-fluid">
+      <label htmlFor="porcentajeAvance">
+        <span class="font-medium">Porcentaje de avance </span>
+      </label>
+      <span class="p-input-icon-right">
+        <i class="pi pi-percentage"></i>
+        <input type="text" pInputText formControlName="porcentajeAvance"/>
+      </span>
+      <p-slider [animate]="true" formControlName="porcentajeAvanceSlider"></p-slider>
+      <div *ngIf="porcentajeNoValido">
+        <div *ngIf="controls['porcentajeAvance'].errors?.['required']">
+          <small class="p-error">Ingrese un valor</small>
+        </div>
+        <div *ngIf="controls['porcentajeAvance'].errors?.['min']">
+          <small class="p-error">Ingrese un valor mayor que el avance anterior ({{ task.avance }}%)</small>
+        </div>
+        <div *ngIf="controls['porcentajeAvance'].errors?.['max']">
+          <small class="p-error">Ingrese un valor menor o igual que 100%</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="field p-fluid">
+      <label htmlFor="observacion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+      <textarea id="observacion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
+                formControlName="observacion"></textarea>
+    </div>
+
+    <div class="field p-fluid">
+      <label htmlFor="archivo"><span class="font-medium">Archivo</span><span> (opcional)</span></label>
+      <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="true"
+                    [maxFileSize]="5000000" (onSelect)="onSelectFile($event)"
+                    (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
+      </p-fileUpload>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode" (cancel)="onBackTask()" (delete)="onDeleteTask($event)"
+                            [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
+                            (createOrUpdate)="onSubmitFollowUp($event, task)"
+                            [disabledCreateOrUpdateButton]="formFollowUp.invalid">
+    </app-form-action-button>
+
+  </form>
 </ng-template>
 
 <ng-template #TemplateCalendarView></ng-template>

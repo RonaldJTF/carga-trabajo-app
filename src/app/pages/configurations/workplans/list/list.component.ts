@@ -37,7 +37,7 @@ export class ListComponent implements OnInit, OnDestroy{
     {label: 'Gestionar etapa', icon: 'pi pi-cog',command: (e) => this.onManagementStage(e.item.id, e.originalEvent)},
     {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)},
     {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDeleteWorkplan(e)},
-  ];;
+  ];
 
   constructor(
     private store: Store<AppState>,

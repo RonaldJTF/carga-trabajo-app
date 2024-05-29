@@ -1,6 +1,8 @@
 import * as StageActions from "./stage.actions";
 import {createReducer, on} from "@ngrx/store";
 import {Stage} from "../models/workplan";
+import _default from "chart.js/dist/plugins/plugin.title";
+import id = _default.id;
 
 export interface StageState {
   items: Stage[];
@@ -23,7 +25,7 @@ export const stageReducer = createReducer(
 
   on(StageActions.setList, (state, { stages }) =>{
    let newItems = JSON.parse(JSON.stringify(stages)) ?? [];
-   updateAvance(newItems); 
+   updateAvance(newItems);
    return {
     ...state,
     items: newItems,
@@ -39,7 +41,7 @@ export const stageReducer = createReducer(
     }else{
       items.push(stage);
     }
-    updateAvance(items); 
+    updateAvance(items);
     return { ...state,
             items:[...items],
             item: findStage(state.item?.id, items)
@@ -48,13 +50,13 @@ export const stageReducer = createReducer(
 
   on(StageActions.removeFromList, (state, { id }) => {
     const items = filtrarNodosArbol (state.items, [id]);
-    updateAvance(items); 
+    updateAvance(items);
     return { ...state, items: items, item: findStage(state.item?.id, items)};
   }),
 
   on(StageActions.removeItemsFromList, (state, { stageIds }) => {
     const items = filtrarNodosArbol (state.items, stageIds);
-    updateAvance(items); 
+    updateAvance(items);
     return { ...state, items: items, item: findStage(state.item?.id, items)};
   }),
 
@@ -64,7 +66,7 @@ export const stageReducer = createReducer(
     if (updatedStage){
       Object.assign(updatedStage, JSON.parse(JSON.stringify(stage)));
     }
-    updateAvance(items); 
+    updateAvance(items);
     return { ...state,
             items:items,
             item: findStage(state.item?.id, items)
@@ -106,7 +108,7 @@ export const stageReducer = createReducer(
     let stage = findStage(task.idEtapa, items);
     if (!stage.tareas){stage.tareas = []}
     stage.tareas.push(task)
-    updateAvance(items); 
+    updateAvance(items);
     return { ...state,
             items: items,
             item: findStage(state.item?.id, items)
@@ -130,11 +132,33 @@ export const stageReducer = createReducer(
     updateAvance(items);
     return { ...state,  items: items, item: updatedStage};
   }),
-  
+
   on(StageActions.setShowMoreDetailOfTasks, (state, { showMoreDetailOfTasks }) => ({
     ...state,
     showMoreDetailOfTasks: showMoreDetailOfTasks,
   })),
+
+  on(StageActions.addFollowUpToTask, (state, { idTask, followUp }) =>{
+    const items = JSON.parse(JSON.stringify(state.items));
+    let stage = findStage(state.item.id, items);
+    let task = stage.tareas.find((e) => e.id == idTask);
+    if (!task.seguimientos){task.seguimientos = []}
+    task.seguimientos.push(followUp)
+    updateAvance(items);
+    return { ...state,
+      items: items,
+      item: stage
+    };
+  }),
+
+  on(StageActions.removeFollowUpFromTask, (state, { idTask, idFollowUp }) => {
+    const items = JSON.parse(JSON.stringify(state.items));
+    let updatedStage = findStage(state.item.id, items);
+    let task = updatedStage.tareas.find( e => idTask == e.id)
+    task.seguimientos = task.seguimientos.filter(e => e.id != idFollowUp);
+    updateAvance(items);
+    return { ...state,  items: items, item: updatedStage};
+  }),
 );
 
 function filtrarNodosArbol(listaNodos: Stage[], idsAEliminar:number[]) {
@@ -190,6 +214,8 @@ function calculateStageAdvance(stage: Stage) {
           return fechaTarea > fechaMax ? tarea : max;
         });
         task.avance =  parseFloat(lastFolloUp.porcentajeAvance.toFixed(1));
+      }else{
+        task.avance =  0;
       }
       totalAdvance += task.avance ?? 0;
       count++;

@@ -63,6 +63,9 @@ import { PercentComponent } from './charts/percent/percent.component';
 import {CalendarModule} from "primeng/calendar";
 import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.pipe';
 import {SelectButtonModule} from "primeng/selectbutton";
+import {SliderModule} from "primeng/slider";
+import {ShowFormValueDirective} from "../directives/show-form-value.directive";
+import {KnobModule} from "primeng/knob";
 
 @NgModule({
   declarations: [
@@ -97,6 +100,7 @@ import {SelectButtonModule} from "primeng/selectbutton";
     ActivityExpirationPipe,
 
     ImageFallbackDirective,
+    ShowFormValueDirective,
   ],
   imports: [
     CommonModule,
@@ -140,6 +144,7 @@ import {SelectButtonModule} from "primeng/selectbutton";
     TreeSelectModule,
     CalendarModule,
     SelectButtonModule,
+    SliderModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -159,6 +164,7 @@ import {SelectButtonModule} from "primeng/selectbutton";
     PercentComponent,
 
     ImageFallbackDirective,
+    ShowFormValueDirective,
 
     FirstNamePipe,
     StatePipe,
@@ -210,12 +216,12 @@ import {SelectButtonModule} from "primeng/selectbutton";
     SkeletonModule,
     ChartModule,
     MessageModule,
-    ListboxModule,
     TieredMenuModule,
     RippleModule,
     TreeSelectModule,
     CalendarModule,
-    SelectButtonModule
+    SelectButtonModule,
+    SliderModule,
   ],
   providers: []
 })
