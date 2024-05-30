@@ -3,10 +3,9 @@
     <div class="card">
       <div class="flex flex-column align-items-center">
         <div class="_button-container">
-          <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
+          <div class="mb-3 image-container">
             <img id="avatarPerson" [src]="personCopy?.srcFoto"
-                 [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                 style="vertical-align: middle; width: 100%; height: auto;"/>
+                 [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"/>
           </div>
           <button pButton pRipple type="button" icon="pi pi-camera"
                   class="p-button-rounded p-button-text p-button-info _button-icon"
@@ -16,7 +15,7 @@
           </button>
         </div>
         <div *ngIf="loadFile" class="_badge-container m-1">
-          <p-message severity="info" text="{{fileInfo}}">
+          <p-message severity="{{severity}}" text="{{fileInfo}}">
           </p-message>
           <span (click)="previewFoto(null)" class="_badge" pTooltip="Click para cancelar"><i
             class="pi pi-times"></i></span>

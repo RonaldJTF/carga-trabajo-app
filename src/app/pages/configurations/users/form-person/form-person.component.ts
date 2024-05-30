@@ -43,6 +43,9 @@ export class FormPersonComponent implements OnInit {
 
   fileInfo: string;
 
+  severity: string;
+
+
   constructor(
     private readonly route: ActivatedRoute,
     private router: Router,
@@ -251,25 +254,43 @@ export class FormPersonComponent implements OnInit {
       return `${parseFloat(bytes.toFixed(2))} ${UNITS[index]}`;
     }
 
-    this.formData = new FormData();
     const file = input.files[0];
+
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!validImageTypes.includes(file.type)) {
+      this.loadFile = true;
+      this.severity = 'error'
+      this.fileInfo = 'Solo se permiten archivos de imagen (JPEG, PNG, GIF).';
+      input.value = '';
+      return;
+    }
+
+    const maxSizeInBytes = 5 * 1024 * 1024;
+    if (file.size > maxSizeInBytes) {
+      alert(`El archivo es demasiado grande. El tamaño máximo permitido es ${formatBytes(maxSizeInBytes)}.`);
+      input.value = '';
+      return;
+    }
+
+    this.formData = new FormData();
     this.formData.append('file', file);
-    this.fileInfo = `${file.name}`;
+    this.fileInfo = `${file.name} (${formatBytes(file.size)})`;
     this.previewFoto(file);
   }
-
 
   previewFoto(file: File) {
     const img = document.getElementById('avatarPerson') as HTMLImageElement;
     if (file) {
       img.src = URL.createObjectURL(file);
       this.loadFile = true;
+      this.severity = 'info'
     } else {
       this.loadFile = false;
       this.fileInfo = '';
       img.src = this.person.srcFoto;
     }
   }
+
 
   protected readonly MESSAGE = MESSAGE;
 }
