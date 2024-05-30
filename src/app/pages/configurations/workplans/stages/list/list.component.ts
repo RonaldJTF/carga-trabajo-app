@@ -42,9 +42,8 @@ export class ListComponent implements OnInit, OnDestroy {
   tasks: Task[] = [];
 
   stateOptions: any[] = [{icon: 'pi pi-list', value: 'diary'}, {icon: 'pi pi-calendar', value: 'calendar'}];
-  selectedViewMode: 'diary' | 'calendar' = "diary";
   selectedViewFollowUp: 'list' | 'form' = "list";
-
+  viewMode: 'diary' | 'calendar';
   isAdmin: boolean;
   isOperator: boolean;
 
@@ -65,6 +64,7 @@ export class ListComponent implements OnInit, OnDestroy {
   showMoreDetailOfTasksSubscription: Subscription;
   advanceSliderSubscription: Subscription;
   advanceSubscription: Subscription;
+  viewModeSubscription: Subscription;
 
   workplan: Workplan;
 
@@ -80,22 +80,12 @@ export class ListComponent implements OnInit, OnDestroy {
   ]
 
   menuItemsOfDownload: MenuItem[] = [
-    {
-      label: 'PDF', icon: 'pi pi-file-pdf', id: "pdf", command: (e) => {
-        this.download(e)
-      }
-    },
-    {
-      label: 'Excel', icon: 'pi pi-file-excel', id: "excel", command: (e) => {
-        this.download(e)
-      }
-    },
+    {label: 'PDF', icon: 'pi pi-file-pdf', id: "pdf", command: (e) => {this.download(e)}},
+    {label: 'Excel', icon: 'pi pi-file-excel', id: "excel", command: (e) => {this.download(e)}},
   ]
 
   menuItemsOfFollowUp: MenuItem[] = [
-    {
-      label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.deleteFollowUp(e),
-    },
+    {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.deleteFollowUp(e)},
   ];
 
   constructor(
@@ -115,6 +105,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.isOperator = this.authService.roleIsOperator();
 
     this.workplanSubscription = this.store.select(state => state.workplan.item).subscribe(e => this.workplan = e);
+    this.viewModeSubscription = this.store.select(state => state.stage.viewMode).subscribe( e => this.viewMode = e);
     this.stages$ = this.store.select(state => state.stage.items).pipe(map(e => e?.map(obj => this.transformToTreeNode(obj))));
     this.stage$ = this.store.select(state => state.stage.item).pipe(map(e => ({
       ...e,
@@ -128,7 +119,7 @@ export class ListComponent implements OnInit, OnDestroy {
       }
     });
     this.expandedNodesSubscription = this.store.select(state => state.stage.expandedNodes).subscribe(e => this.expandedNodes = e);
-    this.tasksSubscription = this.stage$.subscribe( e => this.tasks = e.tareas);
+    this.tasksSubscription = this.stage$.subscribe( e => this.tasks = JSON.parse(JSON.stringify(e.tareas ?? [])));
     
     this.buildForm();
 
@@ -153,6 +144,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.tasksSubscription?.unsubscribe();
     this.advanceSubscription?.unsubscribe();
     this.advanceSliderSubscription?.unsubscribe();
+    this.viewModeSubscription?.unsubscribe();
   }
 
   get totalSelectedStages(): number {
@@ -421,7 +413,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   onTemplateChange(event: "diary" | "calendar") {
-    this.selectedViewMode = event;
+    this.store.dispatch(StageActions.setViewMode({viewMode: event}));
   }
 
   newFollowUp(task: Task) {
@@ -500,8 +492,9 @@ export class ListComponent implements OnInit, OnDestroy {
         this.creatingOrUpdating = false;
       })
     ).subscribe({
-      next: () => {
+      next: (e) => {
         this.onBackTask();
+        this.taskOfCalendar = this.tasks.find(item => item.id == e.idTarea);
       }
     })
   }
@@ -515,6 +508,8 @@ export class ListComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.onBackTask();
         this.store.dispatch(StageActions.addFollowUpToTask({idTask: data.idTarea, followUp: data}));
+        this.taskOfCalendar = this.tasks.find(item => item.id == data.idTarea);
+
       }
     })
   }
@@ -540,6 +535,7 @@ export class ListComponent implements OnInit, OnDestroy {
               idTask: followUp.idTarea,
               idFollowUp: idFollowUp
             }));
+            this.taskOfCalendar = this.tasks.find(item => item.id == followUp.idTarea);
           }
         })
       }
@@ -579,12 +575,6 @@ export class ListComponent implements OnInit, OnDestroy {
   goToManagementFollowUp(idTask: any, event: Event){
     this.detailOfTaskOverlayPanel.toggle(event)
     this.taskOfCalendar = this.tasks.find(item => item.id == idTask);
-  } 
-
-  managementFollowUp(data: any){
-    this.detailOfTaskOverlayPanel.hide()
-    this.detailOfTaskOverlayPanel.show(data.originalEvent)
-    this.taskOfCalendar = this.tasks.find(item => item.id == data.id);
   } 
 
   updateDates(data: any){

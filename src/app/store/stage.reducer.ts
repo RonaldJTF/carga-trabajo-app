@@ -10,6 +10,7 @@ export interface StageState {
   mustRecharge: boolean;
   expandedNodes: any[];
   showMoreDetailOfTasks: boolean;
+  viewMode: 'diary' | 'calendar';
 }
 
 export const initialState: StageState = {
@@ -18,6 +19,7 @@ export const initialState: StageState = {
   mustRecharge: true,
   expandedNodes: [],
   showMoreDetailOfTasks: true,
+  viewMode: 'diary'
 };
 
 export const stageReducer = createReducer(
@@ -159,6 +161,11 @@ export const stageReducer = createReducer(
     updateAvance(items);
     return { ...state,  items: items, item: updatedStage};
   }),
+
+  on(StageActions.setViewMode, (state, { viewMode }) => ({
+    ...state,
+    viewMode: viewMode,
+  })),
 );
 
 function filtrarNodosArbol(listaNodos: Stage[], idsAEliminar:number[]) {

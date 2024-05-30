@@ -113,7 +113,7 @@
               </div>
             </div>
             <div *ngIf="tasks?.length; else sNoTasks" class="w-full mb-3">
-              <ng-container *ngIf="selectedViewMode === 'diary'">
+              <ng-container *ngIf="viewMode === 'diary'">
                 <p-table #dt [value]="tasks" sortMode="single" [(selection)]="selectedTasks" selectionMode="multiple"
                           [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll"
                           [scrollable]="true"
@@ -137,7 +137,7 @@
                           <i class="pi pi-search"></i>
                           <input type="search" pInputText placeholder="Buscar" (input)="onFilterTask(dt, $event)"/>
                         </span>
-                        <p-selectButton styleClass="mb-2" [options]="stateOptions" [(ngModel)]="selectedViewMode"
+                        <p-selectButton styleClass="mb-2" [options]="stateOptions" [(ngModel)]="viewMode"
                                         (ngModelChange)="onTemplateChange($event)">
                           <ng-template let-item pTemplate>
                             <i [class]="item.icon"></i>
@@ -209,28 +209,7 @@
                           </div>
                           <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
                             <ng-template pTemplate>
-                              <div class="flex align-items-center mb-3">
-                                <div
-                                  class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                  <i class="pi pi-info-circle text-xl text-blue-500"></i>
-                                </div>
-                                <div class="flex flex-column">
-                                  <h5 class="m-0 text-700">Detalle</h5>
-                                  <span class="text-500">Detalle de la tarea</span>
-                                </div>
-                              </div>
-                              <ng-container
-                                *ngTemplateOutlet="TemplateFollowUpInformation; context: { task: task }"></ng-container>
-                              <div *ngIf="task.seguimientos as seguimientos" class="grid grid-nogutter">
-                                <ng-container *ngIf="selectedViewFollowUp === 'list'">
-                                  <ng-container
-                                    *ngTemplateOutlet="TemplateFollowList; context: { follow: seguimientos }"></ng-container>
-                                </ng-container>
-                                <ng-container *ngIf="selectedViewFollowUp === 'form'">
-                                  <ng-container
-                                    *ngTemplateOutlet="TemplateFollowUpForm, context: {task: task}"></ng-container>
-                                </ng-container>
-                              </div>
+                              <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: task}"></ng-container>
                             </ng-template>
                           </p-overlayPanel>
                         </td>
@@ -248,7 +227,7 @@
                   Lista de tareas
                 </div>
               </ng-container>
-              <ng-container *ngIf="selectedViewMode === 'calendar'">
+              <ng-container *ngIf="viewMode === 'calendar'">
                 <ng-container *ngTemplateOutlet=" TemplateCalendarView; context: { $implicit: stage }"></ng-container>
               </ng-container>
             </div>
@@ -304,21 +283,18 @@
       <app-percent [value]="task.avance ?? 0" [size]="50" [shape]="'circle'" labelPosition="center"></app-percent>
     </div>
   </div>
-  <div>
-    <!--<button *ngIf="isAdmin && selectedViewFollowUp === 'list'" pButton pRipple icon="pi pi-plus"
-            class="p-button-rounded p-button-text p-button-success p-button-outlined m-1"
-            (click)="newFollowUp()" pTooltip="Nuevo seguimiento" tooltipPosition="bottom">
-    </button>-->
-    <app-go-to-if-not-found *ngIf="isAdmin && selectedViewFollowUp === 'list'" [showImage]="false"
-                            [buttonLabel]="'Crear nuevo seguimiento'" (go)="newFollowUp(task)"
-                            [showButton]="isAdmin"></app-go-to-if-not-found>
+  <div class="mb-2">
+    <app-go-to-if-not-found *ngIf="isAdmin && selectedViewFollowUp === 'list'" 
+      [showImage]="false"
+      [buttonLabel]="'Crear nuevo seguimiento'" (go)="newFollowUp(task)"
+      [showButton]="isAdmin">
+    </app-go-to-if-not-found>
   </div>
 </ng-template>
 
 <ng-template #TemplateFollowList let-follow="follow">
   <p-table #dt [value]="follow" responsiveLayout="scroll" [tableStyle]="{ 'min-width': '500px' }"
            scrollHeight="500px" class="w-full">
-
     <ng-template pTemplate="body" let-followUp let-rowIndex="rowIndex">
       <tr>
         <td>
@@ -329,14 +305,14 @@
             </div>
             <div class="ml-auto flex align-items-center pl-2">
               <app-percent [size]="80" shape="linear" labelPosition="right"
-                           [value]="followUp.porcentajeAvance"></app-percent>
+                           [value]="followUp.porcentajeAvance">
+              </app-percent>
               <app-menu-item [menuItems]="menuItemsOfFollowUp" [id]="followUp.id" [value]="followUp"></app-menu-item>
             </div>
           </div>
           <div class="text-500 my-2 text-justify">{{ followUp.observacion }}</div>
           <div>
-            <div *ngIf="followUp.archivos?.length > 0"
-                 class="col-12 flex flex-column border-round-xl text-center surface-100 py-2 mt-">
+            <div *ngIf="followUp.archivos?.length > 0" class="col-12 flex flex-column border-round-xl text-center surface-100 py-2 mt-">
               <span class="text-500">Anexos</span>
               <div pRipple *ngFor="let file of followUp.archivos" (click)="downloadFile(file.id, $event)"
                    class="flex justify-content-between align-items-center text-center hover:text-primary cursor-pointer p-2">
@@ -345,7 +321,8 @@
                 <span class="ml-auto w-7rem">{{ file.tamanio | fileSize : "Desconocido" }}</span>
                 <button pButton pRipple (click)="downloadFile(file.id, $event)" type="button"
                         icon="pi pi-cloud-download" class="p-button-rounded p-button-text" pTooltip="Descargar"
-                        tooltipPosition="bottom"></button>
+                        tooltipPosition="bottom">
+                </button>
               </div>
             </div>
           </div>
@@ -395,12 +372,6 @@
       <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="true"
                     [maxFileSize]="5000000" (onSelect)="onSelectFile($event)"
                     (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
-        <ng-template pTemplate="content">
-          <div class="flex justify-content-between align-items-center text-center p-3">
-              
-              <i class="pi pi-check text-green-500 text-2xl font-bold"></i>               
-          </div>
-        </ng-template>
       </p-fileUpload>
     </div>
 
@@ -417,7 +388,7 @@
   <div class="p-3">
       <div class="flex justify-content-between mb-3">
           <div class="ml-auto flex-wrap">
-            <p-selectButton [options]="stateOptions" [(ngModel)]="selectedViewMode" (ngModelChange)="onTemplateChange($event)">
+            <p-selectButton [options]="stateOptions" [(ngModel)]="viewMode" (ngModelChange)="onTemplateChange($event)">
               <ng-template let-item pTemplate>
                 <i [class]="item.icon"></i>
               </ng-template>
@@ -428,26 +399,40 @@
         (dropEvent)="updateDates($event)" 
         (resizeEvent)="updateDates($event)"
         (doubleClickOnDate)="goToAddTask(stage)"
-        (doubleClickOnEvent)="managementFollowUp($event)"
-        [menuItems]="menuItemsOfTaskInCalendar" [data]="stage.tareas" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'"></app-calendar>
+        [menuItems]="menuItemsOfTaskInCalendar" [data]="stage.tareas" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
+        <ng-template pTemplate="overlayContentTemplate" let-event let-task="data">
+          <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: task}"></ng-container>
+      </ng-template>
+      </app-calendar>
   </div>
 </ng-template>
 
 <p-overlayPanel #detailOfTaskOverlayPanel [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
   <ng-template pTemplate>
-      <div class="flex align-items-center mb-3">
-      <div
-          class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-          <i class="pi pi-info-circle text-xl text-blue-500"></i>
-      </div>
-      <div class="flex flex-column">
-          <h5 class="m-0 text-700">Detalle</h5>
-          <span class="text-500">Detalle de la tarea</span>
-      </div>
-      </div>
-      <ng-container *ngTemplateOutlet="TemplateFollowUpInformation; context: { task: taskOfCalendar }"></ng-container>
-      <div *ngIf="taskOfCalendar.seguimientos as seguimientos" class="grid grid-nogutter">
-          <ng-container *ngTemplateOutlet="TemplateFollowList; context: { followUp: seguimientos }"></ng-container>
-      </div>
+    <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: taskOfCalendar}"></ng-container>
   </ng-template>
 </p-overlayPanel>
+
+<ng-template #TemplateDetailOfTask let-task>
+  <div class="flex align-items-center mb-3">
+    <div
+      class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+      <i class="pi pi-info-circle text-xl text-blue-500"></i>
+    </div>
+    <div class="flex flex-column">
+      <h5 class="m-0 text-700">Detalle</h5>
+      <span class="text-500">Detalle de la tarea</span>
+    </div>
+  </div>
+  <ng-container *ngTemplateOutlet="TemplateFollowUpInformation; context: { task: task }"></ng-container>
+  <div *ngIf="task.seguimientos as seguimientos" class="grid grid-nogutter">
+    <ng-container *ngIf="selectedViewFollowUp === 'list'">
+      <ng-container
+        *ngTemplateOutlet="TemplateFollowList; context: { follow: seguimientos }"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="selectedViewFollowUp === 'form'">
+      <ng-container
+        *ngTemplateOutlet="TemplateFollowUpForm, context: {task: task}"></ng-container>
+    </ng-container>
+  </div>
+</ng-template>

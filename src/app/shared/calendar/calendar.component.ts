@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Input, OnInit, Output, SimpleChanges, TemplateRef } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -32,6 +32,8 @@ export class CalendarComponent implements OnInit {
   @Output() clickOnDate: EventEmitter<Out> = new EventEmitter<Out>();
   @Output() doubleClickOnEvent: EventEmitter<Out> = new EventEmitter<Out>();
   @Output() clickOnEvent: EventEmitter<Out> = new EventEmitter<Out>();
+
+  @ContentChild(TemplateRef) overlayContentTemplate: TemplateRef<any>;
 
   clickTimeout: any = null;
   showedIcons: any = {};
@@ -69,7 +71,8 @@ export class CalendarComponent implements OnInit {
       title: item[this.titleName], 
       start: Methods.formatToString(new Date(item[this.startDateName]), 'yyyy-mm-dd'), 
       end: Methods.formatToString(end, 'yyyy-mm-dd'),
-      color: this.hexColor ?? this.generateRandomColor()
+      color: this.hexColor ?? this.generateRandomColor(),
+      data: item
     }
   }
   
@@ -84,9 +87,11 @@ export class CalendarComponent implements OnInit {
 
   private updateEvents(events, newEvents) {
     newEvents.forEach(e => {
-        const exists = events.find(evento => evento.id === e.id);
-        if (!exists) {
-            events.push(this.parseDataToEvent(e));
+        let exists = events.find(evento => evento.id === e.id);
+        if (exists) {
+          exists.data = e;
+        }else{
+          events.push(this.parseDataToEvent(e));
         }
     });
     events = events.filter(e => newEvents.some(obj => obj.id === e.id));

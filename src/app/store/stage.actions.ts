@@ -20,3 +20,6 @@ export const setShowMoreDetailOfTasks = createAction('[Configuration of Stage] s
 
 export const addFollowUpToTask = createAction('[Configuration of Stage] Add follow-up to task', props<{ idTask: number, followUp: FollowUp }>());
 export const removeFollowUpFromTask = createAction('[Configuration of Stage] Remove follow-up from task', props<{ idTask: number, idFollowUp: number}>());
+
+export const setViewMode = createAction('[Configuration of Stage] set if events or tasks must be showed as calendar or diary', props<{ viewMode: 'diary' | 'calendar'}>());
+
