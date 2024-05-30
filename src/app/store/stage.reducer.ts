@@ -35,17 +35,17 @@ export const stageReducer = createReducer(
   }),
 
   on(StageActions.addToList, (state, { stage }) =>{
-    const items = JSON.parse(JSON.stringify(state.items));
+    let items = JSON.parse(JSON.stringify(state.items));
     let parent = findStage(stage.idPadre, items);
     if (parent){
       if (!parent.subEtapas){parent.subEtapas = []}
-      parent.subEtapas.push(stage)
+      parent.subEtapas.push({...stage})
     }else{
-      items.push(stage);
+      items.push({...stage});
     }
     updateAvance(items);
     return { ...state,
-            items:[...items],
+            items: items,
             item: findStage(state.item?.id, items)
           };
   }),
@@ -109,7 +109,7 @@ export const stageReducer = createReducer(
     const items = JSON.parse(JSON.stringify(state.items));
     let stage = findStage(task.idEtapa, items);
     if (!stage.tareas){stage.tareas = []}
-    stage.tareas.push(task)
+    stage.tareas.push({...task})
     updateAvance(items);
     return { ...state,
             items: items,

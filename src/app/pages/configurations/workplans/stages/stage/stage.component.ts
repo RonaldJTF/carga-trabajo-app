@@ -20,7 +20,7 @@ export class StageComponent implements OnInit {
   updateMode: boolean;
   creatingOrUpdating: boolean = false;
   deleting: boolean = false;
-  
+
   idWorkplan: number;
   idParent: number;
 
@@ -95,7 +95,7 @@ export class StageComponent implements OnInit {
       },
     });
   }
-  
+
   onSubmitStage(event : Event): void {
     event.preventDefault();
     let payload = {...this.stage, ...this.formStage.value};

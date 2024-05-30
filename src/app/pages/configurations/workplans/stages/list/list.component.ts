@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import * as StageActions from "./../../../../../store/stage.actions";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {MenuItem, TreeNode} from 'primeng/api';
 import {TreeTable} from 'primeng/treetable';
-import {finalize, map, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, finalize, map, Observable, Subscription} from 'rxjs';
 import {AppState} from 'src/app/app.reducers';
 import {FollowUp, Stage, Task, Workplan} from 'src/app/models/workplan';
 import {AuthenticationService} from 'src/app/services/auth.service';
@@ -29,7 +29,6 @@ export class ListComponent implements OnInit, OnDestroy {
   updateMode: boolean;
   creatingOrUpdating: boolean = false;
   uploadedFiles: any[] = [];
-  avance: number;
 
   IMAGE_SIZE = IMAGE_SIZE;
   MESSAGE = MESSAGE;
@@ -97,6 +96,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
+    private renderer: Renderer2
   ) {
   }
 
@@ -109,7 +109,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.stages$ = this.store.select(state => state.stage.items).pipe(map(e => e?.map(obj => this.transformToTreeNode(obj))));
     this.stage$ = this.store.select(state => state.stage.item).pipe(map(e => ({
       ...e,
-      menuItems: this.getMenuItemsOfStructure(e)
+      menuItems: this.getMenuItemsOfStage(e)
     })));
 
     this.showMoreDetailOfTasksSubscription = this.store.select(state => state.stage.showMoreDetailOfTasks).subscribe(e => this.showMoreDetailOfTasks = e);
@@ -120,7 +120,7 @@ export class ListComponent implements OnInit, OnDestroy {
     });
     this.expandedNodesSubscription = this.store.select(state => state.stage.expandedNodes).subscribe(e => this.expandedNodes = e);
     this.tasksSubscription = this.stage$.subscribe( e => this.tasks = JSON.parse(JSON.stringify(e.tareas ?? [])));
-    
+
     this.buildForm();
 
     this.advanceSubscription = this.formFollowUp.get('porcentajeAvance').valueChanges.subscribe(value => {
@@ -162,13 +162,16 @@ export class ListComponent implements OnInit, OnDestroy {
 
   private transformToTreeNode(stage: Stage): TreeNode | null {
     return {
-      data: {...stage, menuItems: this.getMenuItemsOfStructure(stage)},
+      data: {...stage, menuItems: this.getMenuItemsOfStage(stage)},
       children: stage.subEtapas?.map(e => this.transformToTreeNode(e)).filter(e => e),
       expanded: this.expandedNodes?.includes(stage.id)
     };
   }
 
-  private getMenuItemsOfStructure(stage: Stage): MenuItem [] {
+  private getMenuItemsOfStage(stage: Stage): MenuItem [] {
+    if (!stage){
+      return [];
+    }
     let menuItem = [];
     if (this.isAdmin) {
       menuItem.push({label: 'Ver', icon: `pi pi-eye`, data: stage, command: (e) => this.viewStage(e.item.data)});
@@ -417,6 +420,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   newFollowUp(task: Task) {
+    this.clearForm();
     if (task.seguimientos?.length) {
       this.addValidateAvance(task);
     }
@@ -425,7 +429,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   onBackTask() {
     this.selectedViewFollowUp = 'list';
-    this.clearForm();
   }
 
   clearForm() {
@@ -509,7 +512,6 @@ export class ListComponent implements OnInit, OnDestroy {
         this.onBackTask();
         this.store.dispatch(StageActions.addFollowUpToTask({idTask: data.idTarea, followUp: data}));
         this.taskOfCalendar = this.tasks.find(item => item.id == data.idTarea);
-
       }
     })
   }
@@ -575,19 +577,14 @@ export class ListComponent implements OnInit, OnDestroy {
   goToManagementFollowUp(idTask: any, event: Event){
     this.detailOfTaskOverlayPanel.toggle(event)
     this.taskOfCalendar = this.tasks.find(item => item.id == idTask);
-  } 
+  }
 
   updateDates(data: any){
     data.originalEvent.preventDefault();
     this.workplanService.updateDates(data.id, {fechaInicio: data.start, fechaFin: data.end}).subscribe({
       next: (e) => {
-        //this.store.dispatch(StageActions.updateFromList({stage: e}));
-        //this.goBack();
-        //this.creatingOrUpdating = false;
-      },
-      error: (error) => {
-        //this.creatingOrUpdating = false;
-      },
+        this.store.dispatch(StageActions.updateFromList({stage: e}));
+      }
     });
   }
 }

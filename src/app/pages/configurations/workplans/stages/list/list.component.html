@@ -191,7 +191,7 @@
                               <div class="mb-1 text-xs text-blue-500">
                                 Desde el {{task.fechaInicio | prettyDate : "date"}} hasta el {{ task.fechaFin | prettyDate : "date" }}
                               </div>
-                              <span style="font-size: 0.75rem" [class]="'mr-auto activity-expiration-badge activity-expiration-' +                                 
+                              <span style="font-size: 0.75rem" [class]="'mr-auto activity-expiration-badge activity-expiration-' +
                                 ([task.fechaInicio, task.fechaFin] | activityExpiration : task.avance).classStyle">{{([task.fechaInicio, task.fechaFin] | activityExpiration : task.avance).value}}
                               </span>
                             </ng-container>
@@ -202,7 +202,7 @@
                         </td>
                         <td class="text-center">
                           <div class="flex align-items-center justify-content-end">
-                            <button (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle"
+                            <button (click)="detailMessage.toggle($event); selectedViewFollowUp='list'" pButton pRipple icon="pi pi-info-circle"
                                     class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
                                     pTooltip="Ver detalles" tooltipPosition="bottom"></button>
                             <app-menu-item [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
@@ -284,7 +284,7 @@
     </div>
   </div>
   <div class="mb-2">
-    <app-go-to-if-not-found *ngIf="isAdmin && selectedViewFollowUp === 'list'" 
+    <app-go-to-if-not-found *ngIf="isAdmin && selectedViewFollowUp === 'list'"
       [showImage]="false"
       [buttonLabel]="'Crear nuevo seguimiento'" (go)="newFollowUp(task)"
       [showButton]="isAdmin">
@@ -395,8 +395,8 @@
             </p-selectButton>
           </div>
       </div>
-      <app-calendar 
-        (dropEvent)="updateDates($event)" 
+      <app-calendar
+        (dropEvent)="updateDates($event)"
         (resizeEvent)="updateDates($event)"
         (doubleClickOnDate)="goToAddTask(stage)"
         [menuItems]="menuItemsOfTaskInCalendar" [data]="stage.tareas" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
@@ -425,10 +425,10 @@
     </div>
   </div>
   <ng-container *ngTemplateOutlet="TemplateFollowUpInformation; context: { task: task }"></ng-container>
-  <div *ngIf="task.seguimientos as seguimientos" class="grid grid-nogutter">
+  <div class="grid grid-nogutter">
     <ng-container *ngIf="selectedViewFollowUp === 'list'">
       <ng-container
-        *ngTemplateOutlet="TemplateFollowList; context: { follow: seguimientos }"></ng-container>
+        *ngTemplateOutlet="TemplateFollowList; context: { follow: task.seguimientos }"></ng-container>
     </ng-container>
     <ng-container *ngIf="selectedViewFollowUp === 'form'">
       <ng-container
