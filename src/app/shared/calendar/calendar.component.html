@@ -2,7 +2,7 @@
     <ng-template #eventContent let-arg>
         <div *ngIf="menuItems?.length else sOnlyText" (mouseenter)="toggleIcon(true, arg.event.id)" (mouseleave)="toggleIcon(false, arg.event.id)" style="position: relative;" class="fc-event-main-frame">
             <app-calendar-menu-item [toggleIcon]="showedIcons[arg.event.id]" [id]="arg.event.id" [menuItems]="menuItems" ></app-calendar-menu-item>                   
-            <div (click)="detailOfEventOverlayPanel.toggle($event)" class="fc-event-title-container">
+            <div (click)="detailOfEventOverlayPanel.toggle($event)" class="fc-event-title-container cursor-pointer">
                 <span class="fc-event-title fc-sticky" style="position: relative; color:{{arg.event.backgroundColor | darkenColor}};">{{ arg.event.title }}</span>
             </div>
             <p-overlayPanel #detailOfEventOverlayPanel [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
@@ -12,9 +12,14 @@
             </p-overlayPanel>
         </div>           
         <ng-template #sOnlyText>
-            <div class="fc-event-title-container">
+            <div (click)="detailOfEventOverlayPanel.toggle($event)" class="fc-event-title-container cursor-pointer">
                 <span class="fc-event-title fc-sticky" style="color:{{arg.event.backgroundColor | darkenColor}};">{{ arg.event.title }}</span>
             </div>
+            <p-overlayPanel #detailOfEventOverlayPanel [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
+                <ng-template pTemplate>
+                    <ng-container *ngTemplateOutlet="overlayContentTemplate || overlayContentTemplateDefault ; context:{ $implicit: arg.event, data: arg.event.extendedProps.data }"></ng-container>
+                </ng-template>
+            </p-overlayPanel>
         </ng-template>
     </ng-template>
 </full-calendar>

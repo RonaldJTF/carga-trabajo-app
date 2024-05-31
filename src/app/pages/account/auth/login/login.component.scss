@@ -2,3 +2,8 @@
     background-size: cover;
     background-repeat: no-repeat; 
 }
+
+:host ::ng-deep .p-password, 
+:host ::ng-deep .p-password-input{
+    width: 100%;
+}

@@ -72,11 +72,7 @@ export class ListComponent implements OnInit, OnDestroy {
     {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDeleteTask(e)}
   ];
 
-  menuItemsOfTaskInCalendar: MenuItem[] = [
-    {label: 'Gestionar seguimiento', icon: 'pi pi-cog', command: (e) => this.goToManagementFollowUp(e.item.id, e.originalEvent)},
-    {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdateTask(e.item.id, e.originalEvent)},
-    {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDeleteTask(e)}
-  ]
+  menuItemsOfTaskInCalendar: MenuItem[] = []
 
   menuItemsOfDownload: MenuItem[] = [
     {label: 'PDF', icon: 'pi pi-file-pdf', id: "pdf", command: (e) => {this.download(e)}},
@@ -103,6 +99,12 @@ export class ListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAdmin = this.authService.roleIsAdministrator();
     this.isOperator = this.authService.roleIsOperator();
+
+    this.menuItemsOfTaskInCalendar = [
+      {label: 'Gestionar seguimiento', icon: 'pi pi-cog', command: (e) => this.goToManagementFollowUp(e.item.id, e.originalEvent)},
+      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateTask(e.item.id, e.originalEvent)},
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteTask(e)}
+    ]
 
     this.workplanSubscription = this.store.select(state => state.workplan.item).subscribe(e => this.workplan = e);
     this.viewModeSubscription = this.store.select(state => state.stage.viewMode).subscribe( e => this.viewMode = e);

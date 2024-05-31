@@ -33,11 +33,7 @@ export class ListComponent implements OnInit, OnDestroy{
   workplansSubscription: Subscription;
   selectedWorkplans: Workplan[] = [];
 
-  menuitems: MenuItem[] = [
-    {label: 'Gestionar etapa', icon: 'pi pi-cog',command: (e) => this.onManagementStage(e.item.id, e.originalEvent)},
-    {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)},
-    {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDeleteWorkplan(e)},
-  ];
+  menuitems: MenuItem[] = [];
 
   constructor(
     private store: Store<AppState>,
@@ -54,6 +50,12 @@ export class ListComponent implements OnInit, OnDestroy{
     this.workplans$ = this.store.select(state => state.workplan.items);
     this.workplansSubscription =  this.store.select(state => state.workplan.items).subscribe(e => this.workplans = JSON.parse(JSON.stringify(e)));
     this.getWorkplans();
+    this.menuitems = [
+      {label: 'Gestionar etapa', icon: 'pi pi-cog',command: (e) => this.onManagementStage(e.item.id, e.originalEvent)},
+      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)},
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteWorkplan(e)},
+    ];
+  
   }
 
   ngOnDestroy(): void {

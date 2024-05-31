@@ -11,10 +11,10 @@
                 <ng-template pTemplate="caption">
                     <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
                         <div class="flex align-items-center flex-wrap">
-                            <button pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
                                 <span class="p-button-label hidden-lg pl-2">Nuevo</span>
                             </button>
-                            <div class="_badge-container m-1">
+                            <div *ngIf="isAdmin" class="_badge-container m-1">
                                 <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedWorkplans()" pTooltip="Eliminar" tooltipPosition="bottom"
                                     class="p-button-danger " [disabled]="!selectedWorkplans?.length">
                                     <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
@@ -33,7 +33,7 @@
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width: 3rem">
+                        <th *ngIf="isAdmin" style="width: 3rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
                         <th class="text-center" style="min-width: 300px" pSortableColumn="nombre">
@@ -50,7 +50,7 @@
 
                 <ng-template pTemplate="body" let-workplan let-rowIndex="rowIndex">
                     <tr>
-                        <td>
+                        <td *ngIf="isAdmin">
                             <p-tableCheckbox [value]="workplan"></p-tableCheckbox>
                         </td>
                         <td pRipple class="cursor-pointer" (click)="onManagementStage(workplan.id, $event)">

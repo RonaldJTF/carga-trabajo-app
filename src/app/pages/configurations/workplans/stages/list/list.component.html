@@ -104,7 +104,7 @@
                 </div>
                 <div class="flex flex-column">
                   <span class="font-medium">{{ stage.nombre | uppercase }}</span>
-                  <span class="text-500">{{ stage.descripcion }}</span>
+                  <span class="text-500 text-justify ">{{ stage.descripcion }}</span>
                 </div>
               </div>
               <div class="ml-auto pl-2">
@@ -149,7 +149,7 @@
 
                   <ng-template pTemplate="header">
                     <tr>
-                      <th style="width: 3rem">
+                      <th *ngIf="isAdmin" style="width: 3rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                       </th>
                       <th class="text-center" pSortableColumn="nombre">
@@ -170,7 +170,7 @@
 
                     <ng-template pTemplate="body" let-task let-rowIndex="rowIndex">
                       <tr>
-                        <td>
+                        <td *ngIf="isAdmin">
                           <p-tableCheckbox [value]="task"></p-tableCheckbox>
                         </td>
                         <td>
@@ -205,7 +205,7 @@
                             <button (click)="detailMessage.toggle($event); selectedViewFollowUp='list'" pButton pRipple icon="pi pi-info-circle"
                                     class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
                                     pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                            <app-menu-item [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
+                            <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
                           </div>
                           <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
                             <ng-template pTemplate>
@@ -251,7 +251,7 @@
               <app-percent [value]="stage.avance ?? 0" shape="circle" labelPosition="center" [size]="100"
                            [fontSize]="18"></app-percent>
               <span class="text-500 mb-2">Porcentaje de avance</span>
-              <button pButton pRipple type="button" class="p-button-text _button-go" (click)="goToAddSubstage(stage)">
+              <button *ngIf="isAdmin" pButton pRipple type="button" class="p-button-text _button-go" (click)="goToAddSubstage(stage)">
                 <i class="pi pr-2 pi-plus"></i>
                 <span>Agregar subetapa</span>
               </button>
@@ -307,7 +307,7 @@
               <app-percent [size]="80" shape="linear" labelPosition="right"
                            [value]="followUp.porcentajeAvance">
               </app-percent>
-              <app-menu-item [menuItems]="menuItemsOfFollowUp" [id]="followUp.id" [value]="followUp"></app-menu-item>
+              <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfFollowUp" [id]="followUp.id" [value]="followUp"></app-menu-item>
             </div>
           </div>
           <div class="text-500 my-2 text-justify">{{ followUp.observacion }}</div>
@@ -333,7 +333,7 @@
 </ng-template>
 
 <ng-template #TemplateFollowUpForm let-task="task">
-  <form [formGroup]="formFollowUp" class="w-full" style="min-width: 500px">
+  <form [formGroup]="formFollowUp" class="w-full">
 
     <p-divider layout="horizontal" align="center" class="w-full">
       <span class="text-500">Registro de seguimiento</span>
@@ -399,7 +399,7 @@
         (dropEvent)="updateDates($event)"
         (resizeEvent)="updateDates($event)"
         (doubleClickOnDate)="goToAddTask(stage)"
-        [menuItems]="menuItemsOfTaskInCalendar" [data]="stage.tareas" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
+        [menuItems]="menuItemsOfTaskInCalendar" [editable]="isAdmin" [data]="stage.tareas" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
         <ng-template pTemplate="overlayContentTemplate" let-event let-task="data">
           <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: task}"></ng-container>
       </ng-template>

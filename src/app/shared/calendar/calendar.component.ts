@@ -25,6 +25,7 @@ export class CalendarComponent implements OnInit {
   @Input() id: string = 'id';
   @Input() data: any[] = [];
   @Input() hexColor: string;
+  @Input() editable: boolean = true;
 
   @Output() dropEvent:   EventEmitter<Out> = new EventEmitter<Out>();
   @Output() resizeEvent: EventEmitter<Out> = new EventEmitter<Out>();
@@ -52,7 +53,7 @@ export class CalendarComponent implements OnInit {
       initialView: 'dayGridMonth',
       plugins: [dayGridPlugin, interactionPlugin],
       locale: 'es',
-      editable: true,
+      editable: this.editable,
       headerToolbar: {start: 'title', center: '', end: 'today,dayGridMonth,dayGridWeek,dayGridYear,prev,next'},
       buttonText: {today: 'Hoy', month: 'Mes', year: 'Año', week: 'Semana', day: 'Día', list: 'Lista'},
       dateClick: (arg) => this.handleClickOnDate(arg),
