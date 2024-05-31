@@ -3,4 +3,9 @@
         <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
         <li *ngIf="item.separator" class="menu-separator"></li>
     </ng-container>
+    <li>
+        <a href="https://www.unipamplona.edu.co/unipamplona/portalIG/home_220/publicacion/publicado/index.htm" target="_blank">
+            <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'banner' : 'banner-dark'}}.png" alt="Ciadti" class="w-full mt-3"/>
+        </a>
+    </li>
 </ul>

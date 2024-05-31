@@ -583,7 +583,7 @@ export class ListComponent implements OnInit, OnDestroy {
     data.originalEvent.preventDefault();
     this.workplanService.updateDates(data.id, {fechaInicio: data.start, fechaFin: data.end}).subscribe({
       next: (e) => {
-        this.store.dispatch(StageActions.updateFromList({stage: e}));
+        this.store.dispatch(StageActions.updateTaskFromStage({task: e}));
       }
     });
   }

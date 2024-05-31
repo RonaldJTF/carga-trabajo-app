@@ -1,82 +1,90 @@
 <div *ngIf="!loading else sLoading" class="grid p-fluid grid-nogutter p-1">
-  <div class="col-12 lg:col-6">
-    <div class="card m-1 p-3">
-      <div class="flex align-items-center justify-content-between mb-4">
-        <div class="flex align-items-center">
-          <div
-            class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-            <i class="pi pi-sitemap text-xl text-blue-500"></i>
-          </div>
-          <div class="flex flex-column ">
-            <h5 class="m-0 text-700">Dependencia</h5>
-            <span class="text-500">Análisis por dependecia</span>
-          </div>
-        </div>
-        <div>
-          <button pRipple pButton type="button" icon="pi pi-cloud-download"
-                  class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar"
-                  (click)="downloadReport()"></button>
-        </div>
-      </div>
-
-      <p-treeSelect *ngIf="structureOptions?.length" [options]="structureOptions" [(ngModel)]="dependency"
-                    [showClear]="false"
-                    [filter]="true" (onNodeSelect)="onChangeDependency()" containerStyleClass="w-full"
-                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
-                    [filterInputAutoFocus]="true">
-        <ng-template let-node pTemplate="default">
-          <div class="flex align-items-center cursor-pointer" pRipple>
-            <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
-                 style="border-radius: 50%; overflow: hidden;">
-              <img [src]="node.data.srcIcono"
-                   [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                   style="width: 100%; height: auto" alt=""/>
-            </div>
-            <ng-template #sNoItemIcon>
+    <ng-container *ngIf="dependency else sNoDependency">
+      <div class="col-12 lg:col-6">
+        <div class="card m-1 p-3">
+          <div class="flex align-items-center justify-content-between mb-4">
+            <div class="flex align-items-center">
               <div
-                class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                <i
-                  class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                <i class="pi pi-sitemap text-xl text-blue-500"></i>
+              </div>
+              <div class="flex flex-column ">
+                <h5 class="m-0 text-700">Dependencia</h5>
+                <span class="text-500">Análisis por dependecia</span>
+              </div>
+            </div>
+            <div>
+              <button pRipple pButton type="button" icon="pi pi-cloud-download"
+                      class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar"
+                      (click)="downloadReport()"></button>
+            </div>
+          </div>
+    
+          <p-treeSelect *ngIf="structureOptions?.length" [options]="structureOptions" [(ngModel)]="dependency"
+                        [showClear]="false"
+                        [filter]="true" (onNodeSelect)="onChangeDependency()" containerStyleClass="w-full"
+                        [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
+                        [filterInputAutoFocus]="true">
+            <ng-template let-node pTemplate="default">
+              <div class="flex align-items-center cursor-pointer" pRipple>
+                <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
+                     style="border-radius: 50%; overflow: hidden;">
+                  <img [src]="node.data.srcIcono"
+                       [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                       style="width: 100%; height: auto" alt=""/>
+                </div>
+                <ng-template #sNoItemIcon>
+                  <div
+                    class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                    <i
+                      class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                  </div>
+                </ng-template>
+                <div class="flex flex-column align-items-center justify-content-start ml-2">
+                        <span class="image-text ml-2 w-full">
+                            {{ node.label }}
+                        </span>
+                  <span class="image-text text-500 text-sm ml-2 w-full">
+                            {{ node.data.descripcion }}
+                        </span>
+                </div>
               </div>
             </ng-template>
-            <div class="flex flex-column align-items-center justify-content-start ml-2">
-                    <span class="image-text ml-2 w-full">
-                        {{ node.label }}
-                    </span>
-              <span class="image-text text-500 text-sm ml-2 w-full">
-                        {{ node.data.descripcion }}
-                    </span>
-            </div>
+          </p-treeSelect>
+    
+    
+          <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center text-center my-3">
+            <ng-container *ngIf="dependency?.srcIcono else sNoIcon">
+              <img [src]="dependency.srcIcono" [alt]="dependency.nombre"
+                   [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
+            </ng-container>
+            <ng-template #sNoIcon>
+              <div
+                class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependency?.tipologia.nombreColor}}-100 border-circle">
+                <i
+                  class="pi {{dependency?.tipologia.claseIcono}} text-4xl text-{{dependency?.tipologia.nombreColor}}-500"></i>
+              </div>
+            </ng-template>
+            <span class="font-bold">{{ dependency?.nombre }}</span>
+            <span class="text-500">{{ dependency?.descripcion }}</span>
+            <span class="text-sm text-500">{{ dependency?.tipologia.nombre }}</span>
           </div>
-        </ng-template>
-      </p-treeSelect>
-
-
-      <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center text-center my-3">
-        <ng-container *ngIf="dependency?.srcIcono else sNoIcon">
-          <img [src]="dependency.srcIcono" [alt]="dependency.nombre"
-               [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
-        </ng-container>
-        <ng-template #sNoIcon>
-          <div
-            class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependency?.tipologia.nombreColor}}-100 border-circle">
-            <i
-              class="pi {{dependency?.tipologia.claseIcono}} text-4xl text-{{dependency?.tipologia.nombreColor}}-500"></i>
-          </div>
-        </ng-template>
-        <span class="font-bold">{{ dependency?.nombre }}</span>
-        <span class="text-500">{{ dependency?.descripcion }}</span>
-        <span class="text-sm text-500">{{ dependency?.tipologia.nombre }}</span>
+        </div>
+    
       </div>
-    </div>
-
-  </div>
-  <div class="col-12 lg:col-6">
-    <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel de ocupación'"
-                   [iconClass]="'pi-clock'" [colorName]="'blue'" [labels]="levels" [data]="timesTareas"></app-bar-chart>
-    <app-polar-chart [title]="'Personal requerido'" [subtitle]="'Personal total requerido por cada nivel de ocupación'"
-                     [labels]="levels" [data]="personasRequeridas"></app-polar-chart>
-  </div>
+      <div class="col-12 lg:col-6">
+        <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel de ocupación'"
+                       [iconClass]="'pi-clock'" [colorName]="'blue'" [labels]="levels" [data]="timesTareas"></app-bar-chart>
+        <app-polar-chart [title]="'Personal requerido'" [subtitle]="'Personal total requerido por cada nivel de ocupación'"
+                         [labels]="levels" [data]="personasRequeridas"></app-polar-chart>
+      </div>
+    </ng-container>
+    
+    <ng-template #sNoDependency>
+      <div class="col-12 w-full">
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NADA_CONFIGURADO" [showButton]="false"></app-go-to-if-not-found>
+      </div>
+    </ng-template>
 </div>
 
 <ng-template #sLoading>

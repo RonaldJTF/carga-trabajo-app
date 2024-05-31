@@ -83,6 +83,10 @@ export class WorkplanService {
     return this.webRequestService.putWithHeaders(`${this.pathTask}/${id}`, task);
   }
 
+  updateDates(id: number, task: any): Observable<Task> {
+    return this.webRequestService.putWithHeaders(`${this.pathTask}/dates/${id}`, task);
+  }
+
   deleteTask(idTask: number): Observable<Task> {
     return this.webRequestService.deleteWithHeaders(`${this.pathTask}/${idTask}`);
   }
@@ -114,9 +118,5 @@ export class WorkplanService {
 
   deleteSelectedFollow(payload: number[]): Observable<FollowUp[]>{
     return this.webRequestService.deleteWithHeaders(`${this.pathFollowUp}/${payload}`, undefined, payload);
-  }
-
-  updateDates(id: number, task: any): Observable<any> {
-    return this.webRequestService.putWithHeaders(`${this.pathTask}/dates/${id}`, task);
   }
 }

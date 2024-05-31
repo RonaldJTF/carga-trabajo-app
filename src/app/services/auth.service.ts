@@ -95,7 +95,7 @@ export class AuthenticationService {
   }
 
   roleIsAdministrator(): boolean{
-    return  this.getRolesUser().includes("ROLE_ADMIN");
+    return  this.getRolesUser().includes("ROLE_ADMINISTRADOR");
   }
 
   roleIsOperator(): boolean{

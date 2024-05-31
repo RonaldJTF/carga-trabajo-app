@@ -9,7 +9,7 @@ import { Methods } from 'src/app/utils/methods';
 export interface Out{
   id?: number;
   start?: Date;
-  end?: Date;
+  end?: Date; 
   originalEvent?: Event;
 }
 @Component({
@@ -53,7 +53,7 @@ export class CalendarComponent implements OnInit {
       plugins: [dayGridPlugin, interactionPlugin],
       locale: 'es',
       editable: true,
-      headerToolbar: {start: 'title', center:'',  end: 'today,dayGridWeek,dayGridMonth,dayGridYear,prev,next'},
+      headerToolbar: {start: 'title', center: '', end: 'today,dayGridMonth,dayGridWeek,dayGridYear,prev,next'},
       buttonText: {today: 'Hoy', month: 'Mes', year: 'Año', week: 'Semana', day: 'Día', list: 'Lista'},
       dateClick: (arg) => this.handleClickOnDate(arg),
       eventDrop: this.handleEventDrop.bind(this),
@@ -66,16 +66,16 @@ export class CalendarComponent implements OnInit {
   parseDataToEvent(item: any){
     let end: Date = new Date(item[this.endDateName]);
     end.setTime(end.getTime() + (24 * 60 * 60 * 1000));//Para que el día termine a las 23:59:59 o antes de empezar el otro día
-    return {
-      id: item[this.id],
-      title: item[this.titleName],
-      start: Methods.formatToString(new Date(item[this.startDateName]), 'yyyy-mm-dd'),
+    return { 
+      id: item[this.id], 
+      title: item[this.titleName], 
+      start: Methods.formatToString(new Date(item[this.startDateName]), 'yyyy-mm-dd'), 
       end: Methods.formatToString(end, 'yyyy-mm-dd'),
       color: this.hexColor ?? this.generateRandomColor(),
       data: item
     }
   }
-
+  
   private generateRandomColor(){
     let color;
     do {
@@ -87,14 +87,14 @@ export class CalendarComponent implements OnInit {
 
   private updateEvents(events, newEvents) {
     newEvents.forEach(e => {
-        let exists = events.find(evento => evento.id === e.id);
-        if (exists) {
-          let obj = this.parseDataToEvent(e);
-          obj.color = exists.color;
-          Object.assign(exists, obj);
-        }else{
-          events.push(this.parseDataToEvent(e));
-        }
+      let exists = events.find(evento => evento.id === e.id);
+      if (exists) {
+        let obj = this.parseDataToEvent(e);
+        obj.color = exists.color;
+        Object.assign(exists, obj);
+      }else{
+        events.push(this.parseDataToEvent(e));
+      }
     });
     events = events.filter(e => newEvents.some(obj => obj.id === e.id));
     return events;
@@ -167,7 +167,7 @@ export class CalendarComponent implements OnInit {
     }
     return this.resizeEvent.emit({id: event.id, start: new Date(Methods.formatToString(event.start, 'yyyy-mm-dd')), end: new Date(Methods.formatToString(end, 'yyyy-mm-dd')), originalEvent: arg.jsEvent});
   }
-
+  
   toggleIcon(show: boolean, idEvent){
     this.showedIcons[idEvent] = show;
   }

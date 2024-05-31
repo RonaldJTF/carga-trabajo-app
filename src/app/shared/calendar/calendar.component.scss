@@ -8,3 +8,15 @@
     margin-bottom: 0.5rem !important;
     flex-wrap: wrap;
 }
+
+:host ::ng-deep .fc-dayGridWeek-button,
+:host ::ng-deep .fc-dayGridMonth-button,
+:host ::ng-deep .fc-dayGridYear-button {
+    background-color: var(--primary-color) !important; 
+    color: var(--primary-color-text) !important;
+    border: var(--primary-color) !important; 
+}
+
+:host ::ng-deep .fc-button-active{
+    font-weight: 500 !important;
+}

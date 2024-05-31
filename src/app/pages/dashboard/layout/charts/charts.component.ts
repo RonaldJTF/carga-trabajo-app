@@ -7,6 +7,7 @@ import {MESSAGE} from "../../../../../labels/labels";
 import {TypologyInventory} from "../../../../models/typologyinventory";
 import { TreeNode } from 'primeng/api';
 import { Methods } from 'src/app/utils/methods';
+import { IMAGE_SIZE } from 'src/app/utils/constants';
 
 @Component({
   selector: 'app-charts',
@@ -16,7 +17,8 @@ import { Methods } from 'src/app/utils/methods';
 export class ChartsComponent implements OnInit {
 
   protected readonly MESSAGE = MESSAGE;
-
+  protected readonly IMAGE_SIZE = IMAGE_SIZE;
+  
   statistics: Activity[];
   levels: string[];
   timesTareas: string[];
@@ -63,14 +65,19 @@ export class ChartsComponent implements OnInit {
     this.structureService.getStructures().subscribe({
       next: (data) => {
         this.builtNodes(data, this.structureOptions);
-        this.dependency = this.structureOptions[0];
-        this.getStatistics(this.dependency.data.id);
+        this.dependency = this.structureOptions?.length ? this.structureOptions[0] : null;
+        if(this.dependency){
+          this.getStatistics(this.dependency.data.id);
+        }
         this.loading = false;
       }
     })
   }
 
   builtNodes(structures: Structure[], nodes: TreeNode<Structure>[]){
+    if(!structures){
+      return;
+    }
     for (let structure of structures){
       if (Methods.parseStringToBoolean(structure.tipologia.esDependencia) ){
         let node: TreeNode<Structure> = {
