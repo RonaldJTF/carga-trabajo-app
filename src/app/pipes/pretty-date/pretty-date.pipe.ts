@@ -12,31 +12,19 @@ export class PrettyDatePipe implements PipeTransform {
       input += ' 00:00:00';
     }
 
+    const formatDateComponent = (component: number): string => {
+      return component < 10 ? '0' + component : component.toString();
+    }
+
     const date = new Date(input);
-    const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const year = date.getFullYear();
     const month = date.getMonth();
-    let day: any = date.getDate();
-    let hour: any = date.getHours();
-    let minute: any = date.getMinutes();
-    let second: any = date.getSeconds();
+    const day: any = formatDateComponent(date.getDate());
+    const hour: any = formatDateComponent(date.getHours());
+    const minute: any = formatDateComponent(date.getMinutes());
+    const second: any = formatDateComponent(date.getSeconds());
 
-    if (second < 10) {
-      second = '0' + second;
-    }
-
-    if (minute < 10) {
-      minute = '0' + minute;
-    }
-
-    if (hour < 10) {
-      hour = '0' + hour;
-    }
-
-    if (day < 10) {
-      day = '0' + day;
-    }
-    
     if (type == 'datetime' || !type){
       return `${day} de ${MONTHS[month]} de ${year} ${hour}:${minute}:${second}`;
     }else if (type == 'date'){

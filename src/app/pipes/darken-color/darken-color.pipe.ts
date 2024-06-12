@@ -6,9 +6,9 @@ import { Methods } from '../../utils/methods';
 })
 export class DarkenColorPipe implements PipeTransform {
 
-  transform(colorIn: string): string {
+  transform(colorIn: string, factor?: number): string {
     if (colorIn != null){
-      return Methods.darkenColor(colorIn, 0.5);
+      return Methods.darkenColor(colorIn, factor ?? 0.5);
     }
     return '';
   }

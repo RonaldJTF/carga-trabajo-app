@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { Methods } from 'src/app/utils/methods';
 
 export class Out{
   classStyle: string;
@@ -10,19 +11,9 @@ export class Out{
 })
 export class ActivityExpirationPipe implements PipeTransform {
   transform(input: string[], avance: number): Out {
-    const actualDate = new Date();
-    const dateStart = new Date(input[0]);
-    const dateEnd = new Date(input[1]);
-    if (actualDate.getTime() >= dateStart.getTime() && actualDate.getTime() <= dateEnd.getTime()){
-      return {classStyle: 'in-process', value: 'En proceso'};
-    }else if (actualDate.getTime() > dateEnd.getTime()){
-      if(avance >= 100){
-        return {classStyle: 'completed', value: 'Completada'};
-      }
-      return {classStyle: 'delayed', value: 'Atrasada'};
-    }else if (actualDate.getTime() < dateStart.getTime()){
-      return {classStyle: 'waiting', value: 'Pendiente'};
-    }
-    return {classStyle: 'unknown', value: 'Desconocido'};
+    const start = new Date(input[0]);
+    const end = new Date(input[1]);
+    const completed = new Date(input[2]);
+    return Methods.getActivityStatus(start, end, completed, avance);
   }
 }
