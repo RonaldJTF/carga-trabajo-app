@@ -5,9 +5,9 @@ import { AuthenticationService } from '../services/auth.service';
 export const adminGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const authenticationService = inject(AuthenticationService);
-  const isAdmin = authenticationService.roleIsAdministrator();
+  const {isAdministrator, isOperator} = authenticationService.roles();
 
-  if (isAdmin) {
+  if (isAdministrator) {
     return true;
   }
   router.navigate(["/not-found"], {

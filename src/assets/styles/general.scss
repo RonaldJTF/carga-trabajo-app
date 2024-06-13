@@ -6,12 +6,10 @@
     width: 200px !important; 
 }
 
-/* Works on Firefox */
 * {
   scrollbar-color: var(--primary-200);
 }
 
-/* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
   width: 4px;
   height: 5px;
@@ -27,3 +25,30 @@
   border: 1px solid transparent;
   opacity: 0.5;
 }
+
+.activity-expiration-border-left {
+  border-left: 5px solid;
+  padding-left: 0.25rem;
+}
+
+.activity-expiration-border-left {
+  &.activity-expiration-in-process {
+    border-color: #985dbb;
+  }
+  &.activity-expiration-completed {
+    border-color: #48a54e;
+  }
+  &.activity-expiration-completed-late {
+    border-color: #33a89f;
+  }
+  &.activity-expiration-delayed {
+    border-color: #e65858;
+  }
+  &.activity-expiration-waiting {
+    border-color: #2f7dbd;
+  }
+  &.activity-expiration-unknown {
+    border-color: #8a8a8a;
+  }
+}
+

@@ -20,3 +20,23 @@
 :host ::ng-deep .fc-button-active{
     font-weight: 500 !important;
 }
+
+:host ::ng-deep a.fc-daygrid-event{
+    border: none !important;
+}
+
+:host ::ng-deep .fc-scrollgrid{
+    border-radius: var(--border-radius);
+}
+
+:host ::ng-deep .fc-scrollgrid-section-header th[role="presentation"], 
+:host ::ng-deep .fc-scrollgrid-section-header th[role="presentation"] .fc-scroller-harness{
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+:host ::ng-deep .fc-scrollgrid-section-body td[role="presentation"]{
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+

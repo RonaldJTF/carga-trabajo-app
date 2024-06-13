@@ -8,6 +8,7 @@ import { Structure } from 'src/app/models/structure';
 import * as StructureActions from "./../../../../store/structure.actions";
 import { Subscription } from 'rxjs';
 import { StructureService } from 'src/app/services/structure.service';
+import { Methods } from 'src/app/utils/methods';
 
 @Component({
   selector: 'app-structure',
@@ -21,7 +22,9 @@ export class StructureComponent implements OnInit {
 
   structure: Structure;
   idPadre: number;
+  isDependency: string;
   idTipologia: number;
+  defaultOrder: number;
   updateMode: boolean;
   creatingOrUpdating: boolean = false;
   deleting: boolean = false;
@@ -38,9 +41,17 @@ export class StructureComponent implements OnInit {
   ngOnInit(): void {
     this.idPadre = this.route.snapshot.queryParams['idParent'];
     this.idTipologia = this.route.snapshot.queryParams['idTipology'];
+    this.isDependency = this.route.snapshot.queryParams['isDependency'];
+    this.defaultOrder = this.route.snapshot.queryParams['defaultOrder'];    
     this.buildForm();
     this.loadStructure(this.route.snapshot.params['id']);
     this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
+  }
+
+  get noDependency(): boolean{
+    return  this.isDependency != null 
+            ? !Methods.parseStringToBoolean(this.isDependency)
+            : this.structure != null ? !Methods.parseStringToBoolean(this.structure.tipologia.esDependencia) : false;
   }
 
   buildForm(){
@@ -49,7 +60,8 @@ export class StructureComponent implements OnInit {
       idPadre: this.idPadre,
       idTipologia: this.idTipologia,
       nombre: ['', Validators.required],
-      descripcion: ''
+      descripcion: '',
+      orden: [this.defaultOrder, Validators.compose([Validators.min(1)])]
     })
   }
 
@@ -70,6 +82,7 @@ export class StructureComponent implements OnInit {
   assignValuesToForm(){
     this.formStructure.get('nombre').setValue(this.structure.nombre);
     this.formStructure.get('descripcion').setValue(this.structure.descripcion);
+    this.formStructure.get('orden').setValue(this.structure.orden);
   }
 
   onSelectFile(event: any) {

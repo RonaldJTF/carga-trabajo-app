@@ -19,9 +19,16 @@ export class MenuItemComponent implements OnInit{
 
   ngOnInit(): void {
     this.items = this.menuItems.map(e => ({ ...e }));
-    this.items.forEach(element => {
+    this.assign(this.items);
+  }
+
+  assign(items: MenuItem[]){
+    items.forEach(element => {
       element['id'] = this.id.toString();
-      element['value']  = this.value
+      element['value']  = this.value;
+      if(element.items){
+        this.assign(element.items.map(e => ({ ...e })));
+      }
     });
   }
 

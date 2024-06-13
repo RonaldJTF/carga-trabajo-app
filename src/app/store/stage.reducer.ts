@@ -28,6 +28,7 @@ export const stageReducer = createReducer(
   on(StageActions.setList, (state, { stages }) =>{
    let newItems = JSON.parse(JSON.stringify(stages)) ?? [];
    updateAvance(newItems);
+   orderByStartDate(newItems);
    return {
     ...state,
     items: newItems,
@@ -111,6 +112,7 @@ export const stageReducer = createReducer(
     if (!stage.tareas){stage.tareas = []}
     stage.tareas.push({...task})
     updateAvance(items);
+    orderByStartDate(items);
     return { ...state,
             items: items,
             item: findStage(state.item?.id, items)
@@ -124,14 +126,20 @@ export const stageReducer = createReducer(
     if (updatedTask){
       Object.assign(updatedTask, task);
     }
+    orderByStartDate(items);
     return { ...state, items: items, item: stage};
   }),
 
    on(StageActions.removeTasksFromStage, (state, { taskIds }) => {
     const items = JSON.parse(JSON.stringify(state.items));
-    let updatedStage = findStage(state.item.id, items);
-    updatedStage.tareas = updatedStage.tareas.filter( e => !taskIds.includes(e.id))
+    let updatedStage = findStage(state.item?.id, items);
+    if (updatedStage){
+      updatedStage.tareas = updatedStage.tareas.filter( e => !taskIds.includes(e.id));
+    }else{
+      filterTasksInAllStages(items, taskIds);
+    }
     updateAvance(items);
+    orderByStartDate(items);
     return { ...state,  items: items, item: updatedStage};
   }),
 
@@ -205,13 +213,10 @@ function updateAvance(stages: Stage[]){
   }
 }
 
-
 function calculateStageAdvance(stage: Stage) {
   if (!stage) return 0;
-
   let totalAdvance = 0;
   let count = 0;
-
   if (stage.tareas && stage.tareas.length > 0) {
     stage.tareas.forEach(task => {
       if (task.seguimientos?.length){
@@ -228,15 +233,62 @@ function calculateStageAdvance(stage: Stage) {
       count++;
     });
   }
-
   if (stage.subEtapas && stage.subEtapas.length > 0) {
     stage.subEtapas.forEach(subStage => {
       totalAdvance += calculateStageAdvance(subStage);
       count++;
     });
   }
-
   if (count === 0) return 0;
   stage.avance = parseFloat((totalAdvance / count).toFixed(1));
   return parseFloat(stage.avance.toFixed(1));
+}
+
+function orderByStartDate(items) {
+  function sortTasks(item) {
+      if (item.tareas) {
+          item.tareas.sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime());
+      }
+      if (item.subEtapas) {
+          item.subEtapas.forEach(subItem => sortTasks(subItem));
+          item.subEtapas.sort((a, b) => {
+              const aDate = findStartDate(a);
+              const bDate = findStartDate(b);
+              return aDate - bDate;
+          });
+      }
+  }
+
+  function findStartDate(item) {
+      let startDate = Number.MAX_VALUE;
+      if (item.tareas && item.tareas.length > 0) {
+        const taskStartDate = new Date(item.tareas[0].fechaInicio).getTime();
+        startDate = Math.min(startDate, taskStartDate);
+      }
+      if (item.subEtapas) {
+        item.subEtapas.forEach(subItem => {
+          const subStartDate = findStartDate(subItem);
+          startDate = Math.min(startDate, subStartDate);
+        });
+      }
+      return startDate;
+  }
+  items.forEach(item => sortTasks(item));
+  items.sort((a, b) => {
+    const aDate = findStartDate(a);
+    const bDate = findStartDate(b);
+    return aDate - bDate; 
+  });
+}
+
+function filterTasksInAllStages(stages: Stage[], taskIds: number[]): void{
+  if (!stages){
+    return;
+  }
+  stages.forEach(e => {
+    if (e.tareas){
+      e.tareas = e.tareas.filter( e => !taskIds.includes(e.id));
+    }
+    filterTasksInAllStages(e.subEtapas, taskIds);
+  })
 }

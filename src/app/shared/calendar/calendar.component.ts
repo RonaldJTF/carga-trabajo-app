@@ -1,4 +1,5 @@
-import { Component, ContentChild, EventEmitter, Input, OnInit, Output, SimpleChanges, TemplateRef } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Input, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { FullCalendarComponent } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -8,8 +9,8 @@ import { Methods } from 'src/app/utils/methods';
 
 export interface Out{
   id?: number;
-  start?: Date;
-  end?: Date; 
+  start?: string;
+  end?: string; 
   originalEvent?: Event;
 }
 @Component({
@@ -18,13 +19,15 @@ export interface Out{
   styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
+  @ViewChild('fullCalendar') fullCalendar: FullCalendarComponent;
+
   @Input() menuItems: MenuItem[];
   @Input() titleName: string = 'title';
   @Input() startDateName: string = 'start';
   @Input() endDateName: string = 'end';
   @Input() id: string = 'id';
   @Input() data: any[] = [];
-  @Input() hexColor: string;
+  @Input() hexColorName: string = 'color';
   @Input() editable: boolean = true;
 
   @Output() dropEvent:   EventEmitter<Out> = new EventEmitter<Out>();
@@ -34,7 +37,8 @@ export class CalendarComponent implements OnInit {
   @Output() doubleClickOnEvent: EventEmitter<Out> = new EventEmitter<Out>();
   @Output() clickOnEvent: EventEmitter<Out> = new EventEmitter<Out>();
 
-  @ContentChild(TemplateRef) overlayContentTemplate: TemplateRef<any>;
+  @ContentChild('overlayContentTemplate', {static: true}) overlayContentTemplate: TemplateRef<any>;
+  @ContentChild('eventContentTemplate', {static: true}) eventContentTemplate: TemplateRef<any>;
 
   clickTimeout: any = null;
   showedIcons: any = {};
@@ -72,7 +76,7 @@ export class CalendarComponent implements OnInit {
       title: item[this.titleName], 
       start: Methods.formatToString(new Date(item[this.startDateName]), 'yyyy-mm-dd'), 
       end: Methods.formatToString(end, 'yyyy-mm-dd'),
-      color: this.hexColor ?? this.generateRandomColor(),
+      color: item[this.hexColorName] ?? this.generateRandomColor(),
       data: item
     }
   }
@@ -156,7 +160,7 @@ export class CalendarComponent implements OnInit {
     if (event.end){
       end.setTime(end.getTime() - (24 * 60 * 60 * 1000));
     }
-    return this.dropEvent.emit({id: event.id, start: event.start, end: end, originalEvent: arg.jsEvent});
+    return this.dropEvent.emit({id: event.id, start: Methods.formatDateWithTimezone(event.start), end:Methods.formatDateWithTimezone(end), originalEvent: arg.jsEvent});
   }
 
   handleEventResize(arg: any) {
@@ -166,11 +170,17 @@ export class CalendarComponent implements OnInit {
     if (event.end){
       end.setTime(end.getTime() - (24 * 60 * 60 * 1000));
     }
-    return this.resizeEvent.emit({id: event.id, start: new Date(Methods.formatToString(event.start, 'yyyy-mm-dd')), end: new Date(Methods.formatToString(end, 'yyyy-mm-dd')), originalEvent: arg.jsEvent});
+    return this.resizeEvent.emit({id: event.id, start: Methods.formatDateWithTimezone(event.start), end:Methods.formatDateWithTimezone(end), originalEvent: arg.jsEvent});
   }
   
   toggleIcon(show: boolean, idEvent){
     this.showedIcons[idEvent] = show;
+  }
+
+  updateSize() {
+    setTimeout(() => {
+      this.fullCalendar.getApi().updateSize();
+    }, 0);
   }
 
 }

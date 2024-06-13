@@ -9,5 +9,5 @@
 </div>
 
 <ng-template #TemplateOfValue>
-    <span class="{{shape == 'circle' ? 'badge ' +  (value <= 0 ? 'badge-red' : 'badge-blue') : 'text-500'}}">{{value}}%</span>
+    <span class="{{shape == 'circle' ? 'badge ' +  (value <= 0 ? 'badge-red' : 'badge-blue') : 'text-500'}}">{{value | number: '1.0-1'}}%</span>
 </ng-template>

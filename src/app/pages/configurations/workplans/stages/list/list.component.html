@@ -25,25 +25,23 @@
                             class="p-button-danger" [disabled]="!totalSelectedStages">
                       <span class="p-button-label pl-2 hidden-lg">Eliminar</span>
                     </button>
-                    <span *ngIf="totalSelectedStages" (click)="desmarkAllStages()" class="_badge"
-                          pTooltip="Click para desmarcar">{{ totalSelectedStages }}</span>
+                    <span *ngIf="totalSelectedStages" (click)="desmarkAllStages()" class="_badge" pTooltip="Click para desmarcar">{{ totalSelectedStages }}</span>
                   </div>
                   <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
-                  <p-menu #menu [popup]="true" [model]="menuItemsOfDownload" [appendTo]="'body'" [baseZIndex]="1000"
-                          [styleClass]="'my-1'"></p-menu>
+                  <p-menu #menu [popup]="true" [model]="menuItemsOfDownload" [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
                   <div class="_badge-container m-1">
                     <button type="button" pRipple pButton style="position: relative" icon="pi pi-angle-down"
-                            class="m-1 p-button-rounded p-button-info p-button-text" label="Descargar"
+                            class="p-button-rounded p-button-info p-button-text" label="Descargar"
                             (click)="menu.toggle($event)"></button>
-                    <span *ngIf="totalSelectedStages" (click)="desmarkAllStages()" class="_badge"
-                          style="top: 0px; right: -5px" pTooltip="Click para desmarcar">{{ totalSelectedStages }}</span>
+                    <span *ngIf="totalSelectedStages" (click)="desmarkAllStages()" class="_badge" style="top: 0px; right: -5px" pTooltip="Click para desmarcar">{{ totalSelectedStages }}</span>
                   </div>
                 </div>
-                <div class="m-1">
-                  <span class="p-input-icon-left">
+                <div class="flex align-items-center flex-wrap">
+                  <span class="p-input-icon-left m-1">
                     <i class="pi pi-search"></i>
                     <input type="search" pInputText placeholder="Buscar" (input)="onFilterStage($event)"/>
                   </span>
+                  <button pButton pRipple icon="pi pi-calendar" class="p-button-primary p-button-outlined m-1" (click)="showCalendarFullView()" pTooltip="Ver en calendario" tooltipPosition="bottom"></button>
                 </div>
               </div>
             </ng-template>
@@ -74,8 +72,7 @@
                   </div>
                 </td>
                 <td class="w-7rem" style="white-space: nowrap">
-                  <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="stage.avance ?? 0"
-                               styleClass="justify-content-start"></app-percent>
+                  <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="stage.avance ?? 0" styleClass="justify-content-start"></app-percent>
                 </td>
                 <td class="text-center w-5rem">
                   <app-menu-item [menuItems]="stage.menuItems" [id]="stage.id"></app-menu-item>
@@ -113,52 +110,44 @@
               </div>
             </div>
             <div *ngIf="tasks?.length; else sNoTasks" class="w-full mb-3">
+              <div class="flex flex-wrap justify-content-between p-3">
+                <div class="flex align-items-center mb-2">
+                  <div *ngIf="isAdmin" class="_badge-container mr-2">
+                    <button pButton pRipple icon="pi pi-trash" style="position: relative"
+                            (click)="deleteSelectedTasks()" pTooltip="Eliminar" tooltipPosition="bottom"
+                            class="p-button-danger" [disabled]="!selectedTasks?.length"></button>
+                    <span *ngIf="selectedTasks?.length" (click)="desmarkAllTasks()" class="_badge" pTooltip="Click para desmarcar">{{ selectedTasks.length }}</span>
+                  </div>
+                  <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>
+                  <app-menu-item *ngIf="stage['menuItems']?.length" [menuItems]="stage['menuItems']" [id]="stage.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
+                </div>
+                <div class="flex align-items-center flex-wrap">
+                  <span *ngIf="viewMode === 'diary'" class="p-input-icon-left mr-2 mb-2">
+                    <i class="pi pi-search"></i>
+                    <input type="search" pInputText placeholder="Buscar" (input)="onFilterTask($event)"/>
+                  </span>
+                  <p-selectButton styleClass="mb-2" [options]="stateOptions" [(ngModel)]="viewMode" (ngModelChange)="onTemplateChange($event)">
+                    <ng-template let-item pTemplate>
+                      <i [class]="item.icon"></i>
+                    </ng-template>
+                  </p-selectButton>
+                </div>
+              </div>
               <ng-container *ngIf="viewMode === 'diary'">
-                <p-table #dt [value]="tasks" sortMode="single" [(selection)]="selectedTasks" selectionMode="multiple"
+                <p-table #tableOfTask [value]="tasks" sortMode="single" [(selection)]="selectedTasks" selectionMode="multiple"
                           [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll"
                           [scrollable]="true"
                           scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
-                  <ng-template pTemplate="caption">
-                    <div class="flex flex-wrap justify-content-between p-3">
-                      <div class="flex align-items-center mb-2">
-                        <div *ngIf="isAdmin" class="_badge-container mr-2">
-                          <button pButton pRipple icon="pi pi-trash" style="position: relative"
-                                  (click)="deleteSelectedTasks()" pTooltip="Eliminar" tooltipPosition="bottom"
-                                  class="p-button-danger" [disabled]="!selectedTasks?.length"></button>
-                          <span *ngIf="selectedTasks?.length" (click)="desmarkAllTasks()" class="_badge"
-                                pTooltip="Click para desmarcar">{{ selectedTasks.length }}</span>
-                        </div>
-                        <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>
-                        <app-menu-item *ngIf="stage['menuItems']?.length" [menuItems]="stage['menuItems']"
-                                        [id]="stage.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
-                      </div>
-                      <div class="flex align-items-center flex-wrap">
-                        <span class="p-input-icon-left mr-2 mb-2">
-                          <i class="pi pi-search"></i>
-                          <input type="search" pInputText placeholder="Buscar" (input)="onFilterTask(dt, $event)"/>
-                        </span>
-                        <p-selectButton styleClass="mb-2" [options]="stateOptions" [(ngModel)]="viewMode"
-                                        (ngModelChange)="onTemplateChange($event)">
-                          <ng-template let-item pTemplate>
-                            <i [class]="item.icon"></i>
-                          </ng-template>
-                        </p-selectButton>
-                      </div>
-                    </div>
-                  </ng-template>
-
                   <ng-template pTemplate="header">
                     <tr>
                       <th *ngIf="isAdmin" style="width: 3rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                       </th>
                       <th class="text-center" pSortableColumn="nombre">
-                        Tarea
-                        <p-sortIcon field="nombre"></p-sortIcon>
+                        Tarea <p-sortIcon field="nombre"></p-sortIcon>
                       </th>
                       <th class="text-center w-5rem" style="white-space: nowrap" pSortableColumn="avance">
-                        Avance
-                        <p-sortIcon field="avance"></p-sortIcon>
+                        Avance <p-sortIcon field="avance"></p-sortIcon>
                       </th>
                       <th class="w-5rem text-right">
                         <p-inputSwitch id="showMore" [(ngModel)]="showMoreDetailOfTasks"
@@ -167,61 +156,60 @@
                       </th>
                     </tr>
                   </ng-template>
-
-                    <ng-template pTemplate="body" let-task let-rowIndex="rowIndex">
-                      <tr>
-                        <td *ngIf="isAdmin">
-                          <p-tableCheckbox [value]="task"></p-tableCheckbox>
-                        </td>
-                        <td>
-                          <div class="flex flex-column justify-content-start">
-                            <span class="w-full">{{ task.nombre }}</span>
-                            <span class="text-500 text-sm w-full">{{task.descripcion}}</span>
-                            <ng-container *ngIf="showMoreDetailOfTasks">
-                              <div class="text-sm text-500">
-                                <i class="pi pi-users text-lg"></i>
-                                <span class="text-left font-medium ml-1">Responsables:</span>
-                                <span class="text-left">{{task.responsable}}</span>
-                              </div>
-                              <div class="text-sm text-500">
-                                <i class="pi pi-file text-lg"></i>
-                                <span class="text-left font-medium ml-1">Entregables:</span>
-                                <span class="text-left">{{task.entregable}}</span>
-                              </div>
-                              <div class="mb-1 text-xs text-blue-500">
-                                Desde el {{task.fechaInicio | prettyDate : "date"}} hasta el {{ task.fechaFin | prettyDate : "date" }}
-                              </div>
-                              <span style="font-size: 0.75rem" [class]="'mr-auto activity-expiration-badge activity-expiration-' +
-                                ([task.fechaInicio, task.fechaFin] | activityExpiration : task.avance).classStyle">{{([task.fechaInicio, task.fechaFin] | activityExpiration : task.avance).value}}
-                              </span>
-                            </ng-container>
-                          </div>
-                        </td>
-                        <td style="white-space: nowrap">
-                          <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="task.avance ?? 0" styleClass="justify-content-start"></app-percent>
-                        </td>
-                        <td class="text-center">
-                          <div class="flex align-items-center justify-content-end">
-                            <button (click)="detailMessage.toggle($event); selectedViewFollowUp='list'" pButton pRipple icon="pi pi-info-circle"
-                                    class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
-                                    pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                            <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
-                          </div>
-                          <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
-                            <ng-template pTemplate>
-                              <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: task}"></ng-container>
-                            </ng-template>
-                          </p-overlayPanel>
-                        </td>
-                      </tr>
-                    </ng-template>
-                    <ng-template pTemplate="emptymessage">
-                      <tr>
-                        <td colspan="4" class="text-center">
-                          {{ MESSAGE.NO_REGISTROS }}
-                        </td>
-                      </tr>
-                    </ng-template>
+                  <ng-template pTemplate="body" let-task let-rowIndex="rowIndex">
+                    <tr>
+                      <td *ngIf="isAdmin">
+                        <p-tableCheckbox [value]="task"></p-tableCheckbox>
+                      </td>
+                      <td>
+                        <div class="flex flex-column justify-content-start">
+                          <span class="w-full">{{ task.nombre }}</span>
+                          <span class="text-500 text-sm w-full">{{task.descripcion}}</span>
+                          <ng-container *ngIf="showMoreDetailOfTasks">
+                            <div class="text-sm text-500">
+                              <i class="pi pi-users text-lg"></i>
+                              <span class="text-left font-medium ml-1">Responsables: </span>
+                              <span class="text-left">{{task.responsable}}</span>
+                            </div>
+                            <div class="text-sm text-500">
+                              <i class="pi pi-file text-lg"></i>
+                              <span class="text-left font-medium ml-1">Entregables: </span>
+                              <span class="text-left">{{task.entregable}}</span>
+                            </div>
+                            <div class="mb-1 text-xs text-blue-500">
+                              Desde el {{task.fechaInicio | prettyDate : "date"}} hasta el {{ task.fechaFin | prettyDate : "date" }}
+                            </div>
+                            <span style="font-size: 0.75rem; white-space: nowrap" [class]="'mr-auto activity-expiration-badge activity-expiration-' +
+                              ([task.fechaInicio, task.fechaFin, obtenerSeguimientoMasReciente(task.seguimientos)?.fecha] | activityExpiration : task.avance).classStyle">{{([task.fechaInicio, task.fechaFin, obtenerSeguimientoMasReciente(task.seguimientos)?.fecha] | activityExpiration : task.avance).value}}
+                            </span>
+                          </ng-container>
+                        </div>
+                      </td>
+                      <td style="white-space: nowrap">
+                        <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="task.avance ?? 0" styleClass="justify-content-start"></app-percent>
+                      </td>
+                      <td class="text-center">
+                        <div class="flex align-items-center justify-content-end">
+                          <button (click)="detailMessage.toggle($event); selectedViewFollowUp='list'" pButton pRipple icon="pi pi-info-circle"
+                                  class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
+                                  pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                          <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
+                        </div>
+                        <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
+                          <ng-template pTemplate>
+                            <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: task}"></ng-container>
+                          </ng-template>
+                        </p-overlayPanel>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        {{ MESSAGE.NO_REGISTROS }}
+                      </td>
+                    </tr>
+                  </ng-template>
                 </p-table>
                 <div class="text-500 text-sm mx-2 mb-2 my-3">
                   Lista de tareas
@@ -274,10 +262,13 @@
 </ng-template>
 
 <ng-template #TemplateFollowUpInformation let-task="task">
-  <div class="flex flex-row align-items-center">
+  <div class="flex">
     <div class="flex flex-column">
-      <div class="font-medium">{{ task.nombre | uppercase }}</div>
-      <div class="text-500">{{ task.descripcion }}</div>
+      <span class="font-medium">{{ task.nombre | uppercase }}</span>
+      <span class="text-500 mb-1">{{ task.descripcion }}</span>
+      <span style="font-size: 0.75rem; white-space: nowrap" [class]="'mr-auto activity-expiration-badge activity-expiration-' +
+        ([task.fechaInicio, task.fechaFin, obtenerSeguimientoMasReciente(task.seguimientos)?.fecha] | activityExpiration : task.avance).classStyle">{{([task.fechaInicio, task.fechaFin, obtenerSeguimientoMasReciente(task.seguimientos)?.fecha] | activityExpiration : task.avance).value}}
+      </span>
     </div>
     <div class="ml-auto pl-2">
       <app-percent [value]="task.avance ?? 0" [size]="50" [shape]="'circle'" labelPosition="center"></app-percent>
@@ -293,8 +284,7 @@
 </ng-template>
 
 <ng-template #TemplateFollowList let-follow="follow">
-  <p-table #dt [value]="follow" responsiveLayout="scroll" [tableStyle]="{ 'min-width': '500px' }"
-           scrollHeight="500px" class="w-full">
+  <p-table #tableOfFollowUp [value]="follow" responsiveLayout="scroll" [tableStyle]="{ 'min-width': '500px' }" scrollHeight="500px" class="w-full">
     <ng-template pTemplate="body" let-followUp let-rowIndex="rowIndex">
       <tr>
         <td>
@@ -304,9 +294,7 @@
               <span class="text-blue-500 text-xs w-full">{{ followUp.fecha | timeAgo }}</span>
             </div>
             <div class="ml-auto flex align-items-center pl-2">
-              <app-percent [size]="80" shape="linear" labelPosition="right"
-                           [value]="followUp.porcentajeAvance">
-              </app-percent>
+              <app-percent [size]="80" shape="linear" labelPosition="right" [value]="followUp.porcentajeAvance"></app-percent>
               <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfFollowUp" [id]="followUp.id" [value]="followUp"></app-menu-item>
             </div>
           </div>
@@ -333,12 +321,10 @@
 </ng-template>
 
 <ng-template #TemplateFollowUpForm let-task="task">
-  <form [formGroup]="formFollowUp" class="w-full">
-
+  <form [formGroup]="formFollowUp" class="w-full" style="min-width: 500px;">
     <p-divider layout="horizontal" align="center" class="w-full">
       <span class="text-500">Registro de seguimiento</span>
     </p-divider>
-
     <div class="field p-fluid">
       <label htmlFor="porcentajeAvance">
         <span class="font-medium">Porcentaje de avance </span>
@@ -360,13 +346,10 @@
         </div>
       </div>
     </div>
-
     <div class="field p-fluid">
       <label htmlFor="observacion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
-      <textarea id="observacion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
-                formControlName="observacion"></textarea>
+      <textarea id="observacion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="observacion"></textarea>
     </div>
-
     <div class="field p-fluid">
       <label htmlFor="archivo"><span class="font-medium">Archivo</span><span> (opcional)</span></label>
       <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="true"
@@ -374,36 +357,30 @@
                     (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
       </p-fileUpload>
     </div>
-
     <app-form-action-button [updateMode]="updateMode" (cancel)="onBackTask()" (delete)="onDeleteTask($event)"
                             [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
                             (createOrUpdate)="onSubmitFollowUp($event, task)"
                             [disabledCreateOrUpdateButton]="formFollowUp.invalid">
     </app-form-action-button>
-
   </form>
 </ng-template>
 
 <ng-template #TemplateCalendarView let-stage>
-  <div class="p-3">
-      <div class="flex justify-content-between mb-3">
-          <div class="ml-auto flex-wrap">
-            <p-selectButton [options]="stateOptions" [(ngModel)]="viewMode" (ngModelChange)="onTemplateChange($event)">
-              <ng-template let-item pTemplate>
-                <i [class]="item.icon"></i>
-              </ng-template>
-            </p-selectButton>
-          </div>
-      </div>
-      <app-calendar
-        (dropEvent)="updateDates($event)"
-        (resizeEvent)="updateDates($event)"
-        (doubleClickOnDate)="goToAddTask(stage)"
-        [menuItems]="menuItemsOfTaskInCalendar" [editable]="isAdmin" [data]="stage.tareas" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
-        <ng-template pTemplate="overlayContentTemplate" let-event let-task="data">
-          <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: task}"></ng-container>
+  <div class="mx-3">
+    <app-calendar
+      (dropEvent)="updateDates($event)"
+      (resizeEvent)="updateDates($event)"
+      (doubleClickOnDate)="goToAddTaskFromCalendar($event, stage)"
+      [menuItems]="menuItemsOfTaskInCalendar" [editable]="isAdmin" [data]="stage.tareas" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
+      <ng-template #overlayContentTemplate let-event let-task="data">
+        <ng-container *ngTemplateOutlet="TemplateDetailOfTask; context: {$implicit: task}"></ng-container>
       </ng-template>
-      </app-calendar>
+      <ng-template #eventContentTemplate let-event let-item="data">
+        <div class="px-2 py-1 border-round-xs" [class]="'activity-expiration-border-left activity-expiration-'+([item.fechaInicio, item.fechaFin, obtenerSeguimientoMasReciente(item.seguimientos)?.fecha] | activityExpiration : item.avance).classStyle">
+          <span style="color:{{event.backgroundColor | darkenColor}};">{{event.title }}</span>
+        </div>
+      </ng-template>
+    </app-calendar>
   </div>
 </ng-template>
 
@@ -436,3 +413,112 @@
     </ng-container>
   </div>
 </ng-template>
+
+<p-sidebar [(visible)]="calendarFullView" [fullScreen]="true" [baseZIndex]="10000">
+ <div class="card">
+  <div class="flex align-items-center mb-3">
+    <div
+      class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+      <i class="pi pi-info-circle text-xl text-blue-500"></i>
+    </div>
+    <div class="flex flex-column">
+      <h5 class="m-0 text-700">Detalle por tarea</h5>
+      <span class="text-500">Detalle de las tareas en las etapas del plan de trabajo</span>
+    </div>
+  </div>
+  <div *ngIf="nodesOfAllStages.length && allTasks.length else sNoTasksInCalendar" class="grid">
+    <div class="col-12 md:col-4">
+      <div class="card p-0 mb-3">
+        <div class="flex justify-content-between">
+          <div class="flex flex-column p-3">
+            <h5 class="m-0 text-700">{{ workplan.nombre }}</h5>
+            <span class="text-500">{{ workplan.descripcion }}</span>
+          </div>
+          
+          <div class="m-2">
+            <button *ngIf="!downloadingGlobalReport else sDownloadingGlobalReport" pRipple pButton type="button" (click)="downloadGlobalReport()" icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar reporte"></button>
+            <ng-template #sDownloadingGlobalReport>
+              <i #sDownloadingGlobalReport class="pi pi-spin pi-spinner text-blue-500 p-3"></i>
+            </ng-template>
+          </div>
+        </div>
+        <p-treeTable #treeTableOfStage [value]="nodesOfAllStages">
+          <ng-template pTemplate="body" let-rowNode let-item="rowData">
+            <tr>
+              <td class="p-1 px-2" style="min-width: 300px">
+                <div class="flex flex-row align-items-center">
+                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                  <span class="text-500">{{ item.nombre }}</span>
+                  <span *ngIf="item.color" class="p-badge ml-auto" style="background-color:{{item.color}}; color:{{item.color | darkenColor}};" pTooltip="Total de tareas" tooltipPosition="bottom">{{item.total}}</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr>
+              <td class="p-2 px-3" style="min-width: 300px">
+                <div class="flex flex-row align-items-center">
+                  <span class="text-500">TOTAL DE TAREAS</span>
+                  <span class="ml-auto text-xl">{{totalTasks$ | async}}</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-treeTable>
+        <div class="text-500 text-sm m-2 mx-3">
+          Lista de etapas del plan de trabajo
+        </div>
+      </div>
+
+      <div *ngIf="dateSummary$ | async as dateSummary" class="card p-3 mb-3">
+        <div class="flex justify-content-between align-items-center">
+          <div class="flex">
+            <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
+              <i class="pi pi-calendar text-primary-500 text-xl"></i>
+            </div>
+            <div class="flex flex-column ml-2">
+              <span class="text-500">Fecha de realización</span>
+              <span class="text-blue-500 text-sm">{{[dateSummary.start, dateSummary.end] | dateRange : 'date'}}</span>
+            </div>
+          </div>
+          <div  class="flex flex-column align-items-center">
+            <span class="text-xl font-bold">{{dateSummary.totalDays}}</span>
+            <span class="text-500">Días</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-3 mb-3">
+        <div class="flex flex-column mb-2">
+          <h5 class="m-0 text-700">Estados de las tareas</h5>
+          <span class="text-500">Estado en la que se encuentra una tarea de acuerdo a su porcentaje de avance y fechas de realización (identificado por la franja de color)</span>
+        </div>
+        <div *ngFor="let item of statusInformation"  class="flex flex-row align-items-center">
+          <span style="font-size: 0.75rem; white-space: nowrap" [class]="'activity-expiration-badge activity-expiration-' + item.classStyle">{{item.value}}</span>
+          <hr class="border-top-1 border-dashed w-full mx-2">
+          <span style="font-size: 0.75rem; border-radius: 50%; padding: 0em;" [class]="'p-badge activity-expiration-badge activity-expiration-' + item.classStyle">{{item.total}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 md:col-8">
+      <app-calendar #calendarOfAllTasks
+          (dropEvent)="updateDates($event)"
+          (resizeEvent)="updateDates($event)"
+          [menuItems]="menuItemsOfTaskInCalendar" [editable]="isAdmin" [data]="allTasks" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
+          <ng-template #overlayContentTemplate let-event let-task="data">
+            <ng-container *ngTemplateOutlet="TemplateDetailOfTask; context: {$implicit: task}"></ng-container>
+          </ng-template>
+          <ng-template #eventContentTemplate let-event let-item="data">
+            <div class="px-2 py-1 flex flex-column border-round-xs" [class]="'activity-expiration-border-left activity-expiration-'+item.status?.classStyle">
+              <span  style="color:{{event.backgroundColor | darkenColor}};">{{event.title }}</span>
+              <span class="text-xs" style="color:{{event.backgroundColor | darkenColor:0.25}};">{{item.parent}}</span>
+            </div>
+          </ng-template>
+      </app-calendar>
+    </div>
+  </div>
+  <ng-template #sNoTasksInCalendar>
+    <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_TAREAS"></app-no-result>
+  </ng-template>
+ </div>
+</p-sidebar>

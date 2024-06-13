@@ -11,6 +11,7 @@ export const MESSAGE = {
     SELECCIONA_OPCION_TIPO_CONTENIDO_DISCRETO: "Selecciona una opción del tipo de contenido discreto",
     PREGUNTA_NO_RESPONDIDA: "Pregunta sin responder",
     RESPUESTA_A_OTRA_OPCION_NO_ESCRITA: "Respuesta a otra opción no escrita",
-    NO_REGISTRO_ROLES: "No se encontraron roles para el usuario"
+    NO_REGISTRO_ROLES: "No se encontraron roles para el usuario",
+    NO_TAREAS: "No se encontraron tareas"
 };
 

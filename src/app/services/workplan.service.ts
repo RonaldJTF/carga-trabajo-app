@@ -1,44 +1,45 @@
 import {Injectable} from '@angular/core';
-import {Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {WebRequestService} from "./web-request.service";
 import {FollowUp, Stage, Task, Workplan} from "../models/workplan";
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkplanService {
 
-  private pathWorkplain = 'workplan';
-  private pathStage = this.pathWorkplain.concat('/stage');
-  private pathTask = this.pathWorkplain.concat('/task');
-  private pathFollowUp = this.pathWorkplain.concat('/follow-up');
+  private pathWorkplan = 'workplan';
+  private pathStage = this.pathWorkplan.concat('/stage');
+  private pathTask = this.pathWorkplan.concat('/task');
+  private pathFollowUp = this.pathWorkplan.concat('/follow-up');
 
   constructor(private webRequestService: WebRequestService) {
   }
 
   // Servicios: PLAN DE TRABAJO
   getWorkplans(): Observable<Workplan[]> {
-    return this.webRequestService.getWithHeaders(this.pathWorkplain);
+    return this.webRequestService.getWithHeaders(this.pathWorkplan);
   }
 
   getWorkplan(idWorkplan: number): Observable<Workplan> {
-    return this.webRequestService.getWithHeaders(`${this.pathWorkplain}/${idWorkplan}`);
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplan}/${idWorkplan}`);
   }
 
   createWorkplan(workplan: any): Observable<any> {
-    return this.webRequestService.postWithHeaders(this.pathWorkplain, workplan);
+    return this.webRequestService.postWithHeaders(this.pathWorkplan, workplan);
   }
 
   updateWorkplan(id: number, workplan: Workplan): Observable<any> {
-    return this.webRequestService.putWithHeaders(`${this.pathWorkplain}/${id}`, workplan);
+    return this.webRequestService.putWithHeaders(`${this.pathWorkplan}/${id}`, workplan);
   }
 
   deleteWorkplan(idWorkplan: number): Observable<Workplan> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}/${idWorkplan}`);
+    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplan}/${idWorkplan}`);
   }
 
   deleteSelectedWorkplans(payload: number[]):  Observable<Workplan[]> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplain}`, undefined, payload);
+    return this.webRequestService.deleteWithHeaders(`${this.pathWorkplan}`, undefined, payload);
   }
 
   // Servicios: ETAPA
@@ -118,5 +119,44 @@ export class WorkplanService {
 
   deleteSelectedFollow(payload: number[]): Observable<FollowUp[]>{
     return this.webRequestService.deleteWithHeaders(`${this.pathFollowUp}/${payload}`, undefined, payload);
+  }
+
+  downloadReport(type: string, stageIds: number[], idWorkplan: number): Observable<HttpResponse<any>>{
+    const options = {
+      responseType: 'blob' as 'json',
+      observe: 'response' as 'body'
+    };
+
+    let params: any = {type: type}
+    if (idWorkplan){
+      params['idWorkplan'] = idWorkplan;
+    }
+    if(stageIds){
+      params['stageIds'] = JSON.stringify(stageIds);
+    }
+
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplan}/report`, params, null, options).pipe(
+      map(e => {
+        this.handleFileDownload(e);
+        return e;
+      })
+    )
+  }
+
+  private handleFileDownload(response: HttpResponse<Blob>) {
+    const filename = this.getFilenameFromHttpResponse(response);
+    const blob = new Blob([response.body], { type: response.headers.get('content-type') });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  private getFilenameFromHttpResponse(response: HttpResponse<Blob>): string {
+    const contentDisposition = response.headers.get('content-disposition');
+    const matches = /filename="?([^"]+)"?/.exec(contentDisposition);
+    return matches != null ? matches[1] : 'archivo_descargado';
   }
 }

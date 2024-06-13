@@ -70,6 +70,8 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calendar-menu-item.component';
+import { SidebarModule } from 'primeng/sidebar';
+import { DateRangePipe } from '../pipes/date-range/date-range.pipe';
 
 @NgModule({
   declarations: [
@@ -89,6 +91,7 @@ import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calenda
     BodySkeletonComponent,
     PercentComponent,
     CalendarComponent,
+    CalendarMenuItemComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -103,10 +106,10 @@ import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calenda
     PluralizePipe,
     TimeNamePipe,
     ActivityExpirationPipe,
+    DateRangePipe,
 
     ImageFallbackDirective,
     ShowFormValueDirective,
-      CalendarMenuItemComponent,
   ],
   imports: [
     CommonModule,
@@ -153,6 +156,7 @@ import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calenda
     SliderModule,
     FullCalendarModule,
     SpeedDialModule,
+    SidebarModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -188,6 +192,7 @@ import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calenda
     PluralizePipe,
     TimeNamePipe,
     ActivityExpirationPipe,
+    DateRangePipe,
 
     CommonModule,
     ReactiveFormsModule,
@@ -233,6 +238,7 @@ import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calenda
     SliderModule,
     FullCalendarModule,
     SpeedDialModule,
+    SidebarModule,
   ],
   providers: []
 })

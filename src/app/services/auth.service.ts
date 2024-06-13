@@ -45,7 +45,7 @@ export class AuthenticationService {
     );
   }
 
-  getDecodedAccessToken(token: string): any {
+  private getDecodedAccessToken(token: string): any {
     try {
       const currentTime = Math.floor(new Date().getTime() / 1000);
       const decodedToken: any = jwt_decode(token);
@@ -57,7 +57,7 @@ export class AuthenticationService {
             life: 3000
           })
           this.logout()
-        return; // El token ha expirado
+        return {}; // El token ha expirado
       } else {
         return decodedToken;
       }
@@ -68,38 +68,37 @@ export class AuthenticationService {
 
   getRoleUser(): string | null {
     const token: string =
-      this.storageService.getLocalStorage("token") ||
-      this.storageService.getSessionStorage("token");
+      this.storageService.getSessionStorage("token") || this.storageService.getLocalStorage("token");
     if (token) {
       const { authorities } = this.getDecodedAccessToken(token);
-      return authorities[0].authority;
+      if (authorities){
+        return authorities[0].authority;
+      }
     }
     return null;
   }
 
-  getRolesUser(): string[] | null {
-    const token: string = this.storageService.getLocalStorage("token") || this.storageService.getSessionStorage("token");
+  private getRolesUser(): string[] | null {
+    const token: string = this.storageService.getSessionStorage("token") || this.storageService.getLocalStorage("token") ;
     if (token) {
       const { authorities } = this.getDecodedAccessToken(token);
-      return authorities.map(e => e.authority);
+      if (authorities){
+        return authorities.map(e => e.authority);
+      }
     }
     return null;
   }
 
   logout() {
-    //this.storageService.clearLocalStorage();
     this.storageService.clearSessionStorage();
     this.loguedPerson_.next(null);
     this.lastUrl = this.router.url;
     this.router.navigate(["/account/auth/login"]);
   }
 
-  roleIsAdministrator(): boolean{
-    return  this.getRolesUser().includes("ROLE_ADMINISTRADOR");
-  }
-
-  roleIsOperator(): boolean{
-    return  this.getRolesUser().includes("ROLE_OPERADOR");
+  roles(): {isAdministrator: boolean, isOperator: boolean}{
+    const roles = this.getRolesUser();
+    return  {isAdministrator: roles?.includes("ROLE_ADMINISTRADOR"), isOperator: roles?.includes("ROLE_OPERADOR")};
   }
 
 }

@@ -18,7 +18,9 @@ export class AppMenuComponent implements OnInit {
     constructor(public layoutService: LayoutService, private authService: AuthenticationService,) { }
 
     ngOnInit() {
-      this.isAdmin = this.authService.roleIsAdministrator();
+      const {isAdministrator, isOperator} = this.authService.roles();
+      this.isAdmin = isAdministrator;
+      
       this.model = [
         {
           label: 'Home',

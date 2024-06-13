@@ -32,6 +32,8 @@ export class TaskComponent implements OnInit {
 
   es: any;
 
+  startDate: Date;
+
   constructor(
     private store: Store<AppState>,
     private formBuilder: FormBuilder,
@@ -43,6 +45,7 @@ export class TaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.idStage = this.route.snapshot.queryParams['idStage'];
+    this.startDate = this.route.snapshot.queryParams['startDate'];
     this.getParams();
     this.setTraslationCalendar();
     this.buildForm();
@@ -71,11 +74,12 @@ export class TaskComponent implements OnInit {
   }
 
   buildForm() {
+    console.log(this.startDate)
     this.formTask = this.formBuilder.group({
       id: null,
       nombre: ['', Validators.required],
       descripcion: '',
-      rangeDates: [null, Validators.required],
+      rangeDates: [this.startDate ? [new Date(this.startDate), new Date(this.startDate)] : null, Validators.required],
       entregable: ['', Validators.required],
       responsable: ['', Validators.required],
       idEtapa: null

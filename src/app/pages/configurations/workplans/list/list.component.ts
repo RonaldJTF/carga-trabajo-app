@@ -13,6 +13,7 @@ import { WorkplanService } from 'src/app/services/workplan.service';
 import { IMAGE_SIZE } from 'src/app/utils/constants';
 import { MESSAGE } from 'src/labels/labels';
 import { Table } from 'primeng/table';
+import { Methods } from 'src/app/utils/methods';
 
 @Component({
   selector: 'app-list',
@@ -24,7 +25,6 @@ export class ListComponent implements OnInit, OnDestroy{
   MESSAGE = MESSAGE;
 
   isAdmin: boolean;
-  isOperator: boolean;
 
   workplans: Workplan[] = [];
 
@@ -32,8 +32,6 @@ export class ListComponent implements OnInit, OnDestroy{
   workplans$: Observable<Workplan[]>;
   workplansSubscription: Subscription;
   selectedWorkplans: Workplan[] = [];
-
-  menuitems: MenuItem[] = [];
 
   constructor(
     private store: Store<AppState>,
@@ -45,22 +43,36 @@ export class ListComponent implements OnInit, OnDestroy{
   ){}
 
   ngOnInit(): void {
-    this.isAdmin = this.authService.roleIsAdministrator();
-    this.isOperator = this.authService.roleIsOperator();
+    const {isAdministrator, isOperator} = this.authService.roles();
+    this.isAdmin = isAdministrator;
     this.workplans$ = this.store.select(state => state.workplan.items);
-    this.workplansSubscription =  this.store.select(state => state.workplan.items).subscribe(e => this.workplans = JSON.parse(JSON.stringify(e)));
+    this.workplansSubscription =  this.store.select(state => state.workplan.items).subscribe(e =>{
+       this.workplans = JSON.parse(JSON.stringify(e));
+       this.workplans?.forEach( e => {
+        e['menuItems'] = this.getMenuItemsOfWorkplan(e);
+       })
+    });
     this.getWorkplans();
-    this.menuitems = [
-      {label: 'Gestionar etapa', icon: 'pi pi-cog',command: (e) => this.onManagementStage(e.item.id, e.originalEvent)},
-      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)},
-      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteWorkplan(e)},
-    ];
-  
   }
 
   ngOnDestroy(): void {
       this.workplansSubscription?.unsubscribe();
   }
+
+  private getMenuItemsOfWorkplan(workplan: Workplan): MenuItem [] {
+    if (!workplan){
+      return [];
+    }
+    return [
+      {label: 'Gestionar etapa', icon: 'pi pi-cog',command: (e) => this.onManagementStage(e.item.id, e.originalEvent)},
+      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)},
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteWorkplan(e)},
+      {label: 'Descargar', icon: 'pi pi-cloud-download', items: [
+        {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId: "excel", command: (e) => {this.download(e, workplan.id)}},
+      ]},
+    ];
+  }
+
 
   getWorkplans(){
     this.loading = true;
@@ -128,4 +140,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.selectedWorkplans = [];
   }
 
+  download(data: any, idWorkplan: any) {
+    this.workplanService.downloadReport(data.item.automationId, null, idWorkplan).subscribe({});
+  }
 }

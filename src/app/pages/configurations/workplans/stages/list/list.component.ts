@@ -16,6 +16,9 @@ import {Table} from 'primeng/table';
 import {MediaService} from 'src/app/services/media.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { CalendarComponent } from 'src/app/shared/calendar/calendar.component';
+import chroma from 'chroma-js';
+import { Methods } from 'src/app/utils/methods';
 
 @Component({
   selector: 'app-stage-list',
@@ -34,11 +37,20 @@ export class ListComponent implements OnInit, OnDestroy {
   MESSAGE = MESSAGE;
 
   @ViewChild('treeTableOfStage') treeTableOfStage: TreeTable;
+  @ViewChild('tableOfTask') tableOfTask: Table;
   @ViewChild('detailOfTaskOverlayPanel') detailOfTaskOverlayPanel: OverlayPanel;
+  @ViewChild('calendarOfAllTasks') calendarOfAllTasks: CalendarComponent;
 
   taskOfCalendar: Task = new Task();
   tasksSubscription: Subscription;
   tasks: Task[] = [];
+  allTasks: any[] = [];
+  nodesOfAllStages: any[] = [];
+  generatedColors = new Set();
+  statusInformation: any[] = [];
+  totalTasks$: Observable<number>;
+  dateSummary$: Observable<any>;
+  downloadingGlobalReport = false;
 
   stateOptions: any[] = [{icon: 'pi pi-list', value: 'diary'}, {icon: 'pi pi-calendar', value: 'calendar'}];
   selectedViewFollowUp: 'list' | 'form' = "list";
@@ -56,7 +68,9 @@ export class ListComponent implements OnInit, OnDestroy {
 
   expandedNodes: number[];
   showMoreDetailOfTasks: boolean;
+  calendarFullView: boolean;
 
+  allTaskSubscription: Subscription;
   mustRechargeSubscription: Subscription;
   expandedNodesSubscription: Subscription;
   workplanSubscription: Subscription;
@@ -75,8 +89,7 @@ export class ListComponent implements OnInit, OnDestroy {
   menuItemsOfTaskInCalendar: MenuItem[] = []
 
   menuItemsOfDownload: MenuItem[] = [
-    {label: 'PDF', icon: 'pi pi-file-pdf', id: "pdf", command: (e) => {this.download(e)}},
-    {label: 'Excel', icon: 'pi pi-file-excel', id: "excel", command: (e) => {this.download(e)}},
+    {label: 'Reporte de avance', icon: 'pi pi-file-excel', automationId: "excel", command: (e) => {this.download(e)}},
   ]
 
   menuItemsOfFollowUp: MenuItem[] = [
@@ -97,8 +110,9 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.isAdmin = this.authService.roleIsAdministrator();
-    this.isOperator = this.authService.roleIsOperator();
+    const {isAdministrator, isOperator} = this.authService.roles();
+    this.isAdmin = isAdministrator;
+    this.isOperator = isOperator;
 
     this.menuItemsOfTaskInCalendar = [
       {label: 'Gestionar seguimiento', icon: 'pi pi-cog', command: (e) => this.goToManagementFollowUp(e.item.id, e.originalEvent)},
@@ -108,6 +122,41 @@ export class ListComponent implements OnInit, OnDestroy {
 
     this.workplanSubscription = this.store.select(state => state.workplan.item).subscribe(e => this.workplan = e);
     this.viewModeSubscription = this.store.select(state => state.stage.viewMode).subscribe( e => this.viewMode = e);
+    this.totalTasks$ = this.store.select(state => state.stage.items ?? []).pipe(map(e => this.getTotalTasks(e)));
+    this.dateSummary$ = this.store.select(state => state.stage.items ?? []).pipe(map(e => {
+      const initialStartDate = new Date(8640000000000000);
+      const initialEndDate = new Date(-8640000000000000);
+      const {minDate, maxDate} = this.getDateRange(e, initialStartDate, initialEndDate);
+
+      if (minDate.getTime() === initialStartDate.getTime() || maxDate.getTime() === initialEndDate.getTime()) {
+        return {totalDays: 0, start: null, end: null};
+      } else {
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const utc1 = Date.UTC(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+        const utc2 = Date.UTC(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
+        return {totalDays: Math.floor((utc2 - utc1) / msPerDay) + 1, start: minDate, end: maxDate}; // +1 ya que el la fecha fin termina a las 23:59:59
+      }
+    }));
+
+    this.allTaskSubscription = this.store.select(state => state.stage.items ?? []).subscribe( e => {
+      this.allTasks = [];
+      this.nodesOfAllStages = this.getAllTasksAndBuildMetadata(e);
+      
+      let status: any[] = this.allTasks.map(e => e.status);
+
+      const classStyleCounts = status.reduce((acc, s) => {
+        acc[s.classStyle] = (acc[s.classStyle] || 0) + 1;
+        return acc;
+      }, {});
+      const uniqueClassStyles = new Set(status.map(s => s.classStyle));
+      this.statusInformation = Array.from(uniqueClassStyles).map(classStyle => {
+        const obj = status.find(s => s.classStyle === classStyle);
+        return {
+          ...obj,
+          total: classStyleCounts[classStyle]
+        };
+      });
+    });
     this.stages$ = this.store.select(state => state.stage.items).pipe(map(e => e?.map(obj => this.transformToTreeNode(obj))));
     this.stage$ = this.store.select(state => state.stage.item).pipe(map(e => ({
       ...e,
@@ -147,6 +196,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.advanceSubscription?.unsubscribe();
     this.advanceSliderSubscription?.unsubscribe();
     this.viewModeSubscription?.unsubscribe();
+    this.allTaskSubscription?.unsubscribe();
   }
 
   get totalSelectedStages(): number {
@@ -177,54 +227,20 @@ export class ListComponent implements OnInit, OnDestroy {
     let menuItem = [];
     if (this.isAdmin) {
       menuItem.push({label: 'Ver', icon: `pi pi-eye`, data: stage, command: (e) => this.viewStage(e.item.data)});
-      menuItem.push({
-        label: 'Nueva subetapa',
-        disabled: stage.tareas?.length,
-        icon: `pi pi-plus`,
-        data: stage,
-        command: (e) => this.goToAddSubstage(e.item.data)
-      });
-      menuItem.push({
-        label: 'Nueva tarea',
-        disabled: stage.subEtapas?.length,
-        icon: `pi pi-plus`,
-        data: stage,
-        command: (e) => this.goToAddTask(e.item.data)
-      });
+      menuItem.push({label: 'Nueva subetapa', disabled: stage.tareas?.length, icon: `pi pi-plus`, data: stage, command: (e) => this.goToAddSubstage(e.item.data)});
+      menuItem.push({label: 'Nueva tarea', disabled: stage.subEtapas?.length, icon: `pi pi-plus`, data: stage, command: (e) => this.goToAddTask(e.item.data)});
       menuItem.push({
         label: 'Descargar', icon: 'pi pi-cloud-download', items: [
-          {
-            label: 'PDF', icon: 'pi pi-file-pdf', id: "pdf", command: (e) => {
-              this.download(e, stage.id)
-            }
-          },
-          {
-            label: 'Excel', icon: 'pi pi-file-excel', id: "excel", command: (e) => {
-              this.download(e, stage.id)
-            }
-          },
+          {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId: "excel", command: (e) => this.download(e, stage.id)},
         ]
       });
-      menuItem.push({
-        label: 'Editar',
-        icon: 'pi pi-pencil',
-        command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)
-      });
+      menuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)});
       menuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data: stage, command: (e) => this.onDeleteStage(e)});
-    } else if (this.isOperator) {
+    } else if(this.isOperator){
       menuItem.push({label: 'Ver', icon: `pi pi-eye`, data: stage, command: (e) => this.viewStage(e.item.data)});
       menuItem.push({
         label: 'Descargar', icon: 'pi pi-cloud-download', items: [
-          {
-            label: 'PDF', icon: 'pi pi-file-pdf', id: "pdf", command: (e) => {
-              this.download(e, stage.id)
-            }
-          },
-          {
-            label: 'Excel', icon: 'pi pi-file-excel', id: "excel", command: (e) => {
-              this.download(e, stage.id)
-            }
-          },
+          {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId: "excel", command: (e) => this.download(e, stage.id)},
         ]
       });
     }
@@ -279,8 +295,8 @@ export class ListComponent implements OnInit, OnDestroy {
     this.treeTableOfStage.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
-  onFilterTask(table: Table, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  onFilterTask(event: Event) {
+    this.tableOfTask.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
   desmarkAllStages() {
@@ -351,7 +367,7 @@ export class ListComponent implements OnInit, OnDestroy {
             next: () => {
               this.store.dispatch(StageActions.removeTasksFromStage({taskIds: [id]}));
               this.desmarkAllTasks();
-            },
+            }
           });
       }
     )
@@ -365,33 +381,37 @@ export class ListComponent implements OnInit, OnDestroy {
     this.store.dispatch(StageActions.removeFromExpandedNodes({id: event.node.data.id}));
   }
 
+
   download(data: any, idStage?: number) {
-    const menuItem: MenuItem = this.menuItemsOfDownload.find(e => e.id === data.item.id);
-    const initialIcon = menuItem.icon;
-    const initialState = menuItem.disabled;
+    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean) => {
+        if (menuItem) {
+            menuItem.icon = icon;
+            menuItem.disabled = disabled;
+        }
+    };
+    const menuItem = !idStage ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
+    const initialIcon = menuItem?.icon;
+    const initialState = menuItem?.disabled;
+    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
+    const stageIds = idStage 
+        ? [idStage] 
+        : (this.selectedNodesOfStage as TreeNode[])?.map(e => e.data.id) || [];
+    this.workplanService.downloadReport(data.item.automationId, stageIds, this.workplan.id).subscribe({
+        next: () => updateMenuItem(menuItem, initialIcon, initialState),
+        error: () => updateMenuItem(menuItem, initialIcon, initialState)
+    });
+  }
 
-    menuItem.icon = "pi pi-spin pi-spinner";
-    menuItem.disabled = true;
-    let stageIds = (this.selectedNodesOfStage as TreeNode[])?.map(e => e.data.id);
-
-    if (idStage) {
-      if (stageIds == undefined) {
-        stageIds = [idStage];
-      } else {
-        stageIds.push(idStage)
-      }
-    }
-
-    /*this.workplanService.downloadReport(data.item.id, structureIds).subscribe({
+  downloadGlobalReport() {
+    this.downloadingGlobalReport = true;
+    this.workplanService.downloadReport('excel', null, this.workplan.id).subscribe({
       next: () => {
-        menuItem.icon = initialIcon;
-        menuItem.disabled = initialState;
+        this.downloadingGlobalReport = false;
       },
       error: ()=>{
-        menuItem.icon = initialIcon;
-        menuItem.disabled = initialState;
+        this.downloadingGlobalReport = false;
       }
-    });*/
+    });
   }
 
   downloadFile(id: number, event: Event) {
@@ -568,8 +588,11 @@ export class ListComponent implements OnInit, OnDestroy {
     }
   }
 
-  obtenerSeguimientoMasReciente(followUp: FollowUp[]) {
-    return followUp.reduce((reciente, actual) => {
+  obtenerSeguimientoMasReciente(follows: FollowUp[]) {
+    if (!follows?.length){
+      return null;
+    }
+    return follows.reduce((reciente, actual) => {
       const fechaMasReciente = new Date(reciente.fecha);
       const fechaActual = new Date(actual.fecha);
       return fechaActual > fechaMasReciente ? actual : reciente;
@@ -577,6 +600,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   goToManagementFollowUp(idTask: any, event: Event){
+    this.selectedViewFollowUp = 'list';
     this.detailOfTaskOverlayPanel.toggle(event)
     this.taskOfCalendar = this.tasks.find(item => item.id == idTask);
   }
@@ -589,4 +613,104 @@ export class ListComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  goToAddTaskFromCalendar(data: any, stage: Stage) {
+    this.router.navigate(['task/create'], {
+      relativeTo: this.route,
+      skipLocationChange: true,
+      queryParams: {idStage: stage.id, startDate: data.start}
+    });
+  }
+
+  showCalendarFullView(){
+    this.calendarOfAllTasks?.updateSize();
+    this.calendarFullView = true;
+  }
+
+  private getAllTasksAndBuildMetadata(stages: Stage[]): TreeNode[] | null {
+    if(!stages){return null}
+    return stages.map( e => {
+      let color;
+      if (e.tareas?.length){
+        color = this.findColorInNodes(e.id, this.nodesOfAllStages) ?? this.generateRandomColor();
+        this.allTasks.push(...e.tareas.map( 
+          t => {
+            return {...t, 
+              color: color, 
+              parent: e.nombre, 
+              status: Methods.getActivityStatus(new Date(t.fechaInicio), new Date(t.fechaFin), new Date(this.obtenerSeguimientoMasReciente(t.seguimientos)?.fecha), t.avance)}
+          }
+        ));
+      }
+      return {
+        data: {...e, color: color, total: e.tareas?.length},
+        children: this.getAllTasksAndBuildMetadata(e.subEtapas),
+        expanded: true
+      };
+    })
+  }
+
+  private getTotalTasks(stages: Stage[]): number | null {
+    if(!stages){return 0}
+    return stages.reduce( (sum, e) =>  {
+      return sum + e.tareas?.length + this.getTotalTasks(e.subEtapas);
+    }, 0)
+  }
+
+  private getDateRange(stages: Stage[], startDate: Date, endDate: Date): { minDate: Date, maxDate: Date } {
+    if (!stages) {
+        return { minDate: startDate, maxDate: endDate };
+    }
+    for (const e of stages) {
+        if (e.tareas) {
+            const { minDate, maxDate } = e.tareas.reduce((acc, tarea) => {
+                const fechaInicio = new Date(tarea.fechaInicio);
+                const fechaFin = new Date(tarea.fechaFin);
+
+                if (!acc.minDate || fechaInicio < acc.minDate) {
+                    acc.minDate = fechaInicio;
+                }
+                if (!acc.maxDate || fechaFin > acc.maxDate) {
+                    acc.maxDate = fechaFin;
+                }
+                return acc;
+            }, { minDate: startDate, maxDate: endDate });
+
+            startDate = minDate < startDate ? minDate : startDate;
+            endDate = maxDate > endDate ? maxDate : endDate;
+        }
+        const subRange = this.getDateRange(e.subEtapas, startDate, endDate);
+        startDate = subRange.minDate < startDate ? subRange.minDate : startDate;
+        endDate = subRange.maxDate > endDate ? subRange.maxDate : endDate;
+    }
+
+    return { minDate: startDate, maxDate: endDate };
+}
+
+
+
+  private findColorInNodes(id: number, nodes: TreeNode[]): string | undefined {
+    for (const node of nodes) {
+      if (node.data.id === id && node.data.color) {
+        return node.data.color;
+      }
+      if (node.children) {
+        const color = this.findColorInNodes(id, node.children);
+        if (color) {
+          return color;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  private generateRandomColor(){
+    let color;
+    do {
+      color = chroma.random().set('hsl.s', 0.6).set('hsl.l', 0.8).hex();
+    } while (this.generatedColors.has(color));
+    this.generatedColors.add(color);
+    return color;
+  }
+  
 }

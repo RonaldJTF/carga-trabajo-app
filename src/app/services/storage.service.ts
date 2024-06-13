@@ -63,7 +63,7 @@ export class StorageService {
   }
 
   getToken(): string {
-    const token = this.getLocalStorage('token') || this.getSessionStorage('token');
+    const token = this.getSessionStorage('token') || this.getLocalStorage('token');
     return token ? token : null;
   }
 

@@ -27,6 +27,7 @@ export class ChartsComponent implements OnInit {
   inventory: TypologyInventory[];
   structureOptions: TreeNode<Structure>[] = [];
   loading: boolean = false;
+  downloadingReport: boolean = false;
 
   constructor(private dashboardService: DashboardService, private structureService: StructureService) {
   }
@@ -105,7 +106,15 @@ export class ChartsComponent implements OnInit {
   }
 
   downloadReport() {
-    this.structureService.downloadReport('pdf', this.dependency.data.id).subscribe({});
+    this.downloadingReport = true;
+    this.structureService.downloadReport('pdf', this.dependency.data.id).subscribe({
+      next: () => {
+        this.downloadingReport = false;
+      },
+      error: ()=>{
+        this.downloadingReport = false;
+      }
+    });
   }
 }
 

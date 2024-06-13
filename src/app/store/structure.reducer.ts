@@ -21,17 +21,25 @@ export const initialState: StructureState = {
 export const structureReducer = createReducer(
   initialState,
 
-  on(StructureActions.setList, (state, { structures }) => ({
+  on(StructureActions.setList, (state, { structures }) => {
+    let items =  JSON.parse(JSON.stringify(structures ?? []));
+    order (items);
+   return{
     ...state,
-    items: [... structures ?? []],
-  })),
+    items: items,
+   }
+  }),
 
   on(StructureActions.addToList, (state, { structure }) =>{
     const items = JSON.parse(JSON.stringify(state.items));
     let parentStructure = findStructure(structure.idPadre, items);
     if (parentStructure){
       if (!parentStructure.subEstructuras){parentStructure.subEstructuras = []}
+      if (parentStructure.subEstructuras.find( e => e.orden == structure.orden)){
+        reasingOrder(parentStructure.subEstructuras, structure.orden, 1);
+      }
       parentStructure.subEstructuras.push(structure)
+      order(parentStructure.subEstructuras);
     }else{
       items.push(structure);
     }
@@ -43,8 +51,15 @@ export const structureReducer = createReducer(
 
 
   on(StructureActions.removeFromList, (state, { id }) => {
-    const items = filtrarNodosArbol (state.items, [id]);
-    return { ...state, items: items, dependency: findStructure(state.dependency?.id, items)};
+    const items = JSON.parse(JSON.stringify(state.items));
+    let structureToRemove = findStructure(id, items);
+    let parentStructure = findStructure(structureToRemove.idPadre, items);
+    if (parentStructure){
+      reasingOrder(parentStructure.subEstructuras, structureToRemove.orden, -1);
+      order(parentStructure.subEstructuras);
+    }
+    const filteredItems = filtrarNodosArbol (items, [id]);
+    return { ...state, items: filteredItems, dependency: findStructure(state.dependency?.id, filteredItems)};
   }),
 
 
@@ -59,8 +74,18 @@ export const structureReducer = createReducer(
 
 
   on(StructureActions.removeItemsFromList, (state, { structureIds }) => {
-    const items = filtrarNodosArbol (state.items, structureIds);
-    return { ...state, items: items, dependency: findStructure(state.dependency?.id, items)};
+    const items = JSON.parse(JSON.stringify(state.items));
+    for (let id of structureIds){
+      let structureToRemove = findStructure(id, items);
+      let parentStructure = findStructure(structureToRemove.idPadre, items);
+      if (parentStructure){
+        reasingOrder(parentStructure.subEstructuras, structureToRemove.orden, -1);
+        order(parentStructure.subEstructuras);
+      }
+    }
+
+    const filteredItems = filtrarNodosArbol (items, structureIds);
+    return { ...state, items: filteredItems, dependency: findStructure(state.dependency?.id, filteredItems)};
   }),
 
 
@@ -71,9 +96,25 @@ export const structureReducer = createReducer(
   on(StructureActions.updateItemIntoList, (state, { structure }) =>{
     const items = JSON.parse(JSON.stringify(state.items));
     let updatedStructure = findStructure(structure.id, items);
-    if (updatedStructure){
-      Object.assign(updatedStructure, structure);
+    let parentStructure = findStructure(structure.idPadre, items);
+    if (parentStructure?.subEstructuras.find( e => e.orden == structure.orden)){
+      const previousOrder = updatedStructure?.orden;
+      if (previousOrder != null){
+        if (previousOrder >= structure.orden){
+          reasingOrder(parentStructure.subEstructuras, structure.orden, 1, previousOrder);
+        }else{
+          reasingOrder(parentStructure.subEstructuras, previousOrder, -1, structure.orden);
+        }
+      }else{
+        reasingOrder(parentStructure.subEstructuras, structure.orden, 1);
+      }
     }
+    if (updatedStructure){
+      Object.assign(updatedStructure, JSON.parse(JSON.stringify(structure)));
+    }
+        
+    order(parentStructure?.subEstructuras);
+
     return { ...state,
             items:items,
             dependency: findStructure(state.dependency?.id, items)
@@ -158,4 +199,31 @@ function findStructure(id: number, structures: Structure[]): Structure{
     }
   }
   return null;
+}
+
+function reasingOrder(structures: Structure[], inferiorOrder: number, increment: number, superiorOrden?: number){
+  structures.forEach(e => {
+    if (e.orden >= inferiorOrder && (superiorOrden == null || e.orden <= superiorOrden)){
+      e.orden = e.orden + increment
+    }
+  })
+}
+
+function order(structures: Structure[]) {
+  if (!structures?.length) {
+    return;
+  }
+  structures.sort((a, b) => {
+    if (a.orden == null && b.orden == null) {
+      return a.id - b.id;
+    }
+    if (a.orden == null) {
+      return -1;
+    }
+    if (b.orden == null) {
+      return 1;
+    }
+    return a.orden - b.orden;
+  });
+  structures.forEach(e => order(e.subEstructuras));
 }

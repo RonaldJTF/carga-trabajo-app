@@ -1,4 +1,4 @@
-<div *ngIf="!loading else sLoading" class="grid p-fluid grid-nogutter p-1">
+<div *ngIf="!loading else sLoading" class="grid p-fluid grid-nogutter">
     <ng-container *ngIf="dependency else sNoDependency">
       <div class="col-12 lg:col-6">
         <div class="card m-1 p-3">
@@ -14,9 +14,10 @@
               </div>
             </div>
             <div>
-              <button pRipple pButton type="button" icon="pi pi-cloud-download"
-                      class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar"
-                      (click)="downloadReport()"></button>
+              <button *ngIf="!downloadingReport else sDownloadingReport" pRipple pButton type="button" (click)="downloadReport()" icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar reporte"></button>
+              <ng-template #sDownloadingReport>
+                <i #sDownloadingGlobalReport class="pi pi-spin pi-spinner text-blue-500 p-3"></i>
+              </ng-template>
             </div>
           </div>
     

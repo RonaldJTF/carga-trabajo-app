@@ -9,7 +9,6 @@
             </div>   
         </div>
     </div>
-  
     <div class="field p-fluid">
         <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
         <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion"></textarea>
@@ -19,7 +18,6 @@
             </div>   
         </div>
     </div>
-  
     <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitStage($event)"
         (cancel)="onCancelStage($event)"

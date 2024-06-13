@@ -20,6 +20,19 @@
         </div>
     </div>
 
+    <div *ngIf="noDependency" class="field p-fluid">
+        <label htmlFor="orden"><span class="font-medium">Orden</span><span> (opcional)</span></label>
+        <input pInputText id="orden" type="number" aria-describedby="text-help" formControlName="orden"/>
+        <div *ngIf="formStructure.controls['orden'].errors && (formStructure.controls['orden'].touched||formStructure.controls['orden'].dirty)">
+            <div *ngIf="formStructure.controls['orden'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un orden</small>
+            </div>   
+            <div *ngIf="formStructure.controls['orden'].errors?.['min']">
+                <small id="text-help" class="p-error">Ingrese un orden mayor a 1</small>
+            </div>   
+        </div>
+    </div>
+
     <div class="field p-fluid">
         <label htmlFor="archivo"><span class="font-medium">Imagen representativa</span><span> (opcional)</span></label>
         <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="false" 

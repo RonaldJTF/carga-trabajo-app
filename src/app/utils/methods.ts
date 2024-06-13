@@ -1,4 +1,5 @@
 import {AbstractControl, FormArray, FormControl, FormGroup} from "@angular/forms";
+import { MenuItem } from "primeng/api";
 
 export class Methods {
 
@@ -165,4 +166,37 @@ export class Methods {
 
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezone}`;
   };
+
+  static getActivityStatus(startDate: Date, endDate: Date, completedDate:Date, advance: number){
+    let actual = new Date();
+    endDate.setTime(endDate.getTime() + (24 * 60 * 60 * 1000));//Para que el día termine a las 23:59:59 o antes de empezar el otro día
+    if (advance >= 100){
+      if(completedDate?.getTime() <= endDate.getTime()){
+        return {classStyle: 'completed', value: 'Completada'};
+      }else{
+        return {classStyle: 'completed-late', value: 'Completada con atraso'};
+      }
+    }else{
+      if (actual.getTime() > startDate.getTime() && actual.getTime() <= endDate.getTime()){
+        return {classStyle: 'in-process', value: 'En proceso'};
+      }else if (actual.getTime() < startDate.getTime()){
+        return {classStyle: 'waiting', value: 'Pendiente'};
+      }else if(actual.getTime() > endDate.getTime()){
+        return {classStyle: 'delayed', value: 'Atrasada'};
+      }
+    }
+    return {classStyle: 'unknown', value: 'Desconocido'};
+  }
+
+  static findMenuItemBy(menuItems: MenuItem[], value: any, key: any){
+    const menuItem: MenuItem = menuItems.find(e => e[key] == value);
+    if (menuItem){
+      return menuItem;
+    }
+    for (const e of menuItems){
+      if (e.items){
+        return this.findMenuItemBy(e.items, value, key)
+      }
+    }
+  }
 }

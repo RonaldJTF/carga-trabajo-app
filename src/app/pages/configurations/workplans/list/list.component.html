@@ -63,7 +63,7 @@
                             <app-percent [shape]="'linear'" [labelPosition]="'right'" [size]="80" [value]="workplan.avance ?? 0"></app-percent>
                         </td>
                         <td class="text-center">
-                            <app-menu-item [menuItems]="menuitems" [id]="workplan.id"></app-menu-item>
+                            <app-menu-item [menuItems]="workplan.menuItems" [id]="workplan.id"></app-menu-item>
                         </td>
                     </tr>
                 </ng-template>

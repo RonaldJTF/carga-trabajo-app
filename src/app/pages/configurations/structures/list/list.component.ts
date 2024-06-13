@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as StructureActions from "./../../../../store/structure.actions";
-import { map, Observable, Subscription } from 'rxjs';
+import { last, map, Observable, Subscription } from 'rxjs';
 import { Structure } from 'src/app/models/structure';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
@@ -51,8 +51,8 @@ export class ListComponent implements OnInit, OnDestroy{
   expandedNodes: number[];
 
   menuItemsOfDownload: MenuItem[] = [
-    {label: 'PDF', icon: 'pi pi-file-pdf', id:"pdf", command: (e) => { this.download(e) }},
-    {label: 'Excel', icon: 'pi pi-file-excel', id:"excel", command: (e) => { this.download(e) }},
+    {label: 'Reporte de tiempos en PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
+    {label: 'Reporte de tiempos en Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
   ]
 
   constructor(
@@ -65,8 +65,10 @@ export class ListComponent implements OnInit, OnDestroy{
   ){}
 
   ngOnInit(): void {
-    this.isAdmin = this.authService.roleIsAdministrator();
-    this.isOperator = this.authService.roleIsOperator();
+    const {isAdministrator, isOperator} = this.authService.roles();
+    this.isAdmin = isAdministrator;
+    this.isOperator = isOperator;
+
     this.structures$ = this.store.select(state => state.structure.items);
     this.dependency$ = this.store.select(state => state.structure.dependency);
     this.dependencies$ = this.structures$.pipe(map(e => e?.map ( obj => this.transformToTreeNode(obj, true))));
@@ -132,8 +134,8 @@ export class ListComponent implements OnInit, OnDestroy{
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
         extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download', items: [
-          {label: 'PDF', icon: 'pi pi-file-pdf', id:"pdf", command: (e) => { this.download(e, structure.id) }},
-          {label: 'Excel', icon: 'pi pi-file-excel', id:"excel", command: (e) => { this.download(e, structure.id) }},
+          {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
+          {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
         ]})
         extraMenuItemsOfDependency.push({label: 'Nueva sub' + structure.tipologia.nombre.toLowerCase(), icon: `pi pi-plus`, data:structure, command: (e) => this.goToAddSubdependency(e.item.data)})
       }
@@ -145,8 +147,8 @@ export class ListComponent implements OnInit, OnDestroy{
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
         extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download',  items: [
-          {label: 'PDF', icon: 'pi pi-file-pdf', id:"pdf", command: (e) => { this.download(e, structure.id) }},
-          {label: 'Excel', icon: 'pi pi-file-excel', id:"excel", command: (e) => { this.download(e, structure.id) }},
+          {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
+          {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
         ]})
       }
     }
@@ -224,7 +226,29 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   goToAddSubstructure(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true, queryParams: {idParent: structure.id, idTipology: structure.tipologia.idTipologiaSiguiente}});
+    let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
+    this.router.navigate(['create'], { 
+      relativeTo: this.route, 
+      skipLocationChange: true, 
+      queryParams: {
+        idParent: structure.id, 
+        idTipology: structure.tipologia.idTipologiaSiguiente, 
+        isDependency: structure.tipologia.tipologiaSiguiente.esDependencia,
+        defaultOrder: childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1
+      }});
+  }
+
+  private getLastOrder(structures: Structure[]): number{
+    let lastOrder: number = 0;
+    if (!structures?.length){
+      return null;
+    }
+    for (let e of structures){
+      if (lastOrder < e.orden){
+        lastOrder = e.orden;
+      }
+    }
+    return lastOrder == 0 ? null : lastOrder;
   }
 
   goToPage(event: any, structure: Structure){
@@ -283,33 +307,23 @@ export class ListComponent implements OnInit, OnDestroy{
     this.store.dispatch(StructureActions.removeFromExpandedNodes({id: event.node.data.id}));
   }
 
-  download(data: any, idStructure?: number){
-    const menuItem: MenuItem = this.menuItemsOfDownload.find(e => e.id === data.item.id);
-    const initialIcon = menuItem.icon;
-    const initialState = menuItem.disabled;
-
-    menuItem.icon = "pi pi-spin pi-spinner";
-    menuItem.disabled = true;
-    let structureIds = (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id);
-
-    if (idStructure){
-      if (structureIds == undefined){
-        structureIds = [idStructure];
-      }else{
-        structureIds.push(idStructure)
-      }
-    }
-
-    this.structureService.downloadReport(data.item.id, structureIds).subscribe({
-      next: () => {
-        menuItem.icon = initialIcon;
-        menuItem.disabled = initialState;
-      },
-      error: ()=>{
-        menuItem.icon = initialIcon;
-        menuItem.disabled = initialState;
-      }
+  download(data: any, idStructure?: number) {
+    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean) => {
+        if (menuItem) {
+            menuItem.icon = icon;
+            menuItem.disabled = disabled;
+        }
+    };
+    const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
+    const initialIcon = menuItem?.icon;
+    const initialState = menuItem?.disabled;
+    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
+    const structureIds = idStructure 
+        ? [idStructure] 
+        : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
+    this.structureService.downloadReport(data.item.automationId, structureIds).subscribe({
+        next: () => updateMenuItem(menuItem, initialIcon, initialState),
+        error: () => updateMenuItem(menuItem, initialIcon, initialState)
     });
   }
-
 }
