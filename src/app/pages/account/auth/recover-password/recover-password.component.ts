@@ -63,9 +63,8 @@ export class RecoverPasswordComponent implements OnInit {
       this.loader = true;
       this.authenticationService.recoverPassword(this.formRecoverPassword.value).subscribe({
         next: (r) => {
-          let detail = 'El registro se ha creado con éxito.';
-          this.toastService.showSuccess(r.message, detail);
-          //this.login();
+          let detail = 'Ver más detalles en el correo enviado.';
+          this.toastService.showInfo(r.message, detail);
           setTimeout(() => {
             this.loader = false;
             this.okRecoverPassword = true;

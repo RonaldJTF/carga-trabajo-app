@@ -4,7 +4,6 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthenticationService} from "../../../../services/auth.service";
 import {CryptojsService} from "../../../../services/cryptojs.service";
-import {MessageService} from "primeng/api";
 import {ToastService} from "../../../../services/toast.service";
 
 @Component({
@@ -81,10 +80,9 @@ export class ChangePasswordComponent implements OnInit {
       const payload = {tokenPassword, password, confirmPassword};
       this.authenticationService.changePassword(payload).subscribe({
         next: (r) => {
-          let detail = 'El registro se ha actualizado con éxito.';
+          let detail = 'La contraseña ha sido actualizada con éxito.';
           this.toastService.showSuccess(r.message, detail);
           setTimeout(()=>{
-            //this.login();
             this.loader = false;
             this.okChangePassword = true;
           }, 1000)
