@@ -123,4 +123,8 @@ export class LoginComponent {
     }
   }
 
+  recoverPasswor(){
+    this.router.navigate(['account/auth/recover']).then();
+  }
+
 }

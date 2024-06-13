@@ -11,6 +11,8 @@ import { Person } from '../models/person';
   providedIn: 'root'
 })
 export class AuthenticationService {
+  pathRecoverPassword: string = 'auth/recover-password';
+  pathChangePassword: string = 'auth/change-password';
   pathAuth = "auth/authenticate";
   lastUrl: string = "/";
 
@@ -45,6 +47,36 @@ export class AuthenticationService {
     );
   }
 
+  recoverPassword(payload: Person,tenant?: string): Observable<any> {
+    tenant = tenant ? tenant : "tenant_001";
+    const headers = { "X-Tenant-Id": tenant };
+    return this.webRequestService.postWithoutToken(
+      this.pathRecoverPassword,
+      payload,
+      headers
+    ).pipe(
+      map( e => {
+        this.loguedPerson_.next(e.persona);
+        return e;
+      })
+    );
+  }
+
+  changePassword(payload: { tokenPassword: string; password: string, confirmPassword },tenant?: string): Observable<any> {
+    tenant = tenant ? tenant : "tenant_001";
+    const headers = { "X-Tenant-Id": tenant };
+    return this.webRequestService.postWithoutToken(
+      this.pathChangePassword,
+      payload,
+      headers
+    ).pipe(
+      map( e => {
+        this.loguedPerson_.next(e.persona);
+        return e;
+      })
+    );
+  }
+
   private getDecodedAccessToken(token: string): any {
     try {
       const currentTime = Math.floor(new Date().getTime() / 1000);
@@ -57,7 +89,7 @@ export class AuthenticationService {
             life: 3000
           })
           this.logout()
-        return {}; // El token ha expirado
+        return; // El token ha expirado
       } else {
         return decodedToken;
       }

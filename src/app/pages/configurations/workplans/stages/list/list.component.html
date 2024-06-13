@@ -434,7 +434,7 @@
             <h5 class="m-0 text-700">{{ workplan.nombre }}</h5>
             <span class="text-500">{{ workplan.descripcion }}</span>
           </div>
-          
+
           <div class="m-2">
             <button *ngIf="!downloadingGlobalReport else sDownloadingGlobalReport" pRipple pButton type="button" (click)="downloadGlobalReport()" icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar reporte"></button>
             <ng-template #sDownloadingGlobalReport>
@@ -496,7 +496,7 @@
         <div *ngFor="let item of statusInformation"  class="flex flex-row align-items-center">
           <span style="font-size: 0.75rem; white-space: nowrap" [class]="'activity-expiration-badge activity-expiration-' + item.classStyle">{{item.value}}</span>
           <hr class="border-top-1 border-dashed w-full mx-2">
-          <span style="font-size: 0.75rem; border-radius: 50%; padding: 0em;" [class]="'p-badge activity-expiration-badge activity-expiration-' + item.classStyle">{{item.total}}</span>
+          <span style="font-size: 0.75rem; border-radius: 50%; padding: 0em;" [class]="'p-badge activity-expiration-badge activity-expiration-' + item.classStyle" pTooltip="Total de tareas" tooltipPosition="bottom">{{item.total}}</span>
         </div>
       </div>
     </div>

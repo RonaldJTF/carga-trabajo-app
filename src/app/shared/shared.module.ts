@@ -72,6 +72,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calendar-menu-item.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { DateRangePipe } from '../pipes/date-range/date-range.pipe';
+import {SvgColorDirective} from "../directives/svg-color-directive.directive";
 
 @NgModule({
   declarations: [
@@ -106,10 +107,12 @@ import { DateRangePipe } from '../pipes/date-range/date-range.pipe';
     PluralizePipe,
     TimeNamePipe,
     ActivityExpirationPipe,
-    DateRangePipe,
 
+    DateRangePipe,
     ImageFallbackDirective,
     ShowFormValueDirective,
+
+    SvgColorDirective
   ],
   imports: [
     CommonModule,
@@ -178,6 +181,7 @@ import { DateRangePipe } from '../pipes/date-range/date-range.pipe';
 
     ImageFallbackDirective,
     ShowFormValueDirective,
+    SvgColorDirective,
 
     FirstNamePipe,
     StatePipe,

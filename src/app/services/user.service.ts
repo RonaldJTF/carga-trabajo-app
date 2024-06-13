@@ -3,6 +3,7 @@ import {Observable} from 'rxjs';
 import {User} from '../models/user';
 import {Rol} from '../models/rol';
 import {WebRequestService} from './web-request.service';
+import {Person} from "../models/person";
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import {WebRequestService} from './web-request.service';
 export class UserService {
   private pathUser = 'user';
   private pathRole = 'role';
+  private pathSendEmail = 'send-email';
 
   constructor(private webRequestService: WebRequestService) {
   }
@@ -28,5 +30,10 @@ export class UserService {
 
   delete(id: number): Observable<User> {
     return this.webRequestService.deleteWithHeaders(`${this.pathUser}/${id}`);
+  }
+
+  recoverPasswor(person: Person): Observable<Person> {
+    return this.webRequestService.putWithHeaders(`${this.pathSendEmail}`, person);
+
   }
 }
