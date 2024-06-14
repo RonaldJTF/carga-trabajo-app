@@ -8,7 +8,7 @@
     <div class="grid grid-nogutter">
       <div *ngIf="stages$ | async as stages" class="col-12" [ngClass]="{ 'md:col-6 md:pr-2': (stage$ | async)?.id }">
         <div class="card p-0">
-          <p-treeTable #treeTableOfStage [value]="stages" selectionMode="checkbox" [(selection)]="selectedNodesOfStage"
+          <p-treeTable #treeTableOfStages [value]="stages" selectionMode="checkbox" [(selection)]="selectedNodesOfStage"
                        (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                        [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true"
                        scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">

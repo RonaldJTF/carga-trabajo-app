@@ -3,11 +3,11 @@ import { TypologyInventory } from 'src/app/models/typologyinventory';
 import { DashboardService } from 'src/app/services/dashboard.service';
 
 @Component({
-  selector: 'app-heard-page',
-  templateUrl: './heard-page.component.html',
-  styleUrls: ['./heard-page.component.scss'],
+  selector: 'app-structure-resume',
+  templateUrl: './structure-resume.component.html',
+  styleUrls: ['./structure-resume.component.scss'],
 })
-export class HeardPageComponent {
+export class StructureResumeComponent {
 
   inventory: TypologyInventory[];
   loading: boolean = false;

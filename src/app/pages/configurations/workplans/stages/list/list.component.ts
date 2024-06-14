@@ -1,10 +1,10 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import * as StageActions from "./../../../../../store/stage.actions";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {MenuItem, TreeNode} from 'primeng/api';
 import {TreeTable} from 'primeng/treetable';
-import {BehaviorSubject, finalize, map, Observable, Subscription} from 'rxjs';
+import {finalize, map, Observable, Subscription} from 'rxjs';
 import {AppState} from 'src/app/app.reducers';
 import {FollowUp, Stage, Task, Workplan} from 'src/app/models/workplan';
 import {AuthenticationService} from 'src/app/services/auth.service';
@@ -36,7 +36,7 @@ export class ListComponent implements OnInit, OnDestroy {
   IMAGE_SIZE = IMAGE_SIZE;
   MESSAGE = MESSAGE;
 
-  @ViewChild('treeTableOfStage') treeTableOfStage: TreeTable;
+  @ViewChild('treeTableOfStages') treeTableOfStages: TreeTable;
   @ViewChild('tableOfTask') tableOfTask: Table;
   @ViewChild('detailOfTaskOverlayPanel') detailOfTaskOverlayPanel: OverlayPanel;
   @ViewChild('calendarOfAllTasks') calendarOfAllTasks: CalendarComponent;
@@ -122,8 +122,8 @@ export class ListComponent implements OnInit, OnDestroy {
 
     this.workplanSubscription = this.store.select(state => state.workplan.item).subscribe(e => this.workplan = e);
     this.viewModeSubscription = this.store.select(state => state.stage.viewMode).subscribe( e => this.viewMode = e);
-    this.totalTasks$ = this.store.select(state => state.stage.items ?? []).pipe(map(e => this.getTotalTasks(e)));
-    this.dateSummary$ = this.store.select(state => state.stage.items ?? []).pipe(map(e => {
+    this.totalTasks$ = this.store.select(state => state.stage.items).pipe(map(e => this.getTotalTasks(e)));
+    this.dateSummary$ = this.store.select(state => state.stage.items).pipe(map(e => {
       const initialStartDate = new Date(8640000000000000);
       const initialEndDate = new Date(-8640000000000000);
       const {minDate, maxDate} = this.getDateRange(e, initialStartDate, initialEndDate);
@@ -138,10 +138,10 @@ export class ListComponent implements OnInit, OnDestroy {
       }
     }));
 
-    this.allTaskSubscription = this.store.select(state => state.stage.items ?? []).subscribe( e => {
+    this.allTaskSubscription = this.store.select(state => state.stage.items).subscribe( e => {
       this.allTasks = [];
       this.nodesOfAllStages = this.getAllTasksAndBuildMetadata(e);
-      
+
       let status: any[] = this.allTasks.map(e => e.status);
 
       const classStyleCounts = status.reduce((acc, s) => {
@@ -157,7 +157,7 @@ export class ListComponent implements OnInit, OnDestroy {
         };
       });
     });
-    this.stages$ = this.store.select(state => state.stage.items).pipe(map(e => e?.map(obj => this.transformToTreeNode(obj))));
+    this.stages$ = this.store.select(state => state.stage.items).pipe(map(e => e.map(obj => this.transformToTreeNode(obj))));
     this.stage$ = this.store.select(state => state.stage.item).pipe(map(e => ({
       ...e,
       menuItems: this.getMenuItemsOfStage(e)
@@ -200,7 +200,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   get totalSelectedStages(): number {
-    return this.treeTableOfStage?.selection?.length;
+    return this.treeTableOfStages?.selection?.length;
   }
 
   getStages() {
@@ -292,7 +292,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   onFilterStage(event: Event) {
-    this.treeTableOfStage.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    this.treeTableOfStages.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
   onFilterTask(event: Event) {
@@ -393,8 +393,8 @@ export class ListComponent implements OnInit, OnDestroy {
     const initialIcon = menuItem?.icon;
     const initialState = menuItem?.disabled;
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    const stageIds = idStage 
-        ? [idStage] 
+    const stageIds = idStage
+        ? [idStage]
         : (this.selectedNodesOfStage as TreeNode[])?.map(e => e.data.id) || [];
     this.workplanService.downloadReport(data.item.automationId, stageIds, this.workplan.id).subscribe({
         next: () => updateMenuItem(menuItem, initialIcon, initialState),
@@ -633,11 +633,11 @@ export class ListComponent implements OnInit, OnDestroy {
       let color;
       if (e.tareas?.length){
         color = this.findColorInNodes(e.id, this.nodesOfAllStages) ?? this.generateRandomColor();
-        this.allTasks.push(...e.tareas.map( 
+        this.allTasks.push(...e.tareas.map(
           t => {
-            return {...t, 
-              color: color, 
-              parent: e.nombre, 
+            return {...t,
+              color: color,
+              parent: e.nombre,
               status: Methods.getActivityStatus(new Date(t.fechaInicio), new Date(t.fechaFin), new Date(this.obtenerSeguimientoMasReciente(t.seguimientos)?.fecha), t.avance)}
           }
         ));
@@ -712,5 +712,5 @@ export class ListComponent implements OnInit, OnDestroy {
     this.generatedColors.add(color);
     return color;
   }
-  
+
 }

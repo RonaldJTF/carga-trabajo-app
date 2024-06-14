@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HeardPageComponent } from './heard-page.component';
+import { StructureResumeComponent } from './structure-resume.component';
 
 describe('HeardPageComponent', () => {
-  let component: HeardPageComponent;
-  let fixture: ComponentFixture<HeardPageComponent>;
+  let component: StructureResumeComponent;
+  let fixture: ComponentFixture<StructureResumeComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [HeardPageComponent]
+      declarations: [StructureResumeComponent]
     });
-    fixture = TestBed.createComponent(HeardPageComponent);
+    fixture = TestBed.createComponent(StructureResumeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

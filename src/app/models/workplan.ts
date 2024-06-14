@@ -6,6 +6,8 @@ export class Workplan {
   descripcion: string;
   etapas: Stage[];
   avance: number;
+  totalEtapas: number;
+  totalTareas:number;
 }
 
 export class Stage {

@@ -26,7 +26,7 @@ export const stageReducer = createReducer(
   initialState,
 
   on(StageActions.setList, (state, { stages }) =>{
-   let newItems = JSON.parse(JSON.stringify(stages)) ?? [];
+   let newItems = JSON.parse(JSON.stringify(stages ?? []));
    updateAvance(newItems);
    orderByStartDate(newItems);
    return {
@@ -277,7 +277,7 @@ function orderByStartDate(items) {
   items.sort((a, b) => {
     const aDate = findStartDate(a);
     const bDate = findStartDate(b);
-    return aDate - bDate; 
+    return aDate - bDate;
   });
 }
 

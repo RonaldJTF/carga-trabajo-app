@@ -1,4 +1,8 @@
 <div *ngIf="!loading else sLoading" class="grid grid-nogutter">
+    <div class="flex flex-column mb-2 mx-1 col-12">
+      <h5 class="m-0 text-700">Estructuras</h5>
+      <span class="text-500">Resumen de información de interés de las estructuras</span>
+    </div>
     <div *ngFor="let item of inventory" class="col-12 md:col-6 lg:col-{{12/inventory.length}} p-1">
         <app-label-value-chart label="{{item.nombre | pluralize}}" [value]="item.cantidad" colorName="{{item.nombreColor}}"
             iconClass="{{item.claseIcono}}">
