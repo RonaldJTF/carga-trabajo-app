@@ -1,5 +1,5 @@
 <div *ngIf="!loading else sLoading" class="grid p-fluid grid-nogutter">
-    <ng-container *ngIf="dependency else sNoDependency">
+    <ng-container *ngIf="dependency">
       <div class="col-12 lg:col-6">
         <div class="card m-1 p-3">
           <div class="flex align-items-center justify-content-between mb-4">
@@ -80,12 +80,6 @@
                          [labels]="levels" [data]="personasRequeridas"></app-polar-chart>
       </div>
     </ng-container>
-    
-    <ng-template #sNoDependency>
-      <div class="col-12 w-full">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NADA_CONFIGURADO" [showButton]="false"></app-go-to-if-not-found>
-      </div>
-    </ng-template>
 </div>
 
 <ng-template #sLoading>
