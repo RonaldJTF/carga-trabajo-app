@@ -79,7 +79,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                     var g = enter.append("g")
                         .attr("class", d => `${chart._lineTrackCssClass} ${d.valueErrorClass ?? ''}`)
                         .on("click", function (e, d) {
-                            //chart.onClick(d);
+                            //custom-chart.onClick(d);
                         })
                         //.style("cursor", "pointer");
 
@@ -111,7 +111,7 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
                         .attr("text-anchor", "middle")
                         .attr("dominant-baseline", "text-before-edge")
 
-                    
+
                 },
                 update => {},
                 exit => {

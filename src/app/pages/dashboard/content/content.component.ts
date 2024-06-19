@@ -8,10 +8,10 @@ import { MESSAGE } from 'src/labels/labels';
 
 @Component({
   selector: 'app-layout',
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  templateUrl: './content.component.html',
+  styleUrls: ['./content.component.scss']
 })
-export class LayoutComponent implements OnInit{
+export class ContentComponent implements OnInit{
   protected readonly Math = Math;
   protected readonly MESSAGE = MESSAGE;
   protected readonly IMAGE_SIZE = IMAGE_SIZE;

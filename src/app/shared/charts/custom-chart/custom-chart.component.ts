@@ -1,13 +1,13 @@
-import {Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
-import {LayoutService} from "../../../layout/service/app.layout.service";
+import {Component, Input, OnChanges, OnDestroy} from '@angular/core';
 import {Subscription} from "rxjs";
+import {LayoutService} from "../../../layout/service/app.layout.service";
 
 @Component({
-  selector: 'app-bar-chart',
-  templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.scss']
+  selector: 'app-custom-chart',
+  templateUrl: './custom-chart.component.html',
+  styleUrls: ['./custom-chart.component.scss']
 })
-export class BarChartComponent implements OnChanges, OnDestroy {
+export class CustomChartComponent implements OnChanges, OnDestroy {
 
   @Input() labels: string[];
   @Input() data: string[];
@@ -15,43 +15,44 @@ export class BarChartComponent implements OnChanges, OnDestroy {
   @Input() subtitle: string;
   @Input() iconClass: string;
   @Input() colorName: string = "primary";
+  @Input() chartType: string = "bar";
+  @Input() tension: number = 0;
 
-  barData: any;
-  barOptions: any;
+  chartData: any;
+  chartOptions: any;
 
   subscription!: Subscription;
 
   constructor(private layoutService: LayoutService) {
     this.subscription = this.layoutService.configUpdate$.subscribe(() => {
-      this.initChart();
+      this.initCustomChart();
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.initChart();
+  ngOnChanges(): void {
+    this.initCustomChart();
   }
 
-  initChart() {
+  initCustomChart() {
 
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
-    this.barData = {
+    this.chartData = {
       labels: this.labels,
       datasets: [
         {
-          label: 'Total horas',
           backgroundColor: documentStyle.getPropertyValue('--primary-500'),
           borderColor: documentStyle.getPropertyValue('--primary-500'),
           data: this.data,
-          tension: 0
+          tension: this.tension
         },
       ],
     };
 
-    this.barOptions = {
+    this.chartOptions = {
       plugins: {
         legend: {
           labels: {
@@ -81,8 +82,7 @@ export class BarChartComponent implements OnChanges, OnDestroy {
             drawBorder: false,
           },
           title: {
-            display: true,
-            text: 'Horas'
+            display: true
           },
         },
       },
@@ -94,4 +94,5 @@ export class BarChartComponent implements OnChanges, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
+
 }

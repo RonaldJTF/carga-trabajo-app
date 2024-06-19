@@ -65,7 +65,6 @@ import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.
 import {SelectButtonModule} from "primeng/selectbutton";
 import {SliderModule} from "primeng/slider";
 import {ShowFormValueDirective} from "../directives/show-form-value.directive";
-import {KnobModule} from "primeng/knob";
 import { CalendarComponent } from './calendar/calendar.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { SpeedDialModule } from 'primeng/speeddial';
@@ -73,6 +72,7 @@ import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calenda
 import { SidebarModule } from 'primeng/sidebar';
 import { DateRangePipe } from '../pipes/date-range/date-range.pipe';
 import {SvgColorDirective} from "../directives/svg-color-directive.directive";
+import { CustomChartComponent } from './charts/custom-chart/custom-chart.component';
 
 @NgModule({
   declarations: [
@@ -93,6 +93,7 @@ import {SvgColorDirective} from "../directives/svg-color-directive.directive";
     PercentComponent,
     CalendarComponent,
     CalendarMenuItemComponent,
+    CustomChartComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -112,7 +113,7 @@ import {SvgColorDirective} from "../directives/svg-color-directive.directive";
     ImageFallbackDirective,
     ShowFormValueDirective,
 
-    SvgColorDirective
+    SvgColorDirective,
   ],
   imports: [
     CommonModule,
@@ -178,6 +179,7 @@ import {SvgColorDirective} from "../directives/svg-color-directive.directive";
     BodySkeletonComponent,
     PercentComponent,
     CalendarComponent,
+    CustomChartComponent,
 
     ImageFallbackDirective,
     ShowFormValueDirective,

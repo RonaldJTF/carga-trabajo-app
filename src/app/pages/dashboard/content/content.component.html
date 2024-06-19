@@ -8,7 +8,7 @@
         <div class="card p-3 h-full">
           <div class="flex justify-content-between">
             <div class="mr-2">
-              <span class="block text-500">{{ item.nombre }}</span>
+              <span (click)="detailMessage.toggle($event)" class="block text-500 cursor-pointer hover:text-blue-100">{{ item.nombre }}</span>
               <div class="flex flex-row align-items-baseline">
                 <span class="text-500 text-2xl font-medium mr-1">{{ item.totalEtapas | number:'1.0-2' }}</span>
                 <span class="text-xs text-500 mr-2">{{ 'Etapa' | pluralize: item.totalEtapas }}</span>
@@ -42,16 +42,23 @@
         <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NADA_CONFIGURADO" [showButton]="false"></app-go-to-if-not-found>
     </div>
 </ng-container>
-  
+
+
 <app-charts></app-charts>
 
 <ng-template #sLoading>
-    <app-head-skeleton></app-head-skeleton>
+  <app-head-skeleton></app-head-skeleton>
 </ng-template>
 
 <ng-template #Template let-item>
-    <div class="flex flex-row align-items-baseline">
-        <span class="text-500 text-2xl font-medium mr-1">{{item}}</span>
-        <span class="text-sm text-500">{{'Existente' | pluralize : item}}</span>
-    </div>
+  <div class="flex flex-row align-items-baseline">
+    <span class="text-500 text-2xl font-medium mr-1">{{item}}</span>
+    <span class="text-sm text-500">{{'Existente' | pluralize : item}}</span>
+  </div>
 </ng-template>
+
+<p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{'max-width': '75%'}">
+  <ng-template pTemplate>
+    <app-custom-chart></app-custom-chart>
+  </ng-template>
+</p-overlayPanel>

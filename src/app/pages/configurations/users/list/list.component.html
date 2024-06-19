@@ -1,5 +1,5 @@
 <ng-container *ngIf="!loading else sLoading">
-  <div *ngIf="!(people) else data">
+  <div *ngIf="!people else data">
     <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva persona'" (go)="openNew()"
                             [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
   </div>

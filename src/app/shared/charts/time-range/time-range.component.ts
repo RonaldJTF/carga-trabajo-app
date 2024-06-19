@@ -18,7 +18,7 @@ export class TimeRangeComponent implements OnInit, AfterViewInit {
   bubbleChart: any;
 
   constructor(private elementRef: ElementRef) { }
-  
+
   ngAfterViewInit(): void {
     this._initialized = true;
     this.generate();
@@ -41,13 +41,13 @@ export class TimeRangeComponent implements OnInit, AfterViewInit {
 			var grp = {};
 			var data = [
         {
-          label: "Tiempo 1", 
+          label: "Tiempo 1",
           time: {
-            middleValue: this.usualValue ?? 0, 
-            maximumValue: this.maxValue  ?? 0, 
-            minimumValue: this.minValue  ?? 0, 
-            middleValueLabel: "Tusual", 
-            maximumValueLabel: "Tmáx", 
+            middleValue: this.usualValue ?? 0,
+            maximumValue: this.maxValue  ?? 0,
+            minimumValue: this.minValue  ?? 0,
+            middleValueLabel: "Tusual",
+            maximumValueLabel: "Tmáx",
             minimumValueLabel: "Tmín",
             x_lastMiddleValue: this.x_lastMiddleValue }
         }
@@ -55,7 +55,7 @@ export class TimeRangeComponent implements OnInit, AfterViewInit {
 			var filter = crossfilter(data)
 			dim['timeRange'] = filter.dimension(d => d.label);
 			grp['timeRange'] = dim['timeRange'].group().reduce(reduceAdd, reduceRemove, reduceInitial);
-	
+
 			function reduceAdd(p, v) {
 				p = v.time;
 				return p;
@@ -68,7 +68,7 @@ export class TimeRangeComponent implements OnInit, AfterViewInit {
 				return "";
 			}
 
-      this.bubbleChart = new chartValueInRange.ValueInRangeChart("#time-range-chart");
+      this.bubbleChart = new chartValueInRange.ValueInRangeChart("#time-range-custom-chart");
 			this.bubbleChart
 				.dimension(dim['timeRange'])
 				.group(grp['timeRange'])
