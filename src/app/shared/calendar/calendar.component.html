@@ -7,7 +7,7 @@
                     <ng-container *ngTemplateOutlet="eventContentTemplate || eventContentTemplateDefault ; context:{ $implicit: arg.event, data: arg.event.extendedProps.data }"></ng-container>
                 </div>
             </div>
-            <p-overlayPanel #detailOfEventOverlayPanel [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
+            <p-overlayPanel #detailOfEventOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
                 <ng-template pTemplate>
                     <ng-container *ngTemplateOutlet="overlayContentTemplate || overlayContentTemplateDefault ; context:{ $implicit: arg.event, data: arg.event.extendedProps.data }"></ng-container>
                 </ng-template>

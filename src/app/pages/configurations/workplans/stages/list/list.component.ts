@@ -52,7 +52,7 @@ export class ListComponent implements OnInit, OnDestroy {
   dateSummary$: Observable<any>;
   downloadingGlobalReport = false;
 
-  stateOptions: any[] = [{icon: 'pi pi-list', value: 'diary'}, {icon: 'pi pi-calendar', value: 'calendar'}];
+  viewOptions: any[] = [{icon: 'pi pi-list', value: 'diary', tooltip: 'Lista'}, {icon: 'pi pi-calendar', value: 'calendar', tooltip: 'Calendario'}];
   selectedViewFollowUp: 'list' | 'form' = "list";
   viewMode: 'diary' | 'calendar';
   isAdmin: boolean;

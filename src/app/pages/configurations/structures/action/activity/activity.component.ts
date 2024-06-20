@@ -12,6 +12,7 @@ import { StructureService } from 'src/app/services/structure.service';
 import { LevelService } from 'src/app/services/level.service';
 import { ValidateRange } from 'src/app/validations/validateRange';
 import { Subscription } from 'rxjs';
+import { Structure } from 'src/app/models/structure';
 
 @Component({
   selector: 'app-activity',
@@ -23,8 +24,8 @@ export class ActivityComponent implements OnInit, OnDestroy {
   MESSAGE = MESSAGE;
 
   formActivity !: FormGroup;
-  idEstructura: number;
   activity: Activity;
+  structure: Structure;
 
   updateMode: boolean;
   creatingOrUpdating: boolean = false;
@@ -48,8 +49,8 @@ export class ActivityComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.buildForm();
-    this.idEstructura = this.route.snapshot.queryParams['idStructure'];
     this.loadActivity(this.route.snapshot.queryParams['idActivity']);
+    this.loadStructure(this.route.snapshot.queryParams['idStructure']);
     this.loadNivels();
 
     this.tiempoMaximoSubscription = this.formActivity.get('tiempoMaximo').valueChanges.subscribe(_ => {
@@ -132,6 +133,14 @@ export class ActivityComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadStructure(id: number){
+    this.structureService.getStructureById(id).subscribe({
+      next: (e) => {
+        this.structure = e;
+      },
+    });
+  }
+
   assignValuesToForm(){
     this.formActivity.get('frecuencia').setValue(this.activity.frecuencia);
     this.formActivity.get('tiempoMaximo').setValue(this.activity.tiempoMaximo);
@@ -170,7 +179,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
   onSubmitActivity(event : Event): void {
     let payload = {...this.activity, ...this.formActivity.value}
     payload.idNivel = payload.nivel?.id
-    payload.idEstructura = this.idEstructura;
+    payload.idEstructura = this.structure.id;
     event.preventDefault();
     if (this.formActivity.invalid) {
       this.formActivity.markAllAsTouched();

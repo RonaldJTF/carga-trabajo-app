@@ -1,5 +1,18 @@
 
 <form class="p-0" [formGroup]="formActivity">
+    <div class="field p-fluid" *ngIf="structure">
+        <label class="font-medium">Actividad</label>
+        <div class="p-3 surface-100 border-round flex align-items-center">
+            <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{structure.tipologia?.nombreColor}}-100 border-circle">
+                <i class="pi {{structure.tipologia?.claseIcono}} text-xl text-{{structure.tipologia?.nombreColor}}-500"></i>
+            </div>
+            <div class="flex flex-column ml-2">
+                <span>{{ structure.nombre }}</span>
+                <span class="text-500">{{ structure.descripcion }}</span>
+            </div>
+          </div>
+    </div>
+
     <div class="field p-fluid">
         <label htmlFor="frecuencia" class="font-medium mb-0 ">Frecuencia</label>
         <div class="text-sm text-500 mb-2">Valor expresado en repeticiones por mes</div>

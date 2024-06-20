@@ -126,9 +126,9 @@
                     <i class="pi pi-search"></i>
                     <input type="search" pInputText placeholder="Buscar" (input)="onFilterTask($event)"/>
                   </span>
-                  <p-selectButton styleClass="mb-2" [options]="stateOptions" [(ngModel)]="viewMode" (ngModelChange)="onTemplateChange($event)">
+                  <p-selectButton styleClass="mb-2" [options]="viewOptions" [(ngModel)]="viewMode" (ngModelChange)="onTemplateChange($event)">
                     <ng-template let-item pTemplate>
-                      <i [class]="item.icon"></i>
+                      <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
                     </ng-template>
                   </p-selectButton>
                 </div>
@@ -195,7 +195,7 @@
                                   pTooltip="Ver detalles" tooltipPosition="bottom"></button>
                           <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfTask" [id]="task.id"></app-menu-item>
                         </div>
-                        <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
+                        <p-overlayPanel #detailMessage [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
                           <ng-template pTemplate>
                             <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: task}"></ng-container>
                           </ng-template>
@@ -384,7 +384,7 @@
   </div>
 </ng-template>
 
-<p-overlayPanel #detailOfTaskOverlayPanel [showCloseIcon]="false" [style]="{ 'max-width': '75%' }">
+<p-overlayPanel #detailOfTaskOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
   <ng-template pTemplate>
     <ng-container *ngTemplateOutlet="TemplateDetailOfTask, context: {$implicit: taskOfCalendar}"></ng-container>
   </ng-template>

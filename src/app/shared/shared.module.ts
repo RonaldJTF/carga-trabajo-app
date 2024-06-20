@@ -72,7 +72,9 @@ import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calenda
 import { SidebarModule } from 'primeng/sidebar';
 import { DateRangePipe } from '../pipes/date-range/date-range.pipe';
 import {SvgColorDirective} from "../directives/svg-color-directive.directive";
-import { CustomChartComponent } from './charts/custom-chart/custom-chart.component';
+import { LineChartComponent } from './charts/line-chart/line-chart.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { LoadingComponent } from './loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +95,8 @@ import { CustomChartComponent } from './charts/custom-chart/custom-chart.compone
     PercentComponent,
     CalendarComponent,
     CalendarMenuItemComponent,
-    CustomChartComponent,
+    LineChartComponent,
+    LoadingComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -161,6 +164,7 @@ import { CustomChartComponent } from './charts/custom-chart/custom-chart.compone
     FullCalendarModule,
     SpeedDialModule,
     SidebarModule,
+    ProgressSpinnerModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -179,7 +183,8 @@ import { CustomChartComponent } from './charts/custom-chart/custom-chart.compone
     BodySkeletonComponent,
     PercentComponent,
     CalendarComponent,
-    CustomChartComponent,
+    LineChartComponent,
+    LoadingComponent,
 
     ImageFallbackDirective,
     ShowFormValueDirective,
@@ -245,6 +250,7 @@ import { CustomChartComponent } from './charts/custom-chart/custom-chart.compone
     FullCalendarModule,
     SpeedDialModule,
     SidebarModule,
+    ProgressSpinnerModule,
   ],
   providers: []
 })

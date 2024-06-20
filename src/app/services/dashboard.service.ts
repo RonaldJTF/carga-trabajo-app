@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { TypologyInventory } from '../models/typologyinventory';
 import {Activity} from "../models/activity";
 import {Structure} from "../models/structure";
@@ -12,6 +12,7 @@ export class DashboardService {
 
   private pathStructure: string = 'inventory';
   private pathStatistics: string = 'statistics';
+  private pathAdvanceConsolidated: string = 'workplan/consolidated';
 
   constructor(private webRequestService: WebRequestService) {}
 
@@ -21,6 +22,10 @@ export class DashboardService {
 
   getStatistics(idDependency): Observable<Activity[]>{
     return this.webRequestService.getWithHeaders(`${this.pathStatistics}/${idDependency}`);
+  }
+
+  getAdvanceConsolidated(idWorkplan: number, timeType: any): Observable<any>{
+    return this.webRequestService.getWithHeaders(`${this.pathAdvanceConsolidated}/${idWorkplan}`, {timeType: timeType});
   }
 
 }

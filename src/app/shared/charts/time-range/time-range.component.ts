@@ -68,7 +68,7 @@ export class TimeRangeComponent implements OnInit, AfterViewInit {
 				return "";
 			}
 
-      this.bubbleChart = new chartValueInRange.ValueInRangeChart("#time-range-custom-chart");
+      this.bubbleChart = new chartValueInRange.ValueInRangeChart("#time-range-chart");
 			this.bubbleChart
 				.dimension(dim['timeRange'])
 				.group(grp['timeRange'])

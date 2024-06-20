@@ -1,0 +1,16 @@
+._badge {
+    cursor: pointer;
+    position: absolute;
+    top: -15px;
+    left: -5px;
+    background-color: var(--primary-500);;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 5px;
+    font-size: 5px;
+    z-index: 1;
+
+    & .pi{
+        font-size: 10px;
+    }
+}

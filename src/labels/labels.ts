@@ -12,6 +12,7 @@ export const MESSAGE = {
     PREGUNTA_NO_RESPONDIDA: "Pregunta sin responder",
     RESPUESTA_A_OTRA_OPCION_NO_ESCRITA: "Respuesta a otra opción no escrita",
     NO_REGISTRO_ROLES: "No se encontraron roles para el usuario",
-    NO_TAREAS: "No se encontraron tareas"
+    NO_TAREAS: "No se encontraron tareas",
+    NO_AVANCE_TAREAS: "No se encontraron avances de tareas",
 };
 

@@ -115,7 +115,7 @@
                                                     <button *ngIf="hasDetailToShow(structure)" (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
                                                     <app-menu-item *ngIf="structure.menuItems?.length" [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
                                                 </div>
-                                                <p-overlayPanel #detailMessage [showCloseIcon]="false" [style]="{'max-width': '75%'}">
+                                                <p-overlayPanel #detailMessage [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 xl:w-7'">
                                                     <ng-template pTemplate>
                                                         <div class="flex align-items-center mb-3">
                                                             <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
