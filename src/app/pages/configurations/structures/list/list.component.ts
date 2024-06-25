@@ -42,6 +42,8 @@ export class ListComponent implements OnInit, OnDestroy{
   dependencySubscription: Subscription;
   expandedNodesSubscription: Subscription;
   structuresSubscription: Subscription;
+  orderIsAscendingSubscription: Subscription;
+
 
   loading: boolean = false;
   rowGroupMetadata: number[] = [];
@@ -49,6 +51,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
   dependencyMenuItems: MenuItem[] = [];
   expandedNodes: number[];
+  orderIsAscending: boolean;
 
   menuItemsOfDownload: MenuItem[] = [
     {label: 'Reporte de tiempos en PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
@@ -73,6 +76,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.dependency$ = this.store.select(state => state.structure.dependency);
     this.dependencies$ = this.structures$.pipe(map(e => e?.map ( obj => this.transformToTreeNode(obj, true))));
     this.noDependencies$ = this.dependency$.pipe(map(e => e?.subEstructuras?.map( obj => this.transformToTreeNode(obj, false)).filter(o => o)));
+    this.orderIsAscendingSubscription = this.store.select(state => state.structure.orderIsAscending).subscribe(e => this.orderIsAscending = e);
     this.noDependenciesSubscription = this.noDependencies$.subscribe( e=> {
       if(e?.length){this.numberOfElementsByStructure[e[0].data.idPadre] = e.length;}
       this.onGoToUpdateRowGroupMetaData(e);
@@ -91,6 +95,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.mustRechargeSubscription?.unsubscribe();
     this.dependencySubscription?.unsubscribe();
     this.expandedNodesSubscription?.unsubscribe();
+    this.orderIsAscendingSubscription?.unsubscribe();
   }
 
   get totalSelected(): number{
@@ -325,5 +330,10 @@ export class ListComponent implements OnInit, OnDestroy{
         next: () => updateMenuItem(menuItem, initialIcon, initialState),
         error: () => updateMenuItem(menuItem, initialIcon, initialState)
     });
+  }
+
+  changeOrder(event: Event){
+    this.store.dispatch(StructureActions.setOrderIsAscending({orderIsAscending: !this.orderIsAscending}));
+    this.store.dispatch(StructureActions.order());
   }
 }

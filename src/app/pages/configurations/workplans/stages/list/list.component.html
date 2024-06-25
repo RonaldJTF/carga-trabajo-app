@@ -10,8 +10,7 @@
         <div class="card p-0">
           <p-treeTable #treeTableOfStages [value]="stages" selectionMode="checkbox" [(selection)]="selectedNodesOfStage"
                        (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
-                       [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true"
-                       scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
+                       [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" [tableStyle]="{ 'min-width': '400px' }">
             <ng-template pTemplate="caption">
               <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
                 <div class="flex align-items-center flex-wrap">
@@ -135,15 +134,13 @@
               </div>
               <ng-container *ngIf="viewMode === 'diary'">
                 <p-table #tableOfTask [value]="tasks" sortMode="single" [(selection)]="selectedTasks" selectionMode="multiple"
-                          [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll"
-                          [scrollable]="true"
-                          scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
+                          [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" [tableStyle]="{ 'min-width': '400px' }">
                   <ng-template pTemplate="header">
                     <tr>
                       <th *ngIf="isAdmin" style="width: 3rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                       </th>
-                      <th class="text-center" pSortableColumn="nombre">
+                      <th class="text-center" style="white-space: nowrap" pSortableColumn="nombre">
                         Tarea <p-sortIcon field="nombre"></p-sortIcon>
                       </th>
                       <th class="text-center w-5rem" style="white-space: nowrap" pSortableColumn="avance">
@@ -163,8 +160,8 @@
                       </td>
                       <td>
                         <div class="flex flex-column justify-content-start">
-                          <span class="w-full">{{ task.nombre }}</span>
-                          <span class="text-500 text-sm w-full">{{task.descripcion}}</span>
+                          <span class="font-medium">{{ task.nombre }}</span>
+                          <span class="text-500">{{task.descripcion}}</span>
                           <ng-container *ngIf="showMoreDetailOfTasks">
                             <div class="text-sm text-500">
                               <i class="pi pi-users text-lg"></i>
@@ -284,7 +281,7 @@
 </ng-template>
 
 <ng-template #TemplateFollowList let-follow="follow">
-  <p-table #tableOfFollowUp [value]="follow" responsiveLayout="scroll" [tableStyle]="{ 'min-width': '500px' }" scrollHeight="500px" class="w-full">
+  <p-table #tableOfFollowUp [value]="follow"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
     <ng-template pTemplate="body" let-followUp let-rowIndex="rowIndex">
       <tr>
         <td>
@@ -321,7 +318,7 @@
 </ng-template>
 
 <ng-template #TemplateFollowUpForm let-task="task">
-  <form [formGroup]="formFollowUp" class="w-full" style="min-width: 500px;">
+  <form [formGroup]="formFollowUp" class="w-full">
     <p-divider layout="horizontal" align="center" class="w-full">
       <span class="text-500">Registro de seguimiento</span>
     </p-divider>

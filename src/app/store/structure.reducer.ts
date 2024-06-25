@@ -8,6 +8,7 @@ export interface StructureState {
   dependency: Structure;
   mustRecharge: boolean;
   expandedNodes: any[];
+  orderIsAscending: boolean;
 }
 
 export const initialState: StructureState = {
@@ -16,6 +17,7 @@ export const initialState: StructureState = {
   dependency: new Structure(),
   mustRecharge: true,
   expandedNodes: [],
+  orderIsAscending: true,
 };
 
 export const structureReducer = createReducer(
@@ -23,7 +25,6 @@ export const structureReducer = createReducer(
 
   on(StructureActions.setList, (state, { structures }) => {
     let items =  JSON.parse(JSON.stringify(structures ?? []));
-    order (items);
    return{
     ...state,
     items: items,
@@ -39,7 +40,7 @@ export const structureReducer = createReducer(
         reasingOrder(parentStructure.subEstructuras, structure.orden, 1);
       }
       parentStructure.subEstructuras.push(structure)
-      order(parentStructure.subEstructuras);
+      order(parentStructure.subEstructuras, state.orderIsAscending);
     }else{
       items.push(structure);
     }
@@ -56,7 +57,7 @@ export const structureReducer = createReducer(
     let parentStructure = findStructure(structureToRemove.idPadre, items);
     if (parentStructure){
       reasingOrder(parentStructure.subEstructuras, structureToRemove.orden, -1);
-      order(parentStructure.subEstructuras);
+      order(parentStructure.subEstructuras, state.orderIsAscending);
     }
     const filteredItems = filtrarNodosArbol (items, [id]);
     return { ...state, items: filteredItems, dependency: findStructure(state.dependency?.id, filteredItems)};
@@ -69,7 +70,9 @@ export const structureReducer = createReducer(
 
 
   on(StructureActions.setDependency, (state, { structure }) => {
-    return { ...state, dependency: structure };
+    const dependency = JSON.parse(JSON.stringify(structure));
+    order(dependency.subEstructuras, state.orderIsAscending);
+    return { ...state, dependency: dependency };
   }),
 
 
@@ -80,7 +83,7 @@ export const structureReducer = createReducer(
       let parentStructure = findStructure(structureToRemove.idPadre, items);
       if (parentStructure){
         reasingOrder(parentStructure.subEstructuras, structureToRemove.orden, -1);
-        order(parentStructure.subEstructuras);
+        order(parentStructure.subEstructuras, state.orderIsAscending);
       }
     }
 
@@ -113,7 +116,7 @@ export const structureReducer = createReducer(
       Object.assign(updatedStructure, JSON.parse(JSON.stringify(structure)));
     }
         
-    order(parentStructure?.subEstructuras);
+    order(parentStructure?.subEstructuras, state.orderIsAscending);
 
     return { ...state,
             items:items,
@@ -166,6 +169,19 @@ export const structureReducer = createReducer(
           };
   }),
 
+  on(StructureActions.setOrderIsAscending, (state, { orderIsAscending }) => ({
+    ...state,
+    orderIsAscending: orderIsAscending,
+  })),
+
+  on(StructureActions.order, (state) => {
+    const item = JSON.parse(JSON.stringify(state.dependency));
+    order(item.subEstructuras, state.orderIsAscending);
+    return {
+      ...state,
+      dependency: item
+    }
+  }),
 );
 
 
@@ -209,21 +225,22 @@ function reasingOrder(structures: Structure[], inferiorOrder: number, increment:
   })
 }
 
-function order(structures: Structure[]) {
+function order(structures: Structure[], isAscending: boolean) {
   if (!structures?.length) {
     return;
   }
   structures.sort((a, b) => {
+    const orderMultiplier = isAscending ? 1 : -1;
     if (a.orden == null && b.orden == null) {
-      return a.id - b.id;
+      return (a.id - b.id) * orderMultiplier;
     }
     if (a.orden == null) {
-      return -1;
+      return 1 * orderMultiplier;
     }
     if (b.orden == null) {
-      return 1;
+      return -1 * orderMultiplier;
     }
-    return a.orden - b.orden;
+    return (a.orden - b.orden) * orderMultiplier;
   });
-  structures.forEach(e => order(e.subEstructuras));
+  structures.forEach(e => order(e.subEstructuras, isAscending));
 }

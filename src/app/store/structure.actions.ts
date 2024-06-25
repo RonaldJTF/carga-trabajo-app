@@ -15,4 +15,6 @@ export const addToExpandedNodes= createAction('[Configuration of Structures] Add
 export const removeFromExpandedNodes = createAction('[Configuration of Structures] Remove from the list of expanded nodes an element by its id', props<{ id: number }>());
 export const setActivityToStructure = createAction('[Configuration of Structures] Set information of activity to structure', props<{ activity: Activity }>());
 export const removeActivityFromStructure = createAction('[Configuration of Structures] Remove from the Activity from structure', props<{ idStructure: number}>());
+export const setOrderIsAscending = createAction('[Configuration of Structures] Set the order of structures', props<{ orderIsAscending: boolean }>());
+export const order = createAction('[Configuration of Structures] Order to structures');
 

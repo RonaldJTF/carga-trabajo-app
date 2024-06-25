@@ -16,7 +16,6 @@ export class LineChartComponent implements OnChanges, OnDestroy {
 
   @Input() labels: string[];
   @Input() dataset: Dataset[];
-  @Input() chartType: string = "bar";
   @Input() tension: number = 0;
   @Input() xAxisTitle: string;
   @Input() yAxisTitle: string;

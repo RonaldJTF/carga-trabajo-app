@@ -7,7 +7,7 @@
             <div *ngIf="dependencies$ | async as dependencies"  class="col-12" [ngClass]="{ 'md:col-6 md:pr-2': (dependency$ | async)?.id }">
                 <div class="card p-0 ">
                     <p-treeTable  #treeTableDependency [value]="dependencies" selectionMode="checkbox" [(selection)]="selectedNodesOfDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
-                     [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px">
+                     [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
                         <ng-template pTemplate="caption">
                             <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
                                 <div class="flex align-items-center flex-wrap">
@@ -35,6 +35,13 @@
                                     </span>
                                 </div>
                             </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center flex align-items-center justify-content-center " style="white-space: nowrap" ttSortableColumn="nombre" >
+                                    {{dependencies[0].data.tipologia.nombre}}<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
+                                </th>
+                            </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-rowNode let-structure="rowData">
                             <tr >
@@ -66,7 +73,7 @@
                     <div *ngIf="noDependencies$ | async as structures else sNoStructuresNoDependency" class="w-full mb-3">
                         <ng-container  *ngIf="structures?.length  else sNoStructuresNoDependency" >
                             <p-treeTable #treeTableOfStructuresNoDependency [value]="structures" selectionMode="checkbox" [(selection)]="selectedNodesOfStructuresNoDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
-                                [globalFilterFields]="['nombre', 'descripcion']">
+                                [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" [tableStyle]="{ 'min-width': '400px' }">
                                 <ng-template pTemplate="caption" let-structure="rowData">
                                     <div class="flex flex-wrap justify-content-between p-3">
                                         <div  class="flex align-items-center mb-2">
@@ -87,6 +94,14 @@
                                             </span>
                                         </div>
                                     </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="flex flex-row align-items-center">
+                                            <i class="pi {{orderIsAscending ? 'pi-sort-amount-up' : 'pi-sort-amount-down' }} text-lg cursor-pointer" (click)="changeOrder($event)" pTooltip="Orden" tooltipPosition="bottom"></i>
+                                            <span class="text-center w-full">Estructura</span>
+                                        </th>
+                                    </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-rowNode let-structure="rowData">
                                     <tr *ngIf="rowGroupMetadata.includes(structure.id)">

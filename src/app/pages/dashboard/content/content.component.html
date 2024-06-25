@@ -92,7 +92,6 @@
 
   <ng-container *ngIf="!loadingAdvanceCosolidated else sLoadingAdvanceCosolidated">
     <app-line-chart *ngIf="datasetOfAdvanceConsolidated.labels?.length else sNoAdvanceConsolidated" 
-      chartType="line"
       label="Avance"
       yAxisTitle="Porcentaje de avance (%)"
       xAxisTitle="Fecha"
