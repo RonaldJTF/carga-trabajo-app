@@ -49,7 +49,7 @@ export class AppTopBarComponent implements OnInit {
       command: () => {
         let idPerson: number;
         this.loguedPerson$.subscribe((person: Person) => {
-          idPerson = person.id
+          idPerson = person?.id
         })
         this.editPerson(idPerson)
       }

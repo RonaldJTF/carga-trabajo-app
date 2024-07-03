@@ -8,6 +8,7 @@ import {Methods} from "../../../../../utils/methods";
 import { Task } from 'src/app/models/workplan';
 import { AppState } from 'src/app/app.reducers';
 import { Store } from '@ngrx/store';
+import {UrlService} from "../../../../../services/url.service";
 
 @Component({
   selector: 'app-activity',
@@ -40,7 +41,8 @@ export class TaskComponent implements OnInit {
     private workplanService: WorkplanService,
     private router: Router,
     private readonly route: ActivatedRoute,
-    private primengConfig: PrimeNGConfig) {
+    private primengConfig: PrimeNGConfig,
+    private urlService: UrlService,) {
   }
 
   ngOnInit(): void {
@@ -74,7 +76,6 @@ export class TaskComponent implements OnInit {
   }
 
   buildForm() {
-    console.log(this.startDate)
     this.formTask = this.formBuilder.group({
       id: null,
       nombre: ['', Validators.required],
@@ -159,7 +160,7 @@ export class TaskComponent implements OnInit {
     this.workplanService.updateTask(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(StageActions.updateTaskFromStage({task: e}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: () => {
@@ -173,7 +174,7 @@ export class TaskComponent implements OnInit {
     this.workplanService.createTask(payload).subscribe({
       next: (e) => {
         this.store.dispatch(StageActions.addTaskToStage({task: e as Task}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: () => {
@@ -188,7 +189,7 @@ export class TaskComponent implements OnInit {
     this.workplanService.deleteTask(this.task.id).subscribe({
       next: () => {
         this.store.dispatch(StageActions.removeTasksFromStage({taskIds: [this.task.id]}));
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       },
       error: () => {
@@ -199,13 +200,6 @@ export class TaskComponent implements OnInit {
 
   onCancelTask(event: Event): void {
     event.preventDefault();
-    this.goBack();
+    this.urlService.goBack();
   }
-
-  goBack() {
-    this.router.navigate(['configurations/workplans/stages'], {
-      skipLocationChange: true,
-    });
-  }
-
 }

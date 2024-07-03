@@ -16,6 +16,7 @@ import {OverlayPanel} from 'primeng/overlaypanel';
 import {Methods} from 'src/app/utils/methods';
 import {User} from "../../../../models/user";
 import {CryptojsService} from "../../../../services/cryptojs.service";
+import {UrlService} from "../../../../services/url.service";
 
 @Component({
   selector: 'app-form-user-person',
@@ -50,6 +51,7 @@ export class FormUserPersonComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private cryptoService: CryptojsService,
+    private urlService: UrlService,
   ) {
   }
 
@@ -179,7 +181,7 @@ export class FormUserPersonComponent implements OnInit {
   updateUser(id: number, payload: any): void {
     this.userService.update(id, payload).subscribe({
       next: () => {
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: () => {
@@ -192,7 +194,7 @@ export class FormUserPersonComponent implements OnInit {
     this.userService.create(payload).subscribe({
       next: () => {
         this.formUser.reset();
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: () => {
@@ -206,7 +208,7 @@ export class FormUserPersonComponent implements OnInit {
     this.deleting = true;
     this.userService.delete(this.person.usuario.id).subscribe({
       next: () => {
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       },
       error: () => {
@@ -218,13 +220,7 @@ export class FormUserPersonComponent implements OnInit {
   onCancelUserPerson(event: Event): void {
     event.preventDefault();
     this.updateMode = false;
-    this.goBack();
-  }
-
-  goBack() {
-    this.router.navigate(['configurations/users'], {
-      skipLocationChange: true,
-    }).then();
+    this.urlService.goBack();
   }
 
   onValidacionCredenciales(person: Person): void {

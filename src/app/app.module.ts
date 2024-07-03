@@ -32,6 +32,7 @@ import {workplanReducer} from "./store/workplan.reducer";
 import { WorkplanService } from './services/workplan.service';
 import { stageReducer } from './store/stage.reducer';
 import { MediaService } from './services/media.service';
+import {UrlService} from "./services/url.service";
 
 @NgModule({
   declarations: [
@@ -55,7 +56,7 @@ import { MediaService } from './services/media.service';
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService,
-    UserService, MatrizlevantamientoService, WorkplanService,
+    UserService, MatrizlevantamientoService, WorkplanService, UrlService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true },
   ],

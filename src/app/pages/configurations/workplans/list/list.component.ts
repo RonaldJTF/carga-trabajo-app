@@ -15,6 +15,7 @@ import { MESSAGE } from 'src/labels/labels';
 import { Table } from 'primeng/table';
 import { Methods } from 'src/app/utils/methods';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import {UrlService} from "../../../../services/url.service";
 
 @Component({
   selector: 'app-list',
@@ -36,8 +37,8 @@ export class ListComponent implements OnInit, OnDestroy{
   selectedWorkplans: Workplan[] = [];
   datasetOfAdvanceConsolidated: any;
   timeTypeOptions: any[] = [
-    {icon: 'pi pi-calendar-times', value: 'day', tooltip: 'Por día'}, 
-    {icon: 'pi pi-calendar-minus', value: 'week', tooltip: 'Por semana'}, 
+    {icon: 'pi pi-calendar-times', value: 'day', tooltip: 'Por día'},
+    {icon: 'pi pi-calendar-minus', value: 'week', tooltip: 'Por semana'},
     {icon: 'pi pi-calendar', value: 'month', tooltip: 'Por mes'}
   ];
   viewMode: 'day' | 'week' | 'month' = 'day';
@@ -48,7 +49,7 @@ export class ListComponent implements OnInit, OnDestroy{
     private workplanService: WorkplanService,
     private authService: AuthenticationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ){}
 
   ngOnInit(): void {

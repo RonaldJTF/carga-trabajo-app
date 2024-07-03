@@ -15,12 +15,12 @@ export class AppMenuComponent implements OnInit {
 
     isAdmin: boolean = false;
 
-    constructor(public layoutService: LayoutService, private authService: AuthenticationService,) { }
+    constructor(public layoutService: LayoutService, private authService: AuthenticationService) { }
 
     ngOnInit() {
       const {isAdministrator, isOperator} = this.authService.roles();
       this.isAdmin = isAdministrator;
-      
+
       this.model = [
         {
           label: 'Home',

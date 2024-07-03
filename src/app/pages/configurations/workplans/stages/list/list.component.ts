@@ -19,6 +19,7 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { CalendarComponent } from 'src/app/shared/calendar/calendar.component';
 import chroma from 'chroma-js';
 import { Methods } from 'src/app/utils/methods';
+import {UrlService} from "../../../../../services/url.service";
 
 @Component({
   selector: 'app-stage-list',
@@ -105,7 +106,8 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    public urlService: UrlService,
   ) {
   }
 
@@ -429,12 +431,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   onChangeShowMoreDetail(event: any) {
     this.store.dispatch(StageActions.setShowMoreDetailOfTasks({showMoreDetailOfTasks: event.checked}));
-  }
-
-  goBack() {
-    this.router.navigate(['configurations/workplans'], {
-      skipLocationChange: true,
-    });
   }
 
   onTemplateChange(event: "diary" | "calendar") {

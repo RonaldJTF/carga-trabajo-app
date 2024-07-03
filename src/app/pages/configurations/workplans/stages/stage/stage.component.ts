@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {UrlService} from "../../../../../services/url.service";
 
 @Component({
   selector: 'app-stage',
@@ -30,7 +31,8 @@ export class StageComponent implements OnInit {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private urlService: UrlService,
   ){}
 
   ngOnInit(): void {
@@ -72,7 +74,7 @@ export class StageComponent implements OnInit {
     this.workplanService.updateStage(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(StageActions.updateFromList({stage: e}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -87,7 +89,7 @@ export class StageComponent implements OnInit {
     this.workplanService.createStage(payload).subscribe({
       next: (e) => {
         this.store.dispatch(StageActions.addToList({stage: e}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -113,7 +115,7 @@ export class StageComponent implements OnInit {
     this.workplanService.deleteStage(this.stage.id).subscribe({
       next: () => {
         this.store.dispatch(StageActions.removeFromList({id: this.stage.id}));
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       },
       error: (error) => {
@@ -124,12 +126,6 @@ export class StageComponent implements OnInit {
 
   onCancelStage(event : Event): void {
     event.preventDefault();
-    this.goBack();
-  }
-
-  goBack() {
-    this.router.navigate(['configurations/workplans/stages'], {
-      skipLocationChange: true,
-    });
+    this.urlService.goBack();
   }
 }

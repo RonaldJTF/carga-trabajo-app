@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
 import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
 import { Location } from '@angular/common';
+import {UrlService} from "../../../../services/url.service";
 
 @Component({
   selector: 'app-workplan',
@@ -27,7 +28,8 @@ export class WorkplanComponent implements OnInit {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private urlService: UrlService,
   ){}
 
   ngOnInit(): void {
@@ -65,7 +67,7 @@ export class WorkplanComponent implements OnInit {
     this.workplanService.updateWorkplan(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(WorkplanActions.updateFromList({workplan: e}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -78,7 +80,7 @@ export class WorkplanComponent implements OnInit {
     this.workplanService.createWorkplan(payload).subscribe({
       next: (e) => {
         this.store.dispatch(WorkplanActions.addToList({workplan: e}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -86,7 +88,7 @@ export class WorkplanComponent implements OnInit {
       },
     });
   }
-  
+
   onSubmitWorkplan(event : Event): void {
     event.preventDefault();
     let payload = {...this.workplan, ...this.formWorkplan.value};
@@ -104,7 +106,7 @@ export class WorkplanComponent implements OnInit {
     this.workplanService.deleteWorkplan(this.workplan.id).subscribe({
       next: () => {
         this.store.dispatch(WorkplanActions.removeFromList({id: this.workplan.id}));
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       },
       error: (error) => {
@@ -115,12 +117,6 @@ export class WorkplanComponent implements OnInit {
 
   onCancelWorkplan(event : Event): void {
     event.preventDefault();
-    this.goBack();
-  }
-
-  goBack() {
-    this.router.navigate(['configurations/workplans'], {
-      skipLocationChange: true,
-    });
+    this.urlService.goBack();
   }
 }

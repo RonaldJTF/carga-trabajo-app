@@ -3,6 +3,7 @@ import {PrimeNGConfig} from 'primeng/api';
 import {LayoutService} from "./layout/service/app.layout.service";
 import {StorageService} from "./services/storage.service";
 import {ThemeService} from "./layout/service/theme.service";
+import {UrlService} from "./services/url.service";
 
 @Component({
   selector: 'app-root',
@@ -13,13 +14,19 @@ export class AppComponent implements OnInit {
 
   typeConfigList: string[] = ['menuMode', 'scale', 'ripple', 'inputStyle'];
 
-  constructor(private primengConfig: PrimeNGConfig, public layoutService: LayoutService, private storageService: StorageService, private themeService: ThemeService) {
+  constructor(
+    private primengConfig: PrimeNGConfig,
+    public layoutService: LayoutService,
+    private storageService: StorageService,
+    private themeService: ThemeService,
+    private urlService: UrlService) {
     this.themeService.getThemeLocalStorage();
   }
 
   ngOnInit() {
     this.primengConfig.ripple = true;
     this.initConfig();
+    this.urlService.initialize();
   }
 
   get scale(): number {

@@ -13,6 +13,7 @@ import { LevelService } from 'src/app/services/level.service';
 import { ValidateRange } from 'src/app/validations/validateRange';
 import { Subscription } from 'rxjs';
 import { Structure } from 'src/app/models/structure';
+import {UrlService} from "../../../../../services/url.service";
 
 @Component({
   selector: 'app-activity',
@@ -44,7 +45,8 @@ export class ActivityComponent implements OnInit, OnDestroy {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private urlService: UrlService,
   ){}
 
   ngOnInit(): void {
@@ -154,7 +156,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     this.structureService.updateActivity(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.setActivityToStructure({activity: e as Activity}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -167,7 +169,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     this.structureService.createActivity(payload).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.setActivityToStructure({activity: e as Activity}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -195,7 +197,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     this.structureService.deleteActivity(this.activity.id).subscribe({
       next: () => {
         this.store.dispatch(StructureActions.removeActivityFromStructure({idStructure: this.activity.idEstructura}));
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       },
       error: (error) => {
@@ -206,12 +208,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
 
   onCancelActivity(event : Event): void {
     event.preventDefault();
-    this.goBack();
+    this.urlService.goBack();
   }
 
-  goBack() {
-    this.router.navigate(['configurations/structures'], {
-      skipLocationChange: true,
-    });
-  }
 }

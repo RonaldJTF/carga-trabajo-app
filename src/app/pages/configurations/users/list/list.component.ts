@@ -7,6 +7,7 @@ import {Router} from '@angular/router';
 import {IMAGE_SIZE} from 'src/app/utils/constants';
 import {MESSAGE} from 'src/labels/labels';
 import {ConfirmationDialogService} from 'src/app/services/confirmation-dialog.service';
+import {UrlService} from "../../../../services/url.service";
 
 @Component({
   selector: 'app-list',
@@ -37,7 +38,7 @@ export class ListComponent {
   constructor(
     private personService: PersonService,
     private confirmationDialogService: ConfirmationDialogService,
-    private router: Router
+    private router: Router,
   ) {
   }
 

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {PersonService} from 'src/app/services/person.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Person} from 'src/app/models/person';
@@ -8,6 +8,8 @@ import {DocumentType} from 'src/app/models/documenttype';
 import {Gender} from 'src/app/models/gender';
 import {GenderService} from 'src/app/services/gender.service';
 import {MESSAGE} from "../../../../../labels/labels";
+import {UrlService} from "../../../../services/url.service";
+import {AuthenticationService} from "../../../../services/auth.service";
 
 @Component({
   selector: 'app-form-person',
@@ -15,6 +17,9 @@ import {MESSAGE} from "../../../../../labels/labels";
   styleUrls: ['./form-person.component.scss'],
 })
 export class FormPersonComponent implements OnInit {
+
+  protected readonly MESSAGE = MESSAGE;
+
   @Input() submitted: boolean;
 
   @Input() personDialog: boolean;
@@ -45,6 +50,7 @@ export class FormPersonComponent implements OnInit {
 
   severity: string;
 
+  isAdmin: boolean;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -52,13 +58,15 @@ export class FormPersonComponent implements OnInit {
     private personService: PersonService,
     private formBuilder: FormBuilder,
     private documentTypeService: DocumentTypeService,
-    private genderService: GenderService
+    private genderService: GenderService,
+    private urlService: UrlService,
+    private authService: AuthenticationService
   ) {
   }
 
   ngOnInit() {
     this.getDocumentTypes();
-    this.getGenres();
+    this.getGender();
     this.buildForm();
 
     this.route.params.subscribe((params) => {
@@ -69,6 +77,13 @@ export class FormPersonComponent implements OnInit {
       this.updateMode = true;
       this.getPerson(this.personId);
     }
+
+    this.getRole();
+  }
+
+  getRole(){
+    const {isAdministrator, isOperator} = this.authService.roles();
+    this.isAdmin = isAdministrator;
   }
 
   getDocumentTypes(): void {
@@ -79,7 +94,7 @@ export class FormPersonComponent implements OnInit {
     });
   }
 
-  getGenres(): void {
+  getGender(): void {
     this.genderService.getDocumentType().subscribe({
       next: (item) => {
         this.genders = item;
@@ -180,17 +195,11 @@ export class FormPersonComponent implements OnInit {
     this.formPerson.get('idGenero').setValue(person.idGenero);
   }
 
-  goBack() {
-    this.router.navigate(['configurations/users'], {
-      skipLocationChange: true,
-    }).then();
-  }
-
   updatePerson(id: number, payload: any): void {
     payload.srcFoto = ''
     this.personService.update(id, payload).subscribe({
       next: () => {
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: () => {
@@ -202,7 +211,7 @@ export class FormPersonComponent implements OnInit {
   createPerson(payload: any): void {
     this.personService.create(payload).subscribe({
       next: () => {
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: () => {
@@ -228,7 +237,7 @@ export class FormPersonComponent implements OnInit {
     this.deleting = true;
     this.personService.delete(this.personId).subscribe({
       next: () => {
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       }
     });
@@ -237,7 +246,7 @@ export class FormPersonComponent implements OnInit {
   onCancelPerson(event: Event): void {
     event.preventDefault();
     this.updateMode = false;
-    this.goBack();
+    this.urlService.goBack();
   }
 
   onFileSelect(input: HTMLInputElement): void {
@@ -291,6 +300,4 @@ export class FormPersonComponent implements OnInit {
     }
   }
 
-
-  protected readonly MESSAGE = MESSAGE;
 }

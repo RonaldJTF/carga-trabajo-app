@@ -7,6 +7,7 @@ import { Structure } from 'src/app/models/structure';
 import { StructureService } from 'src/app/services/structure.service';
 import * as StructureActions from "../../../../../store/structure.actions";
 import { Location } from '@angular/common';
+import {UrlService} from "../../../../../services/url.service";
 
 @Component({
   selector: 'app-no-dependency',
@@ -31,13 +32,14 @@ export class NoDependencyComponent implements OnInit {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private urlService: UrlService,
   ){}
 
   ngOnInit(): void {
     this.idPadre = this.route.snapshot.queryParams['idParent'];
     this.idTipologia = this.route.snapshot.queryParams['idTipology'];
-    this.defaultOrder = this.route.snapshot.queryParams['defaultOrder'];    
+    this.defaultOrder = this.route.snapshot.queryParams['defaultOrder'];
     this.buildForm();
     this.loadStructure(this.route.snapshot.params['id']);
     this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
@@ -79,7 +81,7 @@ export class NoDependencyComponent implements OnInit {
       next: (e) => {
         this.store.dispatch(StructureActions.updateItemIntoList({structure: e as Structure}));
         this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -92,7 +94,7 @@ export class NoDependencyComponent implements OnInit {
     this.structureService.createStructure(this.formData).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.addToList({structure: e as Structure}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -100,7 +102,7 @@ export class NoDependencyComponent implements OnInit {
       },
     });
   }
-  
+
   onSubmitStructure(event : Event): void {
     event.preventDefault();
     this.formData = new FormData();
@@ -121,7 +123,7 @@ export class NoDependencyComponent implements OnInit {
     this.structureService.deleteStructure(this.structure.id).subscribe({
       next: () => {
         this.store.dispatch(StructureActions.removeFromList({id: this.structure.id}));
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       },
       error: (error) => {
@@ -132,12 +134,7 @@ export class NoDependencyComponent implements OnInit {
 
   onCancelStructure(event : Event): void {
     event.preventDefault();
-    this.goBack();
+    this.urlService.goBack();
   }
 
-  goBack() {
-    this.router.navigate(['configurations/structures'], {
-      skipLocationChange: true,
-    });
-  }
 }

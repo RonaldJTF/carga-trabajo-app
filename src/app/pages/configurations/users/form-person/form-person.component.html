@@ -140,7 +140,7 @@
         </div>
         <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
                                 (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)"
-                                [showDeleteButton]="updateMode"
+                                [showDeleteButton]="updateMode && isAdmin"
                                 [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
                                 [disabledCreateOrUpdateButton]="formPerson.invalid">
         </app-form-action-button>

@@ -7,6 +7,7 @@ import { AppState } from 'src/app/app.reducers';
 import { Structure } from 'src/app/models/structure';
 import { StructureService } from 'src/app/services/structure.service';
 import * as StructureActions from "../../../../../store/structure.actions";
+import {UrlService} from "../../../../../services/url.service";
 
 
 @Component({
@@ -32,12 +33,13 @@ export class DependencyComponent implements OnInit {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private urlService: UrlService,
   ){}
 
   ngOnInit(): void {
     this.idPadre = this.route.snapshot.queryParams['idParent'];
-    this.idTipologia = this.route.snapshot.queryParams['idTipology'];   
+    this.idTipologia = this.route.snapshot.queryParams['idTipology'];
     this.buildForm();
     this.loadStructure(this.route.snapshot.params['id']);
     this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
@@ -78,7 +80,7 @@ export class DependencyComponent implements OnInit {
         this.uploadedFiles.push(file);
     }
   }
-  
+
   onRemoveFile(event: any) {
     this.uploadedFiles = this.uploadedFiles.filter(objeto => objeto.name !== event.file.name);
   }
@@ -89,7 +91,7 @@ export class DependencyComponent implements OnInit {
       next: (e) => {
         this.store.dispatch(StructureActions.updateItemIntoList({structure: e as Structure}));
         this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -102,7 +104,7 @@ export class DependencyComponent implements OnInit {
     this.structureService.createStructure(this.formData).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.addToList({structure: e as Structure}));
-        this.goBack();
+        this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (error) => {
@@ -110,7 +112,7 @@ export class DependencyComponent implements OnInit {
       },
     });
   }
-  
+
   onSubmitStructure(event : Event): void {
     event.preventDefault();
     this.formData = new FormData();
@@ -131,7 +133,7 @@ export class DependencyComponent implements OnInit {
     this.structureService.deleteStructure(this.structure.id).subscribe({
       next: () => {
         this.store.dispatch(StructureActions.removeFromList({id: this.structure.id}));
-        this.goBack();
+        this.urlService.goBack();
         this.deleting = false;
       },
       error: (error) => {
@@ -142,12 +144,7 @@ export class DependencyComponent implements OnInit {
 
   onCancelStructure(event : Event): void {
     event.preventDefault();
-    this.goBack();
+    this.urlService.goBack();
   }
 
-  goBack() {
-    this.router.navigate(['configurations/structures'], {
-      skipLocationChange: true,
-    });
-  }
 }
