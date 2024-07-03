@@ -14,6 +14,7 @@ import { IMAGE_SIZE } from 'src/app/utils/constants';
 import { MESSAGE } from 'src/labels/labels';
 import { Table } from 'primeng/table';
 import { Methods } from 'src/app/utils/methods';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-list',
@@ -29,9 +30,17 @@ export class ListComponent implements OnInit, OnDestroy{
   workplans: Workplan[] = [];
 
   loading: boolean = false;
+  loadingAdvanceCosolidated: boolean = false;
   workplans$: Observable<Workplan[]>;
   workplansSubscription: Subscription;
   selectedWorkplans: Workplan[] = [];
+  datasetOfAdvanceConsolidated: any;
+  timeTypeOptions: any[] = [
+    {icon: 'pi pi-calendar-times', value: 'day', tooltip: 'Por día'}, 
+    {icon: 'pi pi-calendar-minus', value: 'week', tooltip: 'Por semana'}, 
+    {icon: 'pi pi-calendar', value: 'month', tooltip: 'Por mes'}
+  ];
+  viewMode: 'day' | 'week' | 'month' = 'day';
 
   constructor(
     private store: Store<AppState>,
@@ -142,5 +151,29 @@ export class ListComponent implements OnInit, OnDestroy{
 
   download(data: any, idWorkplan: any) {
     this.workplanService.downloadReport(data.item.automationId, null, idWorkplan).subscribe({});
+  }
+
+  loadAdvanceConsolidated(idWorkplan: number, timeType: 'day' | 'week' | 'month', event?: Event, overlayPanel?: OverlayPanel){
+    if (overlayPanel){
+      this.datasetOfAdvanceConsolidated = null;
+      overlayPanel.show(event);
+    }
+    this.loadingAdvanceCosolidated = true;
+      this.workplanService.getAdvanceConsolidated(idWorkplan, timeType).subscribe({
+        next: (data) =>{
+          let dataset = [
+            {label: 'Avance', values: data.dateAdvances.map(e => e.advance)},
+            {label: 'Avance esperado', values: data.dateAdvances.map(e => e.idealAdvance),  borderDash: [5, 5]}
+          ]
+          this.datasetOfAdvanceConsolidated = data;
+          this.datasetOfAdvanceConsolidated['labels'] = data.dateAdvances.map( e => e.formattedDate);
+          this.datasetOfAdvanceConsolidated['dataset'] = dataset;
+          this.loadingAdvanceCosolidated = false;
+        }
+      })
+  }
+
+  onChangeTimeType(timeType: 'day' | 'week' | 'month') {
+    this.loadAdvanceConsolidated(this.datasetOfAdvanceConsolidated?.planTrabajo.id, timeType);
   }
 }

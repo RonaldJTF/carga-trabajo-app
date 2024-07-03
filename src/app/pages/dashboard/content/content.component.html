@@ -12,7 +12,7 @@
                 <span  #iconInfo (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" class="_badge" style="display: none;">
                   <i class="pi pi-info"></i>
                 </span>
-                <span (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" class="cursor-pointer">{{ workplan.nombre }}</span>
+                <span (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" class="text-500 cursor-pointer">{{ workplan.nombre }}</span>
               </div>
               <div class="flex flex-row align-items-baseline">
                 <span class="text-500 text-2xl font-medium mr-1">{{ workplan.totalEtapas | number:'1.0-2' }}</span>

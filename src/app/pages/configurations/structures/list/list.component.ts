@@ -21,6 +21,9 @@ import { StructureService } from 'src/app/services/structure.service';
 export class ListComponent implements OnInit, OnDestroy{
   IMAGE_SIZE = IMAGE_SIZE;
   MESSAGE = MESSAGE;
+  /*Nota: PATH_NO_MANAGED_BY_PARENT hace referencia a todas aquellas rutas que no son gestionadas por aquellas estructuras que figuran como padre de 
+   elementos de su mismo tipo, es decir, si es una estructura actividad y tiene subactividades, esta no pueden gestionarse (asignar tiempo usual, tiempo max, etc.)*/
+  PATH_NO_MANAGED_BY_PARENT: string[] = ['action/activity']
 
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
@@ -126,14 +129,13 @@ export class ListComponent implements OnInit, OnDestroy{
 
   private getMenuItemsOfStructure(structure: Structure): MenuItem []{
     let extraMenuItemsOfDependency = [];
-    let extraMenuItemOfSubstructure = [];
     let extraMenuItemOfActions = [];
     let generalMenuItem = []
 
     if (this.isAdmin){
-      extraMenuItemOfActions = structure?.tipologia?.acciones?.map(obj => ({label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, command: (e) => {this.goToPage(e, structure)}})) ?? [];
+      extraMenuItemOfActions = structure?.tipologia?.acciones?.map(obj => ({label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, disabled: this.hasChildrenOfTheSameType(structure) && this.PATH_NO_MANAGED_BY_PARENT.includes(obj.path), command: (e) => {this.goToPage(e, structure)}})) ?? [];
 
-      generalMenuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)})
+      generalMenuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, Methods.parseStringToBoolean(structure?.tipologia?.esDependencia), e.originalEvent)})
       generalMenuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data:structure, command: (e) => this.onDeleteStructure(e)})
 
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
@@ -142,11 +144,6 @@ export class ListComponent implements OnInit, OnDestroy{
           {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
           {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
         ]})
-        extraMenuItemsOfDependency.push({label: 'Nueva sub' + structure.tipologia.nombre.toLowerCase(), icon: `pi pi-plus`, data:structure, command: (e) => this.goToAddSubdependency(e.item.data)})
-      }
-
-      if(structure?.tipologia?.tipologiaSiguiente){
-        extraMenuItemOfSubstructure.push({label: `Agregar ${structure.tipologia.tipologiaSiguiente.nombre.toLowerCase()}`, icon: 'pi pi-sitemap', data:structure, command: (e) => {this.goToAddSubstructure(e.item.data)}})
       }
     }else if(this.isOperator){
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
@@ -159,11 +156,14 @@ export class ListComponent implements OnInit, OnDestroy{
     }
 
     return [
-      ...extraMenuItemOfActions,
       ...extraMenuItemsOfDependency,
-      ...extraMenuItemOfSubstructure,
+      ...extraMenuItemOfActions,
       ...generalMenuItem
     ]
+  }
+
+  private hasChildrenOfTheSameType(structure: Structure){
+    return structure.subEstructuras?.some(e => e.idTipologia == structure.idTipologia);
   }
 
   private onGoToUpdateRowGroupMetaData(nodes: TreeNode[]){
@@ -171,14 +171,18 @@ export class ListComponent implements OnInit, OnDestroy{
     this.updateRowGroupMetaData(nodes ?? []);
   }
 
-  private updateRowGroupMetaData(nodes: TreeNode[]){
+  private updateRowGroupMetaData(nodes: TreeNode[], idTipologiaPadre?: number){
     nodes.forEach( (e, index) => {
+      const structure: Structure = e.data;
       if (index == 0){
-        this.rowGroupMetadata.push(e.data.id);
+        if (structure.idTipologia != idTipologiaPadre){
+          this.rowGroupMetadata.push(structure.id);
+        }
       }
-      this.updateRowGroupMetaData(e.children ?? []);
+      this.updateRowGroupMetaData(e.children ?? [], structure.idTipologia);
     })
   }
+  
 
   private verifyIfSelectedDependencyWasDeleted(removedIds){
     this.store.dispatch(StructureActions.removeDependencyIfWasDeleted({removedIds: removedIds}));
@@ -194,13 +198,13 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   openNew() {
-    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true});
+    this.router.navigate(['action/dependency'], { relativeTo: this.route, skipLocationChange: true});
   }
 
-  onGoToUpdate (id : any, event: Event): void{
+  onGoToUpdate (id : any, isDependency:boolean, event: Event): void{
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate(['/configurations/structures', id], {skipLocationChange: true})
+    this.router.navigate([isDependency ? 'action/dependency' : 'action/no-dependency', id], {relativeTo: this.route, skipLocationChange: true})
   }
 
   viewDependency(structure: Structure){
@@ -226,19 +230,14 @@ export class ListComponent implements OnInit, OnDestroy{
     }
   }
 
-  goToAddSubdependency(structure: Structure){
-    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true, queryParams: {idParent: structure.id, idTipology:structure.tipologia.id}});
-  }
-
   goToAddSubstructure(structure: Structure){
     let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
-    this.router.navigate(['create'], { 
+    this.router.navigate(['action/no-dependency'], { 
       relativeTo: this.route, 
       skipLocationChange: true, 
       queryParams: {
         idParent: structure.id, 
         idTipology: structure.tipologia.idTipologiaSiguiente, 
-        isDependency: structure.tipologia.tipologiaSiguiente.esDependencia,
         defaultOrder: childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1
       }});
   }
@@ -256,10 +255,24 @@ export class ListComponent implements OnInit, OnDestroy{
     return lastOrder == 0 ? null : lastOrder;
   }
 
+  /**
+   * NOTA: si el path de la accion es action/no-dependency, significa que va agregarse una subestructura de la siguiente tipología, por lo que 
+   * el id de la tipología para esa nueva subestructura debe ser del tipo de tipología siguiente que tiene el padre.
+   */
   goToPage(event: any, structure: Structure){
     const path = event.item.data.path;
     const idStructure = event.item.id;
-    this.router.navigate([path], { relativeTo: this.route, skipLocationChange: true, queryParams: {idStructure: idStructure, idActivity: structure?.actividad?.id} });
+    let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
+    this.router.navigate([path], { 
+      relativeTo: this.route, 
+      skipLocationChange: true, 
+      queryParams: {
+        idStructure: idStructure, 
+        idParent: structure.id,
+        idActivity: structure.actividad?.id,
+        idTipology: path == 'action/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia,
+        defaultOrder: childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1
+      }});
   }
 
   deleteSelectedStructures(nodes: any, isDependency: boolean) {

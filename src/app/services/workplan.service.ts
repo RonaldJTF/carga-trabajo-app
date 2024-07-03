@@ -143,6 +143,10 @@ export class WorkplanService {
     )
   }
 
+  getAdvanceConsolidated(idWorkplan: number, timeType: any): Observable<any>{
+    return this.webRequestService.getWithHeaders(`${this.pathWorkplan}/consolidated/${idWorkplan}`, {timeType: timeType});
+  }
+
   private handleFileDownload(response: HttpResponse<Blob>) {
     const filename = this.getFilenameFromHttpResponse(response);
     const blob = new Blob([response.body], { type: response.headers.get('content-type') });

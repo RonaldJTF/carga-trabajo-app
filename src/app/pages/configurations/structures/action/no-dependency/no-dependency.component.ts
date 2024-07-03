@@ -1,28 +1,24 @@
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
 import { Structure } from 'src/app/models/structure';
-import * as StructureActions from "./../../../../store/structure.actions";
-import { Subscription } from 'rxjs';
 import { StructureService } from 'src/app/services/structure.service';
-import { Methods } from 'src/app/utils/methods';
+import * as StructureActions from "../../../../../store/structure.actions";
+import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-structure',
-  templateUrl: './structure.component.html',
-  styleUrls: ['./structure.component.scss']
+  selector: 'app-no-dependency',
+  templateUrl: './no-dependency.component.html',
+  styleUrls: ['./no-dependency.component.scss']
 })
-export class StructureComponent implements OnInit {
+export class NoDependencyComponent implements OnInit {
   formStructure !: FormGroup;
-  uploadedFiles: any[] = [];
   formData: FormData;
 
   structure: Structure;
   idPadre: number;
-  isDependency: string;
   idTipologia: number;
   defaultOrder: number;
   updateMode: boolean;
@@ -41,17 +37,10 @@ export class StructureComponent implements OnInit {
   ngOnInit(): void {
     this.idPadre = this.route.snapshot.queryParams['idParent'];
     this.idTipologia = this.route.snapshot.queryParams['idTipology'];
-    this.isDependency = this.route.snapshot.queryParams['isDependency'];
     this.defaultOrder = this.route.snapshot.queryParams['defaultOrder'];    
     this.buildForm();
     this.loadStructure(this.route.snapshot.params['id']);
     this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
-  }
-
-  get noDependency(): boolean{
-    return  this.isDependency != null 
-            ? !Methods.parseStringToBoolean(this.isDependency)
-            : this.structure != null ? !Methods.parseStringToBoolean(this.structure.tipologia.esDependencia) : false;
   }
 
   buildForm(){
@@ -85,18 +74,6 @@ export class StructureComponent implements OnInit {
     this.formStructure.get('orden').setValue(this.structure.orden);
   }
 
-  onSelectFile(event: any) {
-    this.uploadedFiles = [];
-    for (const file of event.files) {
-        this.uploadedFiles.push(file);
-    }
-  }
-  
-  onRemoveFile(event: any) {
-    this.uploadedFiles = this.uploadedFiles.filter(objeto => objeto.name !== event.file.name);
-  }
-
-
   updateStructure(id: number): void {
     this.structureService.updateStructure(id, this.formData).subscribe({
       next: (e) => {
@@ -127,7 +104,7 @@ export class StructureComponent implements OnInit {
   onSubmitStructure(event : Event): void {
     event.preventDefault();
     this.formData = new FormData();
-    this.formData.append('file', this.uploadedFiles[0]);
+    this.formData.append('file', null);
     this.formData.append('structure', JSON.stringify({...this.structure, ...this.formStructure.value}));
 
     if (this.formStructure.invalid) {

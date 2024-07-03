@@ -40,12 +40,12 @@ export const structureReducer = createReducer(
         reasingOrder(parentStructure.subEstructuras, structure.orden, 1);
       }
       parentStructure.subEstructuras.push(structure)
-      order(parentStructure.subEstructuras, state.orderIsAscending);
     }else{
       items.push(structure);
     }
+    order(items, state.orderIsAscending);
     return { ...state,
-            items:[...items],
+            items: items,
             dependency: findStructure(state.dependency?.id, items)
           };
   }),
@@ -57,9 +57,9 @@ export const structureReducer = createReducer(
     let parentStructure = findStructure(structureToRemove.idPadre, items);
     if (parentStructure){
       reasingOrder(parentStructure.subEstructuras, structureToRemove.orden, -1);
-      order(parentStructure.subEstructuras, state.orderIsAscending);
     }
     const filteredItems = filtrarNodosArbol (items, [id]);
+    order(filteredItems, state.orderIsAscending);
     return { ...state, items: filteredItems, dependency: findStructure(state.dependency?.id, filteredItems)};
   }),
 
@@ -83,11 +83,10 @@ export const structureReducer = createReducer(
       let parentStructure = findStructure(structureToRemove.idPadre, items);
       if (parentStructure){
         reasingOrder(parentStructure.subEstructuras, structureToRemove.orden, -1);
-        order(parentStructure.subEstructuras, state.orderIsAscending);
       }
     }
-
     const filteredItems = filtrarNodosArbol (items, structureIds);
+    order(filteredItems, state.orderIsAscending);
     return { ...state, items: filteredItems, dependency: findStructure(state.dependency?.id, filteredItems)};
   }),
 
@@ -116,8 +115,7 @@ export const structureReducer = createReducer(
       Object.assign(updatedStructure, JSON.parse(JSON.stringify(structure)));
     }
         
-    order(parentStructure?.subEstructuras, state.orderIsAscending);
-
+    order(items, state.orderIsAscending);
     return { ...state,
             items:items,
             dependency: findStructure(state.dependency?.id, items)

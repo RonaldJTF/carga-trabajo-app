@@ -36,6 +36,9 @@ export class AppTopBarComponent implements OnInit {
   editPerson(idPerson: number) {
     this.router.navigate(['configurations/users/person/', idPerson], {
       skipLocationChange: true,
+      queryParams:{
+        backLocation: true
+      }
     }).then();
   }
 

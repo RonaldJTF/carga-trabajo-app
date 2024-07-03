@@ -1,0 +1,46 @@
+
+<form class="p-0" [formGroup]="formStructure">
+    <div class="field p-fluid">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+        <div *ngIf="formStructure.controls['nombre'].errors && (formStructure.controls['nombre'].touched||formStructure.controls['nombre'].dirty)">
+            <div *ngIf="formStructure.controls['nombre'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
+            </div>   
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion"></textarea>
+        <div *ngIf="formStructure.controls['descripcion'].errors && (formStructure.controls['descripcion'].touched||formStructure.controls['descripcion'].dirty)">
+            <div *ngIf="formStructure.controls['descripcion'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa una descripción</small>
+            </div>   
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="orden"><span class="font-medium">Orden</span><span> (opcional)</span></label>
+        <input pInputText id="orden" type="number" aria-describedby="text-help" formControlName="orden"/>
+        <div *ngIf="formStructure.controls['orden'].errors && (formStructure.controls['orden'].touched||formStructure.controls['orden'].dirty)">
+            <div *ngIf="formStructure.controls['orden'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un orden</small>
+            </div>   
+            <div *ngIf="formStructure.controls['orden'].errors?.['min']">
+                <small id="text-help" class="p-error">Ingrese un orden mayor a 1</small>
+            </div>   
+        </div>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitStructure($event)"
+        (cancel)="onCancelStructure($event)"
+        (delete)="onDeleteStructure($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formStructure.invalid">
+    </app-form-action-button>
+
+</form>

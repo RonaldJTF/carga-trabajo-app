@@ -57,13 +57,26 @@
                             <div class="flex flex-column justify-content-start">
                                 <span class="font-medium">{{ workplan.nombre }}</span>
                                 <span class="text-500">{{workplan.descripcion}}</span>
+                                <span class="text-sm text-blue-500">
+                                    {{ workplan.totalEtapas | number:'1.0-2' }} {{ 'etapa' | pluralize: workplan.totalEtapas }} con {{ workplan.totalTareas | number:'1.0-2' }} {{ 'tarea' | pluralize: workplan.totalTareas }}
+                                </span>
                             </div>
                         </td>
                         <td style="white-space: nowrap;">
                             <app-percent [shape]="'linear'" [labelPosition]="'right'" [size]="80" [value]="workplan.avance ?? 0" styleClass="justify-content-start"></app-percent>
                         </td>
                         <td class="text-center">
-                            <app-menu-item [menuItems]="workplan.menuItems" [id]="workplan.id"></app-menu-item>
+                            <div class="flex align-items-center justify-content-end">
+                                <button (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" pButton pRipple icon="pi pi-info-circle"
+                                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
+                                        pTooltip="Consolidado de avance" tooltipPosition="bottom"></button>
+                                <app-menu-item [menuItems]="workplan.menuItems" [id]="workplan.id"></app-menu-item>
+                            </div>
+                            <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
+                                <ng-template pTemplate>
+                                    <ng-container *ngTemplateOutlet="advanceCosolidatedTemplate"></ng-container>
+                                </ng-template>
+                            </p-overlayPanel>
                         </td>
                     </tr>
                 </ng-template>
@@ -79,4 +92,46 @@
 
 <ng-template #sLoading>
     <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>
+
+<ng-template #advanceCosolidatedTemplate>
+    <div class="flex align-items-center mb-3">
+      <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+        <i  class="pi pi-chart-line text-xl text-blue-500"></i>
+      </div>
+      <div class="flex flex-column ">
+        <h5 class="m-0 text-700">Consolidado de avance</h5>
+        <span class="text-500">Detalle del avance en función del tiempo</span>
+      </div>
+    </div>
+  
+    <div class="flex align-items-center">
+      <div class="flex flex-column">
+        <span class="font-medium">{{datasetOfAdvanceConsolidated?.planTrabajo?.nombre | uppercase}}</span>
+        <span class="text-500 text-justify">{{datasetOfAdvanceConsolidated?.planTrabajo?.descripcion}}</span>
+      </div>
+      <div class="ml-auto pl-2">
+        <p-selectButton styleClass="flex flex-nowrap" [options]="timeTypeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeTimeType($event)">
+          <ng-template let-item pTemplate>
+            <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
+          </ng-template>
+        </p-selectButton>
+      </div>
+    </div>
+  
+    <ng-container *ngIf="!loadingAdvanceCosolidated else sLoadingAdvanceCosolidated">
+      <app-line-chart *ngIf="datasetOfAdvanceConsolidated.labels?.length else sNoAdvanceConsolidated" 
+        label="Avance"
+        yAxisTitle="Porcentaje de avance (%)"
+        xAxisTitle="Fecha"
+        [labels]="datasetOfAdvanceConsolidated.labels" 
+        [dataset]="datasetOfAdvanceConsolidated.dataset">
+      </app-line-chart>
+      <ng-template #sNoAdvanceConsolidated>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_AVANCE_TAREAS"></app-no-result>
+      </ng-template>  
+    </ng-container>
+    <ng-template #sLoadingAdvanceCosolidated>
+      <app-loading></app-loading>
+    </ng-template>
 </ng-template>
