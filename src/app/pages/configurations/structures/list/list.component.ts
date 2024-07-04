@@ -23,13 +23,17 @@ export class ListComponent implements OnInit, OnDestroy{
   MESSAGE = MESSAGE;
   /*Nota: PATH_NO_MANAGED_BY_PARENT hace referencia a todas aquellas rutas que no son gestionadas por aquellas estructuras que figuran como padre de 
    elementos de su mismo tipo, es decir, si es una estructura actividad y tiene subactividades, esta no pueden gestionarse (asignar tiempo usual, tiempo max, etc.)*/
-  PATH_NO_MANAGED_BY_PARENT: string[] = ['action/activity']
+  PATH_NO_MANAGED_BY_PARENT: string[] = ['action/activity'];
+
+  /*Nota: PATH_NO_MANAGED_IF_HAS_ACTIVITY hace referencia a todas aquellas rutas que no son gestionadas si ya la estructura tiene una actividad gestionada*/
+  PATH_NO_MANAGED_IF_HAS_ACTIVITY: string[] = ['action/sub-item'];
 
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
 
   isAdmin: boolean;
   isOperator: boolean;
+  isSuperAdmin: boolean;
 
   structures$: Observable<Structure[]>;
   dependency$: Observable<Structure>;
@@ -71,14 +75,16 @@ export class ListComponent implements OnInit, OnDestroy{
   ){}
 
   ngOnInit(): void {
-    const {isAdministrator, isOperator} = this.authService.roles();
+    const {isAdministrator, isOperator, isSuperAdministrator} = this.authService.roles();
     this.isAdmin = isAdministrator;
     this.isOperator = isOperator;
+    this.isSuperAdmin = isSuperAdministrator;
 
     this.structures$ = this.store.select(state => state.structure.items);
     this.dependency$ = this.store.select(state => state.structure.dependency);
     this.dependencies$ = this.structures$.pipe(map(e => e?.map ( obj => this.transformToTreeNode(obj, true))));
     this.noDependencies$ = this.dependency$.pipe(map(e => e?.subEstructuras?.map( obj => this.transformToTreeNode(obj, false)).filter(o => o)));
+    
     this.orderIsAscendingSubscription = this.store.select(state => state.structure.orderIsAscending).subscribe(e => this.orderIsAscending = e);
     this.noDependenciesSubscription = this.noDependencies$.subscribe( e=> {
       if(e?.length){this.numberOfElementsByStructure[e[0].data.idPadre] = e.length;}
@@ -88,7 +94,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.mustRechargeSubscription = this.store.select(state => state.structure.mustRecharge).subscribe(e => {
       if (e){this.getStructures()}
     });
-    this.dependencySubscription = this.store.select(state => state.structure.dependency).subscribe( e => this.dependencyMenuItems = this.getMenuItemsOfStructure(e));
+    this.dependencySubscription = this.dependency$.subscribe( e => this.dependencyMenuItems = this.getMenuItemsOfStructure(e));
     this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
   }
 
@@ -128,33 +134,40 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   private getMenuItemsOfStructure(structure: Structure): MenuItem []{
-    let extraMenuItemsOfDependency = [];
+    const extraMenuItemsOfDependency = [];
     let extraMenuItemOfActions = [];
-    let generalMenuItem = []
+    let generalMenuItem = [];
 
     if (this.isAdmin){
-      extraMenuItemOfActions = structure?.tipologia?.acciones?.map(obj => ({label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, disabled: this.hasChildrenOfTheSameType(structure) && this.PATH_NO_MANAGED_BY_PARENT.includes(obj.path), command: (e) => {this.goToPage(e, structure)}})) ?? [];
+      extraMenuItemOfActions = structure?.tipologia?.acciones?.map(obj => ({
+        label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, command: (e) => {this.goToPage(e, structure)},
+        disabled: (this.hasChildrenOfTheSameType(structure) && this.PATH_NO_MANAGED_BY_PARENT.includes(obj.path)) || 
+                  (structure.actividad != null && this.PATH_NO_MANAGED_IF_HAS_ACTIVITY.includes(obj.path))
+      })) ?? [];
 
       generalMenuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, Methods.parseStringToBoolean(structure?.tipologia?.esDependencia), e.originalEvent)})
       generalMenuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data:structure, command: (e) => this.onDeleteStructure(e)})
 
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
-        extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download', items: [
-          {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
-          {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
-        ]})
+        if(this.isSuperAdmin){
+          extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download', items: [
+            {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
+            {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
+          ]})
+        }
       }
-    }else if(this.isOperator){
+    }else if(this.isOperator || this.isSuperAdmin){
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
-        extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download',  items: [
-          {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
-          {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
-        ]})
+        if(this.isSuperAdmin){
+          extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download',  items: [
+            {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
+            {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
+          ]})
+        }
       }
     }
-
     return [
       ...extraMenuItemsOfDependency,
       ...extraMenuItemOfActions,

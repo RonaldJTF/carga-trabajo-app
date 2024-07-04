@@ -128,9 +128,13 @@ export class AuthenticationService {
     this.router.navigate(["/account/auth/login"]);
   }
 
-  roles(): {isAdministrator: boolean, isOperator: boolean}{
+  roles(): {isAdministrator: boolean, isOperator: boolean, isSuperAdministrator: boolean}{
     const roles = this.getRolesUser();
-    return  {isAdministrator: roles?.includes("ROLE_ADMINISTRADOR"), isOperator: roles?.includes("ROLE_OPERADOR")};
+    return  {
+      isAdministrator: roles?.includes("ROLE_ADMINISTRADOR"), 
+      isOperator: roles?.includes("ROLE_OPERADOR"),
+      isSuperAdministrator: roles?.includes("ROLE_SUPERADMINISTRADOR"),
+    };
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 
 @Component({
@@ -20,6 +20,13 @@ export class MenuItemComponent implements OnInit{
   ngOnInit(): void {
     this.items = this.menuItems.map(e => ({ ...e }));
     this.assign(this.items);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['menuItems'] || changes['id'] || changes['value']) {
+      this.items = this.menuItems.map(e => ({ ...e }));
+      this.assign(this.items);
+    }
   }
 
   assign(items: MenuItem[]){

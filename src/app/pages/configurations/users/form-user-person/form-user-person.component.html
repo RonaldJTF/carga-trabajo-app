@@ -9,8 +9,8 @@
               style="vertical-align: middle; width: 100%; height: auto;"  alt=""/>
           </div>
         </div>
-        <span class="font-bold">{{person.primerNombre | uppercase}} {{person.primerApellido | uppercase}}</span>
-        <span class="mb-3"><span>{{person.tipoDocumento?.abreviatura}}:</span> {{person.documento}}</span>
+        <span class="font-bold">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
+        <span class="mb-3"><span>{{person.tipoDocumento?.abreviatura}}</span> {{person.documento}}</span>
         <span class="mb-2 font-medium text-500 ">Información de contacto:</span>
         <span *ngIf="person.correo" class="w-full"><span class="text-500">Correo: </span> {{person.correo |
           lowercase}}</span>

@@ -21,12 +21,14 @@
                                         </button>
                                         <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" pTooltip="Click para desmarcar">{{totalSelected}}</span>
                                     </div>
-                                    <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
-                                    <p-menu #menu [popup]="true" [model]="menuItemsOfDownload"  [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
-                                    <div class="_badge-container m-1">
-                                        <button type="button" pRipple pButton style="position: relative;" icon="pi pi-angle-down" class="m-1  p-button-rounded p-button-info p-button-text" label="Descargar" (click)="menu.toggle($event)"></button>
-                                        <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" style="top: 0px; right: -5px; "  pTooltip="Click para desmarcar">{{totalSelected}}</span>
-                                    </div>
+                                    <i *ngIf="isAdmin && isSuperAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
+                                    <ng-container *ngIf="isSuperAdmin">
+                                        <p-menu #menu [popup]="true" [model]="menuItemsOfDownload"  [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
+                                        <div class="_badge-container m-1">
+                                            <button type="button" pRipple pButton style="position: relative;" icon="pi pi-angle-down" class="m-1  p-button-rounded p-button-info p-button-text" label="Descargar" (click)="menu.toggle($event)"></button>
+                                            <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" style="top: 0px; right: -5px; "  pTooltip="Click para desmarcar">{{totalSelected}}</span>
+                                        </div>
+                                    </ng-container>
                                 </div>
                                 <div class="m-1">
                                     <span class="p-input-icon-left">
@@ -47,7 +49,7 @@
                             <tr >
                                 <td class="flex flex-row align-items-center">
                                     <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
-                                    <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
+                                    <p-treeTableCheckbox *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
                                     <div pRipple (click)="viewDependency(structure)" class="flex flex-column cursor-pointer">
                                         <div class="font-medium" [ngClass]="{'text-500': structure.idPadre, 'text-primary': structure.id == (dependency$ | async)?.id}">{{structure.nombre}}</div>
                                         <div class="text-500">{{structure.descripcion}}</div>

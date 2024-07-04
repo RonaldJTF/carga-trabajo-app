@@ -50,7 +50,7 @@ export class FormPersonComponent implements OnInit {
 
   severity: string;
 
-  isAdmin: boolean;
+  isSuperAdmin: boolean;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -82,8 +82,8 @@ export class FormPersonComponent implements OnInit {
   }
 
   getRole(){
-    const {isAdministrator, isOperator} = this.authService.roles();
-    this.isAdmin = isAdministrator;
+    const {isAdministrator, isOperator, isSuperAdministrator} = this.authService.roles();
+    this.isSuperAdmin = isSuperAdministrator;
   }
 
   getDocumentTypes(): void {

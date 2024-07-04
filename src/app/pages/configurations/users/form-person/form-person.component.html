@@ -21,12 +21,10 @@
             class="pi pi-times"></i></span>
         </div>
 
-        <span class="font-bold">
-          {{ personCopy.primerNombre | uppercase }} {{ personCopy.primerApellido | uppercase }}
-        </span>
+        <span *ngIf="personCopy.primerNombre" class="font-bold">{{ (personCopy.primerNombre + ' ' + personCopy.segundoNombre + ' ' + personCopy.primerApellido + ' ' + personCopy.segundoApellido) | uppercase }}</span>
         <span *ngIf="personCopy.documento" class="mb-3">
           <span>{{ personCopy.tipoDocumento?.abreviatura }}:</span> {{ personCopy.documento }}</span>
-        <span *ngIf="personCopy.id" class="mb-2 font-medium text-500 ">Información de contacto:</span>
+        <span *ngIf="personCopy.id" class="mb-2 font-medium text-500 ">Información de contacto</span>
         <span *ngIf="personCopy.correo" class="w-full">
           <span class="text-500">Correo: </span>{{ personCopy.correo | lowercase }}</span>
         <span *ngIf="personCopy.telefono" class="w-full">
@@ -50,7 +48,7 @@
           </div>
 
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-            <label htmlFor="segundoNombre" class="font-medium">Segundo nombre <span> (opcional)</span></label>
+            <label htmlFor="segundoNombre"><span class="font-medium">Segundo nombre </span><span>(opcional)</span></label>
             <input type="text" id="segundoNombre" pInputText formControlName="segundoNombre">
           </div>
         </div>
@@ -66,7 +64,7 @@
             </div>
           </div>
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-            <label class="font-medium" for="segundoApellido">Segundo apellido <span> (opcional)</span></label>
+            <label for="segundoApellido"><span class="font-medium">Segundo apellido </span><span>(opcional)</span></label>
             <input type="text" id="segundoApellido" pInputText formControlName="segundoApellido">
           </div>
         </div>
@@ -122,11 +120,10 @@
           </div>
 
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-            <label class="font-medium" for="telefono">Teléfono</label>
+            <label for="telefono"><span class="font-medium">Teléfono </span><span>(opcional)</span></label>
             <span class="p-input-icon-right">
               <i class="pi pi-phone"></i>
-              <p-inputNumber id="telefono" mode="decimal" inputId="withoutgrouping" [useGrouping]="false"
-                             formControlName="telefono"></p-inputNumber>
+              <p-inputNumber id="telefono" mode="decimal" inputId="withoutgrouping" [useGrouping]="false" formControlName="telefono"></p-inputNumber>
             </span>
             <div *ngIf="telefonoNoValido">
               <div *ngIf="controls['telefono'].errors?.['required']">
@@ -140,7 +137,7 @@
         </div>
         <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
                                 (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)"
-                                [showDeleteButton]="updateMode && isAdmin"
+                                [showDeleteButton]="updateMode && isSuperAdmin"
                                 [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
                                 [disabledCreateOrUpdateButton]="formPerson.invalid">
         </app-form-action-button>

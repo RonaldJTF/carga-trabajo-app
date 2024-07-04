@@ -16,9 +16,9 @@
               </div>
               <div class="flex flex-row align-items-baseline">
                 <span class="text-500 text-2xl font-medium mr-1">{{ workplan.totalEtapas | number:'1.0-2' }}</span>
-                <span class="text-xs text-500 mr-2">{{ 'Etapa' | pluralize: workplan.totalEtapas }}</span>
+                <span class="text-sm text-500 mr-2">{{ 'Etapa' | pluralize: workplan.totalEtapas }}</span>
                 <span class="text-500 text-2xl font-medium mr-1">{{ workplan.totalTareas | number:'1.0-2' }}</span>
-                <span class="text-xs text-500">{{ 'Tarea' | pluralize: workplan.totalTareas }}</span>
+                <span class="text-sm text-500">{{ 'Tarea' | pluralize: workplan.totalTareas }}</span>
               </div>
               <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'" [styleClass]="'w-full sm:w-9 md:w-6'">
                 <ng-template pTemplate>
@@ -52,7 +52,7 @@
     </div>
 </ng-container>
 
-<app-charts></app-charts>
+<app-charts *ngIf="isSuperAdmin"></app-charts>
 
 <ng-template #sLoading>
   <app-head-skeleton></app-head-skeleton>

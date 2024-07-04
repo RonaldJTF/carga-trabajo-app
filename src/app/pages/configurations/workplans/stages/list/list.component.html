@@ -74,7 +74,7 @@
                   <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="stage.avance ?? 0" styleClass="justify-content-start"></app-percent>
                 </td>
                 <td class="text-center w-5rem">
-                  <app-menu-item [menuItems]="stage.menuItems" [id]="stage.id"></app-menu-item>
+                  <app-menu-item *ngIf="stage.menuItems?.length"  [menuItems]="stage.menuItems" [id]="stage.id"></app-menu-item>
                 </td>
               </tr>
             </ng-template>

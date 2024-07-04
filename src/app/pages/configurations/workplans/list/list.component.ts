@@ -111,7 +111,7 @@ export class ListComponent implements OnInit, OnDestroy{
     event.stopPropagation();
     this.store.dispatch(StageActions.reset());
     this.store.dispatch(WorkplanActions.setItem({id: id}));
-    this.router.navigate(['stages'], {relativeTo: this.route, skipLocationChange: true, queryParams: {idWorkplan: id}});
+    this.router.navigate(['stages'], {relativeTo: this.route, skipLocationChange: true});
   }
 
   onDeleteWorkplan(event: any): void {

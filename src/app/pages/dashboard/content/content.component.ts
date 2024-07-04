@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { TypologyInventory } from 'src/app/models/typologyinventory';
 import { Workplan } from 'src/app/models/workplan';
+import { AuthenticationService } from 'src/app/services/auth.service';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { WorkplanService } from 'src/app/services/workplan.service';
 import { IMAGE_SIZE } from 'src/app/utils/constants';
@@ -17,6 +18,7 @@ export class ContentComponent implements OnInit{
   protected readonly MESSAGE = MESSAGE;
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
+  isSuperAdmin: boolean;
 
   workplans: Workplan[];
   inventory: TypologyInventory[];
@@ -31,10 +33,12 @@ export class ContentComponent implements OnInit{
   ];
   viewMode: 'day' | 'week' | 'month' = 'day';
 
-  constructor(private workplanService: WorkplanService, private dashboardService: DashboardService) {}
+  constructor(private workplanService: WorkplanService, private dashboardService: DashboardService, private authService: AuthenticationService) {}
 
   ngOnInit() {
     this.getWorkplans();
+    const {isAdministrator, isOperator, isSuperAdministrator} = this.authService.roles();
+      this.isSuperAdmin = isSuperAdministrator;
   }
 
   getWorkplans() {

@@ -35,7 +35,6 @@ export class UrlService {
   }
 
   goBack() {
-    console.log("urlServices", this.previousUrl)
     this.router.navigate([this.previousUrl], {
       skipLocationChange: true,
     }).then();

@@ -58,6 +58,7 @@ export class ListComponent implements OnInit, OnDestroy {
   viewMode: 'diary' | 'calendar';
   isAdmin: boolean;
   isOperator: boolean;
+  isSuperAdmin: boolean;
 
   stage$: Observable<Stage>;
   stages$: Observable<TreeNode[]>;
@@ -112,9 +113,10 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const {isAdministrator, isOperator} = this.authService.roles();
+    const {isAdministrator, isOperator, isSuperAdministrator} = this.authService.roles();
     this.isAdmin = isAdministrator;
     this.isOperator = isOperator;
+    this.isSuperAdmin = isSuperAdministrator;
 
     this.menuItemsOfTaskInCalendar = [
       {label: 'Gestionar seguimiento', icon: 'pi pi-cog', command: (e) => this.goToManagementFollowUp(e.item.id, e.originalEvent)},
@@ -238,7 +240,7 @@ export class ListComponent implements OnInit, OnDestroy {
       });
       menuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)});
       menuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data: stage, command: (e) => this.onDeleteStage(e)});
-    } else if(this.isOperator){
+    } else if(this.isOperator || this.isSuperAdmin){
       menuItem.push({label: 'Ver', icon: `pi pi-eye`, data: stage, command: (e) => this.viewStage(e.item.data)});
       menuItem.push({
         label: 'Descargar', icon: 'pi pi-cloud-download', items: [
