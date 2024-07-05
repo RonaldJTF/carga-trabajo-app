@@ -55,7 +55,7 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-person let-rowIndex="rowIndex">
-          <tr class="pl-5">
+          <tr>
             <td>
               <p-tableCheckbox [value]="person"></p-tableCheckbox>
             </td>
@@ -67,7 +67,7 @@
               <div class="flex flex-column ml-2">
                 <span class="font-medium">{{ person.primerNombre | titlecase }} {{ person.segundoNombre | titlecase }} {{ person.primerApellido | titlecase }} {{ person.segundoApellido | titlecase }}</span>
                 <span class="text-500">{{ person.tipoDocumento.abreviatura }}: {{ person.documento }}</span>
-                <span *ngIf="person.usuario?.roles.length" class="text-500 text-sm">
+                <span *ngIf="person.usuario?.roles.length" class="text-blue-500 text-sm">
                   <span *ngFor="let rol of person.usuario.roles; let index = index">{{rol.nombre}}{{index < person.usuario.roles.length - 1 ? ', ' : ''}}</span>
                 </span>
 
@@ -80,8 +80,18 @@
                 <span class="badge badge-blue" style="white-space: nowrap;">Sin usuario</span>
               </ng-template>
             </td>
-            <td class="p-0 text-center">
-              <app-menu-item [menuItems]="items" [id]="person.id"></app-menu-item>
+            <td class="text-center">
+              <div class="flex align-items-center justify-content-end">
+                <button (click)="advanceConsolidatedOverlayPanel.toggle($event)" pButton pRipple icon="pi pi-info-circle"
+                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
+                        pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                <app-menu-item [menuItems]="items" [id]="person.id"></app-menu-item>
+              </div>
+              <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
+                  <ng-template pTemplate>
+                    <ng-container *ngTemplateOutlet="personTemplate; context: {$implicit: person}"></ng-container>
+                  </ng-template>
+              </p-overlayPanel>
             </td>
           </tr>
         </ng-template>
@@ -97,4 +107,34 @@
 
 <ng-template #sLoading>
   <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>
+
+<ng-template #personTemplate let-person>
+  <div class="flex align-items-center mb-3">
+    <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+      <i  class="pi pi-user text-xl text-blue-500"></i>
+    </div>
+    <div class="flex flex-column ">
+      <h5 class="m-0 text-700">Información personal</h5>
+      <span class="text-500">Detalle de la información personal</span>
+    </div>
+  </div>
+
+  <div class="flex flex-column align-items-center text-center">
+    <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
+      <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+        style="vertical-align: middle; width: 100%; height: auto;"  alt=""/>
+    </div>
+    <span class="font-bold">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
+    <span>{{ person.tipoDocumento?.abreviatura }}: {{ person.documento }}</span>
+    <span *ngIf="person.correo"><span class="text-500">Correo: </span>{{ person.correo | lowercase }}</span>
+    <span *ngIf="person.telefono"><span class="text-500">Teléfono: </span>{{ person.telefono }}</span>
+    <span *ngIf="person.genero"><span class="text-500">Género: </span>{{ person.genero.nombre }}</span>
+  </div>
+  <div *ngIf="person.usuario?.roles.length" class="w-full flex flex-column border-round-xl text-center surface-100 py-2  mt-2">
+    <span class="text-700 font-medium">
+      <span *ngFor="let rol of person.usuario.roles; let index = index">{{rol.nombre}}{{index < person.usuario.roles.length - 1 ? ', ' : ''}}</span>
+    </span>
+    <span class="text-500 text-sm">Roles de acceso</span>
+</div>
 </ng-template>

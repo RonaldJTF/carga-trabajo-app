@@ -72,7 +72,7 @@ export class ListComponent implements OnInit{
 
   editPerson(idPerson: number) {
     this.router.navigate(['configurations/users/person/', this.cryptoServise.encryptParam(idPerson.toString())], {
-      //skipLocationChange: true,
+      skipLocationChange: true,
     }).then();
   }
 

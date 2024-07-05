@@ -148,6 +148,7 @@ export const structureReducer = createReducer(
         Object.assign(updatedStructure.actividad, activity);
       }
     }
+    order(items, state.orderIsAscending);
     return { ...state,
             items:items,
             dependency: findStructure(state.dependency?.id, items)
@@ -161,6 +162,7 @@ export const structureReducer = createReducer(
     if (updatedStructure){
       updatedStructure.actividad = null;
     }
+    order(items, state.orderIsAscending);
     return { ...state,
             items:items,
             dependency: findStructure(state.dependency?.id, items)

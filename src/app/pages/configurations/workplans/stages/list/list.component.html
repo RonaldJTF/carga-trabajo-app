@@ -433,7 +433,7 @@
           </div>
 
           <div class="m-2">
-            <button *ngIf="!downloadingGlobalReport else sDownloadingGlobalReport" pRipple pButton type="button" (click)="downloadGlobalReport()" icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-info" pTooltip="Descargar reporte"></button>
+            <button *ngIf="!downloadingGlobalReport else sDownloadingGlobalReport" pRipple pButton type="button" (click)="downloadGlobalReport()" icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-primary" pTooltip="Descargar reporte"></button>
             <ng-template #sDownloadingGlobalReport>
               <i #sDownloadingGlobalReport class="pi pi-spin pi-spinner text-blue-500 p-3"></i>
             </ng-template>

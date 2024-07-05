@@ -2,7 +2,7 @@
 
   <div class="col-12 md:col-4">
     <div class="card">
-      <div class="flex flex-column align-items-center">
+      <div class="flex flex-column align-items-center text-center">
         <div class="_button-container">
           <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
             <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
@@ -12,10 +12,8 @@
         <span class="font-bold">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
         <span class="mb-3"><span>{{person.tipoDocumento?.abreviatura}}</span> {{person.documento}}</span>
         <span class="mb-2 font-medium text-500 ">Información de contacto:</span>
-        <span *ngIf="person.correo" class="w-full"><span class="text-500">Correo: </span> {{person.correo |
-          lowercase}}</span>
-        <span *ngIf="person.telefono" class="w-full"><span class="text-500">Teléfono: </span>
-          {{person.telefono}}</span>
+        <span *ngIf="person.correo" class="w-full text-left"><span class="text-500">Correo: </span> {{person.correo | lowercase}}</span>
+        <span *ngIf="person.telefono" class="w-full text-left"><span class="text-500">Teléfono: </span>{{person.telefono}}</span>
       </div>
     </div>
   </div>
