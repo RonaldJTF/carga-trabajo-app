@@ -10,6 +10,7 @@ import {GenderService} from 'src/app/services/gender.service';
 import {MESSAGE} from "../../../../../labels/labels";
 import {UrlService} from "../../../../services/url.service";
 import {AuthenticationService} from "../../../../services/auth.service";
+import {CryptojsService} from "../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-form-person',
@@ -29,6 +30,8 @@ export class FormPersonComponent implements OnInit {
   personCopy: Person = new Person();
 
   personId: number = null;
+
+  param: string;
 
   formPerson!: FormGroup;
 
@@ -60,7 +63,8 @@ export class FormPersonComponent implements OnInit {
     private documentTypeService: DocumentTypeService,
     private genderService: GenderService,
     private urlService: UrlService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private cryptoService: CryptojsService,
   ) {
   }
 
@@ -70,10 +74,13 @@ export class FormPersonComponent implements OnInit {
     this.buildForm();
 
     this.route.params.subscribe((params) => {
-      this.personId = params['id'];
+      this.param = params['id'];
     });
 
-    if (this.personId != null) {
+    if (this.param != null) {
+      console.log("PARAMETRO=> ", this.param);
+      this.personId = parseInt(this.cryptoService.decryptParam(this.param));
+      console.log("PERSONA=> ", this.personId);
       this.updateMode = true;
       this.getPerson(this.personId);
     }

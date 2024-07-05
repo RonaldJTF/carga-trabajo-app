@@ -711,4 +711,10 @@ export class ListComponent implements OnInit, OnDestroy {
     return color;
   }
 
+  goBack() {
+    this.router.navigate(['configurations/workplans'], {
+      skipLocationChange: true,
+    }).then();
+  }
+
 }

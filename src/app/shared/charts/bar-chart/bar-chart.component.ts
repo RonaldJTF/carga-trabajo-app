@@ -46,7 +46,7 @@ export class BarChartComponent implements OnChanges, OnDestroy {
           backgroundColor: documentStyle.getPropertyValue('--primary-500'),
           borderColor: documentStyle.getPropertyValue('--primary-500'),
           data: this.data,
-          tension: 0
+          tension: 0,
         },
       ],
     };
@@ -59,6 +59,9 @@ export class BarChartComponent implements OnChanges, OnDestroy {
           }
         },
       },
+      responsive: true,
+      maintainAspectRatio: false,
+      aspectRatio: 1,
       scales: {
         x: {
           ticks: {
@@ -73,6 +76,7 @@ export class BarChartComponent implements OnChanges, OnDestroy {
           },
         },
         y: {
+          beginAtZero: true,
           ticks: {
             color: textColorSecondary,
           },

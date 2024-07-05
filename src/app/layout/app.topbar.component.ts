@@ -5,6 +5,7 @@ import {Person} from '../models/person';
 import {AuthenticationService} from '../services/auth.service';
 import {Observable, Subscription} from 'rxjs';
 import {Router} from "@angular/router";
+import {CryptojsService} from "../services/cryptojs.service";
 
 @Component({
   selector: 'app-topbar',
@@ -25,7 +26,8 @@ export class AppTopBarComponent implements OnInit {
   constructor(
     public layoutService: LayoutService,
     private authenticationService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private cryptoService: CryptojsService,
   ) {
   }
 
@@ -33,8 +35,8 @@ export class AppTopBarComponent implements OnInit {
     this.loguedPerson$ = this.authenticationService.loguedPerson$;
   }
 
-  editPerson(idPerson: number) {
-    this.router.navigate(['configurations/users/person/', idPerson], {
+  editPerson(idPerson: string) {
+    this.router.navigate(['configurations/users/person/', this.cryptoService.encryptParam(idPerson)], {
       skipLocationChange: true,
       queryParams:{
         backLocation: true
@@ -51,7 +53,7 @@ export class AppTopBarComponent implements OnInit {
         this.loguedPerson$.subscribe((person: Person) => {
           idPerson = person?.id
         })
-        this.editPerson(idPerson)
+        this.editPerson(idPerson.toString())
       }
     },
     {

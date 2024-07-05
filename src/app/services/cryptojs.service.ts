@@ -7,6 +7,9 @@ export class CryptojsService {
   keySize: number;
   iterationCount: number;
 
+  private key = CryptoJS.enc.Utf8.parse('1234567890123456'); // Debe ser de 16 bytes
+  private iv = CryptoJS.enc.Utf8.parse('1234567890123456'); // Debe ser de 16 bytes
+
   constructor() {
     this.keySize = 128 / 32;
     this.iterationCount = 1000;
@@ -69,5 +72,25 @@ export class CryptojsService {
     const cipherText = parts[3];
 
     return this.decrypt(salt, iv, key, cipherText);
+  }
+
+  //////////////////////////////////////
+
+  encryptParam(value: string): string {
+    const encrypted = CryptoJS.AES.encrypt(value, this.key, {
+      iv: CryptoJS.enc.Utf8.parse(),
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    });
+    return encrypted.toString();
+  }
+
+  decryptParam(encrypted: string): string {
+    const decrypted = CryptoJS.AES.decrypt(encrypted, this.key, {
+      iv: CryptoJS.enc.Utf8.parse(),
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    });
+    return decrypted.toString(CryptoJS.enc.Utf8);
   }
 }

@@ -43,13 +43,16 @@ export class PolarChartComponent implements OnChanges {
     };
 
     this.polarOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      aspectRatio: 1,
       plugins: {
         legend: {
           labels: {
             color: textColor
           },
           onHover: this.handleHover,
-          onLeave: this.handleLeave
+          onLeave: this.handleLeave,
         }
       },
       scales: {

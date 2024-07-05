@@ -1,20 +1,20 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Table} from 'primeng/table';
 import {Person} from 'src/app/models/person';
-import {MenuItem, MessageService} from 'primeng/api';
+import {MenuItem} from 'primeng/api';
 import {PersonService} from 'src/app/services/person.service';
 import {Router} from '@angular/router';
 import {IMAGE_SIZE} from 'src/app/utils/constants';
 import {MESSAGE} from 'src/labels/labels';
 import {ConfirmationDialogService} from 'src/app/services/confirmation-dialog.service';
-import {UrlService} from "../../../../services/url.service";
+import {CryptojsService} from "../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
 })
-export class ListComponent {
+export class ListComponent implements OnInit{
   IMAGE_SIZE = IMAGE_SIZE;
 
   MESSAGE = MESSAGE;
@@ -23,15 +23,11 @@ export class ListComponent {
 
   layout: string = 'list';
 
-  deletePeopleDialog: boolean = false;
-
   people: Person[] = [];
 
   person: Person = new Person();
 
   selectedPeople: Person[] = [];
-
-  cols: any[] = [];
 
   items: MenuItem[] = [];
 
@@ -39,6 +35,7 @@ export class ListComponent {
     private personService: PersonService,
     private confirmationDialogService: ConfirmationDialogService,
     private router: Router,
+    private cryptoServise: CryptojsService
   ) {
   }
 
@@ -49,21 +46,9 @@ export class ListComponent {
 
   intMenu() {
     this.items = [
-      {
-        label: 'Gestionar acceso',
-        icon: 'pi pi-key',
-        command: (e) => this.onUserPerson(e),
-      },
-      {
-        label: 'Editar',
-        icon: 'pi pi-pencil',
-        command: (e) => this.editPerson(parseInt(e.item.id)),
-      },
-      {
-        label: 'Eliminar',
-        icon: 'pi pi-trash',
-        command: (e) => this.onDelete(parseInt(e.item.id)),
-      },
+      {label: 'Gestionar acceso', icon: 'pi pi-key', command: (e) => this.onUserPerson(e)},
+      {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editPerson(parseInt(e.item.id))},
+      {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDelete(parseInt(e.item.id))},
     ];
   }
 
@@ -82,13 +67,13 @@ export class ListComponent {
   openNew() {
     this.router.navigate(['configurations/users/person/'], {
       skipLocationChange: true,
-    });
+    }).then();
   }
 
   editPerson(idPerson: number) {
-    this.router.navigate(['configurations/users/person/', idPerson], {
-      skipLocationChange: true,
-    });
+    this.router.navigate(['configurations/users/person/', this.cryptoServise.encryptParam(idPerson.toString())], {
+      //skipLocationChange: true,
+    }).then();
   }
 
   deleteSelectedPeople() {
@@ -97,7 +82,7 @@ export class ListComponent {
       () => {
         this.personService.deleteSelectedPeople(peopleIds)
           .subscribe({
-            next: (e) => {
+            next: () => {
               this.desmarkAll();
               for (let idPerson of peopleIds) {
                 this.filterPeple(idPerson);
@@ -110,7 +95,7 @@ export class ListComponent {
 
   onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.personService.delete(idPerson).subscribe((response) => {
+      this.personService.delete(idPerson).subscribe(() => {
         this.filterPeple(idPerson);
       });
     });
@@ -120,18 +105,6 @@ export class ListComponent {
     this.people = this.people.filter((item) => item.id != idPerson);
   }
 
-  findIndexById(id: number): number {
-    let index = -1;
-    for (let i = 0; i < this.people.length; i++) {
-      if (this.people[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  }
-
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
@@ -139,7 +112,7 @@ export class ListComponent {
   onUserPerson(event: any) {
     this.router.navigate(['configurations/users/user/', event.item.id], {
       skipLocationChange: true,
-    });
+    }).then();
   }
 
   desmarkAll() {
