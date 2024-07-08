@@ -8,6 +8,7 @@ import { Structure } from 'src/app/models/structure';
 import { StructureService } from 'src/app/services/structure.service';
 import * as StructureActions from "../../../../../store/structure.actions";
 import {UrlService} from "../../../../../services/url.service";
+import {CryptojsService} from "../../../../../services/cryptojs.service";
 
 
 @Component({
@@ -35,13 +36,14 @@ export class DependencyComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private urlService: UrlService,
+    private cryptoService: CryptojsService
   ){}
 
   ngOnInit(): void {
-    this.idPadre = this.route.snapshot.queryParams['idParent'];
-    this.idTipologia = this.route.snapshot.queryParams['idTipology'];
+    this.idPadre = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idParent']);
+    this.idTipologia = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTipology']);
     this.buildForm();
-    this.loadStructure(this.route.snapshot.params['id']);
+    this.loadStructure(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
     this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
   }
 

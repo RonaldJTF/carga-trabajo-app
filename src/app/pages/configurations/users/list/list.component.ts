@@ -35,7 +35,7 @@ export class ListComponent implements OnInit{
     private personService: PersonService,
     private confirmationDialogService: ConfirmationDialogService,
     private router: Router,
-    private cryptoServise: CryptojsService
+    private cryptoService: CryptojsService
   ) {
   }
 
@@ -71,7 +71,7 @@ export class ListComponent implements OnInit{
   }
 
   editPerson(idPerson: number) {
-    this.router.navigate(['configurations/users/person/', this.cryptoServise.encryptParam(idPerson.toString())], {
+    this.router.navigate(['configurations/users/person/', this.cryptoService.encryptParam(idPerson)],  {
       skipLocationChange: true,
     }).then();
   }
@@ -110,7 +110,7 @@ export class ListComponent implements OnInit{
   }
 
   onUserPerson(event: any) {
-    this.router.navigate(['configurations/users/user/', event.item.id], {
+    this.router.navigate(['configurations/users/user/', this.cryptoService.encryptParam(event.item.id)], {
       skipLocationChange: true,
     }).then();
   }

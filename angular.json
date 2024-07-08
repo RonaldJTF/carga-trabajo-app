@@ -36,7 +36,8 @@
             "allowedCommonJsDependencies": [
               "quill",
               "dc",
-              "chroma-js"
+              "chroma-js",
+              "lodash"
             ]
           },
           "configurations": {

@@ -9,6 +9,7 @@ import { Task } from 'src/app/models/workplan';
 import { AppState } from 'src/app/app.reducers';
 import { Store } from '@ngrx/store';
 import {UrlService} from "../../../../../services/url.service";
+import {CryptojsService} from "../../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-activity',
@@ -42,11 +43,12 @@ export class TaskComponent implements OnInit {
     private router: Router,
     private readonly route: ActivatedRoute,
     private primengConfig: PrimeNGConfig,
-    private urlService: UrlService,) {
+    private urlService: UrlService,
+    private cryptoService: CryptojsService) {
   }
 
   ngOnInit(): void {
-    this.idStage = this.route.snapshot.queryParams['idStage'];
+    this.idStage = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idStage']);
     this.startDate = this.route.snapshot.queryParams['startDate'];
     this.getParams();
     this.setTraslationCalendar();
@@ -55,7 +57,7 @@ export class TaskComponent implements OnInit {
 
   getParams() {
     this.route.params.subscribe((params) => {
-      this.idTask = params['id'];
+      this.idTask = this.cryptoService.decryptParamAsNumber(params['id']);
     });
     if (this.idTask != null) {
       this.updateMode = true;

@@ -6,9 +6,10 @@ import {Workplan} from "../../../../models/workplan";
 import {WorkplanService} from "../../../../services/workplan.service";
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
-import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
 import { Location } from '@angular/common';
 import {UrlService} from "../../../../services/url.service";
+import {CryptojsService} from "../../../../services/cryptojs.service";
+import {ThisReceiver} from "@angular/compiler";
 
 @Component({
   selector: 'app-workplan',
@@ -30,11 +31,12 @@ export class WorkplanComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private urlService: UrlService,
+    private cryptoService: CryptojsService
   ){}
 
   ngOnInit(): void {
     this.buildForm();
-    this.loadWorkplan(this.route.snapshot.params['id']);
+    this.loadWorkplan(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
   }
 
   buildForm(){

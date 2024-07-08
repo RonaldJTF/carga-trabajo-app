@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as StageActions from "./../../../../../store/stage.actions";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngrx/store';
@@ -19,7 +19,7 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { CalendarComponent } from 'src/app/shared/calendar/calendar.component';
 import chroma from 'chroma-js';
 import { Methods } from 'src/app/utils/methods';
-import {UrlService} from "../../../../../services/url.service";
+import {CryptojsService} from "../../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-stage-list',
@@ -107,8 +107,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private renderer: Renderer2,
-    public urlService: UrlService,
+    private cryptoService: CryptojsService,
   ) {
   }
 
@@ -255,20 +254,20 @@ export class ListComponent implements OnInit, OnDestroy {
     this.router.navigate(['create'], {
       relativeTo: this.route,
       skipLocationChange: true,
-      queryParams: {idWorkplan: this.workplan.id}
+      queryParams: {idWorkplan: this.cryptoService.encryptParam(this.workplan.id)}
     });
   }
 
   onGoToUpdate(id: any, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate([id], {relativeTo: this.route, skipLocationChange: true})
+    this.router.navigate([this.cryptoService.encryptParam(id)], {relativeTo: this.route, skipLocationChange: true})
   }
 
   onGoToUpdateTask(id: any, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate(["task", id], {relativeTo: this.route, skipLocationChange: true})
+    this.router.navigate(["task", this.cryptoService.encryptParam(id)], {relativeTo: this.route, skipLocationChange: true})
   }
 
   viewStage(stage: Stage) {
@@ -279,7 +278,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.router.navigate(['create'], {
       relativeTo: this.route,
       skipLocationChange: true,
-      queryParams: {idWorkplan: this.workplan.id, idParent: stage.id}
+      queryParams: {idWorkplan: this.cryptoService.encryptParam(this.workplan.id), idParent: this.cryptoService.encryptParam( stage.id)}
     });
   }
 
@@ -287,7 +286,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.router.navigate(['task/create'], {
       relativeTo: this.route,
       skipLocationChange: true,
-      queryParams: {idStage: stage.id}
+      queryParams: {idStage: this.cryptoService.encryptParam(stage.id)}
     });
   }
 
@@ -616,7 +615,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.router.navigate(['task/create'], {
       relativeTo: this.route,
       skipLocationChange: true,
-      queryParams: {idStage: stage.id, startDate: data.start}
+      queryParams: {idStage: this.cryptoService.encryptParam(stage.id), startDate: data.start}
     });
   }
 

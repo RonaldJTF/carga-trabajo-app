@@ -13,9 +13,8 @@ import { WorkplanService } from 'src/app/services/workplan.service';
 import { IMAGE_SIZE } from 'src/app/utils/constants';
 import { MESSAGE } from 'src/labels/labels';
 import { Table } from 'primeng/table';
-import { Methods } from 'src/app/utils/methods';
 import { OverlayPanel } from 'primeng/overlaypanel';
-import {UrlService} from "../../../../services/url.service";
+import {CryptojsService} from "../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-list',
@@ -50,6 +49,7 @@ export class ListComponent implements OnInit, OnDestroy{
     private authService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
+    private cryptoService: CryptojsService
   ){}
 
   ngOnInit(): void {
@@ -103,7 +103,7 @@ export class ListComponent implements OnInit, OnDestroy{
   onGoToUpdate (id : any, event: Event): void{
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate([id], {relativeTo: this.route, skipLocationChange: true})
+    this.router.navigate([this.cryptoService.encryptParam(id)], {relativeTo: this.route, skipLocationChange: true})
   }
 
   onManagementStage (id : any, event: Event): void{

@@ -107,7 +107,7 @@ export class LoginComponent {
     } else {
       this.loader = true;
       let { username, password } = this.formLogin.value;
-      password = this.cryptoService.encryptString(password);
+      password = this.cryptoService.encrypt(password);
       const payload = { username, password };
       this.authenticationService.login(payload).subscribe({
         next: (response: any) => {

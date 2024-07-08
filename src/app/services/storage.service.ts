@@ -14,14 +14,14 @@ export class StorageService {
       return;
     }
     const dataString = JSON.stringify(data);
-    const encryptedData = this.cryptojsService.encryptString(dataString);
+    const encryptedData = this.cryptojsService.encrypt(dataString);
     localStorage.setItem(key, encryptedData);
   }
 
   getLocalStorage(key: string) {
     const encryptedData = localStorage.getItem(key);
     if (encryptedData) {
-      const decryptedData = this.cryptojsService.decryptString(encryptedData);
+      const decryptedData = this.cryptojsService.decrypt(encryptedData);
       return JSON.parse(decryptedData);
     }
     return null;
@@ -41,14 +41,14 @@ export class StorageService {
       return;
     }
     const dataString = JSON.stringify(data);
-    const encryptedData = this.cryptojsService.encryptString(dataString);
+    const encryptedData = this.cryptojsService.encrypt(dataString);
     sessionStorage.setItem(key, encryptedData);
   }
 
   getSessionStorage(key: string) {
     const encryptedData = sessionStorage.getItem(key);
     if (encryptedData) {
-      const decryptedData = this.cryptojsService.decryptString(encryptedData);
+      const decryptedData = this.cryptojsService.decrypt(encryptedData);
       return JSON.parse(decryptedData);
     }
     return null;

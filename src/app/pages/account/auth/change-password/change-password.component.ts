@@ -75,8 +75,8 @@ export class ChangePasswordComponent implements OnInit {
     } else {
       this.loader = true;
       let {tokenPassword, password, confirmPassword} = this.formChangePassword.value;
-      password = this.cryptoService.encryptString(password);
-      confirmPassword = this.cryptoService.encryptString(confirmPassword);
+      password = this.cryptoService.encrypt(password);
+      confirmPassword = this.cryptoService.encrypt(confirmPassword);
       const payload = {tokenPassword, password, confirmPassword};
       this.authenticationService.changePassword(payload).subscribe({
         next: (r) => {

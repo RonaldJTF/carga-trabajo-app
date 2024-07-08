@@ -8,6 +8,7 @@ import { StructureService } from 'src/app/services/structure.service';
 import * as StructureActions from "../../../../../store/structure.actions";
 import { Location } from '@angular/common';
 import {UrlService} from "../../../../../services/url.service";
+import {CryptojsService} from "../../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-no-dependency',
@@ -34,14 +35,15 @@ export class NoDependencyComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private urlService: UrlService,
+    private cryptoService: CryptojsService,
   ){}
 
   ngOnInit(): void {
-    this.idPadre = this.route.snapshot.queryParams['idParent'];
-    this.idTipologia = this.route.snapshot.queryParams['idTipology'];
-    this.defaultOrder = this.route.snapshot.queryParams['defaultOrder'];
+    this.idPadre = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idParent']);
+    this.idTipologia = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTipology']);
+    this.defaultOrder = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['defaultOrder']);
     this.buildForm();
-    this.loadStructure(this.route.snapshot.params['id']);
+    this.loadStructure(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
     this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
   }
 

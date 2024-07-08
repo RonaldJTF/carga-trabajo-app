@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -6,9 +7,6 @@ import { Injectable } from '@angular/core';
 export class CryptojsService {
   keySize: number;
   iterationCount: number;
-
-  private key = CryptoJS.enc.Utf8.parse('1234567890123456'); // Debe ser de 16 bytes
-  private iv = CryptoJS.enc.Utf8.parse('1234567890123456'); // Debe ser de 16 bytes
 
   constructor() {
     this.keySize = 128 / 32;
@@ -23,7 +21,7 @@ export class CryptojsService {
     return key;
   }
 
-  private encrypt(salt: any, iv: any, passPhrase: any, plainText: any) {
+  private _encrypt(salt: any, iv: any, passPhrase: any, plainText: any) {
     const key = this.generateKey(salt, passPhrase);
     const encrypted = CryptoJS.AES.encrypt(plainText, key, {
       iv: CryptoJS.enc.Hex.parse(iv),
@@ -31,7 +29,7 @@ export class CryptojsService {
     return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
   }
 
-  private decrypt(salt: any, iv: any, passPhrase: any, cipherText: any) {
+  private _decrypt(salt: any, iv: any, passPhrase: any, cipherText: any) {
     const key = this.generateKey(salt, passPhrase);
     const cipherParams = CryptoJS.lib.CipherParams.create({
       ciphertext: CryptoJS.enc.Base64.parse(cipherText),
@@ -42,7 +40,7 @@ export class CryptojsService {
     return decrypted.toString(CryptoJS.enc.Utf8);
   }
 
-  encryptString(inputString: string) {
+  encrypt(inputString: string) {
     const key = CryptoJS.lib.WordArray.random(256 / 8).toString(
       CryptoJS.enc.Hex
     );
@@ -53,12 +51,12 @@ export class CryptojsService {
       CryptoJS.enc.Hex
     );
 
-    const ciphertext = this.encrypt(salt, iv, key, inputString);
+    const ciphertext = this._encrypt(salt, iv, key, inputString);
 
     return btoa(`${key}|${iv}|${salt}|${ciphertext}`);
   }
 
-  decryptString(encryptedString: string) {
+  decrypt(encryptedString: string) {
     const decryptedString = atob(encryptedString);
     const parts = decryptedString.split("|");
 
@@ -71,26 +69,43 @@ export class CryptojsService {
     const salt = parts[2];
     const cipherText = parts[3];
 
-    return this.decrypt(salt, iv, key, cipherText);
+    return this._decrypt(salt, iv, key, cipherText);
   }
 
-  //////////////////////////////////////
-
-  encryptParam(value: string): string {
-    const encrypted = CryptoJS.AES.encrypt(value, this.key, {
-      iv: CryptoJS.enc.Utf8.parse(),
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-    return encrypted.toString();
+  private generateSalt(value: string): string {
+    return CryptoJS.SHA256(value).toString(CryptoJS.enc.Hex).substring(0, 16);
   }
 
-  decryptParam(encrypted: string): string {
-    const decrypted = CryptoJS.AES.decrypt(encrypted, this.key, {
-      iv: CryptoJS.enc.Utf8.parse(),
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
+  encryptParam(value: number | string): string {
+    if (value == null) {return null;}
+    const uuid = uuidv4();
+    const salt = this.generateSalt(uuid);
+    const key = this.generateKey(uuid, salt);
+    const encrypted = CryptoJS.AES.encrypt(value.toString(), key.toString()).toString();
+    const encodedEncrypted = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encrypted));
+    return `${uuid}|${encodedEncrypted}`;
+  }
+
+  private decryptParam(encrypted: string): string {
+    const [uuid, encodedEncrypted] = encrypted.split('|');
+    const salt = this.generateSalt(uuid);
+    const key = this.generateKey(uuid, salt);
+    const temp = CryptoJS.enc.Base64.parse(encodedEncrypted).toString(CryptoJS.enc.Utf8);
+    const decrypted = CryptoJS.AES.decrypt(temp, key.toString());
     return decrypted.toString(CryptoJS.enc.Utf8);
+  }
+
+  decryptParamAsNumber(encrypted: string): number {
+    if (encrypted == null || encrypted == '') {
+      return null;
+    }
+    return Number(this.decryptParam(encrypted));
+  }
+
+  decryptParamAsString(encrypted: string): string {
+    if (encrypted == null || encrypted == '') {
+      return null;
+    }
+    return this.decryptParam(encrypted);
   }
 }

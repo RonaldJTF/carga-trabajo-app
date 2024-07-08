@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import * as StageActions from "./../../../../../store/stage.actions";
-import * as WorkplanActions from "./../../../../../store/workplan.actions";
 import {ActivatedRoute, Router} from "@angular/router";
 import {WorkplanService} from "../../../../../services/workplan.service";
 import {Stage} from "../../../../../models/workplan";
@@ -9,6 +8,7 @@ import { AppState } from 'src/app/app.reducers';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {UrlService} from "../../../../../services/url.service";
+import {CryptojsService} from "../../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-stage',
@@ -28,18 +28,17 @@ export class StageComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     private workplanService: WorkplanService,
-    private location: Location,
-    private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private urlService: UrlService,
+    private cryptoService: CryptojsService
   ){}
 
   ngOnInit(): void {
-    this.idWorkplan = this.route.snapshot.queryParams['idWorkplan'];
-    this.idParent = this.route.snapshot.queryParams['idParent'];
+    this.idWorkplan = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idWorkplan']);
+    this.idParent = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idParent']);
     this.buildForm();
-    this.loadStage(this.route.snapshot.params['id']);
+    this.loadStage(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
   }
 
   buildForm(){

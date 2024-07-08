@@ -13,6 +13,7 @@ import { TreeTable } from 'primeng/treetable';
 import { Methods } from 'src/app/utils/methods';
 import { AuthenticationService } from 'src/app/services/auth.service';
 import { StructureService } from 'src/app/services/structure.service';
+import {CryptojsService} from "../../../../services/cryptojs.service";
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -21,7 +22,7 @@ import { StructureService } from 'src/app/services/structure.service';
 export class ListComponent implements OnInit, OnDestroy{
   IMAGE_SIZE = IMAGE_SIZE;
   MESSAGE = MESSAGE;
-  /*Nota: PATH_NO_MANAGED_BY_PARENT hace referencia a todas aquellas rutas que no son gestionadas por aquellas estructuras que figuran como padre de 
+  /*Nota: PATH_NO_MANAGED_BY_PARENT hace referencia a todas aquellas rutas que no son gestionadas por aquellas estructuras que figuran como padre de
    elementos de su mismo tipo, es decir, si es una estructura actividad y tiene subactividades, esta no pueden gestionarse (asignar tiempo usual, tiempo max, etc.)*/
   PATH_NO_MANAGED_BY_PARENT: string[] = ['action/activity'];
 
@@ -71,7 +72,8 @@ export class ListComponent implements OnInit, OnDestroy{
     private structureService: StructureService,
     private authService: AuthenticationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cryptoService: CryptojsService
   ){}
 
   ngOnInit(): void {
@@ -84,7 +86,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.dependency$ = this.store.select(state => state.structure.dependency);
     this.dependencies$ = this.structures$.pipe(map(e => e?.map ( obj => this.transformToTreeNode(obj, true))));
     this.noDependencies$ = this.dependency$.pipe(map(e => e?.subEstructuras?.map( obj => this.transformToTreeNode(obj, false)).filter(o => o)));
-    
+
     this.orderIsAscendingSubscription = this.store.select(state => state.structure.orderIsAscending).subscribe(e => this.orderIsAscending = e);
     this.noDependenciesSubscription = this.noDependencies$.subscribe( e=> {
       if(e?.length){this.numberOfElementsByStructure[e[0].data.idPadre] = e.length;}
@@ -141,7 +143,7 @@ export class ListComponent implements OnInit, OnDestroy{
     if (this.isAdmin){
       extraMenuItemOfActions = structure?.tipologia?.acciones?.map(obj => ({
         label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, command: (e) => {this.goToPage(e, structure)},
-        disabled: (this.hasChildrenOfTheSameType(structure) && this.PATH_NO_MANAGED_BY_PARENT.includes(obj.path)) || 
+        disabled: (this.hasChildrenOfTheSameType(structure) && this.PATH_NO_MANAGED_BY_PARENT.includes(obj.path)) ||
                   (structure.actividad != null && this.PATH_NO_MANAGED_IF_HAS_ACTIVITY.includes(obj.path))
       })) ?? [];
 
@@ -195,7 +197,7 @@ export class ListComponent implements OnInit, OnDestroy{
       this.updateRowGroupMetaData(e.children ?? [], structure.idTipologia);
     })
   }
-  
+
 
   private verifyIfSelectedDependencyWasDeleted(removedIds){
     this.store.dispatch(StructureActions.removeDependencyIfWasDeleted({removedIds: removedIds}));
@@ -217,7 +219,7 @@ export class ListComponent implements OnInit, OnDestroy{
   onGoToUpdate (id : any, isDependency:boolean, event: Event): void{
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate([isDependency ? 'action/dependency' : 'action/no-dependency', id], {relativeTo: this.route, skipLocationChange: true})
+    this.router.navigate([isDependency ? 'action/dependency' : 'action/no-dependency', this.cryptoService.encryptParam(id)], {relativeTo: this.route, skipLocationChange: true})
   }
 
   viewDependency(structure: Structure){
@@ -245,13 +247,13 @@ export class ListComponent implements OnInit, OnDestroy{
 
   goToAddSubstructure(structure: Structure){
     let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
-    this.router.navigate(['action/no-dependency'], { 
-      relativeTo: this.route, 
-      skipLocationChange: true, 
+    this.router.navigate(['action/no-dependency'], {
+      relativeTo: this.route,
+      skipLocationChange: true,
       queryParams: {
-        idParent: structure.id, 
-        idTipology: structure.tipologia.idTipologiaSiguiente, 
-        defaultOrder: childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1
+        idParent: this.cryptoService.encryptParam(structure.id),
+        idTipology: this.cryptoService.encryptParam(structure.tipologia.idTipologiaSiguiente),
+        defaultOrder: this.cryptoService.encryptParam(childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1)
       }});
   }
 
@@ -269,22 +271,22 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   /**
-   * NOTA: si el path de la accion es action/no-dependency, significa que va agregarse una subestructura de la siguiente tipología, por lo que 
+   * NOTA: si el path de la accion es action/no-dependency, significa que va agregarse una subestructura de la siguiente tipología, por lo que
    * el id de la tipología para esa nueva subestructura debe ser del tipo de tipología siguiente que tiene el padre.
    */
   goToPage(event: any, structure: Structure){
     const path = event.item.data.path;
     const idStructure = event.item.id;
     let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
-    this.router.navigate([path], { 
-      relativeTo: this.route, 
-      skipLocationChange: true, 
+    this.router.navigate([path], {
+      relativeTo: this.route,
+      skipLocationChange: true,
       queryParams: {
-        idStructure: idStructure, 
-        idParent: structure.id,
-        idActivity: structure.actividad?.id,
-        idTipology: path == 'action/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia,
-        defaultOrder: childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1
+        idStructure: this.cryptoService.encryptParam(idStructure),
+        idParent: this.cryptoService.encryptParam(structure.id),
+        idActivity: this.cryptoService.encryptParam(structure.actividad?.id),
+        idTipology: this.cryptoService.encryptParam(path == 'action/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia),
+        defaultOrder: this.cryptoService.encryptParam(childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1)
       }});
   }
 
@@ -349,8 +351,8 @@ export class ListComponent implements OnInit, OnDestroy{
     const initialIcon = menuItem?.icon;
     const initialState = menuItem?.disabled;
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    const structureIds = idStructure 
-        ? [idStructure] 
+    const structureIds = idStructure
+        ? [idStructure]
         : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
     this.structureService.downloadReport(data.item.automationId, structureIds).subscribe({
         next: () => updateMenuItem(menuItem, initialIcon, initialState),

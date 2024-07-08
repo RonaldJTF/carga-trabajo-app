@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {PersonService} from 'src/app/services/person.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Person} from 'src/app/models/person';
@@ -78,9 +78,7 @@ export class FormPersonComponent implements OnInit {
     });
 
     if (this.param != null) {
-      console.log("PARAMETRO=> ", this.param);
-      this.personId = parseInt(this.cryptoService.decryptParam(this.param));
-      console.log("PERSONA=> ", this.personId);
+      this.personId = this.cryptoService.decryptParamAsNumber(this.param);
       this.updateMode = true;
       this.getPerson(this.personId);
     }

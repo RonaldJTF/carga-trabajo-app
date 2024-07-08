@@ -14,6 +14,7 @@ import { ValidateRange } from 'src/app/validations/validateRange';
 import { Subscription } from 'rxjs';
 import { Structure } from 'src/app/models/structure';
 import {UrlService} from "../../../../../services/url.service";
+import {CryptojsService} from "../../../../../services/cryptojs.service";
 
 @Component({
   selector: 'app-activity',
@@ -47,12 +48,13 @@ export class ActivityComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private urlService: UrlService,
+    private cryptoService: CryptojsService,
   ){}
 
   ngOnInit(): void {
     this.buildForm();
-    this.loadActivity(this.route.snapshot.queryParams['idActivity']);
-    this.loadStructure(this.route.snapshot.queryParams['idStructure']);
+    this.loadActivity(this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idActivity']));
+    this.loadStructure(this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idStructure']));
     this.loadNivels();
 
     this.tiempoMaximoSubscription = this.formActivity.get('tiempoMaximo').valueChanges.subscribe(_ => {

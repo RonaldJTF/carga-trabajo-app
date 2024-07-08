@@ -57,12 +57,12 @@ export class FormUserPersonComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.personId = params['id'];
+      if (params['id']!= null){
+        this.personId = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.getUserPerson(this.personId);
+      }
     });
-
     this.formUser = this.createFormUser();
-
-    this.getUserPerson(this.personId);
   }
 
   get userRolesFormControl(): FormControl {
@@ -167,7 +167,7 @@ export class FormUserPersonComponent implements OnInit {
     event.preventDefault();
     const payload = this.formUser.value;
     payload.activo = Methods.parseBooleanToString(payload.activo);
-    payload.password = this.cryptoService.encryptString(payload.password);
+    payload.password = this.cryptoService.encrypt(payload.password);
     if (this.formUser.invalid) {
       this.formUser.markAllAsTouched();
     } else {
