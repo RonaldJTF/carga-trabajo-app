@@ -59,23 +59,22 @@
             <td>
               <p-tableCheckbox [value]="person"></p-tableCheckbox>
             </td>
-            <td pRipple class="flex align-items-center cursor-pointer" (click)="editPerson(person.id)">
-              <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
-                <img [src]="person.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                     style="width: 100%; height: auto" alt=""/>
-              </div>
-              <div class="flex flex-column ml-2">
-                <span class="font-medium">{{ person.primerNombre | titlecase }} {{ person.segundoNombre | titlecase }} {{ person.primerApellido | titlecase }} {{ person.segundoApellido | titlecase }}</span>
-                <span class="text-500">{{ person.tipoDocumento.abreviatura }}: {{ person.documento }}</span>
-                <span *ngIf="person.usuario?.roles.length" class="text-blue-500 text-sm">
-                  <span *ngFor="let rol of person.usuario.roles; let index = index">{{rol.nombre}}{{index < person.usuario.roles.length - 1 ? ', ' : ''}}</span>
-                </span>
-
+            <td pRipple class="cursor-pointer" (click)="editPerson(person.id)">
+              <div class="flex align-items-center ">
+                <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
+                  <img [src]="person.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto"/>
+                </div>
+                <div class="flex flex-column ml-2">
+                  <span class="font-medium">{{ person.primerNombre | titlecase }} {{ person.segundoNombre | titlecase }} {{ person.primerApellido | titlecase }} {{ person.segundoApellido | titlecase }}</span>
+                  <span class="text-500">{{ person.tipoDocumento.abreviatura }}: {{ person.documento }}</span>
+                  <span *ngIf="person.usuario?.roles.length" class="text-blue-500 text-sm">
+                    <span *ngFor="let rol of person.usuario.roles; let index = index">{{rol.nombre}}{{index < person.usuario.roles.length - 1 ? ', ' : ''}}</span>
+                  </span>
+                </div>
               </div>
             </td>
             <td>
-              <span *ngIf="person.usuario else noUser" style="white-space: nowrap;"
-                    [class]="'status-badge status-' + (person.usuario?.activo | state).classStyle">{{ (person.usuario?.activo | state).value }}</span>
+              <span *ngIf="person.usuario else noUser" style="white-space: nowrap;" [class]="'status-badge status-' + (person.usuario?.activo | state).classStyle">{{ (person.usuario?.activo | state).value }}</span>
               <ng-template #noUser>
                 <span class="badge badge-blue" style="white-space: nowrap;">Sin usuario</span>
               </ng-template>

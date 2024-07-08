@@ -38,19 +38,12 @@
                      style="width: 100%; height: auto" alt=""/>
               </div>
               <ng-template #sNoItemIcon>
-                <div
-                  class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                  <i
-                    class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                  <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
                 </div>
               </ng-template>
-              <div class="flex flex-column align-items-center justify-content-start ml-2">
-                        <span class="image-text ml-2 w-full">
-                            {{ node.label }}
-                        </span>
-                <span class="image-text text-500 text-sm ml-2 w-full">
-                            {{ node.data.descripcion }}
-                        </span>
+              <div class="flex flex-column ml-2">
+                <span>{{ node.label }}</span>
               </div>
             </div>
           </ng-template>

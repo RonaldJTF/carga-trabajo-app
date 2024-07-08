@@ -239,7 +239,7 @@ function calculateStageAdvance(stage: Stage) {
       count++;
     });
   }
-  if (count === 0) return 0;
+  if (count === 0){stage.avance = 0; return 0;}
   stage.avance = parseFloat((totalAdvance / count).toFixed(1));
   return parseFloat(stage.avance.toFixed(1));
 }

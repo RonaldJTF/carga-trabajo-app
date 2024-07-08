@@ -502,8 +502,8 @@
           (dropEvent)="updateDates($event)"
           (resizeEvent)="updateDates($event)"
           [menuItems]="menuItemsOfTaskInCalendar" [editable]="isAdmin" [data]="allTasks" [endDateName]="'fechaFin'" [startDateName]="'fechaInicio'" [titleName]="'nombre'">
-          <ng-template #overlayContentTemplate let-event let-task="data">
-            <ng-container *ngTemplateOutlet="TemplateDetailOfTask; context: {$implicit: task}"></ng-container>
+          <ng-template #overlayContentTemplate let-event let-item="data">
+            <ng-container *ngTemplateOutlet="TemplateDetailOfTask; context: {$implicit: item}"></ng-container>
           </ng-template>
           <ng-template #eventContentTemplate let-event let-item="data">
             <div class="px-2 py-1 flex flex-column border-round-xs" [class]="'activity-expiration-border-left activity-expiration-'+item.status?.classStyle">

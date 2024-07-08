@@ -600,7 +600,7 @@ export class ListComponent implements OnInit, OnDestroy {
   goToManagementFollowUp(idTask: any, event: Event){
     this.selectedViewFollowUp = 'list';
     this.detailOfTaskOverlayPanel.toggle(event)
-    this.taskOfCalendar = this.tasks.find(item => item.id == idTask);
+    this.taskOfCalendar = this.allTasks.find(item => item.id == idTask);
   }
 
   updateDates(data: any){

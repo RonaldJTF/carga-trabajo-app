@@ -1,6 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 import { Structure } from "../models/structure";
 import * as StructureActions from "./structure.actions";
+import _ from 'lodash'; //Usada para clonar conservando la estructura del objeto, por ejemplo, el orden en que se encuentran en una lista, etc.
 
 export interface StructureState {
   items: Structure[];
@@ -43,10 +44,11 @@ export const structureReducer = createReducer(
     }else{
       items.push(structure);
     }
-    order(items, state.orderIsAscending);
+    const dependency = findStructure(state.dependency?.id, items);
+    order(dependency?.subEstructuras, state.orderIsAscending);
     return { ...state,
             items: items,
-            dependency: findStructure(state.dependency?.id, items)
+            dependency: dependency
           };
   }),
 
@@ -59,8 +61,9 @@ export const structureReducer = createReducer(
       reasingOrder(parentStructure.subEstructuras, structureToRemove.orden, -1);
     }
     const filteredItems = filtrarNodosArbol (items, [id]);
-    order(filteredItems, state.orderIsAscending);
-    return { ...state, items: filteredItems, dependency: findStructure(state.dependency?.id, filteredItems)};
+    const dependency = findStructure(state.dependency?.id, filteredItems);
+    order(dependency?.subEstructuras, state.orderIsAscending);
+    return { ...state, items: filteredItems, dependency: dependency};
   }),
 
 
@@ -86,8 +89,9 @@ export const structureReducer = createReducer(
       }
     }
     const filteredItems = filtrarNodosArbol (items, structureIds);
-    order(filteredItems, state.orderIsAscending);
-    return { ...state, items: filteredItems, dependency: findStructure(state.dependency?.id, filteredItems)};
+    const dependency = findStructure(state.dependency?.id, filteredItems);
+    order(dependency?.subEstructuras, state.orderIsAscending);
+    return { ...state, items: filteredItems, dependency: dependency};
   }),
 
 
@@ -113,12 +117,12 @@ export const structureReducer = createReducer(
     }
     if (updatedStructure){
       Object.assign(updatedStructure, JSON.parse(JSON.stringify(structure)));
-    }
-        
-    order(items, state.orderIsAscending);
+    }        
+    const dependency = findStructure(state.dependency?.id, items);
+    order(dependency?.subEstructuras, state.orderIsAscending);
     return { ...state,
             items:items,
-            dependency: findStructure(state.dependency?.id, items)
+            dependency: dependency
           };
   }),
 
@@ -139,7 +143,7 @@ export const structureReducer = createReducer(
 
 
   on(StructureActions.setActivityToStructure, (state, { activity }) =>{
-    const items = JSON.parse(JSON.stringify(state.items));
+    const items = _.cloneDeep(state.items);
     let updatedStructure = findStructure(activity.idEstructura, items);
     if (updatedStructure){
       if (!updatedStructure.actividad){
@@ -148,7 +152,6 @@ export const structureReducer = createReducer(
         Object.assign(updatedStructure.actividad, activity);
       }
     }
-    order(items, state.orderIsAscending);
     return { ...state,
             items:items,
             dependency: findStructure(state.dependency?.id, items)
@@ -157,29 +160,32 @@ export const structureReducer = createReducer(
 
 
   on(StructureActions.removeActivityFromStructure, (state, { idStructure }) =>{
-    const items = JSON.parse(JSON.stringify(state.items));
+    const items = _.cloneDeep(state.items);
     let updatedStructure = findStructure(idStructure, items);
     if (updatedStructure){
       updatedStructure.actividad = null;
     }
-    order(items, state.orderIsAscending);
     return { ...state,
             items:items,
             dependency: findStructure(state.dependency?.id, items)
           };
   }),
 
+
   on(StructureActions.setOrderIsAscending, (state, { orderIsAscending }) => ({
     ...state,
     orderIsAscending: orderIsAscending,
   })),
 
+
   on(StructureActions.order, (state) => {
-    const item = JSON.parse(JSON.stringify(state.dependency));
-    order(item.subEstructuras, state.orderIsAscending);
+    const items = JSON.parse(JSON.stringify(state.items));
+    const dependency = findStructure(state.dependency?.id, items);
+    order(dependency?.subEstructuras, state.orderIsAscending);
     return {
       ...state,
-      dependency: item
+      items: items,
+      dependency: dependency
     }
   }),
 );

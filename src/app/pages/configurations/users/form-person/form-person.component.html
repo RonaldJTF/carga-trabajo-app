@@ -22,8 +22,7 @@
         </div>
 
         <span *ngIf="personCopy.primerNombre" class="font-bold">{{ (personCopy.primerNombre + ' ' + personCopy.segundoNombre + ' ' + personCopy.primerApellido + ' ' + personCopy.segundoApellido) | uppercase }}</span>
-        <span *ngIf="personCopy.documento" class="mb-3">
-          <span>{{ personCopy.tipoDocumento?.abreviatura }}:</span> {{ personCopy.documento }}</span>
+        <span *ngIf="personCopy.documento" class="mb-3"><span>{{ personCopy.tipoDocumento?.abreviatura }}:</span> {{ personCopy.documento }}</span>
         <span *ngIf="personCopy.id" class="mb-2 font-medium text-500 ">Información de contacto</span>
         <span *ngIf="personCopy.correo" class="w-full text-left"><span class="text-500">Correo: </span>{{ personCopy.correo | lowercase }}</span>
         <span *ngIf="personCopy.telefono" class="w-full text-left"><span class="text-500">Teléfono: </span>{{ personCopy.telefono }}</span>
