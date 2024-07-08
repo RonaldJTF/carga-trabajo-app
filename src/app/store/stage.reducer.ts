@@ -1,6 +1,6 @@
 import * as StageActions from "./stage.actions";
 import {createReducer, on} from "@ngrx/store";
-import {Stage} from "../models/workplan";
+import {Stage, Task} from "../models/workplan";
 import _default from "chart.js/dist/plugins/plugin.title";
 import id = _default.id;
 
@@ -150,24 +150,22 @@ export const stageReducer = createReducer(
 
   on(StageActions.addFollowUpToTask, (state, { idTask, followUp }) =>{
     const items = JSON.parse(JSON.stringify(state.items));
-    let stage = findStage(state.item.id, items);
-    let task = stage.tareas.find((e) => e.id == idTask);
+    let task = findTask(idTask, items);
     if (!task.seguimientos){task.seguimientos = []}
     task.seguimientos.push(followUp)
     updateAvance(items);
     return { ...state,
       items: items,
-      item: stage
+      item: findStage(state.item?.id, items)
     };
   }),
 
   on(StageActions.removeFollowUpFromTask, (state, { idTask, idFollowUp }) => {
     const items = JSON.parse(JSON.stringify(state.items));
-    let updatedStage = findStage(state.item.id, items);
-    let task = updatedStage.tareas.find( e => idTask == e.id)
+    let task = findTask(idTask, items);
     task.seguimientos = task.seguimientos.filter(e => e.id != idFollowUp);
     updateAvance(items);
-    return { ...state,  items: items, item: updatedStage};
+    return { ...state,  items: items, item: findStage(state.item?.id, items)};
   }),
 
   on(StageActions.setViewMode, (state, { viewMode }) => ({
@@ -200,6 +198,21 @@ function findStage(id: number, stages: Stage[]): Stage{
         return e;
       }else{
         let obj = findStage(id, e.subEtapas);
+        if (obj){return obj}
+      }
+    }
+  }
+  return null;
+}
+
+function findTask(idTask: number, stages: Stage[]): Task{
+  if (stages && idTask){
+    for (let e of stages){
+      const task = e.tareas?.find((t) => t.id == idTask);
+      if (task){
+        return task;
+      }else{
+        let obj = findTask(idTask, e.subEtapas);
         if (obj){return obj}
       }
     }
