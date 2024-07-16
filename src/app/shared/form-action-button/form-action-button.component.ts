@@ -15,6 +15,7 @@ export class FormActionButtonComponent {
   @Input() creatingOrUpdating: boolean = false;
   @Input() deleting: boolean = false;
   @Input() buttonCreateNamedAs: string = 'Crear';
+  @Input() buttonCancelNamedAs: string = 'Cancelar';
   @Output() createOrUpdate: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() cancel: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() delete: EventEmitter<Event> = new EventEmitter<Event>();

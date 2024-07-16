@@ -64,7 +64,6 @@ import {CalendarModule} from "primeng/calendar";
 import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.pipe';
 import {SelectButtonModule} from "primeng/selectbutton";
 import {SliderModule} from "primeng/slider";
-import {ShowFormValueDirective} from "../directives/show-form-value.directive";
 import { CalendarComponent } from './calendar/calendar.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { SpeedDialModule } from 'primeng/speeddial';
@@ -75,6 +74,8 @@ import {SvgColorDirective} from "../directives/svg-color-directive.directive";
 import { LineChartComponent } from './charts/line-chart/line-chart.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoadingComponent } from './loading/loading.component';
+import {StepsModule} from "primeng/steps";
+import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import { LoadingComponent } from './loading/loading.component';
     CalendarMenuItemComponent,
     LineChartComponent,
     LoadingComponent,
+    CountdownTimerComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -114,7 +116,6 @@ import { LoadingComponent } from './loading/loading.component';
 
     DateRangePipe,
     ImageFallbackDirective,
-    ShowFormValueDirective,
 
     SvgColorDirective,
   ],
@@ -165,6 +166,7 @@ import { LoadingComponent } from './loading/loading.component';
     SpeedDialModule,
     SidebarModule,
     ProgressSpinnerModule,
+    StepsModule
   ],
   exports: [
     FunctionalityComponent,
@@ -185,9 +187,9 @@ import { LoadingComponent } from './loading/loading.component';
     CalendarComponent,
     LineChartComponent,
     LoadingComponent,
+    CountdownTimerComponent,
 
     ImageFallbackDirective,
-    ShowFormValueDirective,
     SvgColorDirective,
 
     FirstNamePipe,
@@ -251,6 +253,7 @@ import { LoadingComponent } from './loading/loading.component';
     SpeedDialModule,
     SidebarModule,
     ProgressSpinnerModule,
+    StepsModule
   ],
   providers: []
 })

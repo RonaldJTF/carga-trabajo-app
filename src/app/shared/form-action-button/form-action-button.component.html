@@ -1,14 +1,14 @@
 <div class=" flex flex-wrap justify-content-end m-0 p-0">
-    <button *ngIf="showDeleteButton" pButton pRipple [icon]="deleting ? 'pi pi-spin pi-spinner m-0' : 'pi pi-trash'" 
+    <button *ngIf="showDeleteButton" pButton pRipple [icon]="deleting ? 'pi pi-spin pi-spinner m-0' : 'pi pi-trash'"
         class="p-button-danger" (click)="onSubmitDelete($event)" [disabled]="creatingOrUpdating || deleting">
         <span class="hidden-xs p-button-label pl-2">Eliminar</span>
     </button>
 
-    <button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onSubmitCancel($event)" 
+    <button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onSubmitCancel($event)"
         [disabled]="creatingOrUpdating || deleting">
-        <span class="hidden-xs p-button-label pl-2">Cancelar</span>
+        <span class="hidden-xs p-button-label pl-2">{{buttonCancelNamedAs}}</span>
     </button>
-    <button pButton pRipple [icon]="creatingOrUpdating ? 'pi pi-spin pi-spinner m-0' : 'pi pi-send'"  class="p-button-success ml-2" 
+    <button pButton pRipple [icon]="creatingOrUpdating ? 'pi pi-spin pi-spinner m-0' : 'pi pi-send'"  class="p-button-success ml-2"
         type="submit" (click)="onSubmitCreateOrUpdate($event)" [disabled]="disabledCreateOrUpdateButton || creatingOrUpdating || deleting">
         <span class="hidden-xs p-button-label pl-2">{{updateMode ? "Actualizar" : buttonCreateNamedAs}}</span>
     </button>

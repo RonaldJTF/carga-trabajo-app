@@ -13,14 +13,12 @@ export class AppMenuComponent implements OnInit {
 
     model: Functionality[] = [];
 
-    isAdmin: boolean;
     isSuperAdmin: boolean;
 
     constructor(public layoutService: LayoutService, private authService: AuthenticationService) { }
 
     ngOnInit() {
-      const {isAdministrator, isOperator, isSuperAdministrator} = this.authService.roles();
-      this.isAdmin = isAdministrator;
+      const {isSuperAdministrator} = this.authService.roles();
       this.isSuperAdmin = isSuperAdministrator;
       this.model = [
         {

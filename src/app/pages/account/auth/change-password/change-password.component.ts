@@ -34,7 +34,6 @@ export class ChangePasswordComponent implements OnInit {
 
   ngOnInit() {
     this.tokenPassword = this.activatedRoute.snapshot.params['id'];
-    console.log(this.tokenPassword);
     if (this.tokenPassword) {
       this.buildForm(this.tokenPassword);
     }

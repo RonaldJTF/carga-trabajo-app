@@ -5,6 +5,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ListComponent } from './list/list.component';
 import { FormPersonComponent } from './form-person/form-person.component';
 import { FormUserPersonComponent } from './form-user-person/form-user-person.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import {CurrentPasswordComponent} from "./change-password/menus/current-password.component";
+import {NewPasswordComponent} from "./change-password/menus/new-password.component";
 
 @NgModule({
   declarations: [
@@ -12,6 +15,9 @@ import { FormUserPersonComponent } from './form-user-person/form-user-person.com
     ListComponent,
     FormPersonComponent,
     FormUserPersonComponent,
+    ChangePasswordComponent,
+    CurrentPasswordComponent,
+    NewPasswordComponent,
   ],
   imports: [UsersRoutingModule, SharedModule],
 })

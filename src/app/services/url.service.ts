@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import {raceInit} from "rxjs/internal/observable/race";
 
 @Injectable({
   providedIn: 'root'
@@ -35,9 +36,11 @@ export class UrlService {
   }
 
   goBack() {
-    this.router.navigate([this.previousUrl], {
-      skipLocationChange: true,
-    }).then();
+    throw this.router.navigate([this.previousUrl], {
+      skipLocationChange: true
+    }).catch(reason => {
+      console.log("paso..", reason)
+    });
   }
 
 }

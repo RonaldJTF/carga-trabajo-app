@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MenuService } from 'src/app/layout/app.menu.service';
+import {Component} from '@angular/core';
+import {MenuService} from 'src/app/layout/app.menu.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,6 +10,6 @@ export class DashboardComponent {
 
   constructor(
     public menuService: MenuService
-  ){}
-
+  ) {
+  }
 }

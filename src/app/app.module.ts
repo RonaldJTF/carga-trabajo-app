@@ -33,26 +33,28 @@ import { WorkplanService } from './services/workplan.service';
 import { stageReducer } from './store/stage.reducer';
 import { MediaService } from './services/media.service';
 import {UrlService} from "./services/url.service";
+import {RippleModule} from "primeng/ripple";
 
 @NgModule({
   declarations: [
     AppComponent,
     NotFoundComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    AppLayoutModule,
-    DashboardModule,
-    ToastModule,
-    ConfirmDialogModule,
-    QuillModule.forRoot(),
-    StoreModule.forRoot({ structure: structureReducer, workplan: workplanReducer, stage: stageReducer}),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25,
-      logOnly: environment.production
-    }),
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        AppLayoutModule,
+        DashboardModule,
+        ToastModule,
+        ConfirmDialogModule,
+        QuillModule.forRoot(),
+        StoreModule.forRoot({structure: structureReducer, workplan: workplanReducer, stage: stageReducer}),
+        StoreDevtoolsModule.instrument({
+            maxAge: 25,
+            logOnly: environment.production
+        }),
+        RippleModule,
+    ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService,

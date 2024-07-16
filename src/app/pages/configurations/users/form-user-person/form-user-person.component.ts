@@ -1,14 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Person} from 'src/app/models/person';
 import {PersonService} from '../../../../services/person.service';
 import {UserService} from 'src/app/services/user.service';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Rol} from 'src/app/models/rol';
 import {SelectItem} from 'primeng/api';
 import {MESSAGE} from '../../../../../labels/labels';
@@ -49,7 +44,6 @@ export class FormUserPersonComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private personService: PersonService,
     private userService: UserService,
-    private router: Router,
     private cryptoService: CryptojsService,
     private urlService: UrlService,
   ) {
@@ -57,7 +51,7 @@ export class FormUserPersonComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      if (params['id']!= null){
+      if (params['id'] != null) {
         this.personId = this.cryptoService.decryptParamAsNumber(params['id']);
         this.getUserPerson(this.personId);
       }
@@ -126,8 +120,8 @@ export class FormUserPersonComponent implements OnInit {
       this.formUser.get('username')?.disable();
       this.formUser.get('password')?.disable();
 
-      let inputPass = document.getElementById('password');
-      inputPass.setAttribute('type', 'password');
+     // let inputPass = document.getElementById('password');
+     // inputPass.setAttribute('type', 'password');
     }
   }
 
@@ -253,9 +247,9 @@ export class FormUserPersonComponent implements OnInit {
       const controls = ['username', 'password'];
 
       controls.forEach(controlName => {
-        const  control = this.formUser.get(controlName);
+        const control = this.formUser.get(controlName);
 
-        if (control){
+        if (control) {
           control.clearValidators();
           control.markAsDirty();
           control.updateValueAndValidity();

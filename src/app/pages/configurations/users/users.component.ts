@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { MenuService } from 'src/app/layout/app.menu.service';
 
 @Component({
@@ -10,5 +10,4 @@ export class UsersComponent {
   constructor(
     public menuService: MenuService
   ){}
-
 }
