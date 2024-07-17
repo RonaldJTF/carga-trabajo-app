@@ -131,10 +131,14 @@ export class AuthenticationService {
   roles(): {isAdministrator: boolean, isOperator: boolean, isSuperAdministrator: boolean}{
     const roles = this.getRolesUser();
     return  {
-      isAdministrator: roles?.includes("ROLE_ADMINISTRADOR"), 
+      isAdministrator: roles?.includes("ROLE_ADMINISTRADOR"),
       isOperator: roles?.includes("ROLE_OPERADOR"),
       isSuperAdministrator: roles?.includes("ROLE_SUPERADMINISTRADOR"),
     };
+  }
+
+  getLoggedPersonInformation(): Person{
+    return (this.loguedPerson_.value as Person);
   }
 
 }

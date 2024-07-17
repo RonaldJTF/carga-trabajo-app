@@ -186,7 +186,7 @@ export class NewPasswordComponent implements OnInit, OnDestroy {
     this.subscription = this.changePasswordService.getPerson().subscribe(person => {
       if (person != null) {
         this.changePasswordService.setUser(null);
-        this.router.navigate(['configurations/users/change-password/', this.cryptoService.encryptParam(person.id)], {
+        this.router.navigate(['configurations/users/change-password/'], {
           skipLocationChange: true,
         }).then();
       }

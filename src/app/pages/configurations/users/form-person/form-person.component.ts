@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {PersonService} from 'src/app/services/person.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Person} from 'src/app/models/person';
@@ -57,7 +57,6 @@ export class FormPersonComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private router: Router,
     private personService: PersonService,
     private formBuilder: FormBuilder,
     private documentTypeService: DocumentTypeService,
@@ -72,22 +71,23 @@ export class FormPersonComponent implements OnInit {
     this.getDocumentTypes();
     this.getGender();
     this.buildForm();
+    this.getInitialValue();
+    this.getRole();
+  }
 
+  getInitialValue() {
     this.route.params.subscribe((params) => {
       this.param = params['id'];
     });
-
     if (this.param != null) {
       this.personId = this.cryptoService.decryptParamAsNumber(this.param);
       this.updateMode = true;
       this.getPerson(this.personId);
     }
-
-    this.getRole();
   }
 
-  getRole(){
-    const {isAdministrator, isOperator, isSuperAdministrator} = this.authService.roles();
+  getRole() {
+    const {isSuperAdministrator} = this.authService.roles();
     this.isSuperAdmin = isSuperAdministrator;
   }
 
@@ -144,16 +144,8 @@ export class FormPersonComponent implements OnInit {
     return this.isValido('primerNombre');
   }
 
-  get nombreSegundoNoValido() {
-    return this.isValido('segundoNombre');
-  }
-
   get apellidoPrimeroNoValido() {
     return this.isValido('primerApellido');
-  }
-
-  get apellidoSegundoNoValido() {
-    return this.isValido('segundoApellido');
   }
 
   get tipoDocumentoNoValido() {

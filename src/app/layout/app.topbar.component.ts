@@ -3,7 +3,7 @@ import {MenuItem} from 'primeng/api';
 import {LayoutService} from "./service/app.layout.service";
 import {Person} from '../models/person';
 import {AuthenticationService} from '../services/auth.service';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Router} from "@angular/router";
 import {CryptojsService} from "../services/cryptojs.service";
 
@@ -38,18 +38,15 @@ export class AppTopBarComponent implements OnInit {
   editPerson(idPerson: string) {
     this.router.navigate(['configurations/users/person/', this.cryptoService.encryptParam(idPerson)], {
       skipLocationChange: true,
-      queryParams:{
+      queryParams: {
         backLocation: true
       }
     }).then();
   }
 
   changePassword(idPerson: string, userName: string) {
-    this.router.navigate(['configurations/users/change-password/', this.cryptoService.encryptParam(idPerson)], {
+    this.router.navigate(['configurations/users/change-password/'], {
       skipLocationChange: true,
-      queryParams:{
-        backLocation: true
-      }
     }).then();
   }
 

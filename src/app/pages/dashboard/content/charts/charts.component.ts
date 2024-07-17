@@ -18,8 +18,7 @@ export class ChartsComponent implements OnInit {
 
   protected readonly MESSAGE = MESSAGE;
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
-  
-  statistics: Activity[];
+
   levels: string[];
   timesTareas: string[];
   personasRequeridas: number[];
@@ -48,15 +47,13 @@ export class ChartsComponent implements OnInit {
   public getLevels(data: any[]) {
     this.levels = data?.map((item: any) => item.nivel);
     this.timesTareas = data.map(item => this.minutesToHours(item.tiempoTotalTarea));
-
     this.personasRequeridas = data.map(item => parseFloat(this.minutesToHours(item.tiempoTotalTarea)) / 167);
   }
 
   getStatistics(idDependence: number) {
     this.dashboardService.getStatistics(idDependence).subscribe({
       next: (data) => {
-        this.statistics = data;
-        this.getLevels(this.statistics);
+        this.getLevels(data);
       },
     });
   }

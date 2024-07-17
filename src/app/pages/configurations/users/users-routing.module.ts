@@ -18,11 +18,11 @@ const routes: Routes = [
       {path: 'person', component: FormPersonComponent, canActivate: [superAdminGuard]},
       {path: 'person/:id', component: FormPersonComponent},
       {
-        path: 'change-password/:id', component: ChangePasswordComponent,
+        path: 'change-password', component: ChangePasswordComponent,
         children: [
           {path: '', redirectTo: "current-password", pathMatch: "full"},
           {path: 'current-password', component: CurrentPasswordComponent},
-          {path: 'new-password', component: NewPasswordComponent, canActivate: [confirmPasswordGuard]},
+          {path: 'new-password', component: NewPasswordComponent, canActivate: [confirmPasswordGuard]}
         ]
       }
     ],

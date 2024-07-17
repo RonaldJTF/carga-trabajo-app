@@ -36,7 +36,7 @@ import {ToastService} from "../../../../../services/toast.service";
       </div>
 
       <div class=" flex flex-wrap justify-content-end m-0 p-0">
-        <button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onCancelChangePassword()"
+        <button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onCancelChangePassword($event)"
                 [disabled]="creatingOrUpdating">
           <span class="hidden-xs p-button-label pl-2">Cancelar</span>
         </button>
@@ -107,7 +107,8 @@ export class CurrentPasswordComponent implements OnInit, OnDestroy {
     return this.isValido('password');
   }
 
-  onCancelChangePassword(): void {
+  onCancelChangePassword(event: MouseEvent): void {
+    event.preventDefault();
     this.formConfirmPasswordUser.reset();
     this.updateMode = false;
     this.router.navigate([this.changePasswordService.getPreviousUrl()], {

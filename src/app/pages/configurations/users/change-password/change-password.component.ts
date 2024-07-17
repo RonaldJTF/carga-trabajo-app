@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Person} from "../../../../models/person";
-import {CryptojsService} from "../../../../services/cryptojs.service";
-import {ActivatedRoute} from "@angular/router";
-import {PersonService} from "../../../../services/person.service";
 import {MenuItem} from "primeng/api";
 import {ChangePasswordService} from "./menus/change-password.service";
 import {UrlService} from "../../../../services/url.service";
+import {AuthenticationService} from "../../../../services/auth.service";
 
 @Component({
   selector: 'app-change-password',
@@ -22,32 +20,18 @@ export class ChangePasswordComponent implements OnInit {
 
   loader = false;
 
-  personId: number;
-
   routeItems: MenuItem[] = [];
 
   constructor(
-    private readonly route: ActivatedRoute,
-    private cryptoService: CryptojsService,
-    private personService: PersonService,
     private changePasswordService: ChangePasswordService,
     private urlService: UrlService,
+    private authenticationService: AuthenticationService,
   ) {
   }
 
   ngOnInit() {
     this.buildMenu();
-    this.getUrlParameter();
-    this.changePasswordService.setPreviousUrl(this.urlService.getPreviousUrl());
-  }
-
-  getUrlParameter() {
-    this.route.params.subscribe(params => {
-      if (params['id'] != null) {
-        this.personId = this.cryptoService.decryptParamAsNumber(params['id']);
-        this.getUserPerson(this.personId);
-      }
-    });
+    this.setInitialValues();
   }
 
   buildMenu() {
@@ -57,14 +41,12 @@ export class ChangePasswordComponent implements OnInit {
     ];
   }
 
-  getUserPerson(personId: number) {
-    this.personService.getPerson(personId).subscribe({
-      next: (data) => {
-        this.person = data;
-        this.changePasswordService.setPerson(data);
-      }
-    });
+  setInitialValues() {
+    this.person = this.authenticationService.getLoggedPersonInformation();
+    this.changePasswordService.setPreviousUrl(this.urlService.getPreviousUrl());
+    this.changePasswordService.setPerson(this.authenticationService.getLoggedPersonInformation());
+    console.log(this.authenticationService.getLoggedPersonInformation());
+    console.log(this.changePasswordService.getPreviousUrl());
   }
-
 
 }
