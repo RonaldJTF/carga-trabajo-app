@@ -25,10 +25,9 @@
         </div>
 
         <p-treeSelect *ngIf="structureOptions?.length" [options]="structureOptions" [(ngModel)]="dependency"
-                      [showClear]="false"
-                      [filter]="true" (onNodeSelect)="onChangeDependency()" containerStyleClass="w-full"
-                      [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
-                      [filterInputAutoFocus]="true">
+                      [showClear]="false" [filter]="true" (onNodeSelect)="onChangeDependency()"
+                      containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                      [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
           <ng-template let-node pTemplate="default">
             <div class="flex align-items-center cursor-pointer" pRipple>
               <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
@@ -38,8 +37,10 @@
                      style="width: 100%; height: auto" alt=""/>
               </div>
               <ng-template #sNoItemIcon>
-                <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                  <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                <div
+                  class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                  <i
+                    class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
                 </div>
               </ng-template>
               <div class="flex flex-column ml-2">

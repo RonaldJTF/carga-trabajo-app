@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {User} from '../models/user';
-import {Rol} from '../models/rol';
+import {Role} from '../models/role';
 import {WebRequestService} from './web-request.service';
 import {Person} from "../models/person";
 
@@ -18,7 +18,7 @@ export class UserService {
   constructor(private webRequestService: WebRequestService) {
   }
 
-  loadRoles(): Observable<Rol[]> {
+  loadRoles(): Observable<Role[]> {
     return this.webRequestService.getWithHeaders(this.pathRole);
   }
 

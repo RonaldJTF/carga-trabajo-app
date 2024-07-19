@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {User} from "../../../../../models/user";
 import {UserService} from "../../../../../services/user.service";
-import {ChangePasswordService} from "./change-password.service";
+import {ChangePasswordService} from "../service/change-password.service";
 import {finalize, Subscription} from "rxjs";
 import {ToastService} from "../../../../../services/toast.service";
 
@@ -34,7 +34,6 @@ import {ToastService} from "../../../../../services/toast.service";
           </div>
         </div>
       </div>
-
       <div class=" flex flex-wrap justify-content-end m-0 p-0">
         <button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onCancelChangePassword($event)"
                 [disabled]="creatingOrUpdating">

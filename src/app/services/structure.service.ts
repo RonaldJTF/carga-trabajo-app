@@ -10,11 +10,11 @@ import { HttpResponse } from '@angular/common/http';
 export class StructureService {
 
   private pathStructure: string = 'structure'
+  private pathDependencies: string = this.pathStructure.concat('/dependencies');
 
   constructor(
     private webRequestService: WebRequestService
   ) { }
-
 
   getStructureById(id: number) {
     return this.webRequestService.getWithHeaders(`${this.pathStructure}/${id}`);
@@ -22,6 +22,10 @@ export class StructureService {
 
   getStructures(): Observable<Structure[]>{
     return this.webRequestService.getWithHeaders(this.pathStructure);
+  }
+
+  getDependenncies(): Observable<Structure[]>{
+    return this.webRequestService.getWithHeaders(this.pathStructure, {'tipologia.esDependencia': 1});
   }
 
   createStructure (payload: any) : Observable<HttpResponse<any>> {
@@ -85,6 +89,10 @@ export class StructureService {
     const contentDisposition = response.headers.get('content-disposition');
     const matches = /filename="?([^"]+)"?/.exec(contentDisposition);
     return matches != null ? matches[1] : 'archivo_descargado';
+  }
+
+  getDependencies(): Observable<Structure[]>{
+    return this.webRequestService.getWithHeaders(this.pathDependencies);
   }
 
 }

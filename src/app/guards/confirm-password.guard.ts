@@ -1,6 +1,6 @@
 import {CanActivateFn, Router} from '@angular/router';
 import {inject} from "@angular/core";
-import {ChangePasswordService} from "../pages/configurations/users/change-password/menus/change-password.service";
+import {ChangePasswordService} from "../pages/configurations/users/change-password/service/change-password.service";
 import {CryptojsService} from "../services/cryptojs.service";
 
 export const confirmPasswordGuard: CanActivateFn = () => {

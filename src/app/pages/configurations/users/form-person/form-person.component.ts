@@ -100,7 +100,7 @@ export class FormPersonComponent implements OnInit {
   }
 
   getGender(): void {
-    this.genderService.getDocumentType().subscribe({
+    this.genderService.getGenders().subscribe({
       next: (item) => {
         this.genders = item;
       }

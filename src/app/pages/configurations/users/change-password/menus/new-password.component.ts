@@ -3,7 +3,7 @@ import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, 
 import {UserService} from "../../../../../services/user.service";
 import {finalize, Subscription} from "rxjs";
 import {User} from "../../../../../models/user";
-import {ChangePasswordService} from "./change-password.service";
+import {ChangePasswordService} from "../service/change-password.service";
 import {CryptojsService} from "../../../../../services/cryptojs.service";
 import {AuthenticationService} from "../../../../../services/auth.service";
 import {Router} from "@angular/router";
@@ -28,7 +28,6 @@ import {Router} from "@angular/router";
         </ng-template>
       </div>
     </div>
-
     <form *ngIf="!okSent" [formGroup]="formNewPasswordUser" (keydown)="keyboardEvent($event)" autocomplete="off" autocapitalize="none">
       <div class="grid">
         <div class="field col">

@@ -1,0 +1,60 @@
+<div *ngIf="menuService.functionality$ | async as functionality" class="card">
+  <app-functionality [functionality]="functionality"></app-functionality>
+
+  <div class="grid">
+    <div class="col-12 md:col-4">
+      <div class="card m-1 p-3">
+        <div class="flex align-items-center justify-content-between mb-4">
+          <div class="flex align-items-center">
+            <div
+              class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+              <i class="pi pi-wrench text-xl text-blue-500"></i>
+            </div>
+            <div class="flex flex-column ">
+              <h5 class="m-0 text-700">Tabla</h5>
+              <span class="text-500">Análisis por dependecia</span>
+            </div>
+          </div>
+        </div>
+
+        <p-treeSelect [options]="menuItems" [showClear]="false" [filter]="true"
+                      (onNodeSelect)="onChangeDependency($event)" containerStyleClass="w-full"
+                      [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
+                      [filterInputAutoFocus]="true">
+          <ng-template let-node pTemplate="default">
+            <div class="flex align-items-center cursor-pointer" pRipple>
+              <div *ngIf="node.icon" class="flex-shrink-0 h-2rem"
+                   style="border-radius: 50%; overflow: hidden;">
+              </div>
+              <div class="flex flex-column ml-2">
+                <span>{{ node.label }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </p-treeSelect>
+
+        <!--<div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center text-center my-3">
+          <ng-container *ngIf="dependency?.srcIcono else sNoIcon">
+            <img [src]="dependency.srcIcono" [alt]="dependency.nombre"
+                 [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
+          </ng-container>
+          <ng-template #sNoIcon>
+            <div
+              class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependency?.tipologia.nombreColor}}-100 border-circle">
+              <i
+                class="pi {{dependency?.tipologia.claseIcono}} text-4xl text-{{dependency?.tipologia.nombreColor}}-500"></i>
+            </div>
+          </ng-template>
+          <span class="font-bold">{{ dependency?.nombre }}</span>
+          <span class="text-500">{{ dependency?.descripcion }}</span>
+          <span class="text-sm text-500">{{ dependency?.tipologia.nombre }}</span>
+        </div>-->
+      </div>
+    </div>
+    <div class="col-12 md:col-8">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+
+</div>

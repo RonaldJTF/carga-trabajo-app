@@ -34,6 +34,8 @@ import { stageReducer } from './store/stage.reducer';
 import { MediaService } from './services/media.service';
 import {UrlService} from "./services/url.service";
 import {RippleModule} from "primeng/ripple";
+import {ChangePasswordService} from "./pages/configurations/users/change-password/service/change-password.service";
+import {KeySequenceService} from "./services/key-sequence.service";
 
 @NgModule({
   declarations: [
@@ -58,7 +60,7 @@ import {RippleModule} from "primeng/ripple";
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService,
-    UserService, MatrizlevantamientoService, WorkplanService, UrlService,
+    UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, KeySequenceService,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true },
   ],

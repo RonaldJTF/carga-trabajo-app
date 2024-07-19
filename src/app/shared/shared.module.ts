@@ -76,6 +76,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoadingComponent } from './loading/loading.component';
 import {StepsModule} from "primeng/steps";
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
+import {MegaMenuModule} from "primeng/megamenu";
 
 @NgModule({
   declarations: [
@@ -166,7 +167,8 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     SpeedDialModule,
     SidebarModule,
     ProgressSpinnerModule,
-    StepsModule
+    StepsModule,
+    MegaMenuModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -253,7 +255,8 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     SpeedDialModule,
     SidebarModule,
     ProgressSpinnerModule,
-    StepsModule
+    StepsModule,
+    MegaMenuModule
   ],
   providers: []
 })

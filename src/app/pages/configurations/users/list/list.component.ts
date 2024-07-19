@@ -25,8 +25,6 @@ export class ListComponent implements OnInit{
 
   people: Person[] = [];
 
-  person: Person = new Person();
-
   selectedPeople: Person[] = [];
 
   items: MenuItem[] = [];
@@ -85,7 +83,7 @@ export class ListComponent implements OnInit{
             next: () => {
               this.desmarkAll();
               for (let idPerson of peopleIds) {
-                this.filterPeple(idPerson);
+                this.filterPeople(idPerson);
               }
             }
           });
@@ -96,12 +94,12 @@ export class ListComponent implements OnInit{
   onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.personService.delete(idPerson).subscribe(() => {
-        this.filterPeple(idPerson);
+        this.filterPeople(idPerson);
       });
     });
   }
 
-  filterPeple(idPerson: number) {
+  filterPeople(idPerson: number) {
     this.people = this.people.filter((item) => item.id != idPerson);
   }
 

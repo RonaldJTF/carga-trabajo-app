@@ -1,4 +1,4 @@
-import {File} from "./File";
+import {File} from "./file";
 
 export class Workplan {
   id: number;

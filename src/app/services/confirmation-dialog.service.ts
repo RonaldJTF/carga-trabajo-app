@@ -36,4 +36,14 @@ export class ConfirmationDialogService {
       acceptAction
     );
   }
+
+  showEventConfirmationDialog(message: string = '¿Está seguro de eliminar el registro?', acceptAction: () => void): void {
+    this.showConfirmationDialog(
+      message,
+      'Confirmación',
+      'Si',
+      'No',
+      acceptAction
+    );
+  }
 }

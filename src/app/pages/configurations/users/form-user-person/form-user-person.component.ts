@@ -4,7 +4,7 @@ import {Person} from 'src/app/models/person';
 import {PersonService} from '../../../../services/person.service';
 import {UserService} from 'src/app/services/user.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Rol} from 'src/app/models/rol';
+import {Role} from 'src/app/models/role';
 import {SelectItem} from 'primeng/api';
 import {MESSAGE} from '../../../../../labels/labels';
 import {OverlayPanel} from 'primeng/overlaypanel';
@@ -29,7 +29,7 @@ export class FormUserPersonComponent implements OnInit {
 
   formUser: FormGroup;
 
-  roles: Rol[];
+  roles: Role[];
 
   rolOptions: SelectItem[] = [];
 
@@ -145,7 +145,7 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   addRol(rol: any) {
-    let temporalRoles: Rol[] = this.formUser.get('roles').value as Rol[];
+    let temporalRoles: Role[] = this.formUser.get('roles').value as Role[];
     this.formUser.get('roles').setValue([...(temporalRoles ?? []), rol]);
     this.rolOptionsOverlayPanel.hide();
     this.loadRolesOptions();

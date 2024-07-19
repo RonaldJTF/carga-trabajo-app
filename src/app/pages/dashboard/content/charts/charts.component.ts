@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {Activity} from "../../../../models/activity";
 import {DashboardService} from "../../../../services/dashboard.service";
 import {StructureService} from "../../../../services/structure.service";
 import {Structure} from "../../../../models/structure";
 import {MESSAGE} from "../../../../../labels/labels";
 import {TypologyInventory} from "../../../../models/typologyinventory";
-import { TreeNode } from 'primeng/api';
-import { Methods } from 'src/app/utils/methods';
-import { IMAGE_SIZE } from 'src/app/utils/constants';
+import {TreeNode} from 'primeng/api';
+import {Methods} from 'src/app/utils/methods';
+import {IMAGE_SIZE} from 'src/app/utils/constants';
 
 @Component({
   selector: 'app-charts',
@@ -60,11 +59,11 @@ export class ChartsComponent implements OnInit {
 
   getStructure() {
     this.loading = true;
-    this.structureService.getStructures().subscribe({
+    this.structureService.getDependenncies().subscribe({
       next: (data) => {
         this.builtNodes(data, this.structureOptions);
         this.dependency = this.structureOptions?.length ? this.structureOptions[0] : null;
-        if(this.dependency){
+        if (this.dependency) {
           this.getStatistics(this.dependency.data.id);
         }
         this.loading = false;
@@ -72,18 +71,18 @@ export class ChartsComponent implements OnInit {
     })
   }
 
-  builtNodes(structures: Structure[], nodes: TreeNode<Structure>[]){
-    if(!structures){
+  builtNodes(structures: Structure[], nodes: TreeNode<Structure>[]) {
+    if (!structures) {
       return;
     }
-    for (let structure of structures){
-      if (Methods.parseStringToBoolean(structure.tipologia.esDependencia) ){
+    for (let structure of structures) {
+      if (Methods.parseStringToBoolean(structure.tipologia.esDependencia)) {
         let node: TreeNode<Structure> = {
           data: structure,
           label: structure.nombre,
           children: []
         };
-        if (structure.subEstructuras?.length){
+        if (structure.subEstructuras?.length) {
           this.builtNodes(structure.subEstructuras, node.children)
         }
         nodes.push(node);
@@ -108,7 +107,7 @@ export class ChartsComponent implements OnInit {
       next: () => {
         this.downloadingReport = false;
       },
-      error: ()=>{
+      error: () => {
         this.downloadingReport = false;
       }
     });
