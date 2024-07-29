@@ -54,6 +54,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
 
   loading: boolean = false;
+  loadingDependency = false;
   rowGroupMetadata: number[] = [];
   numberOfElementsByStructure: any = {};
 
@@ -94,7 +95,7 @@ export class ListComponent implements OnInit, OnDestroy{
       this.getNumberOfElementsByStructure(e);
     });
     this.mustRechargeSubscription = this.store.select(state => state.structure.mustRecharge).subscribe(e => {
-      if (e){this.getStructures()}
+      if (e){this.getDependencies()}
     });
     this.dependencySubscription = this.dependency$.subscribe( e => this.dependencyMenuItems = this.getMenuItemsOfStructure(e));
     this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
@@ -203,12 +204,17 @@ export class ListComponent implements OnInit, OnDestroy{
     this.store.dispatch(StructureActions.removeDependencyIfWasDeleted({removedIds: removedIds}));
   }
 
-  getStructures(){
+  getDependencies(){
     this.loading = true;
-    this.structureService.getStructures().subscribe( e => {
-      this.store.dispatch(StructureActions.setList({structures: e}));
-      this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
-      this.loading = false;
+    this.structureService.getDependencies().subscribe({
+      next: (e)=> {
+        this.store.dispatch(StructureActions.setList({structures: e}));
+        this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
+        this.loading = false;
+      },
+      error: (e)=>{
+        this.loading = false;
+      }
     })
   }
 
@@ -223,7 +229,23 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   viewDependency(structure: Structure){
-    this.store.dispatch(StructureActions.setDependency({structure: structure}));
+    this.store.dispatch(StructureActions.setDependency({structure: structure, hasLoadedInformation: true}));
+    if(!this.hasNoDependency(structure)){
+      this.loadingDependency = true;
+      this.structureService.getDependencyInformationById(structure.id).subscribe({
+        next: (e) =>{
+          this.store.dispatch(StructureActions.setDependency({structure: e, hasLoadedInformation: false}));
+          this.loadingDependency = false;
+        },
+        error: (e)=>{
+          this.loadingDependency = false;
+        }
+      })
+    }
+  }
+
+  private hasNoDependency(structure: Structure){
+    return structure.subEstructuras?.some(e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
   }
 
   onFilter(event: Event, isDependency: boolean) {

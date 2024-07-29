@@ -20,8 +20,16 @@ export class StructureService {
     return this.webRequestService.getWithHeaders(`${this.pathStructure}/${id}`);
   }
 
+  getDependencyInformationById(id: number) {
+    return this.webRequestService.getWithHeaders(`${this.pathStructure}/dependency/${id}`);
+  }
+
   getStructures(): Observable<Structure[]>{
     return this.webRequestService.getWithHeaders(this.pathStructure);
+  }
+
+  getDependencies(): Observable<Structure[]>{
+    return this.webRequestService.getWithHeaders(`${this.pathStructure}/dependencies`);
   }
 
   createStructure (payload: any) : Observable<HttpResponse<any>> {
