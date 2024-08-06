@@ -62,7 +62,7 @@ export class AuthenticationService {
     );
   }
 
-  changePassword(payload: { tokenPassword: string; password: string, confirmPassword },tenant?: string): Observable<any> {
+  changePassword(payload: { tokenPassword: string; password: string, confirmPassword: string },tenant?: string): Observable<any> {
     tenant = tenant ? tenant : "tenant_001";
     const headers = { "X-Tenant-Id": tenant };
     return this.webRequestService.postWithoutToken(
@@ -128,12 +128,13 @@ export class AuthenticationService {
     this.router.navigate(["/account/auth/login"]);
   }
 
-  roles(): {isAdministrator: boolean, isOperator: boolean, isSuperAdministrator: boolean}{
+  roles(): {isAdministrator: boolean, isOperator: boolean, isSuperAdministrator: boolean, isDesarrollador: boolean}{
     const roles = this.getRolesUser();
     return  {
       isAdministrator: roles?.includes("ROLE_ADMINISTRADOR"),
       isOperator: roles?.includes("ROLE_OPERADOR"),
       isSuperAdministrator: roles?.includes("ROLE_SUPERADMINISTRADOR"),
+      isDesarrollador: roles?.includes("ROLE_DESARROLLADOR"),
     };
   }
 

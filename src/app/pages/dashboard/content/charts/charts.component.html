@@ -15,9 +15,8 @@
             </div>
           </div>
           <div>
-            <button *ngIf="!downloadingReport else sDownloadingReport" pRipple pButton type="button"
-                    (click)="downloadReport()" icon="pi pi-cloud-download"
-                    class="p-button-rounded p-button-text p-button-primary" pTooltip="Descargar reporte"></button>
+            <button *ngIf="!downloadingReport else sDownloadingReport" pRipple pButton type="button" (click)="downloadReport()"
+                    icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-primary" pTooltip="Descargar reporte"></button>
             <ng-template #sDownloadingReport>
               <i #sDownloadingGlobalReport class="pi pi-spin pi-spinner text-blue-500 p-3"></i>
             </ng-template>
@@ -52,14 +51,11 @@
 
         <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center text-center my-3">
           <ng-container *ngIf="dependency?.srcIcono else sNoIcon">
-            <img [src]="dependency.srcIcono" [alt]="dependency.nombre"
-                 [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
+            <img [src]="dependency.srcIcono" [alt]="dependency.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
           </ng-container>
           <ng-template #sNoIcon>
-            <div
-              class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependency?.tipologia.nombreColor}}-100 border-circle">
-              <i
-                class="pi {{dependency?.tipologia.claseIcono}} text-4xl text-{{dependency?.tipologia.nombreColor}}-500"></i>
+            <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{dependency?.tipologia.nombreColor}}-100 border-circle">
+              <i class="pi {{dependency?.tipologia.claseIcono}} text-4xl text-{{dependency?.tipologia.nombreColor}}-500"></i>
             </div>
           </ng-template>
           <span class="font-bold">{{ dependency?.nombre }}</span>

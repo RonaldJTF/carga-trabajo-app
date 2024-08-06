@@ -1,0 +1,7 @@
+<div class="flex flex-column align-items-center ">
+  <div [appSvgColor]="'var(--primary-400)'" [svgPath]="srcImage" [svgElementSelector]="'#themeColor'" [svgWidth]="'300px'"></div>
+  <div *ngIf="message" class="font-medium text-base py-2 text-center">
+    {{ message }}
+  </div>
+</div>
+

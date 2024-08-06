@@ -3,7 +3,7 @@ import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.
 
 
 @Component({
-  selector: 'app-form-action-button',
+  selector: 'app-form-actions-button',
   templateUrl: './form-action-button.component.html',
   styleUrls: ['./form-action-button.component.scss']
 })

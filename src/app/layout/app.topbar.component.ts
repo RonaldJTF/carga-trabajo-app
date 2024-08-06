@@ -44,7 +44,7 @@ export class AppTopBarComponent implements OnInit {
     }).then();
   }
 
-  changePassword(idPerson: string, userName: string) {
+  changePassword() {
     this.router.navigate(['configurations/users/change-password/'], {
       skipLocationChange: true,
     }).then();
@@ -66,12 +66,7 @@ export class AppTopBarComponent implements OnInit {
       label: 'Cambiar contraseña',
       icon: 'pi pi-key',
       command: () => {
-        let idPerson: number, userName: string;
-        this.loguedPerson$.subscribe((person: Person) => {
-          idPerson = person?.id
-          userName = person?.usuario.username;
-        })
-        this.changePassword(idPerson.toString(), userName);
+        this.changePassword();
       }
     },
     {

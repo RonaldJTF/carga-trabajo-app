@@ -303,8 +303,7 @@
               <img [src]="file.mimetype | fileIcon" class="mr-2" height="32px" alt=""/>
               <span class="flex-grow-1 text-left">{{ file.nombre }}</span>
               <span class="ml-auto w-7rem">{{ file.tamanio | fileSize : "Desconocido" }}</span>
-              <button pButton pRipple (click)="downloadFile(file.id, $event)" type="button"
-                      icon="pi pi-cloud-download" class="p-button-rounded p-button-text" pTooltip="Descargar"
+              <button pButton pRipple (click)="downloadFile(file.id, $event)" type="button"                      icon="pi pi-cloud-download" class="p-button-rounded p-button-text" pTooltip="Descargar"
                       tooltipPosition="bottom">
               </button>
             </div>
@@ -352,11 +351,11 @@
                     (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
       </p-fileUpload>
     </div>
-    <app-form-action-button [updateMode]="updateMode" (cancel)="onBackTask()" (delete)="onDeleteTask($event)"
+    <app-form-actions-button [updateMode]="updateMode" (cancel)="onBackTask()" (delete)="onDeleteTask($event)"
                             [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
                             (createOrUpdate)="onSubmitFollowUp($event, task)"
                             [disabledCreateOrUpdateButton]="formFollowUp.invalid">
-    </app-form-action-button>
+    </app-form-actions-button>
   </form>
 </ng-template>
 

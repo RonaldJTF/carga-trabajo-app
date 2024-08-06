@@ -6,7 +6,7 @@
       <div *ngIf="formWorkplan.controls['nombre'].errors && (formWorkplan.controls['nombre'].touched||formWorkplan.controls['nombre'].dirty)">
           <div *ngIf="formWorkplan.controls['nombre'].errors?.['required']">
               <small id="text-help" class="p-error">Ingrese un nombre</small>
-          </div>   
+          </div>
       </div>
   </div>
 
@@ -16,11 +16,11 @@
       <div *ngIf="formWorkplan.controls['descripcion'].errors && (formWorkplan.controls['descripcion'].touched||formWorkplan.controls['descripcion'].dirty)">
           <div *ngIf="formWorkplan.controls['descripcion'].errors?.['required']">
               <small id="text-help" class="p-error">Ingresa una descripción</small>
-          </div>   
+          </div>
       </div>
   </div>
 
-  <app-form-action-button [updateMode]="updateMode"
+  <app-form-actions-button [updateMode]="updateMode"
       (createOrUpdate)="onSubmitWorkplan($event)"
       (cancel)="onCancelWorkplan($event)"
       (delete)="onDeleteWorkplan($event)"
@@ -28,5 +28,5 @@
       [creatingOrUpdating] = "creatingOrUpdating"
       [deleting] = "deleting"
       [disabledCreateOrUpdateButton] = "formWorkplan.invalid">
-  </app-form-action-button>
+  </app-form-actions-button>
 </form>

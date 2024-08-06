@@ -6,7 +6,7 @@
         <div *ngIf="formStructure.controls['nombre'].errors && (formStructure.controls['nombre'].touched||formStructure.controls['nombre'].dirty)">
             <div *ngIf="formStructure.controls['nombre'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingrese un nombre</small>
-            </div>   
+            </div>
         </div>
     </div>
 
@@ -16,26 +16,26 @@
         <div *ngIf="formStructure.controls['descripcion'].errors && (formStructure.controls['descripcion'].touched||formStructure.controls['descripcion'].dirty)">
             <div *ngIf="formStructure.controls['descripcion'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingresa una descripción</small>
-            </div>   
+            </div>
         </div>
     </div>
 
     <div class="field p-fluid">
         <label htmlFor="archivo"><span class="font-medium">Imagen representativa</span><span> (opcional)</span></label>
-        <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="false" 
+        <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="false"
             accept="image/*" [maxFileSize]="5000000" (onSelect)="onSelectFile($event)" (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
             <ng-template pTemplate="content">
                 <div class="flex justify-content-between align-items-center text-center p-3"  *ngIf="structure?.srcIcono && uploadedFiles.length < 1" >
                     <img [src]="structure.srcIcono" [alt]="structure.nombre" appImageFallback height="50px"/>
                     <span class="flex-grow-1">Imagen representativa</span>
-                    <span class="flex-grow-1">--</span>  
-                    <i class="pi pi-check text-green-500 text-2xl font-bold"></i>               
+                    <span class="flex-grow-1">--</span>
+                    <i class="pi pi-check text-green-500 text-2xl font-bold"></i>
                 </div>
             </ng-template>
         </p-fileUpload>
     </div>
 
-    <app-form-action-button [updateMode]="updateMode"
+    <app-form-actions-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitStructure($event)"
         (cancel)="onCancelStructure($event)"
         (delete)="onDeleteStructure($event)"
@@ -43,6 +43,6 @@
         [creatingOrUpdating] = "creatingOrUpdating"
         [deleting] = "deleting"
         [disabledCreateOrUpdateButton] = "formStructure.invalid">
-    </app-form-action-button>
+    </app-form-actions-button>
 
 </form>

@@ -130,12 +130,12 @@
             </div>
           </div>
         </div>
-        <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
+        <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
                                 (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)"
                                 [showDeleteButton]="updateMode && isSuperAdmin"
                                 [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
                                 [disabledCreateOrUpdateButton]="formPerson.invalid">
-        </app-form-action-button>
+        </app-form-actions-button>
       </form>
     </div>
   </div>

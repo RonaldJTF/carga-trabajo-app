@@ -13,9 +13,7 @@ export class UrlService {
 
   constructor(private router: Router) {
     this.currentUrl = this.router.url;
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
       this.previousUrl = this.currentUrl;
       this.currentUrl = event.urlAfterRedirects;
     });
@@ -36,7 +34,7 @@ export class UrlService {
 
   goBack() {
     this.router.navigate([this.previousUrl], {
-      skipLocationChange: true
+      //skipLocationChange: true
     }).then();
   }
 

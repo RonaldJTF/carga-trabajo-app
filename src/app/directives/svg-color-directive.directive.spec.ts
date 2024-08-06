@@ -1,4 +1,4 @@
-import { SvgColorDirectiveDirective } from './svg-color-directive.directive';
+import {SvgColorDirectiveDirective} from './svg-color-directive.directive';
 
 describe('SvgColorDirectiveDirective', () => {
   it('should create an instance', () => {

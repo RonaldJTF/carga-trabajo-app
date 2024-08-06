@@ -36,7 +36,7 @@ export class ChangePasswordComponent implements OnInit {
 
   buildMenu() {
     this.routeItems = [
-      {label: 'Actual contraseña', routerLink: 'current-password'},
+      {label: 'Contraseña actual', routerLink: 'current-password'},
       {label: 'Nueva contraseña', routerLink: 'new-password'}
     ];
   }

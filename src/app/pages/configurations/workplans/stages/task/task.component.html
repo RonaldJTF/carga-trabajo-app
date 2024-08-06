@@ -53,10 +53,10 @@
     </div>
   </div>
 
-  <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitTask($event)"
+  <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitTask($event)"
                           (cancel)="onCancelTask($event)" (delete)="onDeleteTask($event)"
                           [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
                           [deleting]="deleting" [disabledCreateOrUpdateButton]="formTask.invalid">
-  </app-form-action-button>
+  </app-form-actions-button>
 
 </form>

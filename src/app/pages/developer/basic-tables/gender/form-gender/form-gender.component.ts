@@ -16,6 +16,7 @@ import {finalize} from "rxjs";
 export class FormGenderComponent implements OnInit {
 
   formGender: FormGroup;
+
   updateMode: boolean = false;
 
   creatingOrUpdating: boolean = false;
@@ -25,7 +26,6 @@ export class FormGenderComponent implements OnInit {
   idGender: number;
 
   param: string;
-
 
   constructor(
     private router: Router,
@@ -99,24 +99,27 @@ export class FormGenderComponent implements OnInit {
   }
 
   updateGender(idGender: number, gender: Gender): void {
-    let message = '¿Está seguro de actulizar el registro?';
-    this.confirmationDialogService.showEventConfirmationDialog(message, () => {
-      console.log("Actualizando...")
-      this.basicTablesService.updateGender(idGender, gender).pipe(
-        finalize(() => {
-          this.creatingOrUpdating = false;
-          this.urlService.goBack();
+    let message = '¿Está seguro de actualizar el registro?';
+    this.confirmationDialogService.showEventConfirmationDialog(
+      message,
+      () => {
+        this.basicTablesService.updateGender(idGender, gender).pipe(
+          finalize(() => {
+            this.creatingOrUpdating = false;
+          })
+        ).subscribe({
+          next: () => {
+            this.urlService.goBack();
+          }
         })
-      ).subscribe({
-        next: (res) => {
-          console.log(res);
-        }
-      })
-    })
+      },
+      () => {
+        this.creatingOrUpdating = false;
+      }
+    )
   }
 
   createGender(gender: Gender): void {
-    console.log("Creando...")
     this.basicTablesService.createGender(gender).pipe(
       finalize(() => {
         this.creatingOrUpdating = false;
@@ -130,19 +133,14 @@ export class FormGenderComponent implements OnInit {
 
   onDeleteRol(event: Event): void {
     event.preventDefault()
-    console.log("Eliminando...", this.idGender)
     this.deleting = true;
     this.basicTablesService.deleteGender(this.idGender).pipe(
       finalize(() => {
         this.deleting = false;
       })
     ).subscribe({
-      next: (res) => {
-        console.log(res);
+      next: () => {
         this.urlService.goBack();
-      },
-      error: (err) => {
-        console.log(err);
       }
     })
   }

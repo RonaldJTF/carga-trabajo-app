@@ -15,7 +15,7 @@ import {ToastService} from "../../../../../services/toast.service";
           <i class="pi pi-key text-4xl text-blue-500"></i>
         </div>
         <span class="font-bold">Ingresa tu contraseña actual.</span>
-        <span class="text-500">Debes  confirmar con tu contraseña actual para proceder con el cambio.</span>
+        <span class="text-500">Debes  confirmar con tu contraseña actual para proceder con el cambio</span>
       </div>
     </div>
     <form [formGroup]="formConfirmPasswordUser" (keydown)="keyboardEvent($event)" autocomplete="off"

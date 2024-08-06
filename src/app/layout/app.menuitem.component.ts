@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Host, HostBinding, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostBinding, Input, OnDestroy, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Subscription} from 'rxjs';
@@ -110,7 +110,7 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
       fragment: 'ignored'
     });
     if (activeRoute) {
-      this.menuService.onFunctionalityChange(this.item)
+      this.menuService.onFunctionalityChange(this.item);
       this.menuService.onMenuStateChange({key: this.key, routeEvent: true});
     }
   }

@@ -4,6 +4,10 @@ import {Observable} from "rxjs";
 import {Role} from "../models/role";
 import {Gender} from "../models/gender";
 import {Level} from "../models/level";
+import {DocumentType} from "../models/documenttype";
+import {Typology} from "../models/typology";
+import {Ftp} from "../models/ftp";
+import {Action} from "../models/action";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +18,17 @@ export class BasicTablesService {
 
   private pathGender = 'gender';
 
-  private pathLevel = 'nivel';
+  private pathLevel = 'level';
+
+  private pathDocumentType = 'document-type';
+
+  private pathTypology = 'typology';
+
+  private pathFtp = 'ftp';
+
+  private pathAction = 'action';
+
+  private pathTypologyAction = 'typology-action';
 
   constructor(
     private webRequestService: WebRequestService
@@ -51,8 +65,8 @@ export class BasicTablesService {
     return this.webRequestService.getWithHeaders(this.pathGender);
   }
 
-  getGender(genderId): Observable<Gender> {
-    return this.webRequestService.getWithHeaders(`${this.pathGender}/${genderId}`);
+  getGender(idGender: number): Observable<Gender> {
+    return this.webRequestService.getWithHeaders(`${this.pathGender}/${idGender}`);
   }
 
   createGender(gender: any): Observable<any> {
@@ -76,8 +90,8 @@ export class BasicTablesService {
     return this.webRequestService.getWithHeaders(this.pathLevel);
   }
 
-  getLevel(levelId): Observable<Level> {
-    return this.webRequestService.getWithHeaders(`${this.pathLevel}/${levelId}`);
+  getLevel(idLevel: number): Observable<Level> {
+    return this.webRequestService.getWithHeaders(`${this.pathLevel}/${idLevel}`);
   }
 
   createLevel(level: any): Observable<any> {
@@ -95,4 +109,130 @@ export class BasicTablesService {
   deleteSelectedLevel(payload: number[]): Observable<Level[]> {
     return this.webRequestService.deleteWithHeaders(this.pathLevel, undefined, payload);
   }
+
+  // Servicios TIPO DOCUMENTO
+  getDocumentTypes(): Observable<DocumentType[]> {
+    return this.webRequestService.getWithHeaders(this.pathDocumentType);
+  }
+
+  getDocumentType(idDocumentType: number): Observable<DocumentType> {
+    return this.webRequestService.getWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
+  }
+
+  createDocumentType(documentType: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathDocumentType, documentType);
+  }
+
+  updateDocumentType(id: number, documentType: DocumentType): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathDocumentType}/${id}`, documentType);
+  }
+
+  deleteDocumentType(idDocumentType: number): Observable<DocumentType> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
+  }
+
+  deleteSelectedDocumentType(payload: number[]): Observable<DocumentType[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathDocumentType, undefined, payload);
+  }
+
+  // Servicios TIPOLOGIAS
+  getTypoligies(): Observable<Typology[]> {
+    return this.webRequestService.getWithHeaders(this.pathTypology);
+  }
+
+  getTypology(idTypology: number): Observable<Typology> {
+    return this.webRequestService.getWithHeaders(`${this.pathTypology}/${idTypology}`);
+  }
+
+  createTypology(typology: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathTypology, typology);
+  }
+
+  updateTypology(id: number, typology: Typology): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathTypology}/${id}`, typology);
+  }
+
+  deleteTypology(idTypology: number): Observable<Typology> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathTypology}/${idTypology}`);
+  }
+
+  deleteSelectedTypologies(payload: number[]): Observable<Typology[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathTypology, undefined, payload);
+  }
+
+  // Servicios FTP
+  getFtps(): Observable<Ftp[]> {
+    return this.webRequestService.getWithHeaders(this.pathFtp);
+  }
+
+  getFtp(idFtp: number): Observable<Ftp> {
+    return this.webRequestService.getWithHeaders(`${this.pathFtp}/${idFtp}`);
+  }
+
+  createFtp(ftp: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathFtp, ftp);
+  }
+
+  updateFtp(id: number, ftp: Ftp): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathFtp}/${id}`, ftp);
+  }
+
+  deleteFtp(idFtp: number): Observable<Ftp> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathFtp}/${idFtp}`);
+  }
+
+  deleteSelectedFtps(payload: number[]): Observable<Ftp[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathFtp, undefined, payload);
+  }
+
+  // Servicios ACCION
+  getActions(): Observable<Action[]> {
+    return this.webRequestService.getWithHeaders(this.pathAction);
+  }
+
+  getAction(idAction: number): Observable<Action> {
+    return this.webRequestService.getWithHeaders(`${this.pathAction}/${idAction}`);
+  }
+
+  createAction(action: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathAction, action);
+  }
+
+  updateAction(id: number, action: Action): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathAction}/${id}`, action);
+  }
+
+  deleteAction(idAction: number): Observable<Action> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathAction}/${idAction}`);
+  }
+
+  deleteSelectedActions(payload: number[]): Observable<Action[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathAction, undefined, payload);
+  }
+
+  // Servicios TIPOLOGIA-ACCION
+  getTypologyActions(): Observable<Action[]> {
+    return this.webRequestService.getWithHeaders(this.pathTypologyAction);
+  }
+
+  getTypologyAction(idAction: number): Observable<Action> {
+    return this.webRequestService.getWithHeaders(`${this.pathTypologyAction}/${idAction}`);
+  }
+
+  createTypologyAction(idTypology: number, action: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(`${this.pathTypologyAction}/${idTypology}`, action);
+  }
+
+  updateTypologyAction(id: number, action: Action): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathTypologyAction}/${id}`, action);
+  }
+
+  deleteTypologyAction(idTypology: number, idAction: number): Observable<Action> {
+    return this.webRequestService.deleteWithHeaders(this.pathTypologyAction, undefined, { idTipologia: idTypology, idAccion: idAction });
+  }
+
+  deleteSelectedTypologyActions(idTypology: number, payload: number[]): Observable<Action[]> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathTypologyAction}/${idTypology}`, undefined, payload);
+  }
+
 }

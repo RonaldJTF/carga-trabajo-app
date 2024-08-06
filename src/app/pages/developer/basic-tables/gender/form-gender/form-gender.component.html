@@ -2,12 +2,12 @@
   <div class="flex align-items-center justify-content-between mb-4">
     <div class="flex align-items-center">
       <div
-        class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-        <i class="pi pi-circle text-xl text-blue-500"></i>
+        class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+        <i class="pi pi-circle text-xl text-primary-500"></i>
       </div>
       <div class="flex flex-column ">
         <h5 class="m-0 text-700">Género</h5>
-        <span class="text-500">Crea géneros</span>
+        <span class="text-500">Gestiona las categorías de género disponibles para los perfiles de usuario.</span>
       </div>
     </div>
   </div>
@@ -24,11 +24,11 @@
         </div>
       </div>
     </div>
-    <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitGender($event)"
+    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitGender($event)"
                             (cancel)="onCancelRol($event)" (delete)="onDeleteRol($event)"
                             [showDeleteButton]="updateMode"
                             [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
                             [disabledCreateOrUpdateButton]="formGender.invalid">
-    </app-form-action-button>
+    </app-form-actions-button>
   </form>
 </div>

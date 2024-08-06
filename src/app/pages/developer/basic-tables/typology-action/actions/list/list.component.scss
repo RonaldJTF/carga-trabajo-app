@@ -1,0 +1,35 @@
+._badge-container {
+  position: relative;
+  display: inline-block;
+}
+
+._badge {
+  cursor: pointer;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--primary-color);;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 8px;
+  font-size: 11px;
+  z-index: 1;
+}
+
+._overlayPanel {
+  padding: 0px;
+}
+
+:host ::ng-deep .p-dialog-content {
+  padding: 0px;
+}
+
+::ng-deep ._overlayPanel .p-overlaypanel-content {
+  padding: 0px !important;
+}
+
+::ng-deep .p-paginator{
+  border: none;
+  margin-bottom: 0.25rem;
+}
+

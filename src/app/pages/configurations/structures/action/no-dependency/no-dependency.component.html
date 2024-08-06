@@ -6,7 +6,7 @@
         <div *ngIf="formStructure.controls['nombre'].errors && (formStructure.controls['nombre'].touched||formStructure.controls['nombre'].dirty)">
             <div *ngIf="formStructure.controls['nombre'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingrese un nombre</small>
-            </div>   
+            </div>
         </div>
     </div>
 
@@ -16,7 +16,7 @@
         <div *ngIf="formStructure.controls['descripcion'].errors && (formStructure.controls['descripcion'].touched||formStructure.controls['descripcion'].dirty)">
             <div *ngIf="formStructure.controls['descripcion'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingresa una descripción</small>
-            </div>   
+            </div>
         </div>
     </div>
 
@@ -26,14 +26,14 @@
         <div *ngIf="formStructure.controls['orden'].errors && (formStructure.controls['orden'].touched||formStructure.controls['orden'].dirty)">
             <div *ngIf="formStructure.controls['orden'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingrese un orden</small>
-            </div>   
+            </div>
             <div *ngIf="formStructure.controls['orden'].errors?.['min']">
                 <small id="text-help" class="p-error">Ingrese un orden mayor a 1</small>
-            </div>   
+            </div>
         </div>
     </div>
 
-    <app-form-action-button [updateMode]="updateMode"
+    <app-form-actions-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitStructure($event)"
         (cancel)="onCancelStructure($event)"
         (delete)="onDeleteStructure($event)"
@@ -41,6 +41,6 @@
         [creatingOrUpdating] = "creatingOrUpdating"
         [deleting] = "deleting"
         [disabledCreateOrUpdateButton] = "formStructure.invalid">
-    </app-form-action-button>
+    </app-form-actions-button>
 
 </form>

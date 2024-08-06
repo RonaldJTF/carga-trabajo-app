@@ -1,0 +1,64 @@
+<div class="card">
+  <div class="flex align-items-center justify-content-between mb-4">
+    <div class="flex align-items-center">
+      <div
+        class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+        <i class="pi pi-folder text-xl text-primary-500"></i>
+      </div>
+      <div class="flex flex-column ">
+        <h5 class="m-0 text-700">Ftp</h5>
+        <span class="text-500">Configure y administre los servidores FTP.</span>
+      </div>
+    </div>
+  </div>
+
+  <form class="p-0" [formGroup]="formFtp">
+    <div class="grid">
+      <div class="field p-fluid col-12 m-0">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input type="text" id="nombre" pInputText formControlName="nombre">
+        <div *ngIf="nombreNoValido">
+          <div *ngIf="controls['nombre'].errors?.['required']">
+            <small class="p-error">Ingrese el nombre</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="field p-fluid col-12 m-0">
+        <label htmlFor="descripcion" class="font-medium">Descripción</label>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
+                  formControlName="descripcion"></textarea>
+        <div *ngIf="descripcionNoValido">
+          <div *ngIf="controls['descripcion'].errors?.['required']">
+            <small class="p-error">Escribe un descripción</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="field p-fluid col-12 xl:col-8 m-0">
+        <label htmlFor="codigo" class="font-medium">Código</label>
+        <input type="text" id="codigo" pInputText formControlName="codigo">
+        <div *ngIf="nombreNoValido">
+          <div *ngIf="controls['codigo'].errors?.['required']">
+            <small class="p-error">Ingrese el código</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid col-12 xl:col-4">
+        <div class="field p-fluid col-12 m-0 p-0">
+          <label for="activo" class="col-12 font-medium">Activo </label>
+          <p-inputSwitch class="p-fluid ml-3" id="activo" formControlName="activo"></p-inputSwitch>
+        </div>
+      </div>
+
+    </div>
+
+    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitFtp($event)"
+                            (cancel)="onCancelFtp($event)" (delete)="onDeleteFtp($event)"
+                            [showDeleteButton]="updateMode"
+                            [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
+                            [disabledCreateOrUpdateButton]="formFtp.invalid">
+    </app-form-actions-button>
+  </form>
+</div>
