@@ -1,15 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {BasicTablesService} from "../../../../../../services/basic-tables.service";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, DataService} from "@services";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CryptojsService} from "../../../../../../services/cryptojs.service";
-import {UrlService} from "../../../../../../services/url.service";
-import {ConfirmationDialogService} from "../../../../../../services/confirmation-dialog.service";
-import {DataService} from "../../../../../../services/data.service";
 import {MenuItem} from "primeng/api";
-import {Action} from "../../../../../../models/action";
+import {Action} from "@models";
 import {finalize} from "rxjs";
-import {MESSAGE} from "../../../../../../../labels/labels";
+import {MESSAGE} from "@labels/labels";
 
 @Component({
   selector: 'app-form',
@@ -59,7 +55,6 @@ export class FormComponent implements OnInit {
     private basicTablesService: BasicTablesService,
     private route: ActivatedRoute,
     private cryptoService: CryptojsService,
-    private urlService: UrlService,
     private confirmationDialogService: ConfirmationDialogService,
     private dataService: DataService
   ) {
@@ -74,8 +69,8 @@ export class FormComponent implements OnInit {
 
 
   getInitialValue() {
-    this.idTypology = this.route.snapshot.queryParams['idTypology'];
-    this.idAction = this.route.snapshot.queryParams['idAction'];
+    this.idTypology = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTypology']);
+    this.idAction = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idAction']);
     if (this.idTypology && this.idAction) {
       this.updateMode = true;
       this.getAction(this.idAction);
@@ -180,16 +175,16 @@ export class FormComponent implements OnInit {
 
   onDeleteAction(event: Event): void {
     event.preventDefault()
-      this.deleting = false;
-      this.basicTablesService.deleteTypologyAction(this.idTypology, this.idAction).pipe(
-        finalize(() => {
-          this.deleting = false;
-        })
-      ).subscribe({
-        next: () => {
-          this.goBack();
-        }
-      });
+    this.deleting = false;
+    this.basicTablesService.deleteTypologyAction(this.idTypology, this.idAction).pipe(
+      finalize(() => {
+        this.deleting = false;
+      })
+    ).subscribe({
+      next: () => {
+        this.goBack();
+      }
+    });
   }
 
   onCancelAction(event: Event) {
@@ -199,12 +194,12 @@ export class FormComponent implements OnInit {
 
   getIcons() {
     this.dataService.getIcons().subscribe(data => {
-      data = data.filter(icons => {
+      data = data.filter((icons: any) => {
         return icons.icon.tags.indexOf('deprecate') === -1;
       });
 
       let icons = data;
-      icons.sort((icon1, icon2) => {
+      icons.sort((icon1: any, icon2: any) => {
         if (icon1.properties.name < icon2.properties.name)
           return -1;
         else if (icon1.properties.name < icon2.properties.name)
@@ -278,7 +273,7 @@ export class FormComponent implements OnInit {
     this.router.navigate(['/developer/basic-tables/typology-action/list'], {
       relativeTo: this.route,
       skipLocationChange: true,
-      queryParams: {idTypology: this.idTypology}
+      queryParams: {idTypology: this.cryptoService.encryptParam(this.idTypology)}
     }).then();
   }
 }

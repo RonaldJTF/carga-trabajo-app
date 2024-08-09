@@ -1,11 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {User} from "../../../../../models/user";
-import {UserService} from "../../../../../services/user.service";
-import {ChangePasswordService} from "../service/change-password.service";
 import {finalize, Subscription} from "rxjs";
-import {ToastService} from "../../../../../services/toast.service";
+import {User} from "@models";
+import {ChangePasswordService, ToastService, UserService} from "@services";
 
 @Component({
   template: `

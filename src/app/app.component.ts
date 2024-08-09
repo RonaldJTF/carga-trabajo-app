@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PrimeNGConfig} from 'primeng/api';
 import {LayoutService} from "./layout/service/app.layout.service";
-import {StorageService} from "./services/storage.service";
-import {ThemeService} from "./layout/service/theme.service";
-import {UrlService} from "./services/url.service";
+import {StorageService, ThemeService, UrlService} from "@services";
 
 @Component({
   selector: 'app-root',

@@ -7,17 +7,15 @@
              selectionMode="multiple" [globalFilterFields]="['nombre', 'claseIcono', 'claseEstado', 'path', ]" [rowsPerPageOptions]="[10, 20, 30]"
              [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id"
              [tableStyle]="{'border-circle': '50px'}" class="m-0">
-
       <ng-template pTemplate="caption">
         <div class="flex flex-wrap justify-content-between p-3">
           <div class="flex align-items-center mb-2">
             <div class="_badge-container mr-2">
-              <button pButton pRipple icon="pi pi-plus" style="position: relative;" (click)="listActions.toggle($event)" pTooltip="Nuevo" tooltipPosition="bottom" class="p-button-success mx-1">
+              <button pButton pRipple icon="pi pi-plus" (click)="listActions.toggle($event)" pTooltip="Nuevo" tooltipPosition="bottom" class="p-button-success mx-1">
               </button>
-              <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedActions()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger mx-1" [disabled]="!selectedActions?.length">
+              <button pButton pRipple icon="pi pi-trash" (click)="deleteSelectedActions()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger mx-1" [disabled]="!selectedActions?.length">
               </button>
-              <span *ngIf="selectedActions?.length" (click)="desmarkAll()" class="_badge"
-                    pTooltip="Click para desmarcar">{{ selectedActions.length }}</span>
+              <span *ngIf="selectedActions?.length" (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{ selectedActions.length }}</span>
             </div>
           </div>
           <div>
@@ -51,7 +49,7 @@
           </td>
           <td pRipple class="cursor-pointer" (click)="editAction(action.id)">
             <div class="flex align-items-center">
-              <button pButton type="button" icon="pi {{action.claseIcono}}" class="p-button-rounded p-button-{{action.claseEstado}} p-button-text p-button-lg"></button>
+              <button pButton disabled type="button" icon="pi {{action.claseIcono}}" class="p-button-rounded p-button-{{action.claseEstado}} p-button-text p-button-lg"></button>
               <div class="flex flex-column ml-2">
                 <span class="font-medium">{{ action.nombre | titlecase }}</span>
                 <span class="text-blue-500 text-sm">{{ action.claseEstado }}</span>
@@ -84,10 +82,9 @@
 
 <p-overlayPanel #listActions [showCloseIcon]="true">
   <ng-template pTemplate>
-    <p-listbox [options]="filteredAction" optionLabel="nombre" [filter]="true" [listStyle]="{ 'max-height': '250px' }"
-               [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" (onClick)="addAction($event.value)">
+    <p-listbox [options]="filteredAction" optionLabel="nombre" [filter]="true" [listStyle]="{ 'max-height': '250px' }" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" (onClick)="addAction($event.value)">
       <ng-template pTemplate="filter">
-        <app-go-to-if-not-found [showImage]="false" (go)="openNew(); visible= false"></app-go-to-if-not-found>
+        <app-go-to-if-not-found [showImage]="false" (go)="openNew(); visible= false" buttonLabel="Nuevo"></app-go-to-if-not-found>
         <input (input)="onFilterAction($event)" pInputText>
       </ng-template>
       <ng-template let-action pTemplate="item">

@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {IMAGE_SIZE} from "../../../../utils/constants";
-import {MESSAGE} from "../../../../../labels/labels";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
 import {MenuItem} from "primeng/api";
-import {BasicTablesService} from "../../../../services/basic-tables.service";
-import {ConfirmationDialogService} from "../../../../services/confirmation-dialog.service";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
 import {Router} from "@angular/router";
-import {CryptojsService} from "../../../../services/cryptojs.service";
-import {Ftp} from "../../../../models/ftp";
+import {Ftp} from "@models";
 import {finalize} from "rxjs";
 import {Table} from "primeng/table";
 
@@ -15,7 +13,7 @@ import {Table} from "primeng/table";
   templateUrl: './ftp.component.html',
   styleUrls: ['./ftp.component.scss']
 })
-export class FtpComponent implements OnInit{
+export class FtpComponent implements OnInit {
 
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 

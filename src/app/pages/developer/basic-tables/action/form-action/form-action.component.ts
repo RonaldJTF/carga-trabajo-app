@@ -1,14 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {MenuItem} from "primeng/api";
-import {MESSAGE} from "../../../../../../labels/labels";
-import {Action} from "../../../../../models/action";
-import {ActivatedRoute, Router} from "@angular/router";
-import {BasicTablesService} from "../../../../../services/basic-tables.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
-import {UrlService} from "../../../../../services/url.service";
-import {ConfirmationDialogService} from "../../../../../services/confirmation-dialog.service";
-import {DataService} from "../../../../../services/data.service";
+import {MESSAGE} from "@labels/labels";
+import {Action} from "@models";
+import {ActivatedRoute} from "@angular/router";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, DataService, UrlService} from "@services";
 import {finalize} from "rxjs";
 
 @Component({
@@ -29,8 +25,6 @@ export class FormActionComponent implements OnInit {
   deleting: boolean = false;
 
   idAction: number;
-
-  param: string;
 
   icons: any[] = [];
 
@@ -53,7 +47,6 @@ export class FormActionComponent implements OnInit {
   iconSelected: any;
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private basicTablesService: BasicTablesService,
     private route: ActivatedRoute,
@@ -73,13 +66,12 @@ export class FormActionComponent implements OnInit {
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
-      this.param = params['id'];
+      if (params['id'] != null) {
+        this.idAction = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.updateMode = true;
+        this.getAction(this.idAction);
+      }
     });
-    if (this.param != null) {
-      this.idAction = this.cryptoService.decryptParamAsNumber(this.param);
-      this.updateMode = true;
-      this.getAction(this.idAction);
-    }
   }
 
   getAction(idAction: number) {
@@ -102,9 +94,9 @@ export class FormActionComponent implements OnInit {
 
   assignValuesToForm(action: Action) {
     this.formAction.get('nombre').setValue(action.nombre);
+    this.formAction.get('path').setValue(action.path);
     this.formAction.get('claseIcono').setValue(action.claseIcono);
     this.formAction.get('claseEstado').setValue(action.claseEstado);
-    this.formAction.get('path').setValue(action.path);
   }
 
   private isValido(nombreAtributo: string) {

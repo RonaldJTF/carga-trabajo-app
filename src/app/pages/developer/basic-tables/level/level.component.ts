@@ -1,21 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
-import {IMAGE_SIZE} from "../../../../utils/constants";
-import {MESSAGE} from "../../../../../labels/labels";
-import {BasicTablesService} from "../../../../services/basic-tables.service";
-import {ConfirmationDialogService} from "../../../../services/confirmation-dialog.service";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
 import {Router} from "@angular/router";
-import {CryptojsService} from "../../../../services/cryptojs.service";
 import {finalize} from "rxjs";
 import {Table} from "primeng/table";
-import {Level} from "../../../../models/level";
+import {Level} from "@models";
 
 @Component({
   selector: 'app-level',
   templateUrl: './level.component.html',
   styleUrls: ['./level.component.scss']
 })
-export class LevelComponent implements OnInit{
+export class LevelComponent implements OnInit {
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
   protected readonly MESSAGE = MESSAGE;

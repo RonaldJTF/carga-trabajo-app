@@ -24,10 +24,13 @@
         </div>
       </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitLevel($event)"
-                            (cancel)="onCancelLevel($event)" (delete)="onDeleteLevel($event)"
+    <app-form-actions-button [updateMode]="updateMode"
+                             (createOrUpdate)="onSubmitLevel($event)"
+                            (cancel)="onCancelLevel($event)"
+                             (delete)="onDeleteLevel($event)"
                             [showDeleteButton]="updateMode"
-                            [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
+                            [creatingOrUpdating]="creatingOrUpdating"
+                             [deleting]="deleting"
                             [disabledCreateOrUpdateButton]="formLevel.invalid">
     </app-form-actions-button>
   </form>

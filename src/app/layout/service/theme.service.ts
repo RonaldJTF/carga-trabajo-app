@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {StorageService} from "../../services/storage.service";
-import {LayoutService} from "./app.layout.service";
+import {LayoutService, StorageService} from "@services";
 
 @Injectable({
   providedIn: 'root'

@@ -33,10 +33,13 @@
         </div>
       </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitRol($event)"
-                            (cancel)="onCancelRol($event)" (delete)="onDeleteRol($event)"
+    <app-form-actions-button [updateMode]="updateMode"
+                             (createOrUpdate)="onSubmitRol($event)"
+                            (cancel)="onCancelRol($event)"
+                             (delete)="onDeleteRol($event)"
                             [showDeleteButton]="updateMode"
-                            [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
+                            [creatingOrUpdating]="creatingOrUpdating"
+                             [deleting]="deleting"
                             [disabledCreateOrUpdateButton]="formRol.invalid">
     </app-form-actions-button>
   </form>

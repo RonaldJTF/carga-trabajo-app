@@ -1,6 +1,6 @@
 <ng-container *ngIf="!loading else sLoading">
   <div *ngIf="!typologies else data">
-    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo rol'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo tipologia'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
   </div>
   <ng-template #data>
     <div class="card p-0 pb-2">
@@ -42,7 +42,7 @@
               <p-sortIcon field="nombre"></p-sortIcon>
             </th>
             <th class="text-center" style="white-space: nowrap;" pSortableColumn="esDependencia">
-              Es dependencia
+              Dependencia
               <p-sortIcon field="esDependencia"></p-sortIcon>
             </th>
             <th></th>
@@ -66,11 +66,11 @@
               </div>
             </td>
             <td class="text-center">
-              <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500': typology.esDependencia == 1, 'false-icon pi-times-circle text-pink-500': typology.esDependencia == 0}"></i>
+              <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500 text-xl': typology.esDependencia === '1', 'false-icon pi-times-circle text-pink-500 text-xl': typology.esDependencia === '0'}"></i>
             </td>
             <td class="text-center">
               <div class="flex align-items-center justify-content-end">
-                <app-menu-item [menuItems]="items" [id]="typology.id" [value]="typology" ></app-menu-item>
+                <app-menu-item [menuItems]="items" [id]="typology.id" [value]="typology"></app-menu-item>
               </div>
             </td>
           </tr>

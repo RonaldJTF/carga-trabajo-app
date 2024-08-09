@@ -1,21 +1,16 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {BasicTablesService} from "../../../../../services/basic-tables.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
-import {UrlService} from "../../../../../services/url.service";
-import {ConfirmationDialogService} from "../../../../../services/confirmation-dialog.service";
-import {Level} from "../../../../../models/level";
-import {Ftp} from "../../../../../models/ftp";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
+import {Ftp} from "@models";
 import {finalize} from "rxjs";
-import {Typology} from "../../../../../models/typology";
 
 @Component({
   selector: 'app-form-ftp',
   templateUrl: './form-ftp.component.html',
   styleUrls: ['./form-ftp.component.scss']
 })
-export class FormFtpComponent {
+export class FormFtpComponent implements OnInit{
 
   formFtp: FormGroup;
 
@@ -26,8 +21,6 @@ export class FormFtpComponent {
   deleting: boolean = false;
 
   idFtp: number;
-
-  param: string;
 
   ftp: Ftp = new Ftp();
 
@@ -58,13 +51,12 @@ export class FormFtpComponent {
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
-      this.param = params['id'];
+      if (params['id'] != null) {
+        this.idFtp = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.updateMode = true;
+        this.getFtp(this.idFtp);
+      }
     });
-    if (this.param != null) {
-      this.idFtp = this.cryptoService.decryptParamAsNumber(this.param);
-      this.updateMode = true;
-      this.getFtp(this.idFtp);
-    }
   }
 
   getFtp(idFtp: number) {

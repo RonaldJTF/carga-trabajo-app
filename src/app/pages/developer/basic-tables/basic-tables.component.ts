@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {MenuService} from "../../../layout/app.menu.service";
 import {MegaMenuItem, Message} from "primeng/api";
-import {MESSAGE} from "../../../../labels/labels";
+import {MESSAGE} from "@labels/labels";
 import {Router} from "@angular/router";
 import {Location} from "@angular/common";
+import {MenuService} from "@services";
 
 @Component({
   selector: 'app-basic-tables',

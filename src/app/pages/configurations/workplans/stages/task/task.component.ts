@@ -1,15 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import * as StageActions from "./../../../../../store/stage.actions";
+import * as StageActions from "@store/stage.actions";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {WorkplanService} from "../../../../../services/workplan.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PrimeNGConfig} from "primeng/api";
-import {Methods} from "../../../../../utils/methods";
-import { Task } from 'src/app/models/workplan';
-import { AppState } from 'src/app/app.reducers';
-import { Store } from '@ngrx/store';
-import {UrlService} from "../../../../../services/url.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
+import {Methods} from "@utils";
+import {Task} from '@models';
+import {AppState} from 'src/app/app.reducers';
+import {Store} from '@ngrx/store';
+import {CryptojsService, UrlService, WorkplanService} from "@services";
 
 @Component({
   selector: 'app-activity',

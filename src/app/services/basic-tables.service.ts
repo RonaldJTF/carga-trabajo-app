@@ -1,13 +1,7 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Role} from "../models/role";
-import {Gender} from "../models/gender";
-import {Level} from "../models/level";
-import {DocumentType} from "../models/documenttype";
-import {Typology} from "../models/typology";
-import {Ftp} from "../models/ftp";
-import {Action} from "../models/action";
+import {Action, Ftp, Gender, Level, Role, Typology, DocumentType} from "@models";
 
 @Injectable({
   providedIn: 'root'
@@ -228,7 +222,10 @@ export class BasicTablesService {
   }
 
   deleteTypologyAction(idTypology: number, idAction: number): Observable<Action> {
-    return this.webRequestService.deleteWithHeaders(this.pathTypologyAction, undefined, { idTipologia: idTypology, idAccion: idAction });
+    return this.webRequestService.deleteWithHeaders(this.pathTypologyAction, undefined, {
+      idTipologia: idTypology,
+      idAccion: idAction
+    });
   }
 
   deleteSelectedTypologyActions(idTypology: number, payload: number[]): Observable<Action[]> {

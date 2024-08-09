@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
-import {BasicTablesService} from "../../../../services/basic-tables.service";
-import {ConfirmationDialogService} from "../../../../services/confirmation-dialog.service";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
 import {Router} from "@angular/router";
-import {CryptojsService} from "../../../../services/cryptojs.service";
-import {IMAGE_SIZE} from "../../../../utils/constants";
-import {MESSAGE} from "../../../../../labels/labels";
-import {Typology} from "../../../../models/typology";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {Typology} from "@models";
 import {finalize} from "rxjs";
 import {Table} from "primeng/table";
 
@@ -81,15 +79,15 @@ export class TypologyComponent implements OnInit {
   }
 
   editManageActions(typology: any) {
-    this.router.navigate(['developer/basic-tables/typology-action'/*, this.cryptoService.encryptParam(typology.id)*/], {
+    this.router.navigate(['developer/basic-tables/typology-action'], {
       skipLocationChange: true,
       queryParams: {
-        id: typology.value.id,
-        nombre: typology.value.nombre,
-        claseIcono: typology.value.claseIcono,
-        nombreColor: typology.value.nombreColor,
-        idTipologiaSiguiente: typology.value?.idTipologiaSiguiente,
-        accionesLength: typology.value.acciones.length,
+        id: this.cryptoService.encryptParam(typology.value.id),
+        nombre: this.cryptoService.encryptParam(typology.value.nombre),
+        claseIcono: this.cryptoService.encryptParam(typology.value.claseIcono),
+        nombreColor: this.cryptoService.encryptParam(typology.value.nombreColor),
+        idTipologiaSiguiente: this.cryptoService.encryptParam(typology.value?.idTipologiaSiguiente),
+        accionesLength: this.cryptoService.encryptParam(typology.value.acciones.length),
       },
     }).then();
   }

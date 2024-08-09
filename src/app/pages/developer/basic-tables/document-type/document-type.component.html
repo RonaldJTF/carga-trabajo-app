@@ -1,16 +1,12 @@
 <ng-container *ngIf="!loading else sLoading">
   <div *ngIf="!documentTypes else data">
-    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo rol'" (go)="openNew()"
-                            [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo rol'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
   </div>
   <ng-template #data>
     <div class="card p-0 pb-2">
-      <p-table #dt [value]="documentTypes" rowGroupMode="subheader" sortMode="single" [paginator]="true" [rows]="10"
-               [(selection)]="selectedDocumentTipe" selectionMode="multiple"
-               [globalFilterFields]="['descripcion', 'abreviatura']"
-               [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
-               currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id"
-               [tableStyle]="{'border-circle': '50px'}">
+      <p-table #dt [value]="documentTypes" rowGroupMode="subheader" sortMode="single" [paginator]="true" [rows]="10" [(selection)]="selectedDocumentTipe"
+               selectionMode="multiple" [globalFilterFields]="['descripcion', 'abreviatura']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+               currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
         <ng-template pTemplate="caption">
           <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
             <div class="flex align-items-center flex-wrap">
@@ -19,13 +15,10 @@
                 <span class="p-button-label hidden-lg pl-2">Nuevo</span>
               </button>
               <div class="_badge-container m-1">
-                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedDocumentType()"
-                        pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger "
-                        [disabled]="!selectedDocumentTipe?.length">
+                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedDocumentType()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger " [disabled]="!selectedDocumentTipe?.length">
                   <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
                 </button>
-                <span *ngIf="selectedDocumentTipe?.length" (click)="desmarkAll()" class="_badge"
-                      pTooltip="Click para desmarcar">{{ selectedDocumentTipe.length }}</span>
+                <span *ngIf="selectedDocumentTipe?.length" (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{ selectedDocumentTipe.length }}</span>
               </div>
             </div>
             <div class="m-1">
@@ -54,7 +47,7 @@
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-documentType let-rowIndex="rowIndex">
+        <ng-template pTemplate="body" let-documentType>
           <tr>
             <td>
               <p-tableCheckbox [value]="documentType"></p-tableCheckbox>

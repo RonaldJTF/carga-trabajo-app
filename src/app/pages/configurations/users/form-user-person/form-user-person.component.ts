@@ -1,17 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Person} from 'src/app/models/person';
-import {PersonService} from '../../../../services/person.service';
-import {UserService} from 'src/app/services/user.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Role} from 'src/app/models/role';
 import {SelectItem} from 'primeng/api';
-import {MESSAGE} from '../../../../../labels/labels';
 import {OverlayPanel} from 'primeng/overlaypanel';
-import {Methods} from 'src/app/utils/methods';
-import {User} from "../../../../models/user";
-import {CryptojsService} from "../../../../services/cryptojs.service";
-import {UrlService} from "../../../../services/url.service";
+import {Methods} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {CryptojsService, PersonService, UrlService, UserService} from "@services";
+import {Person, Role, User} from "@models";
 
 @Component({
   selector: 'app-form-user-person',
@@ -98,7 +93,7 @@ export class FormUserPersonComponent implements OnInit {
       next: (data) => {
         this.person = data;
         if (this.person.usuario) {
-          this.person.usuario.roles.map((rol) => this.addRol(rol));
+          this.person.usuario.roles.map((rol: Role) => this.addRol(rol));
           this.onValidacionCredenciales(data);
           this.updateMode = true;
           this.assignValuesToForm(this.person.usuario);
@@ -120,8 +115,8 @@ export class FormUserPersonComponent implements OnInit {
       this.formUser.get('username')?.disable();
       this.formUser.get('password')?.disable();
 
-     // let inputPass = document.getElementById('password');
-     // inputPass.setAttribute('type', 'password');
+      // let inputPass = document.getElementById('password');
+      // inputPass.setAttribute('type', 'password');
     }
   }
 

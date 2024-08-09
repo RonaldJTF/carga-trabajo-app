@@ -60,9 +60,8 @@
       </div>
       <div class="field p-fluid col-12 xl:col-6 m-0">
         <label for="idTipologiaSiguiente"> <span class="font-medium">Tipologia siguiente </span><span>(opcional)</span></label>
-        <p-dropdown id="idTipologiaSiguiente" inputId="idTipologiaSiguiente" [autoDisplayFirst]="false" [options]="typologies"
-                    optionValue="id" optionLabel="nombre" [filter]="true" [showClear]="true" formControlName="idTipologiaSiguiente"
-                    [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+        <p-dropdown id="idTipologiaSiguiente" inputId="idTipologiaSiguiente" [autoDisplayFirst]="false" [options]="typologies" optionValue="id" optionLabel="nombre"
+                    [filter]="true" [showClear]="true" formControlName="idTipologiaSiguiente" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
         <div *ngIf="idTipologiaSiguienteNoValido">
           <div *ngIf="controls['idTipologiaSiguiente'].errors?.['required']">
             <small class="p-error">Seleccione un tipo de documento</small>
@@ -76,9 +75,14 @@
         </div>
       </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitTypology($event)" (cancel)="onCancelTypology($event)"
-                             (delete)="onDeleteTypoligy($event)" [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
-                             [deleting]="deleting" [disabledCreateOrUpdateButton]="formTipologia.invalid">
+    <app-form-actions-button [updateMode]="updateMode"
+                             (createOrUpdate)="onSubmitTypology($event)"
+                             (cancel)="onCancelTypology($event)"
+                             (delete)="onDeleteTypoligy($event)"
+                             [showDeleteButton]="updateMode"
+                             [creatingOrUpdating]="creatingOrUpdating"
+                             [deleting]="deleting"
+                             [disabledCreateOrUpdateButton]="formTipologia.invalid">
     </app-form-actions-button>
   </form>
 </div>

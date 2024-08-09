@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import jwt_decode from "jwt-decode";
 import { MessageService } from 'primeng/api';
-import { Person } from '../models/person';
+import {Person} from "@models";
 
 @Injectable({
   providedIn: 'root'

@@ -1,10 +1,7 @@
-import {OnDestroy, OnInit} from '@angular/core';
+import {OnInit} from '@angular/core';
 import {Component} from '@angular/core';
-import {LayoutService} from './service/app.layout.service';
-import {Functionality} from '../models/functionality';
-import {AuthenticationService} from "../services/auth.service";
-import {Subscription} from "rxjs";
-
+import {Functionality} from "@models";
+import {AuthenticationService, LayoutService} from "@services";
 
 @Component({
   selector: 'app-menu',
@@ -33,7 +30,7 @@ export class AppMenuComponent implements OnInit {
     this.buildManu();
   }
 
-  initializeRoles(){
+  initializeRoles() {
     const {isSuperAdministrator, isDesarrollador, isAdministrator, isOperator} = this.authService.roles();
     this.isSuperAdmin = isSuperAdministrator;
     this.isDesarrollador = isDesarrollador;
@@ -47,24 +44,55 @@ export class AppMenuComponent implements OnInit {
         label: 'Home',
         visible: this.isAdministrator || this.isOperator || this.isSuperAdmin,
         items: [
-          { label: 'Dashboard', icon: 'pi pi-fw pi-home', color:'red', description: 'Tablero resumen de información de interés',  routerLink: ['/'] }
+          {
+            label: 'Dashboard',
+            icon: 'pi pi-fw pi-home',
+            color: 'red',
+            description: 'Tablero resumen de información de interés',
+            routerLink: ['/']
+          }
         ],
       },
       {
         label: 'Configuración',
         visible: this.isAdministrator || this.isOperator || this.isSuperAdmin,
         items: [
-          { label: 'Usuarios', icon: 'pi pi-user', color:'cyan', description: 'Gestión de usuarios', routerLink: ['/configurations/users'], visible: this.isSuperAdmin },
-          { label: 'Estructuras', icon: 'pi pi-sitemap', color:'blue', description: 'Gestión de dependencias, procesos, procedimientos y actividades',  routerLink: ['/configurations/structures'] },
-          { label: 'Planes de trabajo', icon: 'pi pi-calendar', color:'green', description: 'Gestión de planes de trabajos',  routerLink: ['/configurations/workplans'] },
+          {
+            label: 'Usuarios',
+            icon: 'pi pi-user',
+            color: 'cyan',
+            description: 'Gestión de usuarios',
+            routerLink: ['/configurations/users'],
+            visible: this.isSuperAdmin
+          },
+          {
+            label: 'Estructuras',
+            icon: 'pi pi-sitemap',
+            color: 'blue',
+            description: 'Gestión de dependencias, procesos, procedimientos y actividades',
+            routerLink: ['/configurations/structures']
+          },
+          {
+            label: 'Planes de trabajo',
+            icon: 'pi pi-calendar',
+            color: 'green',
+            description: 'Gestión de planes de trabajos',
+            routerLink: ['/configurations/workplans']
+          },
         ],
       },
       {
         label: 'Desarrollador',
         visible: this.isDesarrollador,
         items: [
-          { label: 'Tablas básicas', icon: 'pi pi-database', color:'yellow', description: 'Gestión de las tablas básicas del sistema', routerLink: ['/developer/basic-tables'] }
-          ],
+          {
+            label: 'Tablas básicas',
+            icon: 'pi pi-database',
+            color: 'yellow',
+            description: 'Gestión de las tablas básicas del sistema',
+            routerLink: ['/developer/basic-tables']
+          }
+        ],
       },
     ];
   }

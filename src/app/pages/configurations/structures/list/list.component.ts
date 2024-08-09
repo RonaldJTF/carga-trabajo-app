@@ -1,19 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import * as StructureActions from "./../../../../store/structure.actions";
+import * as StructureActions from "@store/structure.actions";
 import { last, map, Observable, Subscription } from 'rxjs';
-import { Structure } from 'src/app/models/structure';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
-import { IMAGE_SIZE } from 'src/app/utils/constants';
-import { MESSAGE } from 'src/labels/labels';
+import {IMAGE_SIZE, Methods} from '@utils';
+import { MESSAGE } from '@labels/labels';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
 import { TreeTable } from 'primeng/treetable';
-import { Methods } from 'src/app/utils/methods';
-import { AuthenticationService } from 'src/app/services/auth.service';
-import { StructureService } from 'src/app/services/structure.service';
-import {CryptojsService} from "../../../../services/cryptojs.service";
+import {AuthenticationService, ConfirmationDialogService, CryptojsService, StructureService} from "@services";
+import {Structure} from "@models";
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',

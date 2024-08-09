@@ -15,10 +15,10 @@ import {FtpComponent} from "./ftp/ftp.component";
 import {FormFtpComponent} from "./ftp/form-ftp/form-ftp.component";
 import {ActionComponent} from "./action/action.component";
 import {FormActionComponent} from "./action/form-action/form-action.component";
-import {WarningComponent} from "../../../shared/warning/warning.component";
 import {TypologyActionComponent} from "./typology-action/typology-action.component";
 import {ListComponent} from "./typology-action/actions/list/list.component";
 import {FormComponent} from "./typology-action/actions/form/form.component";
+import {WarningComponent} from "../../../shared/warning/warning.component";
 
 const routes: Routes = [{
   path: '', component: BasicTablesComponent, children: [

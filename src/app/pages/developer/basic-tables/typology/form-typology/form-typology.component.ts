@@ -1,14 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {BasicTablesService} from "../../../../../services/basic-tables.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
-import {UrlService} from "../../../../../services/url.service";
-import {ConfirmationDialogService} from "../../../../../services/confirmation-dialog.service";
-import {Typology} from "../../../../../models/typology";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, DataService, UrlService} from "@services";
+import {Typology} from "@models";
 import {finalize} from "rxjs";
-import {DataService} from "../../../../../services/data.service";
-import {MESSAGE} from "../../../../../../labels/labels";
+import {MESSAGE} from "@labels/labels";
 import {MenuItem} from "primeng/api";
 
 @Component({
@@ -29,8 +25,6 @@ export class FormTypologyComponent implements OnInit {
   deleting: boolean = false;
 
   idTipologia: number;
-
-  param: string;
 
   icons: any[] = [];
 
@@ -71,13 +65,12 @@ export class FormTypologyComponent implements OnInit {
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
-      this.param = params['id'];
+      if (params['id'] != null) {
+        this.idTipologia = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.updateMode = true;
+        this.getTypology(this.idTipologia);
+      }
     });
-    if (this.param != null) {
-      this.idTipologia = this.cryptoService.decryptParamAsNumber(this.param);
-      this.updateMode = true;
-      this.getTypology(this.idTipologia);
-    }
   }
 
   getTypology(idTipologia: number) {

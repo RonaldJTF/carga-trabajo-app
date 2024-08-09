@@ -1,19 +1,16 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {BasicTablesService} from "../../../../../services/basic-tables.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
-import {UrlService} from "../../../../../services/url.service";
-import {ConfirmationDialogService} from "../../../../../services/confirmation-dialog.service";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
 import {finalize} from "rxjs";
-import {Level} from "../../../../../models/level";
+import {Level} from "@models";
 
 @Component({
   selector: 'app-form-level',
   templateUrl: './form-level.component.html',
   styleUrls: ['./form-level.component.scss']
 })
-export class FormLevelComponent {
+export class FormLevelComponent implements OnInit{
 
   formLevel: FormGroup;
 
@@ -24,8 +21,6 @@ export class FormLevelComponent {
   deleting: boolean = false;
 
   idLevel: number;
-
-  param: string;
 
   constructor(
     private router: Router,
@@ -51,13 +46,12 @@ export class FormLevelComponent {
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
-      this.param = params['id'];
+      if (params['id'] != null) {
+        this.idLevel = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.updateMode = true;
+        this.getLevel(this.idLevel);
+      }
     });
-    if (this.param != null) {
-      this.idLevel = this.cryptoService.decryptParamAsNumber(this.param);
-      this.updateMode = true;
-      this.getLevel(this.idLevel);
-    }
   }
 
   getLevel(idLevel: number) {

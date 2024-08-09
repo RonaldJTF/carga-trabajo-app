@@ -1,11 +1,9 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MenuItem} from 'primeng/api';
-import {LayoutService} from "./service/app.layout.service";
-import {Person} from '../models/person';
-import {AuthenticationService} from '../services/auth.service';
+import {AuthenticationService, CryptojsService, LayoutService} from '@services';
 import {Observable} from 'rxjs';
 import {Router} from "@angular/router";
-import {CryptojsService} from "../services/cryptojs.service";
+import {Person} from "@models";
 
 @Component({
   selector: 'app-topbar',

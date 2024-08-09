@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {FollowUp, Stage, Task} from "../models/workplan";
+import {FollowUp, Stage, Task} from "@models";
 
 export const setList = createAction('[Configuration of Stage] Set the stages', props<{ stages: Stage[] }>());
 export const addToList = createAction('[Configuration of Stage] Add item to the stages', props<{ stage: Stage }>());

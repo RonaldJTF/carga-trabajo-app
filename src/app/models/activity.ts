@@ -1,5 +1,6 @@
 import {Level} from "./level";
 
+
 export class Activity {
   id?: number;
   frecuencia?: number;

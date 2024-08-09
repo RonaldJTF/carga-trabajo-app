@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { map, Observable, of } from 'rxjs';
-import { Structure } from '../models/structure';
+import { Structure } from '@models';
 import { HttpResponse } from '@angular/common/http';
 
 @Injectable({

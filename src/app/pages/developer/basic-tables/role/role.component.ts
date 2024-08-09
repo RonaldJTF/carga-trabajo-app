@@ -1,14 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {BasicTablesService} from "../../../../services/basic-tables.service";
-import {IMAGE_SIZE} from "../../../../utils/constants";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
+import {IMAGE_SIZE} from "@utils";
 import {finalize} from "rxjs";
-import {MESSAGE} from "../../../../../labels/labels";
-import {ConfirmationDialogService} from "../../../../services/confirmation-dialog.service";
+import {MESSAGE} from "@labels/labels";
 import {Table} from "primeng/table";
 import {Router} from "@angular/router";
-import {CryptojsService} from "../../../../services/cryptojs.service";
 import {MenuItem} from "primeng/api";
-import {Role} from "../../../../models/role";
+import {Role} from "@models";
 
 @Component({
   selector: 'app-rol',

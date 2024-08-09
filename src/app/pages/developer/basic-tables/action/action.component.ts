@@ -1,14 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {IMAGE_SIZE} from "../../../../utils/constants";
-import {MESSAGE} from "../../../../../labels/labels";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
 import {MenuItem} from "primeng/api";
-import {BasicTablesService} from "../../../../services/basic-tables.service";
-import {ConfirmationDialogService} from "../../../../services/confirmation-dialog.service";
 import {Router} from "@angular/router";
-import {CryptojsService} from "../../../../services/cryptojs.service";
 import {finalize} from "rxjs";
-import {Action} from "../../../../models/action";
+import {Action} from "@models";
 import {Table} from "primeng/table";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
 
 @Component({
   selector: 'app-actions',

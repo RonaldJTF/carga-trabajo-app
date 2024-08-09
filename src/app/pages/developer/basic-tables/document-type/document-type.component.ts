@@ -1,13 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Role} from "../../../../models/role";
 import {MenuItem} from "primeng/api";
-import {IMAGE_SIZE} from "../../../../utils/constants";
-import {MESSAGE} from "../../../../../labels/labels";
-import {DocumentType} from "../../../../models/documenttype";
-import {BasicTablesService} from "../../../../services/basic-tables.service";
-import {ConfirmationDialogService} from "../../../../services/confirmation-dialog.service";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {DocumentType} from "@models";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
 import {Router} from "@angular/router";
-import {CryptojsService} from "../../../../services/cryptojs.service";
 import {finalize} from "rxjs";
 import {Table} from "primeng/table";
 
@@ -16,7 +13,7 @@ import {Table} from "primeng/table";
   templateUrl: './document-type.component.html',
   styleUrls: ['./document-type.component.scss']
 })
-export class DocumentTypeComponent implements OnInit{
+export class DocumentTypeComponent implements OnInit {
 
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 

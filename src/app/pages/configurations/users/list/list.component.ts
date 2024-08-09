@@ -1,13 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Table} from 'primeng/table';
-import {Person} from 'src/app/models/person';
 import {MenuItem} from 'primeng/api';
-import {PersonService} from 'src/app/services/person.service';
 import {Router} from '@angular/router';
-import {IMAGE_SIZE} from 'src/app/utils/constants';
-import {MESSAGE} from 'src/labels/labels';
-import {ConfirmationDialogService} from 'src/app/services/confirmation-dialog.service';
-import {CryptojsService} from "../../../../services/cryptojs.service";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {Person} from "@models";
+import {ConfirmationDialogService, CryptojsService, PersonService} from '@services';
 
 @Component({
   selector: 'app-list',

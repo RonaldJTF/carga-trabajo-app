@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {map, Observable} from "rxjs";
 import {WebRequestService} from "./web-request.service";
-import {FollowUp, Stage, Task, Workplan} from "../models/workplan";
+import {FollowUp, Stage, Task, Workplan} from "@models";
 import { HttpResponse } from '@angular/common/http';
 
 @Injectable({

@@ -1,5 +1,5 @@
-import { Activity } from "./activity";
-import { Typology } from "./typology";
+import {Typology} from "./typology";
+import {Activity} from "./activity";
 
 export class Structure{
     id?: number;

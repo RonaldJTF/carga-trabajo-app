@@ -1,20 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import * as WorkplanActions from "./../../../../store/workplan.actions";
-import * as StageActions from "./../../../../store/stage.actions";
+import * as WorkplanActions from "@store/workplan.actions";
+import * as StageActions from "@store/stage.actions";
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
 import { Observable, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
-import { Workplan } from 'src/app/models/workplan';
-import { AuthenticationService } from 'src/app/services/auth.service';
-import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
-import { WorkplanService } from 'src/app/services/workplan.service';
-import { IMAGE_SIZE } from 'src/app/utils/constants';
-import { MESSAGE } from 'src/labels/labels';
 import { Table } from 'primeng/table';
 import { OverlayPanel } from 'primeng/overlaypanel';
-import {CryptojsService} from "../../../../services/cryptojs.service";
+import {Workplan} from "@models";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {AuthenticationService, ConfirmationDialogService, CryptojsService, WorkplanService} from "@services";
 
 @Component({
   selector: 'app-list',

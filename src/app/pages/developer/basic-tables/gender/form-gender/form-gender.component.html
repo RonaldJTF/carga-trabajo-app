@@ -24,11 +24,14 @@
         </div>
       </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitGender($event)"
-                            (cancel)="onCancelRol($event)" (delete)="onDeleteRol($event)"
-                            [showDeleteButton]="updateMode"
-                            [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
-                            [disabledCreateOrUpdateButton]="formGender.invalid">
+    <app-form-actions-button [updateMode]="updateMode"
+                             (createOrUpdate)="onSubmitGender($event)"
+                             (cancel)="onCancelRol($event)"
+                             (delete)="onDeleteRol($event)"
+                             [showDeleteButton]="updateMode"
+                             [creatingOrUpdating]="creatingOrUpdating"
+                             [deleting]="deleting"
+                             [disabledCreateOrUpdateButton]="formGender.invalid">
     </app-form-actions-button>
   </form>
 </div>

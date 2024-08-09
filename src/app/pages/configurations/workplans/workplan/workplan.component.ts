@@ -1,15 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import * as WorkplanActions from "./../../../../store/workplan.actions";
+import * as WorkplanActions from "@store/workplan.actions";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Workplan} from "../../../../models/workplan";
-import {WorkplanService} from "../../../../services/workplan.service";
-import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/app.reducers';
-import { Location } from '@angular/common';
-import {UrlService} from "../../../../services/url.service";
-import {CryptojsService} from "../../../../services/cryptojs.service";
-import {ThisReceiver} from "@angular/compiler";
+import {Workplan} from "@models";
+import {Store} from '@ngrx/store';
+import {AppState} from 'src/app/app.reducers';
+import {Location} from '@angular/common';
+import {CryptojsService, UrlService, WorkplanService} from "@services";
 
 @Component({
   selector: 'app-workplan',

@@ -3,6 +3,24 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "paths": {
+      "@directives":      ["src/app/directives"],
+      "@guards":          ["src/app/guards"],
+      "@interceptors":    ["src/app/interceptors"],
+      "@models":          ["src/app/models"],
+      "@pipes":           ["src/app/pipes"],
+      "@services":        [
+                            "src/app/services",
+                            "src/app/pages/configurations/users/change-password/service/change-password.service.ts",
+                            "src/app/layout/app.menu.service.ts",
+                            "src/app/layout/service"
+                          ],
+      "@shared":          ["src/app/shared/shared.module.ts"],
+      "@store/*":         ["src/app/store/*"],
+      "@utils":           ["src/app/utils"],
+      "@validations/*":   ["src/app/validations/*"],
+      "@labels/*":        ["src/labels/*"]
+    },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
@@ -21,7 +39,8 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

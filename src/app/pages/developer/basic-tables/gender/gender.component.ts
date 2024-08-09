@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Gender} from "../../../../models/gender";
-import {IMAGE_SIZE} from "../../../../utils/constants";
-import {MESSAGE} from "../../../../../labels/labels";
-import {ConfirmationDialogService} from "../../../../services/confirmation-dialog.service";
+import {Gender} from "@models";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
 import {Router} from "@angular/router";
 import {MenuItem} from "primeng/api";
-import {BasicTablesService} from "../../../../services/basic-tables.service";
-import {CryptojsService} from "../../../../services/cryptojs.service";
 import {Table} from "primeng/table";
 import {finalize} from "rxjs";
 
@@ -15,7 +13,7 @@ import {finalize} from "rxjs";
   templateUrl: './gender.component.html',
   styleUrls: ['./gender.component.scss']
 })
-export class GenderComponent implements OnInit{
+export class GenderComponent implements OnInit {
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
   protected readonly MESSAGE = MESSAGE;

@@ -33,11 +33,9 @@
         </div>
       </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitDocumentType($event)"
-                            (cancel)="onCancelRol($event)" (delete)="onDeleteDocumentType($event)"
-                            [showDeleteButton]="updateMode"
-                            [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
-                            [disabledCreateOrUpdateButton]="formDocumentType.invalid">
+    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitDocumentType($event)" (cancel)="onCancelRol($event)"
+                             (delete)="onDeleteDocumentType($event)" [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
+                             [deleting]="deleting" [disabledCreateOrUpdateButton]="formDocumentType.invalid">
     </app-form-actions-button>
   </form>
 </div>

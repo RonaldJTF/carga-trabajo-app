@@ -1,7 +1,6 @@
 <ng-container *ngIf="!loading else sLoading">
   <div *ngIf="!actions else data">
-    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva accion'" (go)="openNew()"
-                            [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva accion'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
   </div>
   <ng-template #data>
     <div class="card p-0 pb-2">
@@ -55,7 +54,7 @@
             </td>
             <td pRipple class="cursor-pointer" (click)="editAction(action.id)">
               <div class="flex align-items-center ">
-                <button pButton type="button" icon="pi {{action.claseIcono}}" class="p-button-rounded p-button-{{action.claseEstado}} p-button-text p-button-lg"></button>
+                <button pButton disabled type="button" icon="pi {{action.claseIcono}}" class="p-button-rounded p-button-{{action.claseEstado}} p-button-text p-button-lg"></button>
                 <div class="flex flex-column ml-2">
                   <span class="font-medium">{{ action.nombre | titlecase }}</span>
                   <span class="text-blue-500 text-sm">{{ action.claseEstado }}</span>

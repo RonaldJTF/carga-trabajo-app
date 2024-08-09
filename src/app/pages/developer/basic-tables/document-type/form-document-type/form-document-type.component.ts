@@ -1,11 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {BasicTablesService} from "../../../../../services/basic-tables.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
-import {UrlService} from "../../../../../services/url.service";
-import {ConfirmationDialogService} from "../../../../../services/confirmation-dialog.service";
-import {DocumentType} from "../../../../../models/documenttype";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
+import {DocumentType} from "@models";
 import {finalize} from "rxjs";
 
 @Component({
@@ -25,8 +22,6 @@ export class FormDocumentTypeComponent implements OnInit {
 
   idDocumentType: number;
 
-  param: string;
-
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -45,13 +40,12 @@ export class FormDocumentTypeComponent implements OnInit {
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
-      this.param = params['id'];
+      if (params['id'] != null) {
+        this.idDocumentType = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.updateMode = true;
+        this.getDocumentType(this.idDocumentType);
+      }
     });
-    if (this.param != null) {
-      this.idDocumentType = this.cryptoService.decryptParamAsNumber(this.param);
-      this.updateMode = true;
-      this.getDocumentType(this.idDocumentType);
-    }
   }
 
   getDocumentType(idDocumentType: number) {

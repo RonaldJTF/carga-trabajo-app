@@ -1,7 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {LayoutService} from '../service/app.layout.service';
-import {StorageService} from '../../services/storage.service';
-import {ThemeService} from "../service/theme.service";
+import {LayoutService, StorageService, ThemeService} from "@services";
 
 @Component({
   selector: 'app-config',

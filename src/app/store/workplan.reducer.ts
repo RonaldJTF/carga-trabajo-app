@@ -1,6 +1,6 @@
 import * as WorkplanActions from "./workplan.actions";
 import {createReducer, on} from "@ngrx/store";
-import {Stage, Workplan} from "../models/workplan";
+import {Stage, Workplan} from "@models";
 
 export interface WorkplanState {
   items: Workplan[];
@@ -55,7 +55,7 @@ export const workplanReducer = createReducer(
     ...state,
     mustRecharge: mustRecharge,
   })),
-  
+
   on(WorkplanActions.setItem, (state, { id }) => ({
     ...state,
     item: JSON.parse(JSON.stringify(state.items.find(item => item.id == id)))

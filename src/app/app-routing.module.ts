@@ -1,10 +1,8 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { AppLayoutComponent } from './layout/app.layout.component';
-import { authGuard } from './guards/auth.guard';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
-import {adminOrOperatorGuard} from "./guards/admin-or-operator.guard";
-import {developerGuard} from "./guards/developer.guard";
+import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
+import {AppLayoutComponent} from './layout/app.layout.component';
+import {adminOrOperatorGuard, authGuard, developerGuard} from '@guards';
+import {NotFoundComponent} from './pages/not-found/not-found.component';
 
 @NgModule({
   declarations: [],

@@ -1,15 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {MESSAGE} from "../../../../../../../labels/labels";
-import {Action} from "../../../../../../models/action";
-import {ConfirmationDialogService} from "../../../../../../services/confirmation-dialog.service";
-import {BasicTablesService} from "../../../../../../services/basic-tables.service";
+import {MESSAGE} from "@labels/labels";
+import {Action, Typology} from "@models";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
 import {Table} from "primeng/table";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CryptojsService} from "../../../../../../services/cryptojs.service";
 import {MenuItem} from "primeng/api";
-import {Typology} from "../../../../../../models/typology";
-import {IMAGE_SIZE} from "../../../../../../utils/constants";
-import {finalize, isEmpty} from "rxjs";
+import {IMAGE_SIZE} from "@utils";
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-list',
@@ -47,10 +44,6 @@ export class ListComponent implements OnInit {
   ) {
   }
 
-  showDialog() {
-    this.visible = true;
-  }
-
   ngOnInit() {
     this.intMenu();
     this.getActions();
@@ -58,7 +51,7 @@ export class ListComponent implements OnInit {
   }
 
   getInitialValue() {
-    const idTypology = this.route.snapshot.queryParams['idTypology'];
+    let idTypology = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTypology']);
     if (idTypology) {
       this.getTypology(idTypology);
     }
@@ -136,8 +129,8 @@ export class ListComponent implements OnInit {
       relativeTo: this.route,
       skipLocationChange: true,
       queryParams: {
-        idTypology: this.typology.id,
-        idAction: idAction
+        idTypology: this.cryptoService.encryptParam(this.typology.id),
+        idAction: this.cryptoService.encryptParam(idAction)
       }
     }).then();
   }
@@ -207,13 +200,4 @@ export class ListComponent implements OnInit {
     }
   }
 
-  goBack(): void {
-    this.actions = [];
-    this.router.navigate(['/developer/basic-tables/typology'], {
-      skipLocationChange: true
-    }).then();
-  }
-
-  protected readonly isEmpty = isEmpty;
-  protected readonly Object = Object;
 }

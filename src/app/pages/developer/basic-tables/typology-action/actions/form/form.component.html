@@ -53,9 +53,14 @@
       </p-splitter>
     </div>
   </div>
-  <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitAction($event)" (cancel)="onCancelAction($event)"
-                           (delete)="onDeleteAction($event)" [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
-                           [deleting]="deleting" [disabledCreateOrUpdateButton]="formAction.invalid">
+  <app-form-actions-button [updateMode]="updateMode"
+                           (createOrUpdate)="onSubmitAction($event)"
+                           (cancel)="onCancelAction($event)"
+                           (delete)="onDeleteAction($event)"
+                           [showDeleteButton]="updateMode"
+                           [creatingOrUpdating]="creatingOrUpdating"
+                           [deleting]="deleting"
+                           [disabledCreateOrUpdateButton]="formAction.invalid">
   </app-form-actions-button>
 </form>
 

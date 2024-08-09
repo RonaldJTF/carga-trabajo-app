@@ -15,10 +15,10 @@ import {FtpComponent} from './ftp/ftp.component';
 import {FormFtpComponent} from './ftp/form-ftp/form-ftp.component';
 import {FormActionComponent} from './action/form-action/form-action.component';
 import {TypologyActionComponent} from './typology-action/typology-action.component';
-import {SharedModule} from "../../../shared/shared.module";
 import {ListComponent} from "./typology-action/actions/list/list.component";
 import {ActionComponent} from "./action/action.component";
-import { FormComponent } from './typology-action/actions/form/form.component';
+import {FormComponent} from './typology-action/actions/form/form.component';
+import {SharedModule} from "@shared";
 
 @NgModule({
   declarations: [
@@ -41,10 +41,7 @@ import { FormComponent } from './typology-action/actions/form/form.component';
     ActionComponent,
     FormComponent
   ],
-  imports: [
-    BasicTablesRoutingModule,
-    SharedModule
-  ]
+  imports: [BasicTablesRoutingModule, SharedModule]
 })
 export class BasicTablesModule {
 }

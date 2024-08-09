@@ -19,7 +19,7 @@ import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
-import { SharedModule } from '../shared/shared.module';
+import {SharedModule} from "@shared";
 
 @NgModule({
     declarations: [

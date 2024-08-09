@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Person} from "../../../../models/person";
-import {ChangePasswordService} from "./service/change-password.service";
-import {UrlService} from "../../../../services/url.service";
-import {AuthenticationService} from "../../../../services/auth.service";
 import {MenuItem} from "primeng/api";
+import {Person} from "@models";
+import {AuthenticationService, ChangePasswordService, UrlService} from "@services";
 
 @Component({
   selector: 'app-change-password',

@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {DashboardService} from "../../../../services/dashboard.service";
-import {StructureService} from "../../../../services/structure.service";
-import {Structure} from "../../../../models/structure";
-import {MESSAGE} from "../../../../../labels/labels";
-import {TypologyInventory} from "../../../../models/typologyinventory";
+import {DashboardService, StructureService} from "@services";
+import {Structure} from "@models";
+import {MESSAGE} from "@labels/labels";
+import {TypologyInventory} from "@models";
 import {TreeNode} from 'primeng/api';
-import {Methods} from 'src/app/utils/methods';
-import {IMAGE_SIZE} from 'src/app/utils/constants';
+import {IMAGE_SIZE, Methods} from '@utils';
 
 @Component({
   selector: 'app-charts',
@@ -27,7 +25,10 @@ export class ChartsComponent implements OnInit {
   loading: boolean = false;
   downloadingReport: boolean = false;
 
-  constructor(private dashboardService: DashboardService, private structureService: StructureService) {
+  constructor(
+    private dashboardService: DashboardService,
+    private structureService: StructureService
+  ) {
   }
 
   ngOnInit() {

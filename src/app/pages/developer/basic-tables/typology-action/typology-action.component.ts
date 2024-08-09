@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {Typology} from "../../../../models/typology";
-import {MESSAGE} from "../../../../../labels/labels";
-import {IMAGE_SIZE} from "../../../../utils/constants";
-import {UrlService} from "../../../../services/url.service";
+import {Typology} from "@models";
+import {MESSAGE} from "@labels/labels";
+import {IMAGE_SIZE} from "@utils";
+import {CryptojsService, UrlService} from "@services";
 
 @Component({
   selector: 'app-typology-actions',
@@ -28,6 +28,7 @@ export class TypologyActionComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public urlService: UrlService,
+    private cryptoService: CryptojsService,
   ) {
   }
 
@@ -36,22 +37,22 @@ export class TypologyActionComponent implements OnInit {
   }
 
   getInitialValue() {
-    this.typology.id = this.route.snapshot.queryParams['id'];
-    this.typology.nombre = this.route.snapshot.queryParams['nombre'];
-    this.typology.claseIcono = this.route.snapshot.queryParams['claseIcono'];
-    this.typology.nombreColor = this.route.snapshot.queryParams['nombreColor'];
-    this.typology.idTipologiaSiguiente = this.route.snapshot.queryParams['idTipologiaSiguiente'];
-    this.accionesLength = this.route.snapshot.queryParams['accionesLength'];
+    this.typology.id = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['id']);
+    this.typology.nombre = this.cryptoService.decryptParamAsString(this.route.snapshot.queryParams['nombre']);
+    this.typology.claseIcono = this.cryptoService.decryptParamAsString(this.route.snapshot.queryParams['claseIcono']);
+    this.typology.nombreColor = this.cryptoService.decryptParamAsString(this.route.snapshot.queryParams['nombreColor']);
+    this.typology.idTipologiaSiguiente = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTipologiaSiguiente']);
+    this.accionesLength = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['accionesLength']);
     if (this.typology.id) {
-      this.showList(this.typology);
+      this.showList(this.typology.id);
     }
   }
 
-  showList(data: Typology) {
+  showList(idTypology: number) {
     this.router.navigate(['./list'], {
       relativeTo: this.route,
       skipLocationChange: true,
-      queryParams: {idTypology: data.id}
+      queryParams: {idTypology: this.cryptoService.encryptParam(idTypology)}
     }).then();
   }
 

@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { Structure } from "../models/structure";
+import { Structure } from "@models";
 import * as StructureActions from "./structure.actions";
 import _ from 'lodash'; //Usada para clonar conservando la estructura del objeto, por ejemplo, el orden en que se encuentran en una lista, etc.
 
@@ -117,7 +117,7 @@ export const structureReducer = createReducer(
     }
     if (updatedStructure){
       Object.assign(updatedStructure, JSON.parse(JSON.stringify(structure)));
-    }        
+    }
     const dependency = findStructure(state.dependency?.id, items);
     order(dependency?.subEstructuras, state.orderIsAscending);
     return { ...state,

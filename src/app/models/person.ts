@@ -1,6 +1,6 @@
-import { DocumentType } from './documenttype';
-import { Gender } from './gender';
-import { User } from './user';
+import {Gender} from "./gender";
+import {User} from "./user";
+import {DocumentType} from "./documenttype";
 
 export class Person {
   id: number;

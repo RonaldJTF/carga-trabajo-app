@@ -1,12 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {BasicTablesService} from "../../../../../services/basic-tables.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
 import {finalize} from "rxjs";
-import {UrlService} from "../../../../../services/url.service";
-import {ConfirmationDialogService} from "../../../../../services/confirmation-dialog.service";
-import {Role} from "../../../../../models/role";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
+import {Role} from "@models";
 
 @Component({
   selector: 'app-form-rol',
@@ -24,8 +21,6 @@ export class FormRoleComponent implements OnInit {
   deleting: boolean = false;
 
   idRol: number;
-
-  param: string;
 
   constructor(
     private router: Router,
@@ -45,13 +40,12 @@ export class FormRoleComponent implements OnInit {
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
-      this.param = params['id'];
+      if (params['id'] != null) {
+        this.idRol = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.updateMode = true;
+        this.getRole(this.idRol);
+      }
     });
-    if (this.param != null) {
-      this.idRol = this.cryptoService.decryptParamAsNumber(this.param);
-      this.updateMode = true;
-      this.getRole(this.idRol);
-    }
   }
 
   getRole(idRol: number) {
@@ -131,7 +125,7 @@ export class FormRoleComponent implements OnInit {
         this.creatingOrUpdating = false;
       })
     ).subscribe({
-      next: (res) => {
+      next: () => {
         this.urlService.goBack();
       }
     })

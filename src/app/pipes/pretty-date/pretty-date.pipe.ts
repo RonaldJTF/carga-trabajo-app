@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Methods } from '../../utils/methods';
 
 @Pipe({
   name: 'prettyDate'
