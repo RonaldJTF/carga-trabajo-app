@@ -150,7 +150,7 @@ export class ListComponent implements OnInit {
       relativeTo: this.route,
       skipLocationChange: true,
       queryParams: {
-        idTypology: this.typology.id,
+        idTypology: this.cryptoService.encryptParam(this.typology.id),
         idAction: null
       }
     }).then();

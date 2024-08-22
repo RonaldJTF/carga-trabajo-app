@@ -1,0 +1,51 @@
+<ng-container>
+  <div class="flex flex-column align-items-center text-center p-3">
+    <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-red-100 border-circle">
+      <i class="pi pi-times-circle text-4xl text-red-500"></i>
+    </div>
+    <h5 class="font-bold text-600">Parece que estamos teniendo algunos problemas internos.</h5>
+    <span class="text-500">Nuestro equipo ha sido notificado. Si deseas ayudar, cuéntanos lo que ocurrió a continuación.</span>
+  </div>
+
+  <form [formGroup]="formCommentsSentry">
+    <div class="grid">
+      <div class="field p-fluid col-12 m-0">
+        <label htmlFor="name" class="font-medium">Nombre</label>
+        <input type="text" id="name" pInputText formControlName="name">
+        <div *ngIf="nameNoValido">
+          <div *ngIf="controls['name'].errors?.['required']">
+            <small class="p-error">Ingrese el nombre</small>
+          </div>
+        </div>
+      </div>
+      <div class="field p-fluid col-12 m-0">
+        <label htmlFor="email" class="font-medium">Correo</label>
+        <input type="text" id="email" pInputText formControlName="email">
+        <div *ngIf="emailNoValido">
+          <div *ngIf="controls['email'].errors?.['required']">
+            <small class="p-error">Ingrese el correo</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="field p-fluid col-12 m-0">
+        <label htmlFor="message" class="font-medium">¿Que pasó?</label>
+        <textarea id="message" rows="5" cols="30" placeholder="Hice clic en 'X' y luego en 'Enviar'" pInputTextarea formControlName="message"></textarea>
+        <div *ngIf="commentsNoValido">
+          <div *ngIf="controls['message'].errors?.['required']">
+            <small class="p-error">Ingrese un comentario</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <app-form-actions-button (cancel)="hideDialog()"
+                           [showDeleteButton]="false"
+                           [creatingOrUpdating]="creatingOrUpdating"
+                           (createOrUpdate)="sendComments()"
+                           buttonCreateNamedAs="Enviar"
+                           buttonCancelNamedAs="Cerrar"
+                           [disabledCreateOrUpdateButton]="formCommentsSentry.invalid">
+  </app-form-actions-button>
+</ng-container>

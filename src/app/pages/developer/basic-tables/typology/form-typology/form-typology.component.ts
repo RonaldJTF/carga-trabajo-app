@@ -200,22 +200,16 @@ export class FormTypologyComponent implements OnInit {
 
   getIcons() {
     this.dataService.getIcons().subscribe(data => {
-      data = data.filter(value => {
-        return value.icon.tags.indexOf('deprecate') === -1;
-      });
+      const icons = data.filter((value: any) => !value.icon.tags.includes('deprecate'));
 
-      let icons = data;
-      icons.sort((icon1, icon2) => {
-        if (icon1.properties.name < icon2.properties.name)
-          return -1;
-        else if (icon1.properties.name < icon2.properties.name)
-          return 1;
-        else
-          return 0;
+      icons.sort((icon1: any, icon2: any) => {
+        if (icon1.properties.name < icon2.properties.name) return -1;
+        if (icon1.properties.name > icon2.properties.name) return 1;
+        return 0;
       });
 
       this.icons = icons;
-      this.filteredIcons = data;
+      this.filteredIcons = icons;
     });
   }
 

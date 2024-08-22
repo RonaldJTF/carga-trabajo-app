@@ -76,7 +76,7 @@ export class BasicTablesComponent implements OnInit {
         label: 'Configure y administre los servidores FTP.',
         iconStyle: 'primary',
         state: {
-          message: 'Realizar modificaciones en la configuracion del los servidor FTP puede causar interrupciones en el servicio. Impactando en la conectividad y el acceso a los archivos.',
+          message: 'Realizar modificaciones en la configuracion del los servidores FTP puede causar interrupciones en el servicio. Impactando en la conectividad y el acceso a los archivos.',
           severity: 'warn',
           show: true
         }

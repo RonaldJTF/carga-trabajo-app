@@ -79,6 +79,7 @@ export class FormPersonComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.param = params['id'];
     });
+    console.log("Parametro persona ID: ", this.param);
     if (this.param != null) {
       this.personId = this.cryptoService.decryptParamAsNumber(this.param);
       this.updateMode = true;

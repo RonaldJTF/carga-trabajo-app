@@ -138,3 +138,5 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
     }
 };
 
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{},n=(new Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="1165e881-3605-5574-b671-85ec06a56303")}catch(e){}}();
+//# debugId=1165e881-3605-5574-b671-85ec06a56303

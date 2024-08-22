@@ -69,6 +69,7 @@ import {FormActionButtonComponent} from "./form-action-button/form-action-button
 import {MessagesModule} from "primeng/messages";
 import {WarningComponent} from "./warning/warning.component";
 import {CalendarComponent} from "./calendar/calendar.component";
+import { DialogComponent } from './dialog/dialog.component';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import {CalendarComponent} from "./calendar/calendar.component";
     LoadingComponent,
     CountdownTimerComponent,
     WarningComponent,
+    DialogComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -185,6 +187,7 @@ import {CalendarComponent} from "./calendar/calendar.component";
     LoadingComponent,
     CountdownTimerComponent,
     WarningComponent,
+    DialogComponent,
 
     ImageFallbackDirective,
     SvgColorDirective,
@@ -259,5 +262,5 @@ import {CalendarComponent} from "./calendar/calendar.component";
 })
 export class SharedModule {
 }
-export {CalendarComponent}
+export {CalendarComponent, DialogComponent}
 

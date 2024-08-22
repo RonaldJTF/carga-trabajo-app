@@ -71,6 +71,7 @@ export class FormComponent implements OnInit {
   getInitialValue() {
     this.idTypology = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTypology']);
     this.idAction = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idAction']);
+    if (this.idTypology)
     if (this.idTypology && this.idAction) {
       this.updateMode = true;
       this.getAction(this.idAction);

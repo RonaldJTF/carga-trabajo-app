@@ -11,6 +11,7 @@ import {Person} from "@models";
   providedIn: 'root'
 })
 export class AuthenticationService {
+
   pathRecoverPassword: string = 'auth/recover-password';
   pathChangePassword: string = 'auth/change-password';
   pathAuth = "auth/authenticate";

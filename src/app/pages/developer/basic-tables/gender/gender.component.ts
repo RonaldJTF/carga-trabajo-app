@@ -14,6 +14,7 @@ import {finalize} from "rxjs";
   styleUrls: ['./gender.component.scss']
 })
 export class GenderComponent implements OnInit {
+
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
   protected readonly MESSAGE = MESSAGE;

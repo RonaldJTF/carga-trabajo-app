@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -11,9 +11,22 @@ import {environment} from 'src/environments/environment';
 import {QuillModule} from 'ngx-quill';
 import {ErrorInterceptor, OkInterceptor} from '@interceptors';
 import {
-  AuthenticationService, ChangePasswordService, CryptojsService, DashboardService, DocumentTypeService, GenderService,
-  LevelService, MatrizlevantamientoService, MediaService, PersonService, StorageService, StructureService, UrlService,
-  UserService, WorkplanService
+  AuthenticationService,
+  ChangePasswordService,
+  CryptojsService,
+  DashboardService,
+  DocumentTypeService,
+  GenderService,
+  LevelService,
+  MatrizlevantamientoService,
+  MediaService,
+  PersonService,
+  SentryInitService,
+  StorageService,
+  StructureService,
+  UrlService,
+  UserService,
+  WorkplanService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -23,6 +36,10 @@ import {structureReducer} from '@store/structure.reducer';
 import {workplanReducer} from "@store/workplan.reducer";
 import {stageReducer} from '@store/stage.reducer';
 import {RippleModule} from "primeng/ripple";
+
+import * as Sentry from "@sentry/angular";
+import {Router} from "@angular/router";
+import {DialogService} from "primeng/dynamicdialog";
 
 @NgModule({
   declarations: [
@@ -47,9 +64,12 @@ import {RippleModule} from "primeng/ripple";
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService,
-    UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService,
+    UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},
+    {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},
+    {provide: Sentry.TraceService, deps: [Router]},
+    {provide: APP_INITIALIZER, useFactory: () => () => {}, deps: [Sentry.TraceService], multi: true},
   ],
   bootstrap: [AppComponent]
 })

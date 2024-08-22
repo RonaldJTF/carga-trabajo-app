@@ -14,8 +14,7 @@ export class ConfirmationDialogService {
     acceptLabel: string,
     rejectLabel: string,
     acceptAction: () => void,
-    rejectAction: () => void = () => {
-    },
+    rejectAction: () => void = () => {},
   ): void {
     this.confirmationService.confirm({
       message: message,

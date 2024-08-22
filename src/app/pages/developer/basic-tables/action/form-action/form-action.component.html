@@ -80,7 +80,7 @@
       <input (input)="onFilterIcon($event)" pInputText placeholder="Buscar un icono" class="icon-filter w-full p-3 mt-3 mb-5">
     </div>
     <div class="flex flex-wrap justify-content-between h-20rem" style="overflow: auto;">
-      <div class="text-center p-3 w-8rem cursor-pointer" *ngFor="let icon of filteredIcons" (click)="claseIcon(icon)">
+      <div class="text-center p-3 w-8rem cursor-pointer" *ngFor="let icon of filteredIcons" (click)="claseIcono(icon)">
         <div class="flex align-items-center justify-content-center" (click)="claseIconoOverlayPanel.hide()">
           <i class="text-2xl pi pi-{{icon.properties.name}}"></i>
         </div>

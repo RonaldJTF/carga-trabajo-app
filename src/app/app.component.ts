@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {PrimeNGConfig} from 'primeng/api';
-import {LayoutService} from "./layout/service/app.layout.service";
+import {LayoutService, SentryInitService} from "@services";
 import {StorageService, ThemeService, UrlService} from "@services";
 
 @Component({
@@ -17,11 +17,13 @@ export class AppComponent implements OnInit {
     public layoutService: LayoutService,
     private storageService: StorageService,
     private themeService: ThemeService,
-    private urlService: UrlService) {
+    private urlService: UrlService,
+    private sentryInitService: SentryInitService) {
     this.themeService.getThemeLocalStorage();
   }
 
   ngOnInit() {
+    this.sentryInitService.initSentry();
     this.primengConfig.ripple = true;
     this.initConfig();
     this.urlService.initialize();

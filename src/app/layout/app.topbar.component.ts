@@ -33,12 +33,9 @@ export class AppTopBarComponent implements OnInit {
     this.loguedPerson$ = this.authenticationService.loguedPerson$;
   }
 
-  editPerson(idPerson: string) {
+  editPerson(idPerson: number) {
     this.router.navigate(['configurations/users/person/', this.cryptoService.encryptParam(idPerson)], {
       skipLocationChange: true,
-      queryParams: {
-        backLocation: true
-      }
     }).then();
   }
 
@@ -57,7 +54,7 @@ export class AppTopBarComponent implements OnInit {
         this.loguedPerson$.subscribe((person: Person) => {
           idPerson = person?.id
         })
-        this.editPerson(idPerson.toString())
+        this.editPerson(idPerson);
       }
     },
     {
