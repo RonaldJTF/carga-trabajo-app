@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ICONS_OF_FILE_TYPE_BY_EXTENSION, ICON_FILE_GENERAL } from '../../utils/constants';
-import { Methods } from '../../utils/methods';
+import {ICONS_OF_FILE_TYPE_BY_EXTENSION, ICON_FILE_GENERAL, Methods} from '@utils';
 
 @Pipe({
   name: 'fileIcon'

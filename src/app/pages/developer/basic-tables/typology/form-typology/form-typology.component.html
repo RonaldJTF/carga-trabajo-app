@@ -1,0 +1,137 @@
+<div class="card">
+  <div class="flex align-items-center justify-content-between mb-4">
+    <div class="flex align-items-center">
+      <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+        <i class="pi pi-sitemap text-xl text-primary-500"></i>
+      </div>
+      <div class="flex flex-column">
+        <h5 class="m-0 text-700">Tipologia</h5>
+        <span class="text-500">Administra las diferentes tipologías disponibles para clasificación de las estructuras.</span>
+      </div>
+    </div>
+  </div>
+
+  <form class="p-0" [formGroup]="formTipologia">
+    <div class="grid">
+      <div class="field p-fluid col-12 m-0">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input type="text" id="nombre" pInputText formControlName="nombre">
+        <div *ngIf="nombreNoValido">
+          <div *ngIf="controls['nombre'].errors?.['required']">
+            <small class="p-error">Ingrese el nombre</small>
+          </div>
+        </div>
+      </div>
+      <div class="field p-fluid col-12 m-0">
+        <label htmlFor="claseEstado" class="font-medium">Define icono y color</label>
+        <p-splitter [style]="{'height': '150px'}" [panelSizes]="[50,50]">
+          <ng-template pTemplate>
+            <p-splitter layout="vertical" [panelSizes]="[50,50]" [minSizes]="[10,10]">
+              <ng-template pTemplate>
+                <div class="col flex align-items-center justify-content-center">
+                  <div *ngIf="claseIconoFormControl.value else sAddIcon">
+                    <div class="flex align-items-center justify-content-center">
+                      <div class="w-3rem h-3rem border-circle flex align-items-center justify-content-center cursor-pointer" (click)="claseIconoOverlayPanel.toggle($event)">
+                        <i class="pi {{claseIconoFormControl.value}} text-xl"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate>
+                <div class="col flex align-items-center justify-content-center">
+                  <div *ngIf="nombreColorFormControl.value else sAddColor">
+                    <button pButton pRipple type="button" label="{{nombreColorFormControl.value | titlecase}}" class="p-button-text hover:bg-{{nombreColorFormControl.value}}-50 text-{{nombreColorFormControl.value}}-500" (click)="nombreColorOverlayPanel.toggle($event)"></button>
+                  </div>
+                </div>
+              </ng-template>
+            </p-splitter>
+          </ng-template>
+          <ng-template pTemplate>
+            <div class="col flex align-items-center justify-content-center text-center">
+              <div *ngIf="claseIconoFormControl.value || nombreColorFormControl.value else defineIcon">
+                <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{nombreColorFormControl.value}}-100 border-circle flex-shrink-0">
+                  <i class="pi {{claseIconoFormControl.value}} text-{{nombreColorFormControl.value}}-500 text-4xl"></i>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-splitter>
+      </div>
+      <div class="field p-fluid col-12 xl:col-6 m-0">
+        <label for="idTipologiaSiguiente"> <span class="font-medium">Tipologia siguiente </span><span>(opcional)</span></label>
+        <p-dropdown id="idTipologiaSiguiente" inputId="idTipologiaSiguiente" [autoDisplayFirst]="false" [options]="typologies" optionValue="id" optionLabel="nombre"
+                    [filter]="true" [showClear]="true" formControlName="idTipologiaSiguiente" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+        <div *ngIf="idTipologiaSiguienteNoValido">
+          <div *ngIf="controls['idTipologiaSiguiente'].errors?.['required']">
+            <small class="p-error">Seleccione un tipo de documento</small>
+          </div>
+        </div>
+      </div>
+      <div class="grid col-12 xl:col-6">
+        <div class="field p-fluid col-12 m-0 p-0">
+          <label for="esDependencia" class="col-12"><span class="font-medium">Es dependencia </span><span>(opcional)</span></label>
+          <p-inputSwitch class="p-fluid ml-3" id="esDependencia" formControlName="esDependencia"></p-inputSwitch>
+        </div>
+      </div>
+    </div>
+    <app-form-action-button [updateMode]="updateMode"
+                             (createOrUpdate)="onSubmitTypology($event)"
+                             (cancel)="onCancelTypology($event)"
+                             (delete)="onDeleteTypoligy($event)"
+                             [showDeleteButton]="updateMode"
+                             [creatingOrUpdating]="creatingOrUpdating"
+                             [deleting]="deleting"
+                             [disabledCreateOrUpdateButton]="formTipologia.invalid">
+    </app-form-action-button>
+  </form>
+</div>
+
+<p-overlayPanel #claseIconoOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+  <ng-template pTemplate>
+    <input (input)="onFilterIcon($event)" pInputText placeholder="Buscar un icono" class="icon-filter w-full p-3 mt-3 mb-5">
+    <div class="flex flex-wrap justify-content-between h-20rem" style="overflow: auto;">
+      <div class="text-center p-3 w-8rem" *ngFor="let icon of filteredIcons" (click)="claseIcon(icon)">
+        <div class="flex align-items-center cursor-pointer justify-content-center" (click)="claseIconoOverlayPanel.hide()">
+          <i class="text-2xl pi pi-{{icon.properties.name}}"></i>
+        </div>
+        <div>pi-{{ icon.properties.name }}</div>
+      </div>
+    </div>
+  </ng-template>
+</p-overlayPanel>
+<ng-template #sAddIcon>
+  <app-go-to-if-not-found [buttonLabel]="'Icono'" [showImage]=" false" (go)="claseIconoOverlayPanel.toggle($event)"></app-go-to-if-not-found>
+</ng-template>
+
+<p-overlayPanel #nombreColorOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+  <ng-template pTemplate>
+    <div>
+      <input (input)="onFilterColor($event)" pInputText placeholder="Buscar un color" class="icon-filter w-full p-3 mt-3 mb-5">
+      <div class="grid">
+        <div class="text-center col" *ngFor="let color of filteredColor" (click)="nombreColor(color)">
+          <div class="flex align-items-center justify-content-center">
+            <div class="cursor-pointer w-3rem h-3rem bg-{{color.value}}-100 border-circle" (click)="nombreColorOverlayPanel.hide()"></div>
+          </div>
+          <div>{{ color.name }}</div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-overlayPanel>
+<ng-template #sAddColor>
+  <app-go-to-if-not-found [buttonLabel]="'Color'" [showImage]=" false" (go)="nombreColorOverlayPanel.toggle($event)"></app-go-to-if-not-found>
+</ng-template>
+
+<ng-template #defineIcon>
+  <div *ngIf="claseIconoNoValido">
+    <div *ngIf="controls['claseIcono'].errors?.['required']">
+      <small class="p-error">Selecciona un icono</small>
+    </div>
+  </div>
+  <div *ngIf="nombreColorNoValido">
+    <div *ngIf="controls['claseEstado'].errors?.['required']">
+      <small class="p-error">Selecciona un color</small>
+    </div>
+  </div>
+</ng-template>

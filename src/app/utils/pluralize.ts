@@ -4,7 +4,7 @@
  * http://www.studyspanish.com/lessons/plnoun.htm
  * http://www.spanishdict.com/topics/show/3
  * some things are conflicting though so there might be some issues.
- */ 
+ */
 export class Pluralize {
   static transform(str: string | undefined, quantity?: number) : string{
     if (quantity == 1){
@@ -15,12 +15,12 @@ export class Pluralize {
       var last_letter = str[str.length - 1], // Last letter of str
         last_2_letters = str.slice(-2), // Last 3 letters of str
         last_3_letters = str.slice(-3);
-      
+
       if (last_letter === 'x') {
         //they don't change
         plural = str;
       }
-    
+
       if (last_letter === 's') {
         switch (str) {
           case 'pies':
@@ -63,32 +63,35 @@ export class Pluralize {
       else if (last_letter === 'a' || last_letter === 'e' || last_letter === 'é' || last_letter === 'i' || last_letter === 'o' || last_letter === 'u') {
         //easy, just add s
         plural = str + 's';
-    
+
       }
       else if (last_letter === 'á') {
         var radical = str.substring(0, str.length - 1);
         plural = radical + 'aes';
-    
+
       }
       else if (last_letter === 'ó') {
         var radical = str.substring(0, str.length - 1);
         plural = radical + 'oes';
-    
       }
       else if (last_3_letters === 'ión') {
         var radical = str.substring(0, str.length - 3);
         plural = radical + 'iones';
       }
+      else if (last_2_letters === 'ón') {
+        var radical = str.substring(0, str.length - 2);
+        plural = radical + 'ones';
+      }
       else if (last_2_letters === 'ín') {
         var radical = str.substring(0, str.length - 2);
         plural = radical + 'ines';
       }
-    
+
       else {
         plural = str + 'es';
       }
       return plural;
-    } 
+    }
      return '';
   }
 }

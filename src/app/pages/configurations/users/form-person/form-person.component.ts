@@ -1,16 +1,16 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {PersonService} from 'src/app/services/person.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Person} from 'src/app/models/person';
-import {DocumentTypeService} from 'src/app/services/documenttype.service';
-import {DocumentType} from 'src/app/models/documenttype';
-import {Gender} from 'src/app/models/gender';
-import {GenderService} from 'src/app/services/gender.service';
-import {MESSAGE} from "../../../../../labels/labels";
-import {UrlService} from "../../../../services/url.service";
-import {AuthenticationService} from "../../../../services/auth.service";
-import {CryptojsService} from "../../../../services/cryptojs.service";
+import {Gender, Person, DocumentType} from '@models';
+import {MESSAGE} from "@labels/labels";
+import {
+  AuthenticationService,
+  CryptojsService,
+  DocumentTypeService,
+  GenderService,
+  PersonService,
+  UrlService
+} from '@services';
 
 @Component({
   selector: 'app-form-person',
@@ -79,6 +79,7 @@ export class FormPersonComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.param = params['id'];
     });
+    console.log("Parametro persona ID: ", this.param);
     if (this.param != null) {
       this.personId = this.cryptoService.decryptParamAsNumber(this.param);
       this.updateMode = true;
@@ -100,7 +101,7 @@ export class FormPersonComponent implements OnInit {
   }
 
   getGender(): void {
-    this.genderService.getDocumentType().subscribe({
+    this.genderService.getGenders().subscribe({
       next: (item) => {
         this.genders = item;
       }

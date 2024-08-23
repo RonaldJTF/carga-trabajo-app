@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
-import { DocumentType } from '../models/documenttype';
-import { WebRequestService } from './web-request.service';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {DocumentType} from '@models';
+import {WebRequestService} from './web-request.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,8 @@ export class DocumentTypeService {
 
   constructor(
     private webRequestService: WebRequestService
-  ) {}
+  ) {
+  }
 
   getDocumentType(): Observable<DocumentType[]> {
     return this.webRequestService.getWithHeaders(this.pathTipoDocumento);

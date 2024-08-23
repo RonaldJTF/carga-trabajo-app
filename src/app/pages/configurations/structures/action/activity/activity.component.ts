@@ -1,20 +1,15 @@
-import { Location } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/app.reducers';
-import { Activity } from 'src/app/models/activity';
-import { Level } from 'src/app/models/level';
-import * as StructureActions from "./../../../../../store/structure.actions";
-import { MESSAGE } from 'src/labels/labels';
-import { StructureService } from 'src/app/services/structure.service';
-import { LevelService } from 'src/app/services/level.service';
-import { ValidateRange } from 'src/app/validations/validateRange';
-import { Subscription } from 'rxjs';
-import { Structure } from 'src/app/models/structure';
-import {UrlService} from "../../../../../services/url.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
+import {Location} from '@angular/common';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Store} from '@ngrx/store';
+import {AppState} from 'src/app/app.reducers';
+import * as StructureActions from "@store/structure.actions";
+import {ValidateRange} from '@validations/validateRange';
+import {Subscription} from 'rxjs';
+import {Activity, Level, Structure} from '@models';
+import {CryptojsService, LevelService, StructureService, UrlService} from "@services";
+import {MESSAGE} from "@labels/labels";
 
 @Component({
   selector: 'app-activity',
@@ -49,7 +44,8 @@ export class ActivityComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private urlService: UrlService,
     private cryptoService: CryptojsService,
-  ){}
+  ) {
+  }
 
   ngOnInit(): void {
     this.buildForm();
@@ -76,34 +72,37 @@ export class ActivityComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.tiempoMaximoSubscription?.unsubscribe();
     this.tiempoMinimoSubscription?.unsubscribe();
   }
 
-  get tiempoMaximo(): FormControl{
+  get tiempoMaximo(): FormControl {
     return this.formActivity.get('tiempoMaximo') as FormControl;
   }
-  get tiempoMinimo(): FormControl{
+
+  get tiempoMinimo(): FormControl {
     return this.formActivity.get('tiempoMinimo') as FormControl;
   }
-  get tiempoPromedio(): FormControl{
+
+  get tiempoPromedio(): FormControl {
     return this.formActivity.get('tiempoPromedio') as FormControl;
   }
 
-  get tiempoMaximoInHours(): number{
-    return this.tiempoMaximo.value !==null ? parseFloat((this.tiempoMaximo.value/60).toFixed(2)) : null;
+  get tiempoMaximoInHours(): number {
+    return this.tiempoMaximo.value !== null ? parseFloat((this.tiempoMaximo.value / 60).toFixed(2)) : null;
   }
 
-  get tiempoMinimoInHours(): number{
-    return this.tiempoMinimo.value !==null ? parseFloat((this.tiempoMinimo.value/60).toFixed(2)) : null;
-  }
-  get tiempoPromedioInHours(): number{
-    return this.tiempoPromedio.value !==null ? parseFloat((this.tiempoPromedio.value/60).toFixed(2)) : null;
+  get tiempoMinimoInHours(): number {
+    return this.tiempoMinimo.value !== null ? parseFloat((this.tiempoMinimo.value / 60).toFixed(2)) : null;
   }
 
-  buildForm(){
-    this.formActivity= this.formBuilder.group({
+  get tiempoPromedioInHours(): number {
+    return this.tiempoPromedio.value !== null ? parseFloat((this.tiempoPromedio.value / 60).toFixed(2)) : null;
+  }
+
+  buildForm() {
+    this.formActivity = this.formBuilder.group({
       frecuencia: [null, Validators.compose([Validators.required, Validators.min(0)])],
       tiempoMaximo: [null, Validators.compose([Validators.required, Validators.min(0), ValidateRange.validateUpper('tiempoMinimo')])],
       tiempoMinimo: [null, Validators.compose([Validators.required, Validators.min(0), ValidateRange.validateLower('tiempoMaximo')])],
@@ -115,10 +114,10 @@ export class ActivityComponent implements OnInit, OnDestroy {
     })
   }
 
-  loadActivity(id: number){
-    if (id == undefined){
+  loadActivity(id: number) {
+    if (id == undefined) {
       this.updateMode = false;
-    }else{
+    } else {
       this.structureService.getActivityById(id).subscribe({
         next: (e) => {
           this.activity = e;
@@ -129,7 +128,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadNivels(){
+  loadNivels() {
     this.levelService.getLevels().subscribe({
       next: (e) => {
         this.levels = e;
@@ -137,7 +136,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadStructure(id: number){
+  loadStructure(id: number) {
     this.structureService.getStructureById(id).subscribe({
       next: (e) => {
         this.structure = e;
@@ -145,7 +144,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     });
   }
 
-  assignValuesToForm(){
+  assignValuesToForm() {
     this.formActivity.get('frecuencia').setValue(this.activity.frecuencia);
     this.formActivity.get('tiempoMaximo').setValue(this.activity.tiempoMaximo);
     this.formActivity.get('tiempoMinimo').setValue(this.activity.tiempoMinimo);
@@ -180,7 +179,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmitActivity(event : Event): void {
+  onSubmitActivity(event: Event): void {
     let payload = {...this.activity, ...this.formActivity.value}
     payload.idNivel = payload.nivel?.id
     payload.idEstructura = this.structure.id;
@@ -193,7 +192,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDeleteActivity(event : Event): void {
+  onDeleteActivity(event: Event): void {
     event.preventDefault();
     this.deleting = true;
     this.structureService.deleteActivity(this.activity.id).subscribe({
@@ -208,7 +207,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     });
   }
 
-  onCancelActivity(event : Event): void {
+  onCancelActivity(event: Event): void {
     event.preventDefault();
     this.urlService.goBack();
   }

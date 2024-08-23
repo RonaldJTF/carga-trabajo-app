@@ -1,14 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import * as StageActions from "./../../../../../store/stage.actions";
+import * as StageActions from "@store/stage.actions";
 import {ActivatedRoute, Router} from "@angular/router";
-import {WorkplanService} from "../../../../../services/workplan.service";
-import {Stage} from "../../../../../models/workplan";
+import {Stage} from "@models";
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
-import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {UrlService} from "../../../../../services/url.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
+import {CryptojsService, UrlService, WorkplanService} from "@services";
 
 @Component({
   selector: 'app-stage',

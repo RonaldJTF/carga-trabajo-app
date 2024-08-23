@@ -23,22 +23,22 @@
         <div *ngIf="formActivity.controls['frecuencia'].errors && (formActivity.controls['frecuencia'].touched||formActivity.controls['frecuencia'].dirty)">
             <div *ngIf="formActivity.controls['frecuencia'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingrese una frecuencia</small>
-            </div>   
+            </div>
         </div>
     </div>
 
     <div class="grid grid-nogutter">
-        <div class="col-12 md:col-6 xl:col-8"> 
+        <div class="col-12 md:col-6 xl:col-8">
             <div class="field p-fluid">
                 <label htmlFor="tiempoMinimo" class="font-medium">Tiempo mínimo</label>
                 <app-time formControlName="tiempoMinimo"></app-time>
                 <div *ngIf="formActivity.controls['tiempoMinimo'].errors && (formActivity.controls['tiempoMinimo'].touched||formActivity.controls['tiempoMinimo'].dirty)">
                     <div *ngIf="formActivity.controls['tiempoMinimo'].errors?.['required']">
                         <small id="text-help" class="p-error">Ingrese un tiempo mínimo</small>
-                    </div>   
+                    </div>
                     <div *ngIf="formActivity.controls['tiempoMinimo'].errors?.['min']">
                         <small id="text-help" class="p-error">Ingrese un tiempo mayor a 0</small>
-                    </div>   
+                    </div>
                     <div *ngIf="formActivity.controls['tiempoMinimo'].errors?.['invalidValue']">
                         <small id="text-help" class="p-error">Ingrese un valor menor o igual al tiempo máximo</small>
                     </div>
@@ -54,13 +54,13 @@
                     </div>
                     <div *ngIf="formActivity.controls['tiempoMaximo'].errors?.['min']">
                         <small id="text-help" class="p-error">Ingrese un tiempo mayor a 0</small>
-                    </div>   
+                    </div>
                     <div *ngIf="formActivity.controls['tiempoMaximo'].errors?.['invalidValue']">
                         <small id="text-help" class="p-error">Ingrese un valor mayor o igual al tiempo mínimo</small>
                     </div>
                 </div>
             </div>
-        
+
             <div class="field p-fluid">
                 <label htmlFor="tiempoPromedio" class="font-medium mb-0">Tiempo usual</label>
                 <div class="text-sm text-500 mb-2">Tiempo en el que se lleva a cabo la actividad frecuentemente</div>
@@ -68,10 +68,10 @@
                 <div *ngIf="formActivity.controls['tiempoPromedio'].errors && (formActivity.controls['tiempoPromedio'].touched||formActivity.controls['tiempoPromedio'].dirty)">
                     <div *ngIf="formActivity.controls['tiempoPromedio'].errors?.['required']">
                         <small id="text-help" class="p-error">Ingrese un tiempo usual</small>
-                    </div>   
+                    </div>
                     <div *ngIf="formActivity.controls['tiempoPromedio'].errors?.['min']">
                         <small id="text-help" class="p-error">Ingrese un tiempo mayor a 0</small>
-                    </div>   
+                    </div>
                     <div *ngIf="formActivity.controls['tiempoPromedio'].errors?.['invalidValue']">
                         <small id="text-help" class="p-error">Ingrese un valor entre el tiempo máximo y el tiempo mínimo</small>
                     </div>
@@ -79,9 +79,9 @@
             </div>
         </div>
         <div class="col-12 md:col-6 xl:col-4 md:pl-3 mb-3 mt-1 md:mt-4 pt-1">
-            <app-time-range 
-                [usualValue]="tiempoPromedioInHours" 
-                [minValue]="tiempoMinimoInHours" 
+            <app-time-range
+                [usualValue]="tiempoPromedioInHours"
+                [minValue]="tiempoMinimoInHours"
                 [maxValue]="tiempoMaximoInHours">
             </app-time-range>
         </div>
@@ -98,7 +98,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitActivity($event)"

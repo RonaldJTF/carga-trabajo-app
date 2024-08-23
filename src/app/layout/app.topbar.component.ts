@@ -1,11 +1,9 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MenuItem} from 'primeng/api';
-import {LayoutService} from "./service/app.layout.service";
-import {Person} from '../models/person';
-import {AuthenticationService} from '../services/auth.service';
+import {AuthenticationService, CryptojsService, LayoutService} from '@services';
 import {Observable} from 'rxjs';
 import {Router} from "@angular/router";
-import {CryptojsService} from "../services/cryptojs.service";
+import {Person} from "@models";
 
 @Component({
   selector: 'app-topbar',
@@ -35,16 +33,13 @@ export class AppTopBarComponent implements OnInit {
     this.loguedPerson$ = this.authenticationService.loguedPerson$;
   }
 
-  editPerson(idPerson: string) {
+  editPerson(idPerson: number) {
     this.router.navigate(['configurations/users/person/', this.cryptoService.encryptParam(idPerson)], {
       skipLocationChange: true,
-      queryParams: {
-        backLocation: true
-      }
     }).then();
   }
 
-  changePassword(idPerson: string, userName: string) {
+  changePassword() {
     this.router.navigate(['configurations/users/change-password/'], {
       skipLocationChange: true,
     }).then();
@@ -59,19 +54,14 @@ export class AppTopBarComponent implements OnInit {
         this.loguedPerson$.subscribe((person: Person) => {
           idPerson = person?.id
         })
-        this.editPerson(idPerson.toString())
+        this.editPerson(idPerson);
       }
     },
     {
       label: 'Cambiar contraseña',
       icon: 'pi pi-key',
       command: () => {
-        let idPerson: number, userName: string;
-        this.loguedPerson$.subscribe((person: Person) => {
-          idPerson = person?.id
-          userName = person?.usuario.username;
-        })
-        this.changePassword(idPerson.toString(), userName);
+        this.changePassword();
       }
     },
     {

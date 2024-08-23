@@ -5,12 +5,12 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import chroma from 'chroma-js';
 import { MenuItem } from 'primeng/api';
-import { Methods } from 'src/app/utils/methods';
+import {Methods} from "@utils";
 
 export interface Out{
   id?: number;
   start?: string;
-  end?: string; 
+  end?: string;
   originalEvent?: Event;
 }
 @Component({
@@ -71,16 +71,16 @@ export class CalendarComponent implements OnInit {
   parseDataToEvent(item: any){
     let end: Date = new Date(item[this.endDateName]);
     end.setTime(end.getTime() + (24 * 60 * 60 * 1000));//Para que el día termine a las 23:59:59 o antes de empezar el otro día
-    return { 
-      id: item[this.id], 
-      title: item[this.titleName], 
-      start: Methods.formatToString(new Date(item[this.startDateName]), 'yyyy-mm-dd'), 
+    return {
+      id: item[this.id],
+      title: item[this.titleName],
+      start: Methods.formatToString(new Date(item[this.startDateName]), 'yyyy-mm-dd'),
       end: Methods.formatToString(end, 'yyyy-mm-dd'),
       color: item[this.hexColorName] ?? this.generateRandomColor(),
       data: item
     }
   }
-  
+
   private generateRandomColor(){
     let color;
     do {
@@ -172,7 +172,7 @@ export class CalendarComponent implements OnInit {
     }
     return this.resizeEvent.emit({id: event.id, start: Methods.formatDateWithTimezone(event.start), end:Methods.formatDateWithTimezone(end), originalEvent: arg.jsEvent});
   }
-  
+
   toggleIcon(show: boolean, idEvent){
     this.showedIcons[idEvent] = show;
   }

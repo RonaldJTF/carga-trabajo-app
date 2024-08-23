@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Person} from "../../../../models/person";
 import {MenuItem} from "primeng/api";
-import {ChangePasswordService} from "./menus/change-password.service";
-import {UrlService} from "../../../../services/url.service";
-import {AuthenticationService} from "../../../../services/auth.service";
+import {Person} from "@models";
+import {AuthenticationService, ChangePasswordService, UrlService} from "@services";
 
 @Component({
   selector: 'app-change-password',
@@ -36,7 +34,7 @@ export class ChangePasswordComponent implements OnInit {
 
   buildMenu() {
     this.routeItems = [
-      {label: 'Actual contraseña', routerLink: 'current-password'},
+      {label: 'Contraseña actual', routerLink: 'current-password'},
       {label: 'Nueva contraseña', routerLink: 'new-password'}
     ];
   }
@@ -45,8 +43,6 @@ export class ChangePasswordComponent implements OnInit {
     this.person = this.authenticationService.getLoggedPersonInformation();
     this.changePasswordService.setPreviousUrl(this.urlService.getPreviousUrl());
     this.changePasswordService.setPerson(this.authenticationService.getLoggedPersonInformation());
-    console.log(this.authenticationService.getLoggedPersonInformation());
-    console.log(this.changePasswordService.getPreviousUrl());
   }
 
 }

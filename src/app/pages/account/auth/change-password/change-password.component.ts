@@ -1,10 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {LayoutService} from "../../../../layout/service/app.layout.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AuthenticationService} from "../../../../services/auth.service";
-import {CryptojsService} from "../../../../services/cryptojs.service";
-import {ToastService} from "../../../../services/toast.service";
+import {AuthenticationService, CryptojsService, LayoutService, ToastService} from "@services";
 
 @Component({
   selector: 'app-change-password',

@@ -1,0 +1,92 @@
+<ng-container *ngIf="!loading else sLoading">
+  <div *ngIf="!ftps else data">
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo rol'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+  </div>
+  <ng-template #data>
+    <div class="card p-0 pb-2">
+      <p-table #dt [value]="ftps" rowGroupMode="subheader" sortMode="single" [paginator]="true" [rows]="10" [(selection)]="selectedFtps"
+               selectionMode="multiple" [globalFilterFields]="['nombre', 'descripcion', 'codigo', 'activo']" [rowsPerPageOptions]="[10, 20, 30]"
+               [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id"
+               [tableStyle]="{'border-circle': '50px'}">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+            <div class="flex align-items-center flex-wrap">
+              <button pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+              </button>
+              <div class="_badge-container m-1">
+                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedFtps()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger " [disabled]="!selectedFtps?.length">
+                  <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                </button>
+                <span *ngIf="selectedFtps?.length" (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{ selectedFtps.length }}</span>
+              </div>
+            </div>
+            <div class="m-1">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input type="search" pInputText placeholder="Buscar" (input)="onGlobalFilter(dt, $event)">
+              </span>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th class="text-center" style="white-space: nowrap;" pSortableColumn="nombre">
+              Nombre
+              <p-sortIcon field="nombre"></p-sortIcon>
+            </th>
+            <th class="text-center" style="white-space: nowrap;" pSortableColumn="codigo">
+              Código
+              <p-sortIcon field="codigo"></p-sortIcon>
+            </th>
+            <th class="text-center" style="white-space: nowrap;" pSortableColumn="activo">
+              Activo
+              <p-sortIcon field="activo"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-ftp>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="ftp"></p-tableCheckbox>
+            </td>
+            <td pRipple class="cursor-pointer" (click)="editFtp(ftp.id)">
+              <div class="flex align-items-center ">
+                <div class="flex flex-column">
+                  <span class="font-medium">{{ ftp.nombre | titlecase }}</span>
+                  <div class="text-500">{{ ftp.descripcion }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span>{{ ftp.codigo }}</span>
+            </td>
+            <td class="text-center">
+              <i class="pi" [ngClass]="{'true-icon pi-check-circle text-green-500': ftp.activo === '1', 'false-icon pi-times-circle text-pink-500': ftp.activo === '0'}"></i>
+            </td>
+            <td class="text-center">
+              <div class="flex align-items-center justify-content-end">
+                <app-menu-item [menuItems]="items" [id]="ftp.id"></app-menu-item>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center">{{ MESSAGE.NO_REGISTROS }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </ng-template>
+</ng-container>
+
+<ng-template #sLoading>
+  <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>

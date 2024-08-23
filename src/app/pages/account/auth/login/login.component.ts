@@ -1,17 +1,14 @@
-import {Component} from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LayoutService } from 'src/app/layout/service/app.layout.service';
-import { AuthenticationService } from 'src/app/services/auth.service';
-import { StorageService } from 'src/app/services/storage.service';
-import {CryptojsService} from "../../../../services/cryptojs.service";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {AuthenticationService, CryptojsService, LayoutService, StorageService} from "@services";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   formLogin !: FormGroup;
   valCheck: string[] = ['remember'];
   returnUrl!: string;
@@ -22,12 +19,14 @@ export class LoginComponent {
   constructor(
     private authenticationService: AuthenticationService,
     private storageService: StorageService,
-    private formBuilder : FormBuilder,
+    private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     public layoutService: LayoutService,
     private cryptoService: CryptojsService,
-  ){this.createLoginForm();}
+  ) {
+    this.createLoginForm();
+  }
 
   ngOnInit(): void {
     this.hasLogin();
@@ -106,9 +105,9 @@ export class LoginComponent {
       return;
     } else {
       this.loader = true;
-      let { username, password } = this.formLogin.value;
+      let {username, password} = this.formLogin.value;
       password = this.cryptoService.encrypt(password);
-      const payload = { username, password };
+      const payload = {username, password};
       this.authenticationService.login(payload).subscribe({
         next: (response: any) => {
           this.remember(response.token);
@@ -116,14 +115,14 @@ export class LoginComponent {
           this.loader = false;
           this.router.navigate([""]);
         },
-        error: (error) => {
+        error: () => {
           this.loader = false;
         },
       });
     }
   }
 
-  recoverPasswor(){
+  recoverPasswor() {
     this.router.navigate(['account/auth/recover']).then();
   }
 

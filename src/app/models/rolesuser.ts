@@ -1,5 +1,6 @@
-import { Rol } from './rol';
+import {Role} from "./role";
+
 export class RolesUser {
   id!: number;
-  rol!: Rol[];
+  rol!: Role[];
 }

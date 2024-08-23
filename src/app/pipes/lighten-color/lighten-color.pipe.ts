@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { Methods } from '../../utils/methods';
+import {Pipe, PipeTransform} from '@angular/core';
+import {Methods} from '@utils';
 
 @Pipe({
   name: 'lightenColor'
@@ -7,7 +7,7 @@ import { Methods } from '../../utils/methods';
 export class LightenColorPipe implements PipeTransform {
 
   transform(colorIn: string): string {
-    if (colorIn != null){
+    if (colorIn != null) {
       return Methods.lightenColor(colorIn, 0.5);
     }
     return '';

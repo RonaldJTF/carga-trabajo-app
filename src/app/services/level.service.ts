@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { Observable } from 'rxjs';
-import { Level } from '../models/level';
+import { Level } from '@models';
 
 @Injectable({
   providedIn: 'root'

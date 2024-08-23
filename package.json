@@ -1,12 +1,15 @@
 {
   "name": "carga-trabajo",
-  "version": "0.0.0",
+  "version": "1.0.01.00",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --proxy-config proxy.conf.json",
-    "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build": "ng build --base-href=/carga-trabajo-app/ --configuration production",
+    "optimize-svgs": "svgo -f src/assets/content/images/illustrations -o src/assets/content/images/illustrations --config=svgo.config.js",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org desarrollo-especifico-ciadti --project gestion-de-tiempos-laborados ./dist/carga-trabajo-app && sentry-cli sourcemaps upload --org desarrollo-especifico-ciadti --project gestion-de-tiempos-laborados ./dist/carga-trabajo-app",
+    "deploy": "npm run build && npm run sentry:sourcemaps"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +27,8 @@
     "@fullcalendar/interaction": "^6.1.13",
     "@ngrx/store": "^16.3.0",
     "@ngrx/store-devtools": "^16.3.0",
+    "@sentry/angular": "^8.25.0",
+    "@sentry/cli": "^2.33.1",
     "chart.js": "^4.4.3",
     "chartjs-plugin-annotation": "^3.0.1",
     "chroma-js": "^2.4.2",
@@ -58,6 +63,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "svgo": "^3.3.2",
     "typescript": "~5.1.3"
   }
 }

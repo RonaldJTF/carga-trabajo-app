@@ -1,5 +1,4 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {a} from "@fullcalendar/core/internal-common";
 
 @Component({
   selector: 'app-polar-chart',

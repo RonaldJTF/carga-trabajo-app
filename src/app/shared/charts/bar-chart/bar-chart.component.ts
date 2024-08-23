@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
-import {LayoutService} from "../../../layout/service/app.layout.service";
 import {Subscription} from "rxjs";
+import {LayoutService} from "../../../layout/service/app.layout.service";
 
 @Component({
   selector: 'app-bar-chart',

@@ -1,12 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
-import {UserService} from "../../../../../services/user.service";
 import {finalize, Subscription} from "rxjs";
-import {User} from "../../../../../models/user";
-import {ChangePasswordService} from "./change-password.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
-import {AuthenticationService} from "../../../../../services/auth.service";
+import {User} from "@models";
 import {Router} from "@angular/router";
+import {AuthenticationService, ChangePasswordService, CryptojsService, UserService} from "@services";
 
 @Component({
   template: `
@@ -17,18 +14,17 @@ import {Router} from "@angular/router";
             <i class="pi pi-lock text-4xl text-blue-500"></i>
           </div>
           <span class="font-bold">Ingresa tu nueva contraseña.</span>
-          <span class="text-500">Elige una nueva contraseña para tu cuenta y asegúrate de que sea única y segura.</span>
+          <span class="text-500">Elige una nueva contraseña para tu cuenta y asegúrate de que sea única y segura</span>
         </ng-container>
         <ng-template #sNoIcon>
           <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-green-100 border-circle">
             <app-countdown-timer [colorName]="'green'"></app-countdown-timer>
           </div>
           <span class="font-bold">Iniciar sesión.</span>
-          <span class="text-500">Serás redirigido al formulario de inicio de sesión para el ingreso al aplicativo nuevamente.</span>
+          <span class="text-500">Serás redirigido al formulario de inicio de sesión para el ingreso al aplicativo nuevamente</span>
         </ng-template>
       </div>
     </div>
-
     <form *ngIf="!okSent" [formGroup]="formNewPasswordUser" (keydown)="keyboardEvent($event)" autocomplete="off" autocapitalize="none">
       <div class="grid">
         <div class="field col">

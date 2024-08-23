@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-export class Out{
+export class OutState{
   classStyle: string;
   value: string;
 }
@@ -10,7 +10,7 @@ export class Out{
 })
 export class StatePipe implements PipeTransform {
 
-  transform(stateIn: string): Out {
+  transform(stateIn: string): OutState {
     if (stateIn == "1" || stateIn == "true"){
       return {classStyle: 'active', value: 'Activo'}
     }else if (stateIn == "0" || stateIn == "false"){

@@ -1,14 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/app.reducers';
-import { Structure } from 'src/app/models/structure';
-import { StructureService } from 'src/app/services/structure.service';
-import * as StructureActions from "../../../../../store/structure.actions";
-import { Location } from '@angular/common';
-import {UrlService} from "../../../../../services/url.service";
-import {CryptojsService} from "../../../../../services/cryptojs.service";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Store} from '@ngrx/store';
+import {AppState} from 'src/app/app.reducers';
+import * as StructureActions from "@store/structure.actions";
+import {Location} from '@angular/common';
+import {CryptojsService, StructureService, UrlService} from '@services';
+import {Structure} from "@models";
 
 @Component({
   selector: 'app-no-dependency',

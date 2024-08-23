@@ -1,10 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {LayoutService} from "../../../../layout/service/app.layout.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
-import {AuthenticationService} from "../../../../services/auth.service";
-import {MessageService} from "primeng/api";
-import {ToastService} from "../../../../services/toast.service";
+import {AuthenticationService, LayoutService, ToastService} from "@services";
 
 @Component({
   selector: 'app-recover-password',

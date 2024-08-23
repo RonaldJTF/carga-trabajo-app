@@ -38,7 +38,8 @@
               "dc",
               "chroma-js",
               "lodash"
-            ]
+            ],
+            "sourceMap": true
           },
           "configurations": {
             "production": {

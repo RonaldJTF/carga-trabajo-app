@@ -1,8 +1,6 @@
 import * as StageActions from "./stage.actions";
 import {createReducer, on} from "@ngrx/store";
-import {Stage, Task} from "../models/workplan";
-import _default from "chart.js/dist/plugins/plugin.title";
-import id = _default.id;
+import {Stage, Task} from "@models";
 
 export interface StageState {
   items: Stage[];

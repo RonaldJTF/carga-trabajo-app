@@ -1,9 +1,9 @@
-import { Rol } from "./rol";
+import {Role} from "./role";
 
-export class User{
-    id: number;
-    username: string;
-    password: string;
-    activo: string;
-    roles: Rol[];
+export class User {
+  id: number;
+  username: string;
+  password: string;
+  activo: string;
+  roles: Role[];
 }

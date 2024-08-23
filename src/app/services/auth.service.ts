@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import jwt_decode from "jwt-decode";
 import { MessageService } from 'primeng/api';
-import { Person } from '../models/person';
+import {Person} from "@models";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
+
   pathRecoverPassword: string = 'auth/recover-password';
   pathChangePassword: string = 'auth/change-password';
   pathAuth = "auth/authenticate";
@@ -62,7 +63,7 @@ export class AuthenticationService {
     );
   }
 
-  changePassword(payload: { tokenPassword: string; password: string, confirmPassword },tenant?: string): Observable<any> {
+  changePassword(payload: { tokenPassword: string; password: string, confirmPassword: string },tenant?: string): Observable<any> {
     tenant = tenant ? tenant : "tenant_001";
     const headers = { "X-Tenant-Id": tenant };
     return this.webRequestService.postWithoutToken(
@@ -128,12 +129,13 @@ export class AuthenticationService {
     this.router.navigate(["/account/auth/login"]);
   }
 
-  roles(): {isAdministrator: boolean, isOperator: boolean, isSuperAdministrator: boolean}{
+  roles(): {isAdministrator: boolean, isOperator: boolean, isSuperAdministrator: boolean, isDesarrollador: boolean}{
     const roles = this.getRolesUser();
     return  {
       isAdministrator: roles?.includes("ROLE_ADMINISTRADOR"),
       isOperator: roles?.includes("ROLE_OPERADOR"),
       isSuperAdministrator: roles?.includes("ROLE_SUPERADMINISTRADOR"),
+      isDesarrollador: roles?.includes("ROLE_DESARROLLADOR"),
     };
   }
 

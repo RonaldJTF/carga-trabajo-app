@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { AccountRoutingModule } from './account-routing.module';
-import { SharedModule } from 'src/app/shared/shared.module';
+import {SharedModule} from "@shared";
 
 @NgModule({
   declarations: [],

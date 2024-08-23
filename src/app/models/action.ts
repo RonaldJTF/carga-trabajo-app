@@ -3,5 +3,5 @@ export class Action{
     claseIcono: string;
     nombre: string;
     path: string;
-    claseEstadoBoton: string;
+    claseEstado: string;
 }

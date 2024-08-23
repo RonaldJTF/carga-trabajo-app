@@ -5,17 +5,11 @@ import {CheckboxModule} from 'primeng/checkbox';
 import {PasswordModule} from 'primeng/password';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
-import {DarkenColorPipe} from '../pipes/darken-color/darken-color.pipe';
-import {LightenColorPipe} from '../pipes/lighten-color/lighten-color.pipe';
-import {FileSizePipe} from '../pipes/file-size/file-size.pipe';
-import {CapitalizeFirstLetterPipe} from '../pipes/capitalize-first-letter/capitalize-first-letter.pipe';
-import {FileIconPipe} from '../pipes/file-icon/file-icon.pipe';
-import {FirstNamePipe} from '../pipes/first-name/first-name.pipe';
-import {StatePipe} from '../pipes/state/state.pipe';
-import {SanitizeHtmlPipe} from '../pipes/sanitize-html/sanitize-html.pipe';
-import {PrettyDatePipe} from '../pipes/pretty-date/pretty-date.pipe';
-import {TimeAgoPipe} from '../pipes/time-ago/time-ago.pipe';
-import {ImageFallbackDirective} from '../directives/image-fallback.directive';
+import {
+  ActivityExpirationPipe, CapitalizeFirstLetterPipe, DarkenColorPipe, DateRangePipe, FileIconPipe, FileSizePipe,
+  FirstNamePipe, LightenColorPipe, PluralizePipe, PrettyDatePipe, SanitizeHtmlPipe, StatePipe, TimeAgoPipe, TimeNamePipe
+} from '@pipes';
+import {ImageFallbackDirective, SvgColorDirective} from '@directives';
 import {CommonModule} from '@angular/common';
 import {DataViewModule} from 'primeng/dataview';
 import {AuthRoutingModule} from '../pages/account/auth/auth-routing.module';
@@ -31,7 +25,6 @@ import {TreeTableModule} from 'primeng/treetable';
 import {NoResultComponent} from './no-result/no-result.component';
 import {LabelValueChartComponent} from './charts/label-value-chart/label-value-chart.component';
 import {FileUploadModule} from 'primeng/fileupload';
-import {FormActionButtonComponent} from './form-action-button/form-action-button.component';
 import {ToolbarModule} from 'primeng/toolbar';
 import {RatingModule} from 'primeng/rating';
 import {InputTextareaModule} from 'primeng/inputtextarea';
@@ -45,8 +38,6 @@ import {ListboxModule} from 'primeng/listbox';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {TimeComponent} from './time/time.component';
 import {SkeletonListGridComponent} from './skeleton/skeleton-list-grid/skeleton-list-grid.component';
-import {PluralizePipe} from '../pipes/pluralize/pluralize.pipe';
-import {TimeNamePipe} from '../pipes/time-name/time-name.pipe';
 import {BadgeModule} from 'primeng/badge';
 import {SkeletonModule} from 'primeng/skeleton';
 import {ChartModule} from 'primeng/chart';
@@ -59,23 +50,26 @@ import {TreeSelectModule} from "primeng/treeselect";
 import {TimeRangeComponent} from './charts/time-range/time-range.component';
 import {HeadSkeletonComponent} from './skeleton/dashboard/head-skeleton/head-skeleton.component';
 import {BodySkeletonComponent} from './skeleton/dashboard/body-skeleton/body-skeleton.component';
-import { PercentComponent } from './charts/percent/percent.component';
+import {PercentComponent} from './charts/percent/percent.component';
 import {CalendarModule} from "primeng/calendar";
-import { ActivityExpirationPipe } from '../pipes/expiration/activity-expiration.pipe';
 import {SelectButtonModule} from "primeng/selectbutton";
 import {SliderModule} from "primeng/slider";
-import { CalendarComponent } from './calendar/calendar.component';
-import { FullCalendarModule } from '@fullcalendar/angular';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { CalendarMenuItemComponent } from './calendar/calendar-menu-item/calendar-menu-item.component';
-import { SidebarModule } from 'primeng/sidebar';
-import { DateRangePipe } from '../pipes/date-range/date-range.pipe';
-import {SvgColorDirective} from "../directives/svg-color-directive.directive";
-import { LineChartComponent } from './charts/line-chart/line-chart.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { LoadingComponent } from './loading/loading.component';
+import {FullCalendarModule} from '@fullcalendar/angular';
+import {SpeedDialModule} from 'primeng/speeddial';
+import {CalendarMenuItemComponent} from './calendar/calendar-menu-item/calendar-menu-item.component';
+import {SidebarModule} from 'primeng/sidebar';
+import {LineChartComponent} from './charts/line-chart/line-chart.component';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {LoadingComponent} from './loading/loading.component';
 import {StepsModule} from "primeng/steps";
-import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
+import {CountdownTimerComponent} from './countdown-timer/countdown-timer.component';
+import {MegaMenuModule} from "primeng/megamenu";
+import {SplitterModule} from "primeng/splitter";
+import {FormActionButtonComponent} from "./form-action-button/form-action-button.component";
+import {MessagesModule} from "primeng/messages";
+import {WarningComponent} from "./warning/warning.component";
+import {CalendarComponent} from "./calendar/calendar.component";
+import { DialogComponent } from './dialog/dialog.component';
 
 @NgModule({
   declarations: [
@@ -99,6 +93,8 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     LineChartComponent,
     LoadingComponent,
     CountdownTimerComponent,
+    WarningComponent,
+    DialogComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -113,10 +109,9 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     PluralizePipe,
     TimeNamePipe,
     ActivityExpirationPipe,
-
     DateRangePipe,
-    ImageFallbackDirective,
 
+    ImageFallbackDirective,
     SvgColorDirective,
   ],
   imports: [
@@ -154,6 +149,7 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     BadgeModule,
     SkeletonModule,
     ChartModule,
+    MessagesModule,
     MessageModule,
     ListboxModule,
     TieredMenuModule,
@@ -166,7 +162,9 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     SpeedDialModule,
     SidebarModule,
     ProgressSpinnerModule,
-    StepsModule
+    StepsModule,
+    MegaMenuModule,
+    SplitterModule
   ],
   exports: [
     FunctionalityComponent,
@@ -188,6 +186,8 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     LineChartComponent,
     LoadingComponent,
     CountdownTimerComponent,
+    WarningComponent,
+    DialogComponent,
 
     ImageFallbackDirective,
     SvgColorDirective,
@@ -242,6 +242,7 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     BadgeModule,
     SkeletonModule,
     ChartModule,
+    MessagesModule,
     MessageModule,
     TieredMenuModule,
     RippleModule,
@@ -253,9 +254,13 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     SpeedDialModule,
     SidebarModule,
     ProgressSpinnerModule,
-    StepsModule
+    StepsModule,
+    MegaMenuModule,
+    SplitterModule
   ],
   providers: []
 })
 export class SharedModule {
 }
+export {CalendarComponent, DialogComponent}
+

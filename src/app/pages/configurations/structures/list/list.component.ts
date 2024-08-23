@@ -1,19 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import * as StructureActions from "./../../../../store/structure.actions";
+import * as StructureActions from "@store/structure.actions";
 import { last, map, Observable, Subscription } from 'rxjs';
-import { Structure } from 'src/app/models/structure';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
-import { IMAGE_SIZE } from 'src/app/utils/constants';
-import { MESSAGE } from 'src/labels/labels';
+import {IMAGE_SIZE, Methods} from '@utils';
+import { MESSAGE } from '@labels/labels';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmationDialogService } from 'src/app/services/confirmation-dialog.service';
 import { TreeTable } from 'primeng/treetable';
-import { Methods } from 'src/app/utils/methods';
-import { AuthenticationService } from 'src/app/services/auth.service';
-import { StructureService } from 'src/app/services/structure.service';
-import {CryptojsService} from "../../../../services/cryptojs.service";
+import {AuthenticationService, ConfirmationDialogService, CryptojsService, StructureService} from "@services";
+import {Structure} from "@models";
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -24,10 +20,10 @@ export class ListComponent implements OnInit, OnDestroy{
   MESSAGE = MESSAGE;
   /*Nota: PATH_NO_MANAGED_BY_PARENT hace referencia a todas aquellas rutas que no son gestionadas por aquellas estructuras que figuran como padre de
    elementos de su mismo tipo, es decir, si es una estructura actividad y tiene subactividades, esta no pueden gestionarse (asignar tiempo usual, tiempo max, etc.)*/
-  PATH_NO_MANAGED_BY_PARENT: string[] = ['action/activity'];
+  PATH_NO_MANAGED_BY_PARENT: string[] = ['actions/activity'];
 
   /*Nota: PATH_NO_MANAGED_IF_HAS_ACTIVITY hace referencia a todas aquellas rutas que no son gestionadas si ya la estructura tiene una actividad gestionada*/
-  PATH_NO_MANAGED_IF_HAS_ACTIVITY: string[] = ['action/sub-item'];
+  PATH_NO_MANAGED_IF_HAS_ACTIVITY: string[] = ['actions/sub-item'];
 
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;

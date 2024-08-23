@@ -1,6 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Structure } from "../models/structure";
-import { Activity } from "../models/activity";
+import {Activity, Structure} from "@models";
 
 export const setList = createAction('[Configuration of Structures] Set the list of structures', props<{ structures: Structure[] }>());
 export const addToList = createAction('[Configuration of Structures] Add item to the list', props<{ structure: Structure }>());

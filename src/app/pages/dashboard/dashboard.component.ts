@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {MenuService} from 'src/app/layout/app.menu.service';
+import {MenuService} from "@services";
 
 @Component({
   selector: 'app-dashboard',

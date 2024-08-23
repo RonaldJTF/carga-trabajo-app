@@ -13,7 +13,8 @@ export class ConfirmationDialogService {
     header: string,
     acceptLabel: string,
     rejectLabel: string,
-    acceptAction: () => void
+    acceptAction: () => void,
+    rejectAction: () => void = () => {},
   ): void {
     this.confirmationService.confirm({
       message: message,
@@ -24,6 +25,9 @@ export class ConfirmationDialogService {
       accept: () => {
         acceptAction()
       },
+      reject: () => {
+        rejectAction()
+      }
     });
   }
 
@@ -34,6 +38,17 @@ export class ConfirmationDialogService {
       'Si',
       'No',
       acceptAction
+    );
+  }
+
+  showEventConfirmationDialog(message: string = '¿Está seguro de eliminar el registro?', acceptAction: () => void, rejectAction: () => void): void {
+    this.showConfirmationDialog(
+      message,
+      'Confirmación',
+      'Si',
+      'No',
+      acceptAction,
+      rejectAction,
     );
   }
 }

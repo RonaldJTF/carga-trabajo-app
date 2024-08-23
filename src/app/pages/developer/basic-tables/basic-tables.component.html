@@ -1,0 +1,50 @@
+<div *ngIf="menuService.functionality$ | async as functionality" class="card">
+  <app-functionality [functionality]="functionality"></app-functionality>
+  <div class="grid">
+    <div class="col-12 md:col-4">
+      <div class="card p-3">
+        <div class="flex align-items-center justify-content-between mb-4">
+          <div class="flex align-items-center">
+            <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+              <i class="pi pi-wrench text-xl text-blue-500"></i>
+            </div>
+            <div class="flex flex-column">
+              <h5 class="m-0 text-700">Tabla</h5>
+              <span class="text-500">Administre las tablas básicas y gestione los datos esenciales del sistema</span>
+            </div>
+          </div>
+        </div>
+        <p-dropdown [options]="menuItems" [(ngModel)]="selectedOption" optionLabel="title" [filter]="true" filterBy="title" [showClear]="true"
+                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" (onChange)="onChangeTable(selectedOption)"
+                    (onClear)="onChangeTable()" styleClass="w-full">
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2" *ngIf="selectedOption">
+              <div>{{ selectedOption.title }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-option pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <i class="pi {{option.icon}}"></i>
+              <div>{{ option.title }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <div *ngIf="selectedOption as opcion" class="flex flex-column align-items-center text-center my-3">
+          <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{opcion.iconStyle}}-100 border-circle">
+            <i class="pi {{selectedOption.icon}} text-4xl text-{{opcion.iconStyle}}-500"></i>
+          </div>
+          <span class="font-bold">{{ opcion.title }}</span>
+          <span class="text-500">{{ opcion.label }}</span>
+        </div>
+      </div>
+      <div *ngIf="messages" class="bg-yellow-50 border-round-xl flex flex-column align-items-center p-4">
+        <i class="pi pi-exclamation-triangle text-5xl text-yellow-600 mb-2"></i>
+        <span class="text-yellow-600 text-justify">{{ messages?.detail }}</span>
+      </div>
+
+    </div>
+    <div class="col-12 md:col-8 pb-0">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -255,3 +255,5 @@ export class ValueInRangeChart extends dc.ColorMixin(dc.BaseMixin) {
     }
 };
 
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{},n=(new Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="6c7c3380-63f9-5c08-9b11-eba6ba671919")}catch(e){}}();
+//# debugId=6c7c3380-63f9-5c08-9b11-eba6ba671919

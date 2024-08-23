@@ -1,13 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Table} from 'primeng/table';
-import {Person} from 'src/app/models/person';
 import {MenuItem} from 'primeng/api';
-import {PersonService} from 'src/app/services/person.service';
 import {Router} from '@angular/router';
-import {IMAGE_SIZE} from 'src/app/utils/constants';
-import {MESSAGE} from 'src/labels/labels';
-import {ConfirmationDialogService} from 'src/app/services/confirmation-dialog.service';
-import {CryptojsService} from "../../../../services/cryptojs.service";
+import {IMAGE_SIZE} from "@utils";
+import {MESSAGE} from "@labels/labels";
+import {Person} from "@models";
+import {ConfirmationDialogService, CryptojsService, PersonService} from '@services';
 
 @Component({
   selector: 'app-list',
@@ -24,8 +22,6 @@ export class ListComponent implements OnInit{
   layout: string = 'list';
 
   people: Person[] = [];
-
-  person: Person = new Person();
 
   selectedPeople: Person[] = [];
 
@@ -85,7 +81,7 @@ export class ListComponent implements OnInit{
             next: () => {
               this.desmarkAll();
               for (let idPerson of peopleIds) {
-                this.filterPeple(idPerson);
+                this.filterPeople(idPerson);
               }
             }
           });
@@ -96,12 +92,12 @@ export class ListComponent implements OnInit{
   onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.personService.delete(idPerson).subscribe(() => {
-        this.filterPeple(idPerson);
+        this.filterPeople(idPerson);
       });
     });
   }
 
-  filterPeple(idPerson: number) {
+  filterPeople(idPerson: number) {
     this.people = this.people.filter((item) => item.id != idPerson);
   }
 
