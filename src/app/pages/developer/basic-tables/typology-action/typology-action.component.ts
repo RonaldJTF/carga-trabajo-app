@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Typology} from "@models";
 import {MESSAGE} from "@labels/labels";
 import {IMAGE_SIZE} from "@utils";
-import {CryptojsService, UrlService} from "@services";
+import {CryptojsService} from "@services";
 
 @Component({
   selector: 'app-typology-actions',
@@ -16,9 +16,9 @@ export class TypologyActionComponent implements OnInit {
 
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
-  updateMode: boolean = false;
-
   typology: Typology = new Typology();
+
+  updateMode: boolean = false;
 
   loading: boolean = false;
 
@@ -27,7 +27,6 @@ export class TypologyActionComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    public urlService: UrlService,
     private cryptoService: CryptojsService,
   ) {
   }
@@ -59,7 +58,7 @@ export class TypologyActionComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/developer/basic-tables/typology'], {
       skipLocationChange: true
-    }).then();
+    }).then(() => this.typology = null);
   }
 
 

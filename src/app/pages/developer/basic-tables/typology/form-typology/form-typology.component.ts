@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService, DataService, UrlService} from "@services";
 import {Typology} from "@models";
 import {finalize} from "rxjs";
@@ -43,7 +43,6 @@ export class FormTypologyComponent implements OnInit {
   tipologia: Typology = new Typology();
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private basicTablesService: BasicTablesService,
     private route: ActivatedRoute,
@@ -155,7 +154,7 @@ export class FormTypologyComponent implements OnInit {
           })
         ).subscribe({
           next: () => {
-            this.urlService.goBack();
+            this.goBack();
           }
         })
       },
@@ -172,7 +171,7 @@ export class FormTypologyComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
@@ -186,16 +185,14 @@ export class FormTypologyComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
 
   onCancelTypology(event: Event) {
     event.preventDefault();
-    this.router.navigate(['developer/basic-tables/typology'], {
-      skipLocationChange: true,
-    }).then();
+    this.goBack();
   }
 
   getIcons() {
@@ -274,6 +271,11 @@ export class FormTypologyComponent implements OnInit {
         this.typologies = res;
       }
     })
+  }
+
+  goBack() {
+    this.urlService.goBack();
+    this.formTipologia.reset();
   }
 
 }

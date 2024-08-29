@@ -23,7 +23,6 @@ export class FormGenderComponent implements OnInit {
   idGender: number;
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private basicTablesService: BasicTablesService,
     private route: ActivatedRoute,
@@ -103,7 +102,7 @@ export class FormGenderComponent implements OnInit {
           })
         ).subscribe({
           next: () => {
-            this.urlService.goBack();
+            this.goBack();
           }
         })
       },
@@ -120,7 +119,7 @@ export class FormGenderComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
@@ -134,16 +133,19 @@ export class FormGenderComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
 
   onCancelRol(event: Event) {
     event.preventDefault();
-    this.router.navigate(['developer/basic-tables/gender'], {
-      skipLocationChange: true,
-    }).then();
+    this.goBack();
+  }
+
+  goBack() {
+    this.urlService.goBack();
+    this.formGender.reset();
   }
 
 }

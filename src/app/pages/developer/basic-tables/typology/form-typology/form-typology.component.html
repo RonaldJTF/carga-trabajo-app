@@ -29,12 +29,13 @@
             <p-splitter layout="vertical" [panelSizes]="[50,50]" [minSizes]="[10,10]">
               <ng-template pTemplate>
                 <div class="col flex align-items-center justify-content-center">
-                  <div *ngIf="claseIconoFormControl.value else sAddIcon">
+                  <div *ngIf="claseIconoFormControl.value else sAddIcon" class="text-center">
                     <div class="flex align-items-center justify-content-center">
-                      <div class="w-3rem h-3rem border-circle flex align-items-center justify-content-center cursor-pointer" (click)="claseIconoOverlayPanel.toggle($event)">
+                      <div class="w-3rem h-1rem border-circle flex align-items-center justify-content-center cursor-pointer" (click)="claseIconoOverlayPanel.toggle($event)">
                         <i class="pi {{claseIconoFormControl.value}} text-xl"></i>
                       </div>
                     </div>
+                    <div>{{ claseIconoFormControl.value }}</div>
                   </div>
                 </div>
               </ng-template>
@@ -76,17 +77,20 @@
       </div>
     </div>
     <app-form-action-button [updateMode]="updateMode"
-                             (createOrUpdate)="onSubmitTypology($event)"
-                             (cancel)="onCancelTypology($event)"
-                             (delete)="onDeleteTypoligy($event)"
-                             [showDeleteButton]="updateMode"
-                             [creatingOrUpdating]="creatingOrUpdating"
-                             [deleting]="deleting"
-                             [disabledCreateOrUpdateButton]="formTipologia.invalid">
+                            (createOrUpdate)="onSubmitTypology($event)"
+                            (cancel)="onCancelTypology($event)"
+                            (delete)="onDeleteTypoligy($event)"
+                            [showDeleteButton]="updateMode"
+                            [creatingOrUpdating]="creatingOrUpdating"
+                            [deleting]="deleting"
+                            [disabledCreateOrUpdateButton]="formTipologia.invalid">
     </app-form-action-button>
   </form>
 </div>
 
+<ng-template #sAddIcon>
+  <app-go-to-if-not-found [buttonLabel]="'Icono'" [showImage]=" false" (go)="claseIconoOverlayPanel.toggle($event)"></app-go-to-if-not-found>
+</ng-template>
 <p-overlayPanel #claseIconoOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
   <ng-template pTemplate>
     <input (input)="onFilterIcon($event)" pInputText placeholder="Buscar un icono" class="icon-filter w-full p-3 mt-3 mb-5">
@@ -100,10 +104,10 @@
     </div>
   </ng-template>
 </p-overlayPanel>
-<ng-template #sAddIcon>
-  <app-go-to-if-not-found [buttonLabel]="'Icono'" [showImage]=" false" (go)="claseIconoOverlayPanel.toggle($event)"></app-go-to-if-not-found>
-</ng-template>
 
+<ng-template #sAddColor>
+  <app-go-to-if-not-found [buttonLabel]="'Color'" [showImage]=" false" (go)="nombreColorOverlayPanel.toggle($event)"></app-go-to-if-not-found>
+</ng-template>
 <p-overlayPanel #nombreColorOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
   <ng-template pTemplate>
     <div>
@@ -113,15 +117,12 @@
           <div class="flex align-items-center justify-content-center">
             <div class="cursor-pointer w-3rem h-3rem bg-{{color.value}}-100 border-circle" (click)="nombreColorOverlayPanel.hide()"></div>
           </div>
-          <div>{{ color.name }}</div>
+          <div>{{ color.nombre }}</div>
         </div>
       </div>
     </div>
   </ng-template>
 </p-overlayPanel>
-<ng-template #sAddColor>
-  <app-go-to-if-not-found [buttonLabel]="'Color'" [showImage]=" false" (go)="nombreColorOverlayPanel.toggle($event)"></app-go-to-if-not-found>
-</ng-template>
 
 <ng-template #defineIcon>
   <div *ngIf="claseIconoNoValido">

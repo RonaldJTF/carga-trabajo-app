@@ -10,7 +10,7 @@ import {finalize} from "rxjs";
   templateUrl: './form-ftp.component.html',
   styleUrls: ['./form-ftp.component.scss']
 })
-export class FormFtpComponent implements OnInit{
+export class FormFtpComponent implements OnInit {
 
   formFtp: FormGroup;
 
@@ -25,7 +25,6 @@ export class FormFtpComponent implements OnInit{
   ftp: Ftp = new Ftp();
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private basicTablesService: BasicTablesService,
     private route: ActivatedRoute,
@@ -122,7 +121,7 @@ export class FormFtpComponent implements OnInit{
           })
         ).subscribe({
           next: () => {
-            this.urlService.goBack();
+            this.goBack();
           }
         })
       },
@@ -139,7 +138,7 @@ export class FormFtpComponent implements OnInit{
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
@@ -153,16 +152,18 @@ export class FormFtpComponent implements OnInit{
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
 
   onCancelFtp(event: Event) {
     event.preventDefault();
-    this.router.navigate(['developer/basic-tables/ftp'], {
-      skipLocationChange: true,
-    }).then();
+    this.goBack();
   }
 
+  goBack() {
+    this.urlService.goBack();
+    this.formFtp.reset();
+  }
 }

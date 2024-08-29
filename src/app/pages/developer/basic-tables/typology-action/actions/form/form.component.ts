@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {BasicTablesService, ConfirmationDialogService, CryptojsService, DataService} from "@services";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, DataService, UrlService} from "@services";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MenuItem} from "primeng/api";
 import {Action} from "@models";
@@ -56,7 +56,8 @@ export class FormComponent implements OnInit {
     private route: ActivatedRoute,
     private cryptoService: CryptojsService,
     private confirmationDialogService: ConfirmationDialogService,
-    private dataService: DataService
+    private dataService: DataService,
+    private urlService: UrlService
   ) {
   }
 
@@ -72,10 +73,10 @@ export class FormComponent implements OnInit {
     this.idTypology = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTypology']);
     this.idAction = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idAction']);
     if (this.idTypology)
-    if (this.idTypology && this.idAction) {
-      this.updateMode = true;
-      this.getAction(this.idAction);
-    }
+      if (this.idTypology && this.idAction) {
+        this.updateMode = true;
+        this.getAction(this.idAction);
+      }
   }
 
   getAction(idAction: number) {
@@ -275,6 +276,6 @@ export class FormComponent implements OnInit {
       relativeTo: this.route,
       skipLocationChange: true,
       queryParams: {idTypology: this.cryptoService.encryptParam(this.idTypology)}
-    }).then();
+    }).then(() => this.formAction.reset());
   }
 }

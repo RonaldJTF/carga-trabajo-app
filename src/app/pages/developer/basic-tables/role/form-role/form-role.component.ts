@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {finalize} from "rxjs";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
 import {Role} from "@models";
@@ -23,7 +23,6 @@ export class FormRoleComponent implements OnInit {
   idRol: number;
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private basicTablesService: BasicTablesService,
     private route: ActivatedRoute,
@@ -109,7 +108,7 @@ export class FormRoleComponent implements OnInit {
           })
         ).subscribe({
           next: () => {
-            this.urlService.goBack();
+            this.goBack();
           }
         })
       },
@@ -126,7 +125,7 @@ export class FormRoleComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
@@ -140,16 +139,19 @@ export class FormRoleComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
 
   onCancelRol(event: Event) {
     event.preventDefault();
-    this.router.navigate(['developer/basic-tables/rol'], {
-      skipLocationChange: true,
-    }).then();
+    this.goBack();
+  }
+
+  goBack() {
+    this.urlService.goBack();
+    this.formRol.reset();
   }
 
 }
