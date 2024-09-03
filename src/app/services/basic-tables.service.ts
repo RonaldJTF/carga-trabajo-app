@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Action, Ftp, Gender, Level, Role, Typology} from "@models";
+import {Action, Ftp, Gender, Level, Role, Typology, DocumentType} from "@models";
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,8 @@ export class BasicTablesService {
   private pathAction = 'action';
 
   private pathTypologyAction = 'typology-action';
+
+  private pathDocumentType = 'document-type';
 
   constructor(
     private webRequestService: WebRequestService
@@ -199,10 +201,35 @@ export class BasicTablesService {
       idTipologia: idTypology,
       idAccion: idAction
     });
+
   }
 
   deleteSelectedTypologyActions(idTypology: number, payload: number[]): Observable<Action[]> {
     return this.webRequestService.deleteWithHeaders(`${this.pathTypologyAction}/${idTypology}`, undefined, payload);
   }
 
+  // Servicios DOCUMENTTYPE
+  getDocumentsType(): Observable<DocumentType[]> {
+    return this.webRequestService.getWithHeaders(this.pathDocumentType);
+  }
+
+  getDocumentType(idDocumentType: number): Observable<DocumentType> {
+    return this.webRequestService.getWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
+  }
+
+  createDocumentType(documentType: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathDocumentType, documentType);
+  }
+
+  updateDocumentType(id: number, documentType: DocumentType): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathDocumentType}/${id}`, documentType);
+  }
+
+  deleteDocumentType(idDocumentType: number): Observable<DocumentType> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
+  }
+
+  deleteSelectedDocumentType(payload: number[]): Observable<DocumentType[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathDocumentType, undefined, payload);
+  }
 }

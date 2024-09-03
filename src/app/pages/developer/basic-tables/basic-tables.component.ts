@@ -120,6 +120,14 @@ export class BasicTablesComponent implements OnInit {
           severity: 'warn',
           show: true
         }
+      },
+      {
+        title: 'Documento',
+        icon: 'pi pi-id-card',
+        url: 'document-type',
+        label: 'Configura y administra el tipo de documento.',
+        iconStyle: 'primary',
+        state: {}
       }
     ]
   }

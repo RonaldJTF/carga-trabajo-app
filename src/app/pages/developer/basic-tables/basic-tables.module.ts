@@ -17,6 +17,8 @@ import {ListComponent} from "./typology-action/actions/list/list.component";
 import {ActionComponent} from "./action/action.component";
 import {FormComponent} from './typology-action/actions/form/form.component';
 import {SharedModule} from "@shared";
+import {DocumentTypeComponent} from './document/document-type.component';
+import {FormDocumentTypeComponent} from './document/form-document/form-document-type.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import {SharedModule} from "@shared";
     TypologyActionComponent,
     ListComponent,
     ActionComponent,
-    FormComponent
+    FormComponent,
+    DocumentTypeComponent,
+    FormDocumentTypeComponent
   ],
   imports: [BasicTablesRoutingModule, SharedModule]
 })
