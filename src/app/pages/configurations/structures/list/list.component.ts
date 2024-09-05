@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as StructureActions from "@store/structure.actions";
-import { last, map, Observable, Subscription } from 'rxjs';
+import {flatMap, last, map, Observable, Subscription} from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
 import {IMAGE_SIZE, Methods} from '@utils';
@@ -123,10 +123,12 @@ export class ListComponent implements OnInit, OnDestroy{
 
   private transformToTreeNode(structure: Structure, isDependency: boolean): TreeNode | null {
     if (Methods.parseStringToBoolean(structure.tipologia.esDependencia) === isDependency) {
-      return {
-        data: { ...structure, menuItems: this.getMenuItemsOfStructure(structure) },
+      /*Esto se hace (lo del if) porque si cambia la lista de items, entonces se tienen nuevas refeencias de objetos seleccionados en la tabla,
+        así que para no perder esta referencia, se usan los mismos que ya habían sido seleccionados*/
+      return (this.selectedNodesOfDependency as TreeNode[])?.find(e => e.data.id == structure.id) ?? {
+        data: {...structure, menuItems: this.getMenuItemsOfStructure(structure)},
         children: structure.subEstructuras?.map(e => this.transformToTreeNode(e, isDependency)).filter(e => e),
-        expanded: this.expandedNodes?.includes(structure.id)
+        expanded: this.expandedNodes?.includes(structure.id),
       };
     }
     return null;
@@ -225,7 +227,6 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   viewDependency(structure: Structure){
-    this.store.dispatch(StructureActions.setDependency({structure: structure, hasLoadedInformation: true}));
     if(!this.hasNoDependency(structure)){
       this.loadingDependency = true;
       this.structureService.getDependencyInformationById(structure.id).subscribe({
@@ -237,6 +238,8 @@ export class ListComponent implements OnInit, OnDestroy{
           this.loadingDependency = false;
         }
       })
+    }else{
+      this.store.dispatch(StructureActions.setDependency({structure: structure, hasLoadedInformation: true}));
     }
   }
 

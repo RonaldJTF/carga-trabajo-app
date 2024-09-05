@@ -75,7 +75,6 @@ export const structureReducer = createReducer(
   on(StructureActions.setDependency, (state, { structure, hasLoadedInformation }) => {
     const dependency = JSON.parse(JSON.stringify(structure));
     order(dependency.subEstructuras, state.orderIsAscending);
-
     const items = _.cloneDeep(state.items);
     if (!hasLoadedInformation){
       Object.assign(findStructure(dependency.id, items), dependency);
