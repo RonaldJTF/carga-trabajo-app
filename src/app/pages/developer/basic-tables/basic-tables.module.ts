@@ -7,8 +7,6 @@ import {FormRoleComponent} from "./role/form-role/form-role.component";
 import {RoleComponent} from "./role/role.component";
 import {LevelComponent} from './level/level.component';
 import {FormLevelComponent} from './level/form-level/form-level.component';
-import {DocumentTypeComponent} from './document-type/document-type.component';
-import {FormDocumentTypeComponent} from './document-type/form-document-type/form-document-type.component';
 import {TypologyComponent} from './typology/typology.component';
 import {FormTypologyComponent} from './typology/form-typology/form-typology.component';
 import {FtpComponent} from './ftp/ftp.component';
@@ -29,8 +27,6 @@ import {SharedModule} from "@shared";
     FormGenderComponent,
     LevelComponent,
     FormLevelComponent,
-    DocumentTypeComponent,
-    FormDocumentTypeComponent,
     TypologyComponent,
     FormTypologyComponent,
     FtpComponent,

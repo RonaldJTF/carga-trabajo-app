@@ -129,18 +129,6 @@ export class BasicTablesComponent implements OnInit {
           show: true
         }
       },
-      {
-        title: 'Tipo de documento',
-        icon: 'pi pi-id-card',
-        url: 'document-type',
-        label: 'Configura y gestiona los tipos de documentos permitidos.',
-        iconStyle: 'primary',
-        state: {
-          message: '',
-          severity: 'warn',
-          show: false
-        }
-      },
     ]
   }
 
