@@ -50,6 +50,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
 
   loading: boolean = false;
+  loadingDependency = false;
   rowGroupMetadata: number[] = [];
   numberOfElementsByStructure: any = {};
 
@@ -90,7 +91,7 @@ export class ListComponent implements OnInit, OnDestroy{
       this.getNumberOfElementsByStructure(e);
     });
     this.mustRechargeSubscription = this.store.select(state => state.structure.mustRecharge).subscribe(e => {
-      if (e){this.getStructures()}
+      if (e){this.getDependencies()}
     });
     this.dependencySubscription = this.dependency$.subscribe( e => this.dependencyMenuItems = this.getMenuItemsOfStructure(e));
     this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
@@ -199,12 +200,17 @@ export class ListComponent implements OnInit, OnDestroy{
     this.store.dispatch(StructureActions.removeDependencyIfWasDeleted({removedIds: removedIds}));
   }
 
-  getStructures(){
+  getDependencies(){
     this.loading = true;
-    this.structureService.getStructures().subscribe( e => {
-      this.store.dispatch(StructureActions.setList({structures: e}));
-      this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
-      this.loading = false;
+    this.structureService.getDependencies().subscribe({
+      next: (e)=> {
+        this.store.dispatch(StructureActions.setList({structures: e}));
+        this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
+        this.loading = false;
+      },
+      error: (e)=>{
+        this.loading = false;
+      }
     })
   }
 
@@ -219,7 +225,23 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   viewDependency(structure: Structure){
-    this.store.dispatch(StructureActions.setDependency({structure: structure}));
+    this.store.dispatch(StructureActions.setDependency({structure: structure, hasLoadedInformation: true}));
+    if(!this.hasNoDependency(structure)){
+      this.loadingDependency = true;
+      this.structureService.getDependencyInformationById(structure.id).subscribe({
+        next: (e) =>{
+          this.store.dispatch(StructureActions.setDependency({structure: e, hasLoadedInformation: false}));
+          this.loadingDependency = false;
+        },
+        error: (e)=>{
+          this.loadingDependency = false;
+        }
+      })
+    }
+  }
+
+  private hasNoDependency(structure: Structure){
+    return structure.subEstructuras?.some(e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
   }
 
   onFilter(event: Event, isDependency: boolean) {
@@ -267,7 +289,7 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   /**
-   * NOTA: si el path de la accion es actions/no-dependency, significa que va agregarse una subestructura de la siguiente tipología, por lo que
+   * NOTA: si el path de la accion es action/no-dependency, significa que va agregarse una subestructura de la siguiente tipología, por lo que
    * el id de la tipología para esa nueva subestructura debe ser del tipo de tipología siguiente que tiene el padre.
    */
   goToPage(event: any, structure: Structure){
@@ -281,7 +303,7 @@ export class ListComponent implements OnInit, OnDestroy{
         idStructure: this.cryptoService.encryptParam(idStructure),
         idParent: this.cryptoService.encryptParam(structure.id),
         idActivity: this.cryptoService.encryptParam(structure.actividad?.id),
-        idTipology: this.cryptoService.encryptParam(path == 'actions/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia),
+        idTipology: this.cryptoService.encryptParam(path == 'action/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia),
         defaultOrder: this.cryptoService.encryptParam(childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1)
       }});
   }

@@ -100,7 +100,7 @@
     </div>
 
 
-    <app-form-actions-button [updateMode]="updateMode"
+    <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitActivity($event)"
         (cancel)="onCancelActivity($event)"
         (delete)="onDeleteActivity($event)"
@@ -108,6 +108,6 @@
         [creatingOrUpdating] = "creatingOrUpdating"
         [deleting] = "deleting"
         [disabledCreateOrUpdateButton] = "formActivity.invalid">
-    </app-form-actions-button>
+    </app-form-action-button>
 
 </form>

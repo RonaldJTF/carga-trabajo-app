@@ -42,10 +42,11 @@
                 <div class="col flex align-items-center justify-content-center">
                   <div *ngIf="claseIconoFormControl.value else sAddIcon">
                     <div class="flex align-items-center justify-content-center">
-                      <div class="w-3rem h-3rem border-circle flex align-items-center justify-content-center cursor-pointer" (click)="claseIconoOverlayPanel.toggle($event)">
+                      <div class="w-3rem h-1rem border-circle flex align-items-center justify-content-center cursor-pointer" (click)="claseIconoOverlayPanel.toggle($event)">
                         <i class="pi {{claseIconoFormControl.value}} text-xl"></i>
                       </div>
                     </div>
+                    <div>{{ claseIconoFormControl.value }}</div>
                   </div>
                 </div>
               </ng-template>
@@ -68,9 +69,9 @@
         </p-splitter>
       </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitAction($event)" (cancel)="onCancelAction($event)" (delete)="onDeleteAction($event)"
-                             [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting" [disabledCreateOrUpdateButton]="formAction.invalid">
-    </app-form-actions-button>
+    <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitAction($event)" (cancel)="onCancelAction($event)" (delete)="onDeleteAction($event)"
+                            [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting" [disabledCreateOrUpdateButton]="formAction.invalid">
+    </app-form-action-button>
   </form>
 </div>
 

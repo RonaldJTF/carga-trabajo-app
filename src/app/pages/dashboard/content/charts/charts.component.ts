@@ -33,7 +33,7 @@ export class ChartsComponent implements OnInit {
 
   ngOnInit() {
     this.getInventarioTipologia();
-    this.getStructure();
+    this.getDependencies();
   }
 
   getInventarioTipologia() {
@@ -58,9 +58,9 @@ export class ChartsComponent implements OnInit {
     });
   }
 
-  getStructure() {
+  getDependencies() {
     this.loading = true;
-    this.structureService.getDependenncies().subscribe({
+    this.structureService.getDependencies().subscribe({
       next: (data) => {
         this.builtNodes(data, this.structureOptions);
         this.dependency = this.structureOptions?.length ? this.structureOptions[0] : null;

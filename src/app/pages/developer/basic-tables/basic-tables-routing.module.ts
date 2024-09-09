@@ -17,6 +17,8 @@ import {TypologyActionComponent} from "./typology-action/typology-action.compone
 import {ListComponent} from "./typology-action/actions/list/list.component";
 import {FormComponent} from "./typology-action/actions/form/form.component";
 import {WarningComponent} from "../../../shared/warning/warning.component";
+import {DocumentTypeComponent} from './document/document-type.component';
+import {FormDocumentTypeComponent} from './document/form-document/form-document-type.component';
 
 const routes: Routes = [{
   path: '', component: BasicTablesComponent, children: [
@@ -44,7 +46,10 @@ const routes: Routes = [{
         {path: 'list', component: ListComponent},
         {path: 'form', component: FormComponent},
       ]
-    }
+    },
+    {path: 'document-type', component: DocumentTypeComponent},
+    {path: 'create-document-type', component: FormDocumentTypeComponent},
+    {path: 'create-document-type/:id', component: FormDocumentTypeComponent }
   ]
 }];
 

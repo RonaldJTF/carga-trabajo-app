@@ -87,11 +87,7 @@ export class BasicTablesComponent implements OnInit {
         url: 'gender',
         label: 'Gestiona las categorías de género disponibles para los perfiles de usuario.',
         iconStyle: 'primary',
-        state: {
-          message: '',
-          severity: 'warn',
-          show: false
-        }
+        state: {}
       },
       {
         title: 'Nivel ocupacional',
@@ -99,11 +95,7 @@ export class BasicTablesComponent implements OnInit {
         url: 'level',
         label: 'Define y administra los niveles ocupacionales dentro de la organización.',
         iconStyle: 'primary',
-        state: {
-          message: '',
-          severity: 'warn',
-          show: false
-        }
+        state: {}
       },
       {
         title: 'Rol',
@@ -129,6 +121,14 @@ export class BasicTablesComponent implements OnInit {
           show: true
         }
       },
+      {
+        title: 'Documento',
+        icon: 'pi pi-id-card',
+        url: 'document-type',
+        label: 'Configura y administra el tipo de documento.',
+        iconStyle: 'primary',
+        state: {}
+      }
     ]
   }
 

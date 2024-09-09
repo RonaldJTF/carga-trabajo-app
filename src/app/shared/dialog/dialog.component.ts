@@ -67,30 +67,7 @@ export class DialogComponent implements OnInit {
       .then(event => {
         event && this.toastService.showSuccess("Reporte enviado", "Gracias por ayudarnos a mejorar")
       });
-    //this.buildReport(this.formCommentsSentry.value);
     this.ref.close();
   }
 
-  buildReport(report: any) {
-    /*Sentry.captureMessage(
-      report.comments, {
-        level: 'error',
-        extra: {
-          name: report.name,
-          email: report.email
-        }
-      });
-
-    //
-
-    Sentry.createErrorHandler({
-      dialogOptions: {
-        comments: report.comments,
-        user: {
-          name: report.name,
-          email: report.email
-        }
-      }
-    });*/
-  }
 }

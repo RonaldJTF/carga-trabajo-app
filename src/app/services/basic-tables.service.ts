@@ -14,8 +14,6 @@ export class BasicTablesService {
 
   private pathLevel = 'level';
 
-  private pathDocumentType = 'document-type';
-
   private pathTypology = 'typology';
 
   private pathFtp = 'ftp';
@@ -23,6 +21,8 @@ export class BasicTablesService {
   private pathAction = 'action';
 
   private pathTypologyAction = 'typology-action';
+
+  private pathDocumentType = 'document-type';
 
   constructor(
     private webRequestService: WebRequestService
@@ -102,31 +102,6 @@ export class BasicTablesService {
 
   deleteSelectedLevel(payload: number[]): Observable<Level[]> {
     return this.webRequestService.deleteWithHeaders(this.pathLevel, undefined, payload);
-  }
-
-  // Servicios TIPO DOCUMENTO
-  getDocumentTypes(): Observable<DocumentType[]> {
-    return this.webRequestService.getWithHeaders(this.pathDocumentType);
-  }
-
-  getDocumentType(idDocumentType: number): Observable<DocumentType> {
-    return this.webRequestService.getWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
-  }
-
-  createDocumentType(documentType: any): Observable<any> {
-    return this.webRequestService.postWithHeaders(this.pathDocumentType, documentType);
-  }
-
-  updateDocumentType(id: number, documentType: DocumentType): Observable<any> {
-    return this.webRequestService.putWithHeaders(`${this.pathDocumentType}/${id}`, documentType);
-  }
-
-  deleteDocumentType(idDocumentType: number): Observable<DocumentType> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
-  }
-
-  deleteSelectedDocumentType(payload: number[]): Observable<DocumentType[]> {
-    return this.webRequestService.deleteWithHeaders(this.pathDocumentType, undefined, payload);
   }
 
   // Servicios TIPOLOGIAS
@@ -226,10 +201,35 @@ export class BasicTablesService {
       idTipologia: idTypology,
       idAccion: idAction
     });
+
   }
 
   deleteSelectedTypologyActions(idTypology: number, payload: number[]): Observable<Action[]> {
     return this.webRequestService.deleteWithHeaders(`${this.pathTypologyAction}/${idTypology}`, undefined, payload);
   }
 
+  // Servicios DOCUMENTTYPE
+  getDocumentsType(): Observable<DocumentType[]> {
+    return this.webRequestService.getWithHeaders(this.pathDocumentType);
+  }
+
+  getDocumentType(idDocumentType: number): Observable<DocumentType> {
+    return this.webRequestService.getWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
+  }
+
+  createDocumentType(documentType: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathDocumentType, documentType);
+  }
+
+  updateDocumentType(id: number, documentType: DocumentType): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathDocumentType}/${id}`, documentType);
+  }
+
+  deleteDocumentType(idDocumentType: number): Observable<DocumentType> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathDocumentType}/${idDocumentType}`);
+  }
+
+  deleteSelectedDocumentType(payload: number[]): Observable<DocumentType[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathDocumentType, undefined, payload);
+  }
 }

@@ -351,11 +351,11 @@
                     (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
       </p-fileUpload>
     </div>
-    <app-form-actions-button [updateMode]="updateMode" (cancel)="onBackTask()" (delete)="onDeleteTask($event)"
+    <app-form-action-button [updateMode]="updateMode" (cancel)="onBackTask()" (delete)="onDeleteTask($event)"
                             [showDeleteButton]="updateMode" [creatingOrUpdating]="creatingOrUpdating"
                             (createOrUpdate)="onSubmitFollowUp($event, task)"
                             [disabledCreateOrUpdateButton]="formFollowUp.invalid">
-    </app-form-actions-button>
+    </app-form-action-button>
   </form>
 </ng-template>
 

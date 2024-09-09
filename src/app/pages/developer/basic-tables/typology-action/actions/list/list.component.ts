@@ -51,7 +51,7 @@ export class ListComponent implements OnInit {
   }
 
   getInitialValue() {
-    let idTypology = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTypology']);
+    const idTypology = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTypology']);
     if (idTypology) {
       this.getTypology(idTypology);
     }

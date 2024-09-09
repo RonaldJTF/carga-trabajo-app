@@ -20,7 +20,7 @@
       </div>
   </div>
 
-  <app-form-actions-button [updateMode]="updateMode"
+  <app-form-action-button [updateMode]="updateMode"
       (createOrUpdate)="onSubmitWorkplan($event)"
       (cancel)="onCancelWorkplan($event)"
       (delete)="onDeleteWorkplan($event)"
@@ -28,5 +28,5 @@
       [creatingOrUpdating] = "creatingOrUpdating"
       [deleting] = "deleting"
       [disabledCreateOrUpdateButton] = "formWorkplan.invalid">
-  </app-form-actions-button>
+  </app-form-action-button>
 </form>

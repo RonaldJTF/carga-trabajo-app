@@ -72,10 +72,15 @@ export const structureReducer = createReducer(
   }),
 
 
-  on(StructureActions.setDependency, (state, { structure }) => {
+  on(StructureActions.setDependency, (state, { structure, hasLoadedInformation }) => {
     const dependency = JSON.parse(JSON.stringify(structure));
     order(dependency.subEstructuras, state.orderIsAscending);
-    return { ...state, dependency: dependency };
+
+    const items = _.cloneDeep(state.items);
+    if (!hasLoadedInformation){
+      Object.assign(findStructure(dependency.id, items), dependency);
+    }
+    return { ...state, items: items, dependency: dependency };
   }),
 
 
@@ -222,6 +227,22 @@ function findStructure(id: number, structures: Structure[]): Structure{
   }
   return null;
 }
+
+
+/*function replaceStructureInList(list: Structure[], newStructure: Structure) {
+  for (let i = 0; i < list.length; i++) {
+    const current = list[i];
+    if (current.id === newStructure.id) {
+      list[i] = newStructure;
+      return;
+    }
+    const subEstructuras = current.subEstructuras;
+    if (subEstructuras && subEstructuras.length > 0) {
+      replaceStructureInList(subEstructuras, newStructure);
+    }
+  }
+}*/
+
 
 function reasingOrder(structures: Structure[], inferiorOrder: number, increment: number, superiorOrden?: number){
   structures.forEach(e => {

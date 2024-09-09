@@ -18,7 +18,7 @@
             </div>
         </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode"
+    <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitStage($event)"
         (cancel)="onCancelStage($event)"
         (delete)="onDeleteStage($event)"
@@ -26,6 +26,6 @@
         [creatingOrUpdating] = "creatingOrUpdating"
         [deleting] = "deleting"
         [disabledCreateOrUpdateButton] = "formStage.invalid">
-    </app-form-actions-button>
+    </app-form-action-button>
   </form>
 

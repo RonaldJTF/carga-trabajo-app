@@ -1,18 +1,18 @@
 {
   "colors": [
-    {"name": "Blue", "value": "blue"},
-    {"name": "Green", "value": "green"},
-    {"name": "Yellow", "value": "yellow"},
-    {"name": "Cyan", "value": "cyan"},
-    {"name": "Pink", "value": "pink"},
-    {"name": "Indigo", "value": "indigo"},
-    {"name": "Teal", "value": "teal"},
-    {"name": "Orange", "value": "orange"},
-    {"name": "Bluegray", "value": "bluegray"},
-    {"name": "Purple", "value": "purple"},
-    {"name": "Gray", "value": "gray"},
-    {"name": "Red", "value": "red"},
-    {"name": "Primary", "value": "primary"}
+    {"name": "Blue", "nombre": "Azul", "value": "blue"},
+    {"name": "Green", "nombre": "Verde", "value": "green"},
+    {"name": "Yellow", "nombre": "Amarillo", "value": "yellow"},
+    {"name": "Cyan", "nombre": "Cian", "value": "cyan"},
+    {"name": "Pink", "nombre": "Rosa","value": "pink"},
+    {"name": "Indigo", "nombre": "Índigo", "value": "indigo"},
+    {"name": "Teal", "nombre": "Verde azulado", "value": "teal"},
+    {"name": "Orange", "nombre": "Naranja", "value": "orange"},
+    {"name": "Bluegray", "nombre": "Azul gris", "value": "bluegray"},
+    {"name": "Purple", "nombre": "Púrpura", "value": "purple"},
+    {"name": "Gray", "nombre": "Gris", "value": "gray"},
+    {"name": "Red", "nombre": "Rojo", "value": "red"},
+    {"name": "Primary", "nombre": "Primario", "value": "primary"}
     ],
   "classButton": [
     {"name": "Primary", "value": "primary"},

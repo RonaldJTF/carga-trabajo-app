@@ -53,7 +53,7 @@
       </p-splitter>
     </div>
   </div>
-  <app-form-actions-button [updateMode]="updateMode"
+  <app-form-action-button [updateMode]="updateMode"
                            (createOrUpdate)="onSubmitAction($event)"
                            (cancel)="onCancelAction($event)"
                            (delete)="onDeleteAction($event)"
@@ -61,7 +61,7 @@
                            [creatingOrUpdating]="creatingOrUpdating"
                            [deleting]="deleting"
                            [disabledCreateOrUpdateButton]="formAction.invalid">
-  </app-form-actions-button>
+  </app-form-action-button>
 </form>
 
 <p-overlayPanel #claseIconoOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">

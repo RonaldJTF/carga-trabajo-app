@@ -3,16 +3,16 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
 import {finalize} from "rxjs";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
-import {Role} from "@models";
+import {DocumentType} from "@models";
 
 @Component({
-  selector: 'app-form-rol',
-  templateUrl: './form-role.component.html',
-  styleUrls: ['./form-role.component.scss']
+  selector: 'app-form-document-type',
+  templateUrl: './form-document-type.component.html',
+  styleUrls: ['./form-document-type.component.scss']
 })
-export class FormRoleComponent implements OnInit {
+export class FormDocumentTypeComponent implements OnInit {
 
-  formRol: FormGroup;
+  formDocumentType: FormGroup;
 
   updateMode: boolean = false;
 
@@ -20,7 +20,7 @@ export class FormRoleComponent implements OnInit {
 
   deleting: boolean = false;
 
-  idRol: number;
+  idDocumentType: number;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -32,23 +32,27 @@ export class FormRoleComponent implements OnInit {
   ) {
   }
 
+
   ngOnInit() {
     this.buildForm();
     this.getInitialValue();
   }
 
+
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.idRol = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.idDocumentType = this.cryptoService.decryptParamAsNumber(params['id']);
         this.updateMode = true;
-        this.getRole(this.idRol);
+        this.getDocumentType(this.idDocumentType);
       }
     });
   }
 
-  getRole(idRol: number) {
-    this.basicTablesService.getRole(idRol).subscribe({
+
+  getDocumentType(idDocumentType: number) {
+    
+    this.basicTablesService.getDocumentType(idDocumentType).subscribe({
       next: (result) => {
         this.assignValuesToForm(result);
       }
@@ -56,53 +60,53 @@ export class FormRoleComponent implements OnInit {
   }
 
   buildForm() {
-    this.formRol = this.formBuilder.group({
-      nombre: ['', Validators.required],
-      codigo: ['', Validators.required]
+    this.formDocumentType = this.formBuilder.group({
+      descripcion: ['', Validators.required],
+      abreviatura: ['', Validators.required]
     });
   }
 
-  assignValuesToForm(rol: Role) {
-    this.formRol.get('nombre').setValue(rol.nombre);
-    this.formRol.get('codigo').setValue(rol.codigo);
+  assignValuesToForm(documentType: DocumentType) {
+    this.formDocumentType.get('descripcion').setValue(documentType.descripcion);
+    this.formDocumentType.get('abreviatura').setValue(documentType.abreviatura);
   }
 
   private isValido(nombreAtributo: string) {
     return (
-      this.formRol.get(nombreAtributo)?.invalid &&
-      (this.formRol.get(nombreAtributo)?.dirty ||
-        this.formRol.get(nombreAtributo)?.touched)
+      this.formDocumentType.get(nombreAtributo)?.invalid &&
+      (this.formDocumentType.get(nombreAtributo)?.dirty ||
+        this.formDocumentType.get(nombreAtributo)?.touched)
     );
   }
 
   get controls() {
-    return this.formRol.controls;
+    return this.formDocumentType.controls;
   }
 
-  get nombreNoValido() {
-    return this.isValido('nombre');
+  get descripcionNoValido() {
+    return this.isValido('descripcion');
   }
 
-  get codigoNoValido() {
-    return this.isValido('codigo');
+  get abreviaturaNoValido() {
+    return this.isValido('abreviatura');
   }
 
-  onSubmitRol(event: Event): void {
+  onSubmitDocumentType(event: Event): void {
     event.preventDefault();
-    if (this.formRol.valid) {
+    if (this.formDocumentType.valid) {
       this.creatingOrUpdating = true;
-      this.updateMode ? this.updateRole(this.idRol, this.formRol.value) : this.createRole(this.formRol.value);
+      this.updateMode ? this.updateDocumentType(this.idDocumentType, this.formDocumentType.value) : this.createDocumentType(this.formDocumentType.value);
     } else {
-      this.formRol.markAllAsTouched();
+      this.formDocumentType.markAllAsTouched();
     }
   }
 
-  updateRole(idRol: number, rol: Role): void {
+  updateDocumentType(idDocumentType: number, documentType: DocumentType): void {
     let message = '¿Está seguro de actualizar el registro?';
     this.confirmationDialogService.showEventConfirmationDialog(
       message,
       () => {
-        this.basicTablesService.updateRole(idRol, rol).pipe(
+        this.basicTablesService.updateDocumentType(idDocumentType, documentType).pipe(
           finalize(() => {
             this.creatingOrUpdating = false;
           })
@@ -118,8 +122,8 @@ export class FormRoleComponent implements OnInit {
     )
   }
 
-  createRole(rol: Role): void {
-    this.basicTablesService.createRole(rol).pipe(
+  createDocumentType(documentType: DocumentType): void {
+    this.basicTablesService.createDocumentType(documentType).pipe(
       finalize(() => {
         this.creatingOrUpdating = false;
       })
@@ -130,10 +134,10 @@ export class FormRoleComponent implements OnInit {
     })
   }
 
-  onDeleteRol(event: Event): void {
+  onDeleteDocumentType(event: Event): void {
     event.preventDefault()
     this.deleting = true;
-    this.basicTablesService.deleteRole(this.idRol).pipe(
+    this.basicTablesService.deleteDocumentType(this.idDocumentType).pipe(
       finalize(() => {
         this.deleting = false;
       })
@@ -144,14 +148,14 @@ export class FormRoleComponent implements OnInit {
     })
   }
 
-  onCancelRol(event: Event) {
+  onCancelDocumentType(event: Event) {
     event.preventDefault();
     this.goBack();
   }
 
   goBack() {
     this.urlService.goBack();
-    this.formRol.reset();
+    this.formDocumentType.reset();
   }
 
 }

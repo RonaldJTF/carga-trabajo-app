@@ -99,11 +99,11 @@
             </ng-template>
           </div>
 
-          <app-form-actions-button [updateMode]="updateMode" (createOrUpdate)="onSubmitUser($event)"
+          <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitUser($event)"
             (cancel)="onCancelUserPerson($event)" (delete)="onDeleteUserPerson($event)" [showDeleteButton]="updateMode"
             [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
             [disabledCreateOrUpdateButton]="formUser.invalid">
-          </app-form-actions-button>
+          </app-form-action-button>
         </div>
       </div>
     </div>

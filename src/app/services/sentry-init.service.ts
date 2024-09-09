@@ -35,7 +35,6 @@ export class SentryInitService {
       profilesSampleRate: 1.0,
 
       // Definir variables a enviar a la plataforma
-      initialScope: {},
       release: "1.0.01.00", // Versión del aplicativo.
       environment: environment.environment, // Define el ambiente desde donde se lanza el evento.
 

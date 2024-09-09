@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <app-form-actions-button [updateMode]="updateMode"
+    <app-form-action-button [updateMode]="updateMode"
                              (createOrUpdate)="onSubmitGender($event)"
                              (cancel)="onCancelRol($event)"
                              (delete)="onDeleteRol($event)"
@@ -32,6 +32,6 @@
                              [creatingOrUpdating]="creatingOrUpdating"
                              [deleting]="deleting"
                              [disabledCreateOrUpdateButton]="formGender.invalid">
-    </app-form-actions-button>
+    </app-form-action-button>
   </form>
 </div>

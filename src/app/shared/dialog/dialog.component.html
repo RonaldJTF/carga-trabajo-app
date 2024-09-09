@@ -40,12 +40,12 @@
     </div>
   </form>
 
-  <app-form-actions-button (cancel)="hideDialog()"
+  <app-form-action-button (cancel)="hideDialog()"
                            [showDeleteButton]="false"
                            [creatingOrUpdating]="creatingOrUpdating"
                            (createOrUpdate)="sendComments()"
                            buttonCreateNamedAs="Enviar"
                            buttonCancelNamedAs="Cerrar"
                            [disabledCreateOrUpdateButton]="formCommentsSentry.invalid">
-  </app-form-actions-button>
+  </app-form-action-button>
 </ng-container>

@@ -2,11 +2,11 @@
   <div class="flex align-items-center justify-content-between p-5 pb-1">
     <div class="flex align-items-center">
       <div
-        class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-        <i class="pi pi-verified text-xl text-blue-500"></i>
+        class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+        <i class="pi pi-verified text-xl text-primary-500"></i>
       </div>
       <div class="flex flex-column">
-        <h5 class="m-0 text-700">{{ 'Accion' | pluralize: accionesLength }} de {{ typology.nombre | lowercase }}</h5>
+        <h5 class="m-0 text-700">{{ 'Acción' | pluralize: accionesLength }} de <span class="text-primary-600">{{ typology.nombre | lowercase}}</span></h5>
         <span class="text-500">Administra las diferentes acciones disponibles para la tipologia.</span>
       </div>
     </div>
@@ -21,7 +21,7 @@
   <router-outlet></router-outlet>
 </div>
 <div class="flex flex-wrap justify-content-end m-0 p-0 mt-3">
-  <button class="p-button-secondary" pButton pRipple icon="pi pi-undo" (click)="goBack()">
+  <button pRipple pButton class="p-button-secondary" icon="pi pi-undo" (click)="goBack()">
     <span class="hidden-xs p-button-label pl-2">Volver</span>
   </button>
 </div>

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
 import {finalize} from "rxjs";
 import {Level} from "@models";
@@ -23,7 +23,6 @@ export class FormLevelComponent implements OnInit{
   idLevel: number;
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private basicTablesService: BasicTablesService,
     private route: ActivatedRoute,
@@ -103,7 +102,7 @@ export class FormLevelComponent implements OnInit{
           })
         ).subscribe({
           next: () => {
-            this.urlService.goBack();
+            this.goBack();
           }
         })
       },
@@ -120,7 +119,7 @@ export class FormLevelComponent implements OnInit{
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
@@ -134,15 +133,18 @@ export class FormLevelComponent implements OnInit{
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
 
   onCancelLevel(event: Event) {
     event.preventDefault();
-    this.router.navigate(['developer/basic-tables/level'], {
-      skipLocationChange: true,
-    }).then();
+    this.goBack();
+  }
+
+  goBack(){
+    this.urlService.goBack();
+    this.formLevel.reset();
   }
 }

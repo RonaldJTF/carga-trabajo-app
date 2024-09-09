@@ -12,9 +12,7 @@ export const adminOrOperatorGuard: CanActivateFn = (route, state) => {
   if (isAdminOrOperator) {
     return true;
   } else {
-    isDesarrollador && router.navigate(["/developer/basic-tables"], {
-      queryParams: {returnUrl: state.url},
-    });
+    isDesarrollador && router.navigate(["/developer/basic-tables"], {queryParams: {returnUrl: state.url}});
     return false;
   }
 

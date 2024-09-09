@@ -24,6 +24,8 @@ export class FormActionComponent implements OnInit {
 
   deleting: boolean = false;
 
+  loading: boolean = false;
+
   idAction: number;
 
   icons: any[] = [];
@@ -33,8 +35,6 @@ export class FormActionComponent implements OnInit {
   filteredIcons: any[] = [];
 
   filteredColor: any[] = [];
-
-  loading: boolean = false;
 
   items: MenuItem[] = [];
 
@@ -138,9 +138,8 @@ export class FormActionComponent implements OnInit {
   }
 
   updateAction(idAction: number, action: Action): void {
-    let message = '¿Está seguro de actualizar el registro?';
     this.confirmationDialogService.showEventConfirmationDialog(
-      message,
+      '¿Está seguro de actualizar el registro?',
       () => {
         this.basicTablesService.updateAction(idAction, action).pipe(
           finalize(() => {
@@ -148,7 +147,7 @@ export class FormActionComponent implements OnInit {
           })
         ).subscribe({
           next: () => {
-            this.urlService.goBack();
+            this.goBack();
           }
         })
       },
@@ -165,7 +164,7 @@ export class FormActionComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
@@ -179,14 +178,14 @@ export class FormActionComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.urlService.goBack();
+        this.goBack();
       }
     })
   }
 
   onCancelAction(event: Event) {
     event.preventDefault();
-    this.urlService.goBack();
+    this.goBack();
   }
 
   getIcons() {
@@ -260,4 +259,8 @@ export class FormActionComponent implements OnInit {
     this.iconSelected = this.icons.find(item => item.value === claseIcono);
   }
 
+  goBack(){
+    this.urlService.goBack();
+    this.formAction.reset();
+  }
 }

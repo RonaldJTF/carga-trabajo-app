@@ -12,7 +12,7 @@
 
     <div class="field p-fluid">
         <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
-        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion"></textarea>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
         <div *ngIf="formStructure.controls['descripcion'].errors && (formStructure.controls['descripcion'].touched||formStructure.controls['descripcion'].dirty)">
             <div *ngIf="formStructure.controls['descripcion'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingresa una descripción</small>
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <app-form-actions-button [updateMode]="updateMode"
+    <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitStructure($event)"
         (cancel)="onCancelStructure($event)"
         (delete)="onDeleteStructure($event)"
@@ -41,6 +41,6 @@
         [creatingOrUpdating] = "creatingOrUpdating"
         [deleting] = "deleting"
         [disabledCreateOrUpdateButton] = "formStructure.invalid">
-    </app-form-actions-button>
+    </app-form-action-button>
 
 </form>

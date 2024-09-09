@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sentryInitService.initSentry();
+    //this.sentryInitService.initSentry();// Inicialización de Sentry
     this.primengConfig.ripple = true;
     this.initConfig();
     this.urlService.initialize();
