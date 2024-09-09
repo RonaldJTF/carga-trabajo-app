@@ -32,15 +32,12 @@ export class FormDocumentTypeComponent implements OnInit {
   ) {
   }
 
-  // método del ciclo de vida de angular que se ejecuta al inicializar el componente.
 
   ngOnInit() {
     this.buildForm();
     this.getInitialValue();
   }
 
-  // suscribe a los parámetros de la ruta para verificar si se ha proporcionado un ID. 
-  // se obtiene el tipo de documento.
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
@@ -52,13 +49,11 @@ export class FormDocumentTypeComponent implements OnInit {
     });
   }
 
-  // Obtener detalles de un tipo documento.
 
   getDocumentType(idDocumentType: number) {
-    // se usa el servicio para realizar una solicitud al backend.
+    
     this.basicTablesService.getDocumentType(idDocumentType).subscribe({
       next: (result) => {
-        // llamada al método encargado de obtener los detalles requeridos.
         this.assignValuesToForm(result);
       }
     })
