@@ -172,7 +172,7 @@ export const stageReducer = createReducer(
   })),
 );
 
-function filtrarNodosArbol(listaNodos: Stage[], idsAEliminar:number[]) {
+export function filtrarNodosArbol(listaNodos: Stage[], idsAEliminar:number[]) {
   const listaFiltrada = JSON.parse(JSON.stringify(listaNodos));
   for (let i = listaFiltrada.length - 1; i >= 0; i--) {
     const nodo = listaFiltrada[i];
@@ -189,7 +189,7 @@ function filtrarNodosArbol(listaNodos: Stage[], idsAEliminar:number[]) {
   return listaFiltrada;
 }
 
-function findStage(id: number, stages: Stage[]): Stage{
+export function findStage(id: number, stages: Stage[]): Stage{
   if (stages && id){
     for (let e of stages){
       if (id == e.id){
@@ -203,7 +203,7 @@ function findStage(id: number, stages: Stage[]): Stage{
   return null;
 }
 
-function findTask(idTask: number, stages: Stage[]): Task{
+export function findTask(idTask: number, stages: Stage[]): Task{
   if (stages && idTask){
     for (let e of stages){
       const task = e.tareas?.find((t) => t.id == idTask);
@@ -218,13 +218,13 @@ function findTask(idTask: number, stages: Stage[]): Task{
   return null;
 }
 
-function updateAvance(stages: Stage[]){
+export function updateAvance(stages: Stage[]){
   for (let stage of stages){
     stage.avance = calculateStageAdvance(stage)
   }
 }
 
-function calculateStageAdvance(stage: Stage) {
+export function calculateStageAdvance(stage: Stage) {
   if (!stage) return 0;
   let totalAdvance = 0;
   let count = 0;
@@ -255,7 +255,7 @@ function calculateStageAdvance(stage: Stage) {
   return parseFloat(stage.avance.toFixed(1));
 }
 
-function orderByStartDate(items) {
+  export function orderByStartDate(items) {
   function sortTasks(item) {
       if (item.tareas) {
           item.tareas.sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime());
@@ -292,7 +292,7 @@ function orderByStartDate(items) {
   });
 }
 
-function filterTasksInAllStages(stages: Stage[], taskIds: number[]): void{
+export function filterTasksInAllStages(stages: Stage[], taskIds: number[]): void{
   if (!stages){
     return;
   }
