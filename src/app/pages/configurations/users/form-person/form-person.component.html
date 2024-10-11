@@ -38,9 +38,10 @@
             <label htmlFor="primerNombre" class="font-medium">Primer nombre</label>
             <input type="text" id="primerNombre" pInputText formControlName="primerNombre">
             <div *ngIf="nombrePrimeroNoValido">
-              <div *ngIf="controls['primerNombre'].errors?.['required']">
-                <small class="p-error">Ingrese un primer nombre</small>
-              </div>
+              <ng-container *ngIf="controls['primerNombre'].errors as errors">
+                <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer nombre</small>
+                <small *ngIf="errors?.['whitespace']" class="p-error">El nombre no puede ser espacios en blanco</small>
+              </ng-container>
             </div>
           </div>
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
@@ -53,9 +54,10 @@
             <label class="font-medium" for="primerApellido">Primer apellido</label>
             <input type="text" id="primerApellido" pInputText formControlName="primerApellido">
             <div *ngIf="apellidoPrimeroNoValido">
-              <div *ngIf="controls['primerApellido'].errors?.['required']">
-                <small class="p-error">Ingrese un primer apellido</small>
-              </div>
+              <ng-container *ngIf="controls['primerApellido'].errors as errors">
+                <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer apellido</small>
+                <small *ngIf="errors?.['whitespace']" class="p-error">El apellido no puede ser espacios en blanco</small>
+              </ng-container>
             </div>
           </div>
           <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
