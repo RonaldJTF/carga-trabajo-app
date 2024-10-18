@@ -105,6 +105,7 @@ export class GenderComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.basicTableService.deleteGender(id).subscribe(() => {
         this.filterRole(id);
+        this.desmarkAll();
       });
     });
   }

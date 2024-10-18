@@ -71,11 +71,11 @@ export class ListComponent implements OnInit, OnDestroy{
       return [];
     }
     return [
-      {label: 'Gestionar etapa', icon: 'pi pi-cog',command: (e) => this.onManagementStage(e.item.id, e.originalEvent)},
+      {label: 'Gestión de etapas', icon: 'pi pi-cog',command: (e) => this.onManagementStage(e.item.id, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdate(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteWorkplan(e)},
       {label: 'Descargar', icon: 'pi pi-cloud-download', items: [
-        {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId: "excel", command: (e) => {this.download(e, workplan.id)}},
+        {label: 'Reporte de excel', icon: 'pi pi-file-excel', automationId: "excel", command: (e) => {this.download(e, workplan.id)}},
       ]},
     ];
   }

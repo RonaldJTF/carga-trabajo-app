@@ -60,6 +60,4 @@ export class TypologyActionComponent implements OnInit {
       skipLocationChange: true
     }).then(() => this.typology = null);
   }
-
-
 }

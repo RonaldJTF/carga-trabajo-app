@@ -104,6 +104,7 @@ export class LevelComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.basicTableService.deleteLevel(idLevel).subscribe(() => {
         this.filterLevel(idLevel);
+        this.desmarkAll();
       });
     });
   }

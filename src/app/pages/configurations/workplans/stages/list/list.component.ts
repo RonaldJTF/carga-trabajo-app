@@ -124,7 +124,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
     this.menuItemsOfTaskInCalendar = [
       {
-        label: 'Gestionar seguimiento',
+        label: 'Gestión de seguimientos',
         icon: 'pi pi-cog',
         command: (e) => this.goToManagementFollowUp(e.item.id, e.originalEvent)
       },

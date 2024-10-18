@@ -104,6 +104,7 @@ export class ActionComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.basicTableService.deleteAction(idAction).subscribe(() => {
         this.filterAction(idAction);
+        this.desmarkAll();
       });
     });
   }

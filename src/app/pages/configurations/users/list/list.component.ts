@@ -93,6 +93,7 @@ export class ListComponent implements OnInit{
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.personService.delete(idPerson).subscribe(() => {
         this.filterPeople(idPerson);
+        this.desmarkAll();
       });
     });
   }

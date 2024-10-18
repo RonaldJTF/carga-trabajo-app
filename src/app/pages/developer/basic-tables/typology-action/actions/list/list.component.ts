@@ -45,7 +45,7 @@ export class ListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.intMenu();
+    this.initMenu();
     this.getActions();
     this.getInitialValue();
   }
@@ -71,7 +71,7 @@ export class ListComponent implements OnInit {
     })
   }
 
-  intMenu() {
+  initMenu() {
     this.items = [
       {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editAction(parseInt(e.item.id))},
       {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDelete(e.item)},

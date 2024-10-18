@@ -105,6 +105,7 @@ export class FtpComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.basicTableService.deleteFtp(idLevel).subscribe(() => {
         this.filterFtp(idLevel);
+        this.desmarkAll();
       });
     });
   }

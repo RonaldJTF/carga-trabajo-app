@@ -120,6 +120,7 @@ export class TypologyComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.basicTableService.deleteTypology(idTypology).subscribe(() => {
         this.filterTypology(idTypology);
+        this.desmarkAll();
       });
     });
   }

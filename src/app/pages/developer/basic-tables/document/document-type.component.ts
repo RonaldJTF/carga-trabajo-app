@@ -105,6 +105,7 @@ export class DocumentTypeComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.basicTableService.deleteDocumentType(idDocumentType).subscribe(() => {
         this.filterDocumentType(idDocumentType);
+        this.desmarkAll();
       });
     });
   }

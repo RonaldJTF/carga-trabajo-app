@@ -105,6 +105,7 @@ export class RoleComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
       this.basicTableService.deleteRole(idRol).subscribe(() => {
         this.filterRole(idRol);
+        this.desmarkAll();
       });
     });
   }

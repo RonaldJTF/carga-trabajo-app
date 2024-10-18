@@ -1,5 +1,6 @@
 import {AbstractControl, FormArray, FormControl, FormGroup} from "@angular/forms";
 import { MenuItem } from "primeng/api";
+import { MIMETYPE_TO_EXTENSION } from "./constants";
 
 export class Methods {
 
@@ -117,11 +118,7 @@ export class Methods {
   }
 
   static getExtensionOfMimetype(mimetype: string) {
-    const parts = mimetype.split('/');
-    if (parts.length === 2) {
-      return parts[1];
-    }
-    return null;
+    return MIMETYPE_TO_EXTENSION[mimetype.toLowerCase()];
   }
 
   static lightenColor(color, factor) {
