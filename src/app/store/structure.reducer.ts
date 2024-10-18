@@ -195,7 +195,7 @@ export const structureReducer = createReducer(
 );
 
 
-function filtrarNodosArbol(listaNodos: Structure[], idsAEliminar:number[]) {
+export function filtrarNodosArbol(listaNodos: Structure[], idsAEliminar:number[]) {
   const listaFiltrada = JSON.parse(JSON.stringify(listaNodos));
   for (let i = listaFiltrada.length - 1; i >= 0; i--) {
     const nodo = listaFiltrada[i];
@@ -213,7 +213,7 @@ function filtrarNodosArbol(listaNodos: Structure[], idsAEliminar:number[]) {
 }
 
 
-function findStructure(id: number, structures: Structure[]): Structure{
+export function findStructure(id: number, structures: Structure[]): Structure{
   if (structures && id){
     for (let e of structures){
       if (id == e.id){
@@ -243,7 +243,7 @@ function findStructure(id: number, structures: Structure[]): Structure{
 }*/
 
 
-function reasingOrder(structures: Structure[], inferiorOrder: number, increment: number, superiorOrden?: number){
+export function reasingOrder(structures: Structure[], inferiorOrder: number, increment: number, superiorOrden?: number){
   structures.forEach(e => {
     if (e.orden >= inferiorOrder && (superiorOrden == null || e.orden <= superiorOrden)){
       e.orden = e.orden + increment
@@ -251,7 +251,7 @@ function reasingOrder(structures: Structure[], inferiorOrder: number, increment:
   })
 }
 
-function order(structures: Structure[], isAscending: boolean) {
+export function order(structures: Structure[], isAscending: boolean) {
   if (!structures?.length) {
     return;
   }

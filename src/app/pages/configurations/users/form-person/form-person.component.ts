@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Gender, Person, DocumentType} from '@models';
 import {MESSAGE} from "@labels/labels";
 import {
@@ -110,9 +110,9 @@ export class FormPersonComponent implements OnInit {
 
   buildForm() {
     this.formPerson = this.formBuilder.group({
-      primerNombre: ['', Validators.compose([Validators.required])],
+      primerNombre: ['', Validators.compose([Validators.required, this.noWhitespaceValidator])],
       segundoNombre: [''],
-      primerApellido: ['', Validators.compose([Validators.required])],
+      primerApellido: ['', Validators.compose([Validators.required, this.noWhitespaceValidator])],
       segundoApellido: [''],
       idTipoDocumento: ['', Validators.required],
       documento: [null, Validators.compose([Validators.required, Validators.min(0)])],
@@ -296,6 +296,14 @@ export class FormPersonComponent implements OnInit {
       this.fileInfo = '';
       img.src = this.person.srcFoto;
     }
+  }
+
+  noWhitespaceValidator(control: AbstractControl) {
+    const value = control.value || '';
+    if (!value.trim() && value.length > 0) {
+      return { 'whitespace': true };
+    }
+    return null;
   }
 
 }
