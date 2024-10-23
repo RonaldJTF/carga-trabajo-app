@@ -26,7 +26,10 @@ import {
   StructureService,
   UrlService,
   UserService,
-  WorkplanService
+  WorkplanService,
+  ScopeService,
+  PeriodicityService,
+  CategoryService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -36,10 +39,11 @@ import {structureReducer} from '@store/structure.reducer';
 import {workplanReducer} from "@store/workplan.reducer";
 import {stageReducer} from '@store/stage.reducer';
 import {RippleModule} from "primeng/ripple";
-
 import * as Sentry from "@sentry/angular";
 import {Router} from "@angular/router";
 import {DialogService} from "primeng/dynamicdialog";
+
+
 
 @NgModule({
   declarations: [
@@ -63,7 +67,7 @@ import {DialogService} from "primeng/dynamicdialog";
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
-    StructureService, LevelService, DashboardService, DocumentTypeService, GenderService, PersonService,
+    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},

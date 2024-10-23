@@ -22,3 +22,6 @@ export * from 'src/app/layout/service/app.layout.service';
 export * from 'src/app/layout/service/theme.service';
 export * from 'src/app/pages/configurations/users/change-password/service/change-password.service';
 export * from './sentry-init.service';
+export * from './scope.service'
+export * from './periodicity.service';
+export * from './category.service';

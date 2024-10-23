@@ -128,6 +128,30 @@ export class BasicTablesComponent implements OnInit {
         label: 'Gestión de los tipos de documentos de identidad',
         iconStyle: 'primary',
         state: {}
+      },
+      {
+        title: 'Alcance',
+        icon: 'pi pi-compass',
+        url: 'scope',
+        label: 'Gestión de alcance',
+        iconStyle: 'primary',
+        state: {}
+      },
+      {
+        title: 'Categorías',
+        icon: 'pi pi-th-large',
+        url: 'category',
+        label:'Gestión de categorías',
+        iconStyle: 'primary',
+        state: {}
+      },
+      {
+        title: 'Periodicidad',
+        icon: 'pi pi-calendar-plus',
+        url: 'periodicity',
+        label: 'Gestión de periodicidad',
+        iconStyle: 'primary',
+        state: {}
       }
     ]
   }

@@ -19,6 +19,12 @@ import {FormComponent} from "./typology-action/actions/form/form.component";
 import {WarningComponent} from "../../../shared/warning/warning.component";
 import {DocumentTypeComponent} from './document/document-type.component';
 import {FormDocumentTypeComponent} from './document/form-document/form-document-type.component';
+import { ScopeComponent } from './scope/scope.component';
+import { FormScopeComponent } from './scope/form-scope/form-scope.component';
+import { CategoryComponent } from './category/category.component';
+import { FormCategoryComponent } from './category/form-category/form-category.component';
+import { PeriodicityComponent } from './periodicity/periodicity.component';
+import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-periodicity.component';
 
 const routes: Routes = [{
   path: '', component: BasicTablesComponent, children: [
@@ -49,7 +55,16 @@ const routes: Routes = [{
     },
     {path: 'document-type', component: DocumentTypeComponent},
     {path: 'create-document-type', component: FormDocumentTypeComponent},
-    {path: 'create-document-type/:id', component: FormDocumentTypeComponent }
+    {path: 'create-document-type/:id', component: FormDocumentTypeComponent },
+    {path: 'scope', component: ScopeComponent},
+    {path: 'create-scope', component: FormScopeComponent},
+    {path: 'create-scope/:id', component:FormScopeComponent},
+    {path: 'category', component: CategoryComponent},
+    {path: 'create-category', component: FormCategoryComponent},
+    {path: 'create-category/:id', component: FormCategoryComponent},
+    {path: 'periodicity', component: PeriodicityComponent},
+    {path: 'create-periodicity', component: FormPeriodicityComponent},
+    {path: 'create-periodicity/:id', component: FormPeriodicityComponent}
   ]
 }];
 
