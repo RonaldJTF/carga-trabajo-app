@@ -196,4 +196,12 @@ export class Methods {
       }
     }
   }
+
+  /**
+   * Transforma, de una cadena de texto, la primera letra en mayuscula y el restos en miniscula.
+   * @param text cadena de texto a modificar.
+   */
+  static capitalizeFirstLetter(text: string){
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
 }

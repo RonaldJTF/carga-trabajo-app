@@ -44,7 +44,7 @@ import {DialogService} from "primeng/dynamicdialog";
 @NgModule({
   declarations: [
     AppComponent,
-    NotFoundComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

@@ -31,9 +31,9 @@ export class AppMenuComponent implements OnInit {
   }
 
   initializeRoles() {
-    const {isSuperAdministrator, isDesarrollador, isAdministrator, isOperator} = this.authService.roles();
+    const {isSuperAdministrator, isDeveloper, isAdministrator, isOperator} = this.authService.roles();
     this.isSuperAdmin = isSuperAdministrator;
-    this.isDesarrollador = isDesarrollador;
+    this.isDesarrollador = isDeveloper;
     this.isAdministrator = isAdministrator;
     this.isOperator = isOperator;
   }
@@ -78,6 +78,13 @@ export class AppMenuComponent implements OnInit {
             color: 'green',
             description: 'Gestión de planes de trabajos',
             routerLink: ['/configurations/workplans']
+          },
+          {
+            label: 'Compensaciones laboralares',
+            icon: 'pi pi-money-bill',
+            color: 'purple',
+            description: 'Gestión de compensación laboral',
+            routerLink: ['/configurations/compensations']
           },
         ],
       },

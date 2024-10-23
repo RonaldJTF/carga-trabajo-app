@@ -19,7 +19,7 @@ import {MenuItemComponent} from './menu-item/menu-item.component';
 import {DividerModule} from 'primeng/divider';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {PanelModule} from 'primeng/panel';
-import {MenuModule} from 'primeng/menu';
+import {MenuItemContent, MenuModule} from 'primeng/menu';
 import {TableModule} from 'primeng/table';
 import {TreeTableModule} from 'primeng/treetable';
 import {NoResultComponent} from './no-result/no-result.component';
@@ -82,7 +82,6 @@ import { DialogComponent } from './dialog/dialog.component';
     TimeComponent,
     SkeletonListGridComponent,
     TimeRangeComponent,
-    MenuItemComponent,
     BarChartComponent,
     PolarChartComponent,
     HeadSkeletonComponent,
@@ -138,7 +137,6 @@ import { DialogComponent } from './dialog/dialog.component';
     InputNumberModule,
     DialogModule,
     TableModule,
-    MenuModule,
     DataViewModule,
     TagModule,
     InputMaskModule,
@@ -164,7 +162,7 @@ import { DialogComponent } from './dialog/dialog.component';
     ProgressSpinnerModule,
     StepsModule,
     MegaMenuModule,
-    SplitterModule
+    SplitterModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -176,7 +174,6 @@ import { DialogComponent } from './dialog/dialog.component';
     TimeComponent,
     SkeletonListGridComponent,
     TimeRangeComponent,
-    MenuItemComponent,
     BarChartComponent,
     PolarChartComponent,
     HeadSkeletonComponent,
@@ -230,7 +227,6 @@ import { DialogComponent } from './dialog/dialog.component';
     InputNumberModule,
     DialogModule,
     TableModule,
-    MenuModule,
     DataViewModule,
     TagModule,
     InputMaskModule,

@@ -25,17 +25,30 @@ export class RecoverPasswordComponent implements OnInit {
   ) {
   }
 
+  /**
+   * Implementación del de OnInit.
+   * Inicializa la construcción del formulario.
+   */
   ngOnInit() {
     this.buildForm();
   }
 
+  /**
+   * Método que construye el formularios con los campos se seran utilizado para recolectar la informacion.
+   * Se realiza asiga algunas validaciones y requisitos con los que el campo debe cumplir.
+   */
   buildForm(): void {
     this.formRecoverPassword = this.formBuilder.group({
       correo: ["", Validators.compose([Validators.email, Validators.required, Validators.maxLength(120)])]
     })
   }
 
-
+  /**
+   * Método privado que toma un parámetro nombreAtributo que representa el nombre de un atributo en un formulario.
+   * Devuelve un valor booleano que indica si el atributo del formulario es inválido y ha sido modificado o tocado por el usuario.
+   * @param nombreAtributo cadena de texto con el nombre del campo a verificar.
+   * @private
+   */
   private isValido(nombreAtributo: string) {
     return (
       this.formRecoverPassword.get(nombreAtributo)?.invalid &&
@@ -44,14 +57,25 @@ export class RecoverPasswordComponent implements OnInit {
     );
   }
 
+  /**
+   * Devuelve totos los controles del formulario `formChangePassword`
+   */
   get controls() {
     return this.formRecoverPassword.controls;
   }
 
+  /**
+   * Devuelve un valor booleano para validar si campo `correo` del formulario es valido.
+   */
   get correoNoValido() {
     return this.isValido('correo');
   }
 
+  /**
+   * Este método se ejecuta cuando se envía un formulario de cambio de contraseña.
+   * El método primero verifica si el formulario es válido utilizando la propiedad invalid del formulario.
+   * Si el formulario no es válido, se marca como tocado y se detiene la ejecución del método.
+   */
   onSubmit() {
     if (this.formRecoverPassword.invalid) {
       this.formRecoverPassword.markAllAsTouched();
@@ -74,6 +98,9 @@ export class RecoverPasswordComponent implements OnInit {
     }
   }
 
+  /**
+   * Redirecciona a la paguina login.
+   */
   login() {
     this.router.navigate(['account/auth/login']).then();
   }

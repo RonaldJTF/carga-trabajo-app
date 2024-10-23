@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import {DynamicDialogRef} from "primeng/dynamicdialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as Sentry from '@sentry/angular'
 import {ToastService} from "@services";

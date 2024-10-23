@@ -19,7 +19,14 @@ export class ErrorInterceptor implements HttpInterceptor {
   ) {
   }
 
-
+  /**
+   * Este método intersepta las peticiones HTTP que son enviados desde el backend.
+   * Se manejar los error que de hayan generado luego de realizada una peticion y este llegue como respuesta del servicio llamado.
+   * Se hace uso del operador `catchError`, para capturar el error.
+   * El error el validado para disparar un toast donde el usuario podra evidenciar el error que se ha generado.
+   * @param request contiene la solucitud HTTP que se esta interceptando.
+   * @param next contiene el handler que manejará la petición.
+   */
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request)
       .pipe(

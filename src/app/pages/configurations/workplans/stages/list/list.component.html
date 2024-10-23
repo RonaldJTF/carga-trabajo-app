@@ -303,7 +303,7 @@
               <img [src]="file.mimetype | fileIcon" class="mr-2" height="32px" alt=""/>
               <span class="flex-grow-1 text-left">{{ file.nombre }}</span>
               <span class="ml-auto w-7rem">{{ file.tamanio | fileSize : "Desconocido" }}</span>
-              <button pButton pRipple (click)="downloadFile(file.id, $event)" type="button"                      icon="pi pi-cloud-download" class="p-button-rounded p-button-text" pTooltip="Descargar"
+              <button pButton pRipple (click)="downloadFile(file.id, $event)" type="button" icon="pi pi-cloud-download" class="p-button-rounded p-button-text" pTooltip="Descargar"
                       tooltipPosition="bottom">
               </button>
             </div>

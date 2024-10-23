@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { map, Observable, of } from 'rxjs';
 import { Structure } from '@models';
-import { HttpResponse } from '@angular/common/http';
+import {HttpEventType, HttpResponse} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -48,15 +48,29 @@ export class StructureService {
     return this.webRequestService.deleteWithHeaders(`${this.pathStructure}/${id}`)
   }
 
-  downloadReport(type: string, structureIds: number[]): Observable<HttpResponse<any>>{
+  downloadReport(type: string, structureIds: number[]): Observable<number>{
     const options = {
-      responseType: 'blob' as 'json',
-      observe: 'response' as 'body'
+      //responseType: 'blob' as 'json',
+      //observe: 'response' as 'body'
+      responseType: 'blob',
+      observe: 'events',
+      reportProgress: true
     };
     return this.webRequestService.getWithHeaders(`${this.pathStructure}/report`, {type: type, structureIds: JSON.stringify(structureIds ?? [])}, null, options).pipe(
       map(e => {
-        this.handleFileDownload(e);
-        return e;
+        switch (e.type) {
+          case HttpEventType.DownloadProgress:
+            return Math.round((100 * e.loaded) / (e.total || 1));
+
+          case HttpEventType.Response:
+            this.handleFileDownload(e);
+            return 100;
+
+          default:
+            return 0;
+        }
+        //this.handleFileDownload(e);
+        //return e;
       })
     )
   }

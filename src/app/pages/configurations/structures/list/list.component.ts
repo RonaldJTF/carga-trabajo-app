@@ -1,15 +1,17 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as StructureActions from "@store/structure.actions";
-import {flatMap, last, map, Observable, Subscription} from 'rxjs';
-import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/app.reducers';
+import {finalize, map, Observable, Subscription} from 'rxjs';
+import {Store} from '@ngrx/store';
+import {AppState} from 'src/app/app.reducers';
 import {IMAGE_SIZE, Methods} from '@utils';
-import { MESSAGE } from '@labels/labels';
-import { MenuItem, TreeNode } from 'primeng/api';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TreeTable } from 'primeng/treetable';
+import {MESSAGE} from '@labels/labels';
+import {MenuItem, TreeNode} from 'primeng/api';
+import {ActivatedRoute, Router} from '@angular/router';
+import {TreeTable} from 'primeng/treetable';
 import {AuthenticationService, ConfirmationDialogService, CryptojsService, StructureService} from "@services";
 import {Structure} from "@models";
+import {Menu} from "primeng/menu";
+
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -59,9 +61,11 @@ export class ListComponent implements OnInit, OnDestroy{
   orderIsAscending: boolean;
 
   menuItemsOfDownload: MenuItem[] = [
-    {label: 'Reporte de tiempos en PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
-    {label: 'Reporte de tiempos en Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
+    {label: 'Reporte de tiempos en PDF', escape: false, icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
+    {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
   ]
+
+  @ViewChild('menu') menu!: Menu;
 
   constructor(
     private store: Store<AppState>,
@@ -70,7 +74,8 @@ export class ListComponent implements OnInit, OnDestroy{
     private authService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
-    private cryptoService: CryptojsService
+    private cryptoService: CryptojsService,
+    private cdr: ChangeDetectorRef
   ){}
 
   ngOnInit(): void {
@@ -362,22 +367,32 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   download(data: any, idStructure?: number) {
-    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean) => {
+    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
         if (menuItem) {
             menuItem.icon = icon;
             menuItem.disabled = disabled;
+            menuItem.label = label;
         }
     };
     const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
     const initialIcon = menuItem?.icon;
     const initialState = menuItem?.disabled;
+    const initialLabel = menuItem?.label;
+
+    let automationId = data.item.automationId;
+
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
     const structureIds = idStructure
         ? [idStructure]
         : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
-    this.structureService.downloadReport(data.item.automationId, structureIds).subscribe({
-        next: () => updateMenuItem(menuItem, initialIcon, initialState),
-        error: () => updateMenuItem(menuItem, initialIcon, initialState)
+    this.structureService.downloadReport(automationId, structureIds).pipe(
+      finalize(()=>{
+        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
+      })
+    ).subscribe({
+      next: (res) => {
+        this.reportUploaded(menuItem, automationId, res);
+      }
     });
   }
 
@@ -385,4 +400,18 @@ export class ListComponent implements OnInit, OnDestroy{
     this.store.dispatch(StructureActions.setOrderIsAscending({orderIsAscending: !this.orderIsAscending}));
     this.store.dispatch(StructureActions.order());
   }
+
+  reportUploaded(menuItem: MenuItem, automationId: string, downloadProgress: number) {
+    let format = automationId === 'excel' ? Methods.capitalizeFirstLetter(automationId) : automationId.toUpperCase();
+    menuItem.label = `
+      <span>Reporte de tiempos en ${format}</span>
+      <progress id="progressBar-${automationId}" max="100" style="width: 100%"></progress>
+    `;
+    if (downloadProgress > 0) {
+      let element = document.getElementById(`progressBar-${automationId}`) as HTMLProgressElement;
+      element.value = downloadProgress;
+    }
+    this.cdr.detectChanges();
+  }
+
 }

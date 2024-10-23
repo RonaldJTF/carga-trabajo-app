@@ -17,7 +17,7 @@ export class AppConfigComponent {
   }
 
   ngOnInit() {
-   // this.getThemeLocalStorage();
+    // this.getThemeLocalStorage();
     this.initConfig();
   }
 

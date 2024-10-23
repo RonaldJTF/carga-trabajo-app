@@ -16,7 +16,7 @@ export class UserService {
   constructor(private webRequestService: WebRequestService) {
   }
 
-  loadRoles(): Observable<Role[]> {
+  loadRoles(): Observable<string[]> {
     return this.webRequestService.getWithHeaders(this.pathRole);
   }
 
@@ -24,11 +24,11 @@ export class UserService {
     return this.webRequestService.postWithHeaders(this.pathUser, user);
   }
 
-  update(id: number, user: User): Observable<any> {
+  update(id: string, user: any): Observable<any> {
     return this.webRequestService.putWithHeaders(`${this.pathUser}/${id}`, user);
   }
 
-  delete(id: number): Observable<User> {
+  delete(id: string): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathUser}/${id}`);
   }
 

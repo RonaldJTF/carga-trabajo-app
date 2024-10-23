@@ -20,7 +20,7 @@ export class FormUserPersonComponent implements OnInit {
 
   person: Person = new Person();
 
-  personId: number = null;
+  personId: string = null;
 
   formUser: FormGroup;
 
@@ -47,7 +47,7 @@ export class FormUserPersonComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.personId = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.personId = params['id'];
         this.getUserPerson(this.personId);
       }
     });
@@ -60,7 +60,7 @@ export class FormUserPersonComponent implements OnInit {
 
   createFormUser() {
     return this.formBuilder.group({
-      idPersona: [this.personId],
+      idPersona: [this.cryptoService.decryptParamAsNumber(this.personId)],
       username: ['', Validators.required],
       password: ['', Validators.required],
       activo: [false],
@@ -88,13 +88,13 @@ export class FormUserPersonComponent implements OnInit {
     return this.isValido('password');
   }
 
-  getUserPerson(personId: number) {
+  getUserPerson(personId: string) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
-        this.person = data;
+        this.person = JSON.parse(this.cryptoService.decryptParamAsString(data));
         if (this.person.usuario) {
           this.person.usuario.roles.map((rol: Role) => this.addRol(rol));
-          this.onValidacionCredenciales(data);
+          this.onValidacionCredenciales(this.person);
           this.updateMode = true;
           this.assignValuesToForm(this.person.usuario);
         }
@@ -133,7 +133,7 @@ export class FormUserPersonComponent implements OnInit {
   loadRoles() {
     this.userService.loadRoles().subscribe({
       next: (e) => {
-        this.roles = e;
+        this.roles = this.decriptList<Role>(e);
         this.loadRolesOptions();
       },
     });
@@ -154,20 +154,20 @@ export class FormUserPersonComponent implements OnInit {
 
   onSubmitUser(event: Event): void {
     event.preventDefault();
-    const payload = this.formUser.value;
+    let payload = this.formUser.value;
     payload.activo = Methods.parseBooleanToString(payload.activo);
     payload.password = this.cryptoService.encrypt(payload.password);
+    payload = this.cryptoService.encryptParam(payload);
     if (this.formUser.invalid) {
       this.formUser.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      this.updateMode
-        ? this.updateUser(this.person.usuario.id, payload)
-        : this.createUser(payload);
+      console.log(payload)
+      this.updateMode ? this.updateUser(this.personId, payload) : this.createUser(payload);
     }
   }
 
-  updateUser(id: number, payload: any): void {
+  updateUser(id: string, payload: any): void {
     this.userService.update(id, payload).subscribe({
       next: () => {
         this.urlService.goBack();
@@ -195,7 +195,7 @@ export class FormUserPersonComponent implements OnInit {
   onDeleteUserPerson(event: Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.userService.delete(this.person.usuario.id).subscribe({
+    this.userService.delete(this.personId).subscribe({
       next: () => {
         this.urlService.goBack();
         this.deleting = false;
@@ -253,4 +253,12 @@ export class FormUserPersonComponent implements OnInit {
     }
   }
 
+  decriptList<T>(param: string[]): T[] {
+    let list: T[] = [];
+    param.forEach(item => {
+      let elemnt: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
+      list.push(elemnt);
+    })
+    return list;
+  }
 }
