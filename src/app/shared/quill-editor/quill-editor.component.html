@@ -1,0 +1,11 @@
+<div #editorContainer class="p-editor-container">
+    <quill-editor style="width: 100%;"
+        [classList]="['p-editor-content']"
+        [(ngModel)] = "contentHtml"
+        [customToolbarPosition]="'bottom'"
+        [modules]="editorModules" 
+        [placeholder]="'Escribe aquí'"
+        (onContentChanged)="contentChange($event)"
+        (onEditorCreated)="readyEditor()">
+    </quill-editor>
+</div>

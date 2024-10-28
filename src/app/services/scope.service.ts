@@ -14,7 +14,7 @@ export class ScopeService {
   ) {
   }
 
-  getScope(): Observable<Scope[]> {
+  getScopes(): Observable<Scope[]> {
     return this.webRequestService.getWithHeaders(this.pathAlcance);
   }
 }

@@ -3,8 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
 import {finalize} from "rxjs";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
-import { Scope } from 'src/app/models/scope';
-
+import { Scope } from '@models';
 
 @Component({
   selector: 'app-form-scope',

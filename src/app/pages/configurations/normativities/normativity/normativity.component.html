@@ -1,0 +1,93 @@
+<form class="p-0" [formGroup]="formNormativity">
+    <div class="field p-fluid">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+        <div *ngIf="formNormativity.controls['nombre'].errors && (formNormativity.controls['nombre'].touched||formNormativity.controls['nombre'].dirty)">
+            <div *ngIf="formNormativity.controls['nombre'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa un nombre</small>
+            </div>  
+        </div>
+    </div>
+
+    <div class="grid grid-nogutter">
+        <div [ngClass]="{'md:col-6 md:pr-2': !isSalaryScale}" class="field p-fluid col-12">
+            <label class="font-medium" for="idTipoNormatividad">Tipo de normatividad</label>
+            <p-dropdown id="idTipoNormatividad" inputId="idTipoNormatividad" [autoDisplayFirst]="false"
+                        [options]="normativityTypes" optionValue="id" optionLabel="nombre" [filter]="true"
+                        [showClear]="true"
+                        formControlName="idTipoNormatividad" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+            </p-dropdown>
+            <div *ngIf="formNormativity.controls['idTipoNormatividad'].errors && (formNormativity.controls['idTipoNormatividad'].touched||formNormativity.controls['idTipoNormatividad'].dirty)">
+                <div *ngIf="formNormativity.controls['idTipoNormatividad'].errors?.['required']">
+                    <small id="text-help" class="p-error">Seleccione un tipo de normatividad</small>
+                </div>  
+            </div>
+        </div>
+
+        <div *ngIf="!isSalaryScale" class="field p-fluid col-12 md:col-6 md:pl-2">
+            <label class="font-medium" for="idAlcance">Alcance</label>
+            <p-dropdown id="idAlcance" inputId="idAlcance" [autoDisplayFirst]="false"
+                        [options]="scopes" optionValue="id" optionLabel="nombre" [filter]="true"
+                        [showClear]="true"
+                        formControlName="idAlcance" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+            </p-dropdown>
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="emisor"><span class="font-medium">Entidad emisora</span><span> (opcional)</span></label>
+        <input pInputText id="emisor" type="text" aria-describedby="text-help" formControlName="emisor" />
+    </div>
+
+    <div class="grid grid-nogutter">
+        <div class="field p-fluid col-12 md:col-6 md:pr-2">
+            <label htmlFor="fechaInicioVigencia"><span class="font-medium">Fecha de inicio de la vigencia</span><span> (opcional)</span></label>
+            <p-calendar [showClear]="true" [showIcon]="true" inputId="fechaInicioVigencia" formControlName="fechaInicioVigencia" dateFormat="dd-mm-yy" 
+                [showTime]="false" [showSeconds]="false" icon="pi pi-calendar"></p-calendar>
+        </div>
+
+        <div class="field p-fluid col-12 md:col-6 md:pl-2">
+            <label htmlFor="fechaFinVigencia"><span class="font-medium">Fecha final de la vigencia</span><span> (opcional)</span></label>
+            <p-calendar [showClear]="true" [showIcon]="true" inputId="fechaFinVigencia" formControlName="fechaFinVigencia" dateFormat="dd-mm-yy" 
+                [showTime]="false" [showSeconds]="false" icon="pi pi-calendar"></p-calendar>
+        </div>
+    </div>
+
+    <div class="field p-fluid flex align-items-center">
+        <label htmlFor="estado" class="font-medium mr-2">En vigencia</label>
+        <p-inputSwitch id="estado" formControlName="estado"></p-inputSwitch>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="descripcion" class="font-medium">Descripción</label>
+        <app-quill-editor formControlName="descripcion"></app-quill-editor>
+        <div *ngIf="formNormativity.controls['descripcion'].errors && (formNormativity.controls['descripcion'].touched||formNormativity.controls['descripcion'].dirty)">
+            <div *ngIf="formNormativity.controls['descripcion'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa una descripción</small>
+            </div>    
+        </div>
+    </div> 
+
+    <div class="bg-yellow-50 border-round-xl flex align-items-center p-4 mb-3">
+        <i class="pi pi-exclamation-triangle text-3xl text-yellow-500 mr-2"></i>
+        <span class="text-yellow-500 text-justify">
+            Toda normatividad con vigencia deshabilitada no permite gestionársele procesos. 
+            Si se establecen las fechas de la vigencia, ésta se podrá activar o desactivar automáticamente según los plazos definidos, facilitando su administración y cumplimiento.
+        </span>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitNormativity($event)"
+        (cancel)="onCancelNormativity($event)"
+        (delete)="onDeleteNormativity($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formNormativity.invalid"
+        [deleteMessage]="DELETE_MESSAGE"
+        >
+    </app-form-action-button>
+
+</form>

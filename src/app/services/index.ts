@@ -25,3 +25,6 @@ export * from './sentry-init.service';
 export * from './scope.service'
 export * from './periodicity.service';
 export * from './category.service';
+export * from './scope.service';
+export * from './level.service';
+export * from './normativity.service';

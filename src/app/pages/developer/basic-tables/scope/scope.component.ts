@@ -6,7 +6,7 @@ import {MESSAGE} from "@labels/labels";
 import {Table} from "primeng/table";
 import {Router} from "@angular/router";
 import {MenuItem} from "primeng/api";
-import { Scope } from 'src/app/models/scope';
+import { Scope } from '@models';
 
 @Component({
   selector: 'app-scope',

@@ -20,10 +20,10 @@ export class ListComponent implements OnInit, OnDestroy{
   MESSAGE = MESSAGE;
   /*Nota: PATH_NO_MANAGED_BY_PARENT hace referencia a todas aquellas rutas que no son gestionadas por aquellas estructuras que figuran como padre de
    elementos de su mismo tipo, es decir, si es una estructura actividad y tiene subactividades, esta no pueden gestionarse (asignar tiempo usual, tiempo max, etc.)*/
-  PATH_NO_MANAGED_BY_PARENT: string[] = ['actions/activity'];
+  PATH_NO_MANAGED_BY_PARENT: string[] = ['action/activity'];
 
   /*Nota: PATH_NO_MANAGED_IF_HAS_ACTIVITY hace referencia a todas aquellas rutas que no son gestionadas si ya la estructura tiene una actividad gestionada*/
-  PATH_NO_MANAGED_IF_HAS_ACTIVITY: string[] = ['actions/sub-item'];
+  PATH_NO_MANAGED_IF_HAS_ACTIVITY: string[] = ['action/sub-item'];
 
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;

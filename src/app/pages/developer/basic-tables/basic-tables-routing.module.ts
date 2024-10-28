@@ -5,8 +5,6 @@ import {GenderComponent} from "./gender/gender.component";
 import {FormGenderComponent} from "./gender/form-gender/form-gender.component";
 import {RoleComponent} from "./role/role.component";
 import {FormRoleComponent} from "./role/form-role/form-role.component";
-import {LevelComponent} from "./level/level.component";
-import {FormLevelComponent} from "./level/form-level/form-level.component";
 import {TypologyComponent} from "./typology/typology.component";
 import {FormTypologyComponent} from "./typology/form-typology/form-typology.component";
 import {FtpComponent} from "./ftp/ftp.component";
@@ -21,8 +19,6 @@ import {DocumentTypeComponent} from './document/document-type.component';
 import {FormDocumentTypeComponent} from './document/form-document/form-document-type.component';
 import { ScopeComponent } from './scope/scope.component';
 import { FormScopeComponent } from './scope/form-scope/form-scope.component';
-import { CategoryComponent } from './category/category.component';
-import { FormCategoryComponent } from './category/form-category/form-category.component';
 import { PeriodicityComponent } from './periodicity/periodicity.component';
 import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-periodicity.component';
 
@@ -35,9 +31,6 @@ const routes: Routes = [{
     {path: 'gender', component: GenderComponent},
     {path: 'create-gender', component: FormGenderComponent},
     {path: 'create-gender/:id', component: FormGenderComponent},
-    {path: 'level', component: LevelComponent},
-    {path: 'create-level', component: FormLevelComponent},
-    {path: 'create-level/:id', component: FormLevelComponent},
     {path: 'typology', component: TypologyComponent},
     {path: 'create-typology', component: FormTypologyComponent},
     {path: 'create-typology/:id', component: FormTypologyComponent},
@@ -59,9 +52,6 @@ const routes: Routes = [{
     {path: 'scope', component: ScopeComponent},
     {path: 'create-scope', component: FormScopeComponent},
     {path: 'create-scope/:id', component:FormScopeComponent},
-    {path: 'category', component: CategoryComponent},
-    {path: 'create-category', component: FormCategoryComponent},
-    {path: 'create-category/:id', component: FormCategoryComponent},
     {path: 'periodicity', component: PeriodicityComponent},
     {path: 'create-periodicity', component: FormPeriodicityComponent},
     {path: 'create-periodicity/:id', component: FormPeriodicityComponent}
