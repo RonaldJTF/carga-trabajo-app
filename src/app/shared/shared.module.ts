@@ -7,7 +7,8 @@ import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {
   ActivityExpirationPipe, CapitalizeFirstLetterPipe, DarkenColorPipe, DateRangePipe, FileIconPipe, FileSizePipe,
-  FirstNamePipe, LightenColorPipe, PluralizePipe, PrettyDatePipe, SanitizeHtmlPipe, StatePipe, TimeAgoPipe, TimeNamePipe
+  FirstNamePipe, LightenColorPipe, PluralizePipe, PrettyDatePipe, SanitizeHtmlPipe, StatePipe, TimeAgoPipe, TimeNamePipe,
+  ValidityPipe
 } from '@pipes';
 import {ImageFallbackDirective, SvgColorDirective} from '@directives';
 import {CommonModule} from '@angular/common';
@@ -70,6 +71,9 @@ import {MessagesModule} from "primeng/messages";
 import {WarningComponent} from "./warning/warning.component";
 import {CalendarComponent} from "./calendar/calendar.component";
 import { DialogComponent } from './dialog/dialog.component';
+import { QuillEditorComponent } from './quill-editor/quill-editor.component';
+import { QuillModule } from 'ngx-quill';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [
@@ -95,6 +99,7 @@ import { DialogComponent } from './dialog/dialog.component';
     CountdownTimerComponent,
     WarningComponent,
     DialogComponent,
+    QuillEditorComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -110,6 +115,7 @@ import { DialogComponent } from './dialog/dialog.component';
     TimeNamePipe,
     ActivityExpirationPipe,
     DateRangePipe,
+    ValidityPipe,
 
     ImageFallbackDirective,
     SvgColorDirective,
@@ -164,7 +170,9 @@ import { DialogComponent } from './dialog/dialog.component';
     ProgressSpinnerModule,
     StepsModule,
     MegaMenuModule,
-    SplitterModule
+    SplitterModule,
+    QuillModule,
+    ConfirmDialogModule
   ],
   exports: [
     FunctionalityComponent,
@@ -188,6 +196,7 @@ import { DialogComponent } from './dialog/dialog.component';
     CountdownTimerComponent,
     WarningComponent,
     DialogComponent,
+    QuillEditorComponent,
 
     ImageFallbackDirective,
     SvgColorDirective,
@@ -206,6 +215,7 @@ import { DialogComponent } from './dialog/dialog.component';
     TimeNamePipe,
     ActivityExpirationPipe,
     DateRangePipe,
+    ValidityPipe,
 
     CommonModule,
     ReactiveFormsModule,
@@ -256,7 +266,9 @@ import { DialogComponent } from './dialog/dialog.component';
     ProgressSpinnerModule,
     StepsModule,
     MegaMenuModule,
-    SplitterModule
+    SplitterModule,
+    QuillModule,
+    ConfirmDialogModule,
   ],
   providers: []
 })

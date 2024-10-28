@@ -9,7 +9,6 @@ export class OutState{
   name: 'state'
 })
 export class StatePipe implements PipeTransform {
-
   transform(stateIn: string): OutState {
     if (stateIn == "1" || stateIn == "true"){
       return {classStyle: 'active', value: 'Activo'}

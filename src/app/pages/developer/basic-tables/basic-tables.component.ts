@@ -90,14 +90,6 @@ export class BasicTablesComponent implements OnInit {
         state: {}
       },
       {
-        title: 'Niveles ocupacionales',
-        icon: 'pi pi-bookmark',
-        url: 'level',
-        label: 'Gestón de los niveles ocupacionales dentro de la organización',
-        iconStyle: 'primary',
-        state: {}
-      },
-      {
         title: 'Roles de acceso',
         icon: 'pi pi-users',
         url: 'rol',

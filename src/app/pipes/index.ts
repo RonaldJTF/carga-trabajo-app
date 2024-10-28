@@ -12,3 +12,4 @@ export * from './sanitize-html/sanitize-html.pipe';
 export * from './state/state.pipe';
 export * from './time-ago/time-ago.pipe';
 export * from './time-name/time-name.pipe';
+export * from './validity/validity.pipe';

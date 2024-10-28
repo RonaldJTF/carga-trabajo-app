@@ -121,6 +121,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.isAdmin = isAdministrator;
     this.isOperator = isOperator;
     this.isSuperAdmin = isSuperAdministrator;
+    
 
     this.menuItemsOfTaskInCalendar = [
       {

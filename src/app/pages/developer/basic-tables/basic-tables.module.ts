@@ -5,8 +5,6 @@ import {GenderComponent} from './gender/gender.component';
 import {FormGenderComponent} from "./gender/form-gender/form-gender.component";
 import {FormRoleComponent} from "./role/form-role/form-role.component";
 import {RoleComponent} from "./role/role.component";
-import {LevelComponent} from './level/level.component';
-import {FormLevelComponent} from './level/form-level/form-level.component';
 import {TypologyComponent} from './typology/typology.component';
 import {FormTypologyComponent} from './typology/form-typology/form-typology.component';
 import {FtpComponent} from './ftp/ftp.component';
@@ -27,8 +25,6 @@ import {FormDocumentTypeComponent} from './document/form-document/form-document-
     FormRoleComponent,
     GenderComponent,
     FormGenderComponent,
-    LevelComponent,
-    FormLevelComponent,
     TypologyComponent,
     FormTypologyComponent,
     FtpComponent,

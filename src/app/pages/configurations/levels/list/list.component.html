@@ -1,0 +1,209 @@
+<ng-container *ngIf="!loading else sLoading">
+    <div *ngIf="!levels.length else data">
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo nivel ocupacional'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+    </div>
+    <ng-template #data>
+        <div class="card p-0 pb-2">
+            <p-table #dt [value]="levels" rowGroupMode="subheader" sortMode="single"
+                [paginator]="true" [rows]="10" [(selection)]="selectedLevels" selectionMode="multiple"
+                [globalFilterFields]="['nombre', 'descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+                        <div class="flex align-items-center flex-wrap">
+                            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                            </button>
+                            <div *ngIf="isAdmin" class="_badge-container m-1">
+                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedLevels()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                    class="p-button-danger " [disabled]="!selectedLevels?.length">
+                                    <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                </button>
+                                <span *ngIf="selectedLevels?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedLevels.length}}</span>
+                            </div>
+                        </div>
+                        <div class="m-1">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox *ngIf="isAdmin"></p-tableHeaderCheckbox>
+                        </th>
+                        <th class="text-center" style="min-width: 300px; white-space: nowrap" pSortableColumn="descripcion">
+                            Nivel ocupacional
+                            <p-sortIcon field="descripcion"></p-sortIcon>
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-level let-rowIndex="rowIndex" let-expanded="expanded">
+                    <tr>
+                        <td class="flex flex-row align-items-center">
+                            <div class="h-3rem flex align-items-center mr-2">
+                                <button (click)="loadSalaryScalesToTable(level.id, level.loaded, expanded)" type="button" pButton pRipple [pRowToggler]="level" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                            </div>
+                            <p-tableCheckbox *ngIf="isAdmin" [value]="level"></p-tableCheckbox>
+                        </td>
+                        <td>
+                            <div class="flex flex-column justify-content-start">
+                                <span class="font-medium">{{level.descripcion}}</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex align-items-center justify-content-end">
+                                <button (click)="loadSalaryScalesToOverlayPanel(level.id, level.loaded, detailOverlayPanel, $event)"  pButton pRipple icon="pi pi-info-circle"
+                                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
+                                        pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                                <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id"></app-menu-item>
+                            </div>
+                            <p-overlayPanel #detailOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
+                                <ng-template pTemplate>
+                                    <ng-container *ngTemplateOutlet="detailOfLevelTemplate"></ng-container>
+                                </ng-template>
+                            </p-overlayPanel>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-level>
+                    <tr>
+                        <td colspan="3" class="hover:surface-0 p-0">
+                            <ng-container *ngIf="!loadingLevelById[level.id]; else sLoadingLevelWithActiveSalaryScales" >
+                                <ng-container *ngIf="getActiveSalaryScales(level.escalasSalariales) as activeSalaryScales; else sNoActiveSalaryScales">
+                                    <ng-container *ngIf="activeSalaryScales.length; else sNoActiveSalaryScales">
+                                        <div *ngFor="let activeSalaryScale of activeSalaryScales; let i = index" class="px-3 py-2 flex align-items-center hover:surface-hover">
+                                            <span class="font-medium m-2">{{i+1}}.</span>
+                                            <div class="flex flex-column">
+                                                <span class="font-medium">{{activeSalaryScale.nombre}}</span>
+                                                <span class="text-500 text-sm" >{{activeSalaryScale.normatividad?.nombre}}</span>
+                                            </div>
+                                            <div class="ml-auto ">
+                                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfSalaryScale" [id]="activeSalaryScale.id" [value]="activeSalaryScale"></app-menu-item>
+                                            </div>
+                                        </div>
+                                        <div class="text-500 text-sm px-3 py-2 mb-2">Escalas salariales vigentes</div>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-template #sNoActiveSalaryScales>
+                                    <div class="p-3">
+                                        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.MEDIUM" buttonLabel="Gestionar escala salarial"(go)="onGoToUpdateLevel(level.id, $event)" [message]="MESSAGE.NO_ESCALAS_SALARIALES_VIGENTES" [showButton]="isAdmin"></app-go-to-if-not-found>
+                                    </div>
+                                </ng-template>
+                            </ng-container>
+                            <ng-template #sLoadingLevelWithActiveSalaryScales>
+                                <div class="p-3">
+                                    <app-loading></app-loading>
+                                </div>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="3" class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </ng-template>
+</ng-container>
+
+<ng-template #sLoading>
+    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>
+
+<ng-template #detailOfLevelTemplate>
+    <div class="flex align-items-center mb-3">
+      <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+        <i  class="pi pi-bookmark text-xl text-blue-500"></i>
+      </div>
+      <div class="flex flex-column ">
+        <h5 class="m-0 text-700">Información del nivel</h5>
+        <span class="text-500">Detalle del nivel junto a sus escalas salariales</span>
+      </div>
+    </div>
+  
+    <div class="flex align-items-center mb-1">
+      <div *ngIf="level" class="flex flex-column">
+        <span class="font-medium">{{level?.descripcion | uppercase}}</span>
+        <span *ngIf="filteredSalaryScales && level.escalasSalariales?.length" class="text-blue-500">{{filteredSalaryScales.length}} de {{level.escalasSalariales.length}} escalas salariales</span>
+      </div>
+      <div class="ml-auto pl-2 flex align-items-center">
+        <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
+        <i class="pi pi-bars p-toolbar-separator mx-2"></i>
+        <p-selectButton styleClass="flex flex-nowrap" [options]="viewModeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeSalaryScaleType($event)">
+          <ng-template let-item pTemplate>
+            <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
+          </ng-template>
+        </p-selectButton>
+      </div>
+    </div>
+  
+    <ng-container *ngIf="!loadingLevel else sLoadingLevel">
+      <ng-container *ngIf="filteredSalaryScales?.length; else sNoSalaryScales">
+        <p-table #tableOfSalaryScales [value]="filteredSalaryScales"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
+            <ng-template pTemplate="body" let-salaryScale let-rowIndex="rowIndex">
+                <tr pRowGroupHeader *ngIf="rowGroupMetadata[salaryScale.normatividad.nombre]?.index === rowIndex">
+                    <td colspan="4">
+                        <div class="flex align-items-center w-full">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
+                                <img src="assets/content/images/normativity.png" [appImageFallback]="'assets/content/images/image-fallback.png'" style="width: 100%; height: auto"/>
+                            </div>
+                            <div class="flex flex-column ml-2 justify-content-start">
+                                <span class="font-medium text-500">
+                                    {{salaryScale.normatividad.nombre | uppercase}}
+                                    <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span> 
+                                </span>
+                                <span style="white-space: nowrap;" [class]="'mr-auto status-badge status-' + (salaryScale.normatividad.estado | validity).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
+                            </div>
+                            <div class="ml-auto flex align-items-center">
+                                <button (click)="showDetailOfNormativity(detailOfNormativity, $event)"  pButton pRipple icon="pi pi-eye"
+                                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
+                                        pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfNormativity" [id]="salaryScale.normatividad.id" [value]="salaryScale.normatividad"></app-menu-item>
+                            </div>
+                        </div>
+                        <div #detailOfNormativity style="display: none;" class="mt-3 p-3 surface-100 border-round ql-snow w-full">
+                            <div class="ql-editor" [innerHTML] ="salaryScale.normatividad?.descripcion ?? '' | sanitizeHtml"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                <td >
+                    <div class="flex flex-column justify-content-start">
+                        <span>{{ salaryScale.nombre }}</span>
+                        <span class="text-500 font-italic">Código: {{ salaryScale.codigo }}</span>
+                    </div>
+                </td>
+                <td class="w-6rem">
+                    <span *ngIf="salaryScale.incrementoPorcentual" class="text-green-500" pTooltip="Incremento porcentual" tooltipPosition="bottom">{{salaryScale.incrementoPorcentual}}% <i class="pi pi-arrow-up-right"></i></span>
+                </td>
+                <td class="w-5rem text-center">
+                    <i class="pi" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(salaryScale.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(salaryScale.estado)}"
+                        pTooltip="Estado" tooltipPosition="bottom"></i>
+                </td>
+                <td class="w-5rem">
+                    <div class="flex align-items-center justify-content-end">
+                        <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfSalaryScale" [id]="salaryScale.id" [value]="salaryScale"></app-menu-item>
+                    </div>
+                </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de escalas salariales</div>
+      </ng-container>
+      <ng-template #sNoSalaryScales>
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" buttonLabel="Gestionar escala salarial"(go)="onGoToUpdateLevel(level.id, $event)" [message]="MESSAGE.NO_ESCALAS_SALARIALES" [showButton]="isAdmin"></app-go-to-if-not-found>
+      </ng-template>  
+    </ng-container>
+    <ng-template #sLoadingLevel>
+        <app-loading></app-loading>
+    </ng-template>
+</ng-template>

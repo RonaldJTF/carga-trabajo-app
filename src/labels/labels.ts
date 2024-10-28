@@ -14,5 +14,8 @@ export const MESSAGE = {
     NO_REGISTRO_ROLES: "No se encontraron roles para el usuario",
     NO_TAREAS: "No se encontraron tareas",
     NO_AVANCE_TAREAS: "No se encontraron avances de tareas",
+    NO_ESCALAS_SALARIALES: "No se encontraron escalas salariales",
+    NO_ESCALAS_SALARIALES_VIGENTES: "No se encontraron escalas salariales vigentes",
+    NO_NORMATIVIDAD_ASOCIADA: "No se encontró normatividad asociada"
 };
 

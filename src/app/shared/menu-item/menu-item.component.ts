@@ -9,6 +9,7 @@ import { MenuItem } from 'primeng/api';
 export class MenuItemComponent implements OnInit{
   @Input() menuItems: MenuItem[];
   @Input() id: number;
+  @Input() index: number;
   @Input() value: any;
   @Input() stopPropagation: boolean = false;
   @Input() buttonClass: string = "p-button-rounded p-button-text"
@@ -23,7 +24,7 @@ export class MenuItemComponent implements OnInit{
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['menuItems'] || changes['id'] || changes['value']) {
+    if (changes['menuItems'] || changes['id']  || changes['index']  || changes['value']) {
       this.items = this.menuItems.map(e => ({ ...e }));
       this.assign(this.items);
     }
@@ -31,7 +32,8 @@ export class MenuItemComponent implements OnInit{
 
   assign(items: MenuItem[]){
     items.forEach(element => {
-      element['id'] = this.id.toString();
+      element['id'] = this.id?.toString();
+      element['index'] = this.index;
       element['value']  = this.value;
       if(element.items){
         this.assign(element.items.map(e => ({ ...e })));

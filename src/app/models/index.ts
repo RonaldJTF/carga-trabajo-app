@@ -14,3 +14,4 @@ export * from './typology';
 export * from './typologyinventory';
 export * from './user';
 export * from './workplan';
+export * from './normativity'

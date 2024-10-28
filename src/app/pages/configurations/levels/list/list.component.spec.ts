@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormLevelComponent } from './form-level.component';
+import { ListComponent } from './list.component';
 
-describe('FormLevelComponent', () => {
-  let component: FormLevelComponent;
-  let fixture: ComponentFixture<FormLevelComponent>;
+describe('ListComponent', () => {
+  let component: ListComponent;
+  let fixture: ComponentFixture<ListComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [FormLevelComponent]
+      declarations: [ListComponent]
     });
-    fixture = TestBed.createComponent(FormLevelComponent);
+    fixture = TestBed.createComponent(ListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

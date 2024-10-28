@@ -16,6 +16,7 @@ export class FormActionButtonComponent {
   @Input() deleting: boolean = false;
   @Input() buttonCreateNamedAs: string = 'Crear';
   @Input() buttonCancelNamedAs: string = 'Cancelar';
+  @Input() deleteMessage: string;
   @Output() createOrUpdate: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() cancel: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() delete: EventEmitter<Event> = new EventEmitter<Event>();
@@ -39,7 +40,8 @@ export class FormActionButtonComponent {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.delete.emit(event);
-      }
+      },
+      this.deleteMessage
     )
   }
 }

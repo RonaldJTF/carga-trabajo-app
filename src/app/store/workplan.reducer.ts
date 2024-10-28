@@ -1,12 +1,10 @@
 import * as WorkplanActions from "./workplan.actions";
 import {createReducer, on} from "@ngrx/store";
-import {Stage, Workplan} from "@models";
+import {Workplan} from "@models";
 
 export interface WorkplanState {
   items: Workplan[];
   item: Workplan;
-  stages: Stage[];
-  stage: Stage;
   mustRecharge: boolean;
   expandedNodes: any[];
 }
@@ -14,8 +12,6 @@ export interface WorkplanState {
 export const initialState: WorkplanState = {
   items: [],
   item: new Workplan(),
-  stages: [],
-  stage: new Stage(),
   mustRecharge: true,
   expandedNodes: [],
 };

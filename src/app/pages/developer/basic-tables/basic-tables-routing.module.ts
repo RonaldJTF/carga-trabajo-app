@@ -5,8 +5,6 @@ import {GenderComponent} from "./gender/gender.component";
 import {FormGenderComponent} from "./gender/form-gender/form-gender.component";
 import {RoleComponent} from "./role/role.component";
 import {FormRoleComponent} from "./role/form-role/form-role.component";
-import {LevelComponent} from "./level/level.component";
-import {FormLevelComponent} from "./level/form-level/form-level.component";
 import {TypologyComponent} from "./typology/typology.component";
 import {FormTypologyComponent} from "./typology/form-typology/form-typology.component";
 import {FtpComponent} from "./ftp/ftp.component";
@@ -29,9 +27,6 @@ const routes: Routes = [{
     {path: 'gender', component: GenderComponent},
     {path: 'create-gender', component: FormGenderComponent},
     {path: 'create-gender/:id', component: FormGenderComponent},
-    {path: 'level', component: LevelComponent},
-    {path: 'create-level', component: FormLevelComponent},
-    {path: 'create-level/:id', component: FormLevelComponent},
     {path: 'typology', component: TypologyComponent},
     {path: 'create-typology', component: FormTypologyComponent},
     {path: 'create-typology/:id', component: FormTypologyComponent},
