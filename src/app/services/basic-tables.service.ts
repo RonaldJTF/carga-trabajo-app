@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity} from "@models";
+import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity, Normativity, NormativityType} from "@models";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +29,8 @@ export class BasicTablesService {
   private pathCategory = 'category';
 
   private pathPeriodicity = 'periodicity';
+
+  private pathNormativityType = 'normativity-type';
 
   constructor(
     private webRequestService: WebRequestService
@@ -312,5 +314,30 @@ export class BasicTablesService {
 
   deleteSelectedPeriodicity(payload: number[]): Observable<Periodicity[]> {
     return this.webRequestService.deleteWithHeaders(this.pathPeriodicity, undefined, payload);
+  }
+
+  // Servicios NormativityTypes
+  getNormativityTypes(): Observable<NormativityType[]> {
+    return this.webRequestService.getWithHeaders(this.pathNormativityType);
+  }
+
+  getNormativityType(idNormativityType: number): Observable<NormativityType> {
+    return this.webRequestService.getWithHeaders(`${this.pathNormativityType}/${idNormativityType}`);
+  }
+
+  createNormativityType(normativityType: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathNormativityType, normativityType);
+  }
+
+  updateNormativityType(id: number, normativityType: NormativityType): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathNormativityType}/${id}`, normativityType);
+  }
+
+  deleteNormativityType(idNormativityType: number): Observable<NormativityType> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathNormativityType}/${idNormativityType}`);
+  }
+
+  deleteSelectedNormativityType(payload: number[]): Observable<NormativityType[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathNormativityType, undefined, payload);
   }
 }

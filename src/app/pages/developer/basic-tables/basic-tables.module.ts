@@ -21,6 +21,8 @@ import { ScopeComponent } from './scope/scope.component';
 import { FormScopeComponent } from './scope/form-scope/form-scope.component';
 import { PeriodicityComponent } from './periodicity/periodicity.component';
 import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-periodicity.component';
+import { NormativityTypeComponent } from './normativity-tipe/normativity-type.component';
+import { FormNormativityTypeComponent } from './normativity-tipe/form-normativity-type/form-normativity-type.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-pe
     ScopeComponent,
     FormScopeComponent,
     PeriodicityComponent,
-    FormPeriodicityComponent
+    FormPeriodicityComponent,
+    NormativityTypeComponent,
+    FormNormativityTypeComponent
   ],
   imports: [BasicTablesRoutingModule, SharedModule]
 })
