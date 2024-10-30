@@ -27,4 +27,5 @@ export * from './periodicity.service';
 export * from './category.service';
 export * from './level.service';
 export * from './normativity.service';
+export * from './normativitytype.service'
 export * from './compensation.service';

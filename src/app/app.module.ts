@@ -29,7 +29,8 @@ import {
   WorkplanService,
   ScopeService,
   PeriodicityService,
-  CategoryService
+  CategoryService,
+  NormativityTypeService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -70,7 +71,7 @@ import {compensationReducer} from "@store/compensation.reducer";
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
-    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, GenderService, PersonService,
+    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, NormativityTypeService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     NormativityService, ScopeService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
