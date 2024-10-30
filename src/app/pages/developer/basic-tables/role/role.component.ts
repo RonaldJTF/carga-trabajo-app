@@ -55,13 +55,13 @@ export class RoleComponent implements OnInit {
       })
     ).subscribe({
       next: (res) => {
-        this.roles = res;
+        this.roles = this.decryptList<Role>(res);
       }
     })
   }
 
   deleteSelectedRole() {
-    let roleIds: number[] = this.selectedRole.map(item => item.id);
+    let roleIds: string[] = this.selectedRole.map(item => this.cryptoService.encryptParam(item.id));
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.basicTableService.deleteSelectedRole(roleIds)
@@ -69,7 +69,7 @@ export class RoleComponent implements OnInit {
             next: () => {
               this.desmarkAll();
               for (let id of roleIds) {
-                this.filterRole(id);
+                this.filterRole(this.cryptoService.decryptParamAsNumber(id));
               }
             }
           });
@@ -103,11 +103,20 @@ export class RoleComponent implements OnInit {
 
   onDelete(idRol: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.basicTableService.deleteRole(idRol).subscribe(() => {
+      this.basicTableService.deleteRole(this.cryptoService.encryptParam(idRol)).subscribe(() => {
         this.filterRole(idRol);
         this.desmarkAll();
       });
     });
+  }
+
+  decryptList<T>(param: string[]): T[] {
+    let list: T[] = [];
+    param.forEach(item => {
+      let element: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
+      list.push(element);
+    })
+    return list;
   }
 
 }

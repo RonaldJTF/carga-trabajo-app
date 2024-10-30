@@ -17,6 +17,7 @@ export class ConfirmationDialogService {
     rejectAction: () => void = () => {},
   ): void {
     this.confirmationService.confirm({
+      key: 'generalConfirmDialog',
       message: message,
       header: header,
       icon: 'pi pi-exclamation-triangle',
@@ -31,9 +32,9 @@ export class ConfirmationDialogService {
     });
   }
 
-  showDeleteConfirmationDialog(acceptAction: () => void): void {
+  showDeleteConfirmationDialog(acceptAction: () => void, message: string = '¿Está seguro de eliminar el registro?'): void {
     this.showConfirmationDialog(
-      '¿Está seguro de eliminar el registro?',
+      message,
       'Confirmación',
       'Si',
       'No',

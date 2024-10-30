@@ -1,18 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
-import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
 import {finalize} from "rxjs";
-import {Level} from "@models";
+import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
+import { Category } from 'src/app/models/category';
+
 
 @Component({
-  selector: 'app-form-level',
-  templateUrl: './form-level.component.html',
-  styleUrls: ['./form-level.component.scss']
+  selector: 'app-form-scope',
+  templateUrl: './form-category.component.html',
+  styleUrls: ['./form-category.component.scss']
 })
-export class FormLevelComponent implements OnInit{
+export class FormCategoryComponent implements OnInit {
 
-  formLevel: FormGroup;
+  formCategory: FormGroup;
 
   updateMode: boolean = false;
 
@@ -20,7 +21,7 @@ export class FormLevelComponent implements OnInit{
 
   deleting: boolean = false;
 
-  idLevel: number;
+  idCategory: number;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -32,71 +33,82 @@ export class FormLevelComponent implements OnInit{
   ) {
   }
 
+
   ngOnInit() {
     this.buildForm();
     this.getInitialValue();
   }
 
-  buildForm() {
-    this.formLevel = this.formBuilder.group({
-      descripcion: ['', Validators.required]
-    });
-  }
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.idLevel = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.idCategory = this.cryptoService.decryptParamAsNumber(params['id']);
         this.updateMode = true;
-        this.getLevel(this.idLevel);
+        this.getCategory(this.idCategory);
       }
     });
   }
 
-  getLevel(idLevel: number) {
-    this.basicTablesService.getLevel(idLevel).subscribe({
+
+  getCategory(idCategory: number) {
+
+    this.basicTablesService.getCategory(idCategory).subscribe({
       next: (result) => {
         this.assignValuesToForm(result);
       }
     })
   }
 
-  assignValuesToForm(level: Level) {
-    this.formLevel.get('descripcion').setValue(level.descripcion);
+  buildForm() {
+    this.formCategory = this.formBuilder.group({
+      nombre: ['', Validators.required],
+      descripcion: ['', Validators.required]
+    });
+  }
+
+  assignValuesToForm(category: Category) {
+    this.formCategory.get('nombre').setValue(category.nombre);
+    this.formCategory.get('descripcion').setValue(category.descripcion);
   }
 
   private isValido(nombreAtributo: string) {
     return (
-      this.formLevel.get(nombreAtributo)?.invalid &&
-      (this.formLevel.get(nombreAtributo)?.dirty ||
-        this.formLevel.get(nombreAtributo)?.touched)
+      this.formCategory.get(nombreAtributo)?.invalid &&
+      (this.formCategory.get(nombreAtributo)?.dirty ||
+        this.formCategory.get(nombreAtributo)?.touched)
     );
   }
 
   get controls() {
-    return this.formLevel.controls;
+    return this.formCategory.controls;
   }
 
   get nombreNoValido() {
+    return this.isValido('nombre');
+  }
+
+  get descripcionNoValido() {
     return this.isValido('descripcion');
   }
 
-  onSubmitLevel(event: Event): void {
+
+  onSubmitCategory(event: Event): void {
     event.preventDefault();
-    if (this.formLevel.valid) {
+    if (this.formCategory.valid) {
       this.creatingOrUpdating = true;
-      this.updateMode ? this.updateLevel(this.idLevel, this.formLevel.value) : this.createLevel(this.formLevel.value);
+      this.updateMode ? this.updateCategory(this.idCategory, this.formCategory.value) : this.createCategory(this.formCategory.value);
     } else {
-      this.formLevel.markAllAsTouched();
+      this.formCategory.markAllAsTouched();
     }
   }
 
-  updateLevel(idLevel: number, level: Level): void {
+  updateCategory(idCategory: number, category: Category): void {
     let message = '¿Está seguro de actualizar el registro?';
     this.confirmationDialogService.showEventConfirmationDialog(
       message,
       () => {
-        this.basicTablesService.updateLevel(idLevel, level).pipe(
+        this.basicTablesService.updateCategory(idCategory, category).pipe(
           finalize(() => {
             this.creatingOrUpdating = false;
           })
@@ -112,8 +124,8 @@ export class FormLevelComponent implements OnInit{
     )
   }
 
-  createLevel(level: Level): void {
-    this.basicTablesService.createLevel(level).pipe(
+  createCategory(category: Category): void {
+    this.basicTablesService.createCategory(category).pipe(
       finalize(() => {
         this.creatingOrUpdating = false;
       })
@@ -124,10 +136,10 @@ export class FormLevelComponent implements OnInit{
     })
   }
 
-  onDeleteLevel(event: Event): void {
-    event.preventDefault();
+  onDeleteCategory(event: Event): void {
+    event.preventDefault()
     this.deleting = true;
-    this.basicTablesService.deleteLevel(this.idLevel).pipe(
+    this.basicTablesService.deleteCategory(this.idCategory).pipe(
       finalize(() => {
         this.deleting = false;
       })
@@ -138,13 +150,14 @@ export class FormLevelComponent implements OnInit{
     })
   }
 
-  onCancelLevel(event: Event) {
+  onCancelCategory(event: Event) {
     event.preventDefault();
     this.goBack();
   }
 
-  goBack(){
+  goBack() {
     this.urlService.goBack();
-    this.formLevel.reset();
+    this.formCategory.reset();
   }
+
 }

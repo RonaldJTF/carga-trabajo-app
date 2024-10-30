@@ -208,12 +208,10 @@ export class FormPersonComponent implements OnInit {
   createPerson(payload: any): void {
     this.personService.create(payload).subscribe({
       next: (res) => {
-        console.log("Ok- ", res);
         this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
       error: (err) => {
-        console.log("Error- ", err);
         this.creatingOrUpdating = false;
       },
     });
@@ -227,6 +225,7 @@ export class FormPersonComponent implements OnInit {
       this.formPerson.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
+      console.log(this.formPerson.value)
       this.updateMode ? this.updatePerson(this.personId, this.formData) : this.createPerson(this.formData);
     }
   }

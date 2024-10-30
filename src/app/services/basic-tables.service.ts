@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Action, Ftp, Gender, Level, Role, Typology, DocumentType} from "@models";
+import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity} from "@models";
+import {an} from "@fullcalendar/core/internal-common";
 
 @Injectable({
   providedIn: 'root'
@@ -24,17 +25,23 @@ export class BasicTablesService {
 
   private pathDocumentType = 'document-type';
 
+  private pathScope = 'scope';
+
+  private pathCategory = 'category';
+
+  private pathPeriodicity = 'periodicity';
+
   constructor(
     private webRequestService: WebRequestService
   ) {
   }
 
   // Servicios ROL
-  getRoles(): Observable<Role[]> {
+  getRoles(): Observable<string[]> {
     return this.webRequestService.getWithHeaders(this.pathRole);
   }
 
-  getRole(idRol: number): Observable<Role> {
+  getRole(idRol: string): Observable<any> {
     return this.webRequestService.getWithHeaders(`${this.pathRole}/${idRol}`);
   }
 
@@ -42,24 +49,24 @@ export class BasicTablesService {
     return this.webRequestService.postWithHeaders(this.pathRole, rol);
   }
 
-  updateRole(id: number, rol: Role): Observable<any> {
+  updateRole(id: string, rol: any): Observable<any> {
     return this.webRequestService.putWithHeaders(`${this.pathRole}/${id}`, rol);
   }
 
-  deleteRole(idRol: number): Observable<Role> {
+  deleteRole(idRol: string): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathRole}/${idRol}`);
   }
 
-  deleteSelectedRole(payload: number[]): Observable<Role[]> {
+  deleteSelectedRole(payload: string[]): Observable<any[]> {
     return this.webRequestService.deleteWithHeaders(this.pathRole, undefined, payload);
   }
 
   // Servicios GENERO
-  getGenders(): Observable<Gender[]> {
+  getGenders(): Observable<string[]> {
     return this.webRequestService.getWithHeaders(this.pathGender);
   }
 
-  getGender(idGender: number): Observable<Gender> {
+  getGender(idGender: string): Observable<string> {
     return this.webRequestService.getWithHeaders(`${this.pathGender}/${idGender}`);
   }
 
@@ -67,11 +74,11 @@ export class BasicTablesService {
     return this.webRequestService.postWithHeaders(this.pathGender, gender);
   }
 
-  updateGender(id: number, gender: Gender): Observable<any> {
+  updateGender(id: string, gender: Gender): Observable<any> {
     return this.webRequestService.putWithHeaders(`${this.pathGender}/${id}`, gender);
   }
 
-  deleteGender(idGender: number): Observable<Gender> {
+  deleteGender(idGender: string): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathGender}/${idGender}`);
   }
 
@@ -231,5 +238,80 @@ export class BasicTablesService {
 
   deleteSelectedDocumentType(payload: number[]): Observable<DocumentType[]> {
     return this.webRequestService.deleteWithHeaders(this.pathDocumentType, undefined, payload);
+  }
+
+  // Servicios SCOPE (ALCANCE)
+  getScopes(): Observable<Scope[]> {
+    return this.webRequestService.getWithHeaders(this.pathScope);
+  }
+
+  getScope(idScope: number): Observable<Scope> {
+    return this.webRequestService.getWithHeaders(`${this.pathScope}/${idScope}`);
+  }
+
+  createScope(scope: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathScope, scope);
+  }
+
+  updateScope(id: number, scope: Scope): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathScope}/${id}`, scope);
+  }
+
+  deleteScope(idScope: number): Observable<Scope> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathScope}/${idScope}`);
+  }
+
+  deleteSelectedScope(payload: number[]): Observable<Scope[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathScope, undefined, payload);
+  }
+
+  // Servicios Category
+  getCategories(): Observable<Category[]> {
+    return this.webRequestService.getWithHeaders(this.pathCategory);
+  }
+
+  getCategory(idCategory: number): Observable<Category> {
+    return this.webRequestService.getWithHeaders(`${this.pathPeriodicity}/${idCategory}`);
+  }
+
+  createCategory(category: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathCategory, category);
+  }
+
+  updateCategory(id: number, category: Category): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathCategory}/${id}`, category);
+  }
+
+  deleteCategory(idCategory: number): Observable<Category> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathCategory}/${idCategory}`);
+  }
+
+  deleteSelectedCategory(payload: number[]): Observable<Category[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathCategory, undefined, payload);
+  }
+
+  // Servicios Periodicity
+  getPeriodicities(): Observable<Periodicity[]> {
+    return this.webRequestService.getWithHeaders(this.pathPeriodicity);
+  }
+
+  getPeriodicity(idPeriodicity: number): Observable<Periodicity> {
+    return this.webRequestService.getWithHeaders(`${this.pathPeriodicity}/${idPeriodicity}`);
+  }
+
+  createPeriodicity(periodicity: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathPeriodicity, periodicity);
+  }
+
+  updatePeriodicity(id: number, periodicity: Periodicity): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathPeriodicity}/${id}`, periodicity);
+  }
+
+  deletePeriodicity(idPeriodicity: number): Observable<Periodicity> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathPeriodicity}/${idPeriodicity}`);
+  }
+
+  deleteSelectedPeriodicity(payload: number[]): Observable<Periodicity[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathPeriodicity, undefined, payload);
   }
 }

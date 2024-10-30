@@ -1,28 +1,29 @@
 import {Component, OnInit} from '@angular/core';
-import {MenuItem} from "primeng/api";
-import {IMAGE_SIZE} from "@utils";
-import {MESSAGE} from "@labels/labels";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService} from "@services";
-import {Router} from "@angular/router";
+import {IMAGE_SIZE} from "@utils";
 import {finalize} from "rxjs";
+import {MESSAGE} from "@labels/labels";
 import {Table} from "primeng/table";
-import {Level} from "@models";
+import {Router} from "@angular/router";
+import {MenuItem} from "primeng/api";
+import { Scope } from '@models';
 
 @Component({
-  selector: 'app-level',
-  templateUrl: './level.component.html',
-  styleUrls: ['./level.component.scss']
+  selector: 'app-scope',
+  templateUrl: './scope.component.html',
+  styleUrls: ['./scope.component.scss']
 })
-export class LevelComponent implements OnInit {
+export class ScopeComponent implements OnInit {
+
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
   protected readonly MESSAGE = MESSAGE;
 
-  levels: Level[] = [];
+  tipoAlcances: Scope[] = [];
 
   loading: boolean = false;
 
-  selectedLevels: Level[] = [];
+  selectedScopes: Scope[] = [];
 
   items: MenuItem[] = [];
 
@@ -35,40 +36,40 @@ export class LevelComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getLevels();
+    this.getScopes();
     this.intMenu();
   }
 
   intMenu() {
     this.items = [
-      {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editLevel(parseInt(e.item.id))},
+      {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editScope(parseInt(e.item.id))},
       {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDelete(parseInt(e.item.id))},
     ];
   }
 
-  getLevels() {
+  getScopes() {
     this.loading = true;
-    this.basicTableService.getLevels().pipe(
+    this.basicTableService.getScopes().pipe(
       finalize(() => {
         this.loading = false;
       })
     ).subscribe({
       next: (res) => {
-        this.levels = res;
+        this.tipoAlcances = res;
       }
     })
   }
 
-  deleteSelectedLevel() {
-    let levelIds: number[] = this.selectedLevels.map(item => item.id);
+  deleteSelectedScope() {
+    let scopeIds: number[] = this.selectedScopes.map(item => item.id);
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.basicTableService.deleteSelectedLevel(levelIds)
+        this.basicTableService.deleteSelectedScope(scopeIds)
           .subscribe({
             next: () => {
               this.desmarkAll();
-              for (let id of levelIds) {
-                this.filterLevel(id);
+              for (let id of scopeIds) {
+                this.filterScope(id);
               }
             }
           });
@@ -76,14 +77,14 @@ export class LevelComponent implements OnInit {
     )
   }
 
-  editLevel(idLevel: number) {
-    this.router.navigate(['developer/basic-tables/create-level', this.cryptoService.encryptParam(idLevel)], {
+  editScope(idScope: number) {
+    this.router.navigate(['developer/basic-tables/create-scope', this.cryptoService.encryptParam(idScope)], {
       skipLocationChange: true,
     }).then();
   }
 
-  filterLevel(idLevel: number) {
-    this.levels = this.levels.filter((item) => item.id != idLevel);
+  filterScope(idScope: number) {
+    this.tipoAlcances = this.tipoAlcances.filter((item) => item.id != idScope);
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -91,19 +92,19 @@ export class LevelComponent implements OnInit {
   }
 
   desmarkAll() {
-    this.selectedLevels = [];
+    this.selectedScopes = [];
   }
 
   openNew() {
-    this.router.navigate(['developer/basic-tables/create-level'], {
+    this.router.navigate(['developer/basic-tables/create-scope'], {
       skipLocationChange: true,
     }).then();
   }
 
-  onDelete(idLevel: number) {
+  onDelete(idScope: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.basicTableService.deleteLevel(idLevel).subscribe(() => {
-        this.filterLevel(idLevel);
+      this.basicTableService.deleteScope(idScope).subscribe(() => {
+        this.filterScope(idScope);
         this.desmarkAll();
       });
     });

@@ -1,13 +1,13 @@
 <ng-container *ngIf="!loading else sLoading">
-  <div *ngIf="!levels else data">
-    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo rol'" (go)="openNew()"
+  <div *ngIf="!tipoAlcances else data">
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo alcance'" (go)="openNew()"
                             [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
   </div>
   <ng-template #data>
     <div class="card p-0 pb-2">
-      <p-table #dt [value]="levels" rowGroupMode="subheader" sortMode="single" [paginator]="true" [rows]="10"
-               [(selection)]="selectedLevels" selectionMode="multiple"
-               [globalFilterFields]="['descripcion']"
+      <p-table #dt [value]="tipoAlcances" rowGroupMode="subheader" sortMode="single" [paginator]="true" [rows]="10"
+               [(selection)]="selectedScopes" selectionMode="multiple"
+               [globalFilterFields]="['nombre']"
                [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id"
                [tableStyle]="{'border-circle': '50px'}">
@@ -19,13 +19,13 @@
                 <span class="p-button-label hidden-lg pl-2">Nuevo</span>
               </button>
               <div class="_badge-container m-1">
-                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedLevel()"
+                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedScope()"
                         pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger "
-                        [disabled]="!selectedLevels?.length">
+                        [disabled]="!selectedScopes?.length">
                   <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
                 </button>
-                <span *ngIf="selectedLevels?.length" (click)="desmarkAll()" class="_badge"
-                      pTooltip="Click para desmarcar">{{ selectedLevels.length }}</span>
+                <span *ngIf="selectedScopes?.length" (click)="desmarkAll()" class="_badge"
+                      pTooltip="Click para desmarcar">{{ selectedScopes.length }}</span>
               </div>
             </div>
             <div class="m-1">
@@ -50,21 +50,22 @@
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-level let-rowIndex="rowIndex">
+        <ng-template pTemplate="body" let-scope let-rowIndex="rowIndex">
           <tr>
             <td>
-              <p-tableCheckbox [value]="level"></p-tableCheckbox>
+              <p-tableCheckbox [value]="scope"></p-tableCheckbox>
             </td>
-            <td pRipple class="cursor-pointer" (click)="editLevel(level.id)">
+            <td pRipple class="cursor-pointer" (click)="editScope(scope.id)">
               <div class="flex align-items-center ">
                 <div class="flex flex-column">
-                  <span class="font-medium">{{ level.descripcion | titlecase }}</span>
+                  <span class="font-medium">{{ scope.nombre | titlecase }}</span>
+                  <div class="text-500">{{ scope.descripcion }}</div>
                 </div>
               </div>
             </td>
             <td class="text-center">
               <div class="flex align-items-center justify-content-end">
-                <app-menu-item [menuItems]="items" [id]="level.id"></app-menu-item>
+                <app-menu-item [menuItems]="items" [id]="scope.id"></app-menu-item>
               </div>
             </td>
           </tr>

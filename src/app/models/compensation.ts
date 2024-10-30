@@ -1,22 +1,13 @@
-export class Categoria {
-  id: number;
-  nombre: string;
-  descripcion: string;
-}
-
-export class Periodicidad {
-  id: number;
-  nombre: string;
-  frecuencia: number;
-}
+import {Periodicity} from "./periodicity";
+import {Category} from "./category";
 
 export class Compensation {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  estado: string;
-  idCategoria: number;
-  categoria: Categoria;
-  idPeriodicidad: number;
-  periodicidad: Periodicidad;
+  id?: number;
+  nombre?: string;
+  descripcion?: string;
+  estado?: string;
+  idCategoria?: number;
+  categoria?: Category;
+  idPeriodicidad?: number;
+  periodicidad?: Periodicity;
 }

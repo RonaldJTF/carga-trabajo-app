@@ -28,7 +28,6 @@ export class ListComponent implements OnInit, OnDestroy{
 
   loading: boolean = false;
   loadingAdvanceCosolidated: boolean = false;
-  workplans$: Observable<Workplan[]>;
   workplansSubscription: Subscription;
   selectedWorkplans: Workplan[] = [];
   datasetOfAdvanceConsolidated: any;
@@ -52,7 +51,6 @@ export class ListComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
-    this.workplans$ = this.store.select(state => state.workplan.items);
     this.workplansSubscription =  this.store.select(state => state.workplan.items).subscribe(e =>{
        this.workplans = JSON.parse(JSON.stringify(e));
        this.workplans?.forEach( e => {

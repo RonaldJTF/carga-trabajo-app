@@ -5,8 +5,6 @@ import {GenderComponent} from './gender/gender.component';
 import {FormGenderComponent} from "./gender/form-gender/form-gender.component";
 import {FormRoleComponent} from "./role/form-role/form-role.component";
 import {RoleComponent} from "./role/role.component";
-import {LevelComponent} from './level/level.component';
-import {FormLevelComponent} from './level/form-level/form-level.component';
 import {TypologyComponent} from './typology/typology.component';
 import {FormTypologyComponent} from './typology/form-typology/form-typology.component';
 import {FtpComponent} from './ftp/ftp.component';
@@ -19,6 +17,12 @@ import {FormComponent} from './typology-action/actions/form/form.component';
 import {SharedModule} from "@shared";
 import {DocumentTypeComponent} from './document/document-type.component';
 import {FormDocumentTypeComponent} from './document/form-document/form-document-type.component';
+import { ScopeComponent } from './scope/scope.component';
+import { FormScopeComponent } from './scope/form-scope/form-scope.component';
+import { CategoryComponent } from './category/category.component';
+import { FormCategoryComponent } from './category/form-category/form-category.component';
+import { PeriodicityComponent } from './periodicity/periodicity.component';
+import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-periodicity.component';
 
 @NgModule({
   declarations: [
@@ -27,8 +31,6 @@ import {FormDocumentTypeComponent} from './document/form-document/form-document-
     FormRoleComponent,
     GenderComponent,
     FormGenderComponent,
-    LevelComponent,
-    FormLevelComponent,
     TypologyComponent,
     FormTypologyComponent,
     FtpComponent,
@@ -39,7 +41,13 @@ import {FormDocumentTypeComponent} from './document/form-document/form-document-
     ActionComponent,
     FormComponent,
     DocumentTypeComponent,
-    FormDocumentTypeComponent
+    FormDocumentTypeComponent,
+    ScopeComponent,
+    FormScopeComponent,
+    CategoryComponent,
+    FormCategoryComponent,
+    PeriodicityComponent,
+    FormPeriodicityComponent
   ],
   imports: [BasicTablesRoutingModule, SharedModule]
 })

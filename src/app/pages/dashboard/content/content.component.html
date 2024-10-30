@@ -48,7 +48,7 @@
         </div>
     </div>
     <div *ngIf="!workplans?.length && !inventory?.length" class="col-12 w-full">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NADA_CONFIGURADO" [showButton]="false"></app-go-to-if-not-found>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NADA_CONFIGURADO"></app-no-result>
     </div>
 </ng-container>
 

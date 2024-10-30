@@ -47,7 +47,7 @@ export class AppMenuComponent implements OnInit {
           {
             label: 'Dashboard',
             icon: 'pi pi-fw pi-home',
-            color: 'red',
+            color: 'primary',
             description: 'Tablero resumen de información de interés',
             routerLink: ['/']
           }
@@ -60,30 +60,37 @@ export class AppMenuComponent implements OnInit {
           {
             label: 'Usuarios',
             icon: 'pi pi-user',
-            color: 'cyan',
+            color: 'primary',
             description: 'Gestión de usuarios',
             routerLink: ['/configurations/users'],
             visible: this.isSuperAdmin
           },
           {
+            label: 'Niveles ocupacionales',
+            icon: 'pi pi-bookmark',
+            color: 'primary',
+            description: 'Gestión de los niveles ocupacionales en el ámbito laboral',
+            routerLink: ['/configurations/levels'],
+          },
+          {
             label: 'Estructuras',
             icon: 'pi pi-sitemap',
-            color: 'blue',
+            color: 'primary',
             description: 'Gestión de dependencias, procesos, procedimientos y actividades',
             routerLink: ['/configurations/structures']
           },
           {
             label: 'Planes de trabajo',
             icon: 'pi pi-calendar',
-            color: 'green',
+            color: 'primary',
             description: 'Gestión de planes de trabajos',
             routerLink: ['/configurations/workplans']
           },
           {
-            label: 'Compensaciones laboralares',
+            label: 'Compensaciones laborales',
             icon: 'pi pi-money-bill',
-            color: 'purple',
-            description: 'Gestión de compensación laboral',
+            color: 'primary',
+            description: 'Gestión de compensaciones laborales',
             routerLink: ['/configurations/compensations']
           },
         ],
@@ -95,7 +102,7 @@ export class AppMenuComponent implements OnInit {
           {
             label: 'Tablas básicas',
             icon: 'pi pi-database',
-            color: 'yellow',
+            color: 'primary',
             description: 'Gestión de las tablas básicas del sistema',
             routerLink: ['/developer/basic-tables']
           }

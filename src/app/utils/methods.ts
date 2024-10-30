@@ -5,7 +5,7 @@ import { MIMETYPE_TO_EXTENSION } from "./constants";
 export class Methods {
 
   static parseStringToBoolean(s: string | undefined): boolean {
-    if (s == '1') {
+    if (s == '1' || s == 'true') {
       return true;
     } else {
       return false;
@@ -195,6 +195,35 @@ export class Methods {
         return this.findMenuItemBy(e.items, value, key)
       }
     }
+  }
+
+  static cloneFormGroup(formGroup: FormGroup): FormGroup {
+    const clonedGroup = new FormGroup({});
+
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+
+      if (control instanceof FormGroup) {
+        clonedGroup.addControl(key, Methods.cloneFormGroup(control));
+      } else if (control instanceof FormArray) {
+        clonedGroup.addControl(key, this.cloneFormArray(control));
+      } else if (control instanceof FormControl) {
+        clonedGroup.addControl(key, new FormControl(control.value, control.validator, control.asyncValidator));
+      }
+    });
+    return clonedGroup;
+  }
+
+  static cloneFormArray(formArray: FormArray): FormArray {
+    const clonedArray = new FormArray([]);
+    formArray.controls.forEach(control => {
+      if (control instanceof FormGroup) {
+        clonedArray.push(this.cloneFormGroup(control));
+      } else if (control instanceof FormControl) {
+        clonedArray.push(new FormControl(control.value, control.validator, control.asyncValidator));
+      }
+    });
+    return clonedArray;
   }
 
   /**

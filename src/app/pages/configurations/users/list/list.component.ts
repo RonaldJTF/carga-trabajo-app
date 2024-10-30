@@ -36,11 +36,11 @@ export class ListComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.intMenu();
+    this.initMenu();
     this.getPeople();
   }
 
-  intMenu() {
+  initMenu() {
     this.items = [
       {label: 'Gestionar acceso', icon: 'pi pi-key', command: (e) => this.onUserPerson(e)},
       {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editPerson(parseInt(e.item.id))},

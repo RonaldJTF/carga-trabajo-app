@@ -114,4 +114,15 @@ export class CryptojsService {
     return this.decryptParam(encrypted);
   }
 
+  decryptList<T>(param: string[]): T[] {
+    let list: T[] = [];
+    if (param !== null) {
+      param.forEach(item => {
+        let element: T = JSON.parse(this.decryptParamAsString(item));
+        list.push(element);
+      })
+    }
+    return list;
+  }
+
 }
