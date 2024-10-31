@@ -74,6 +74,7 @@ import { DialogComponent } from './dialog/dialog.component';
 import { QuillEditorComponent } from './quill-editor/quill-editor.component';
 import { QuillModule } from 'ngx-quill';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ChipModule } from 'primeng/chip';
 
 @NgModule({
   declarations: [
@@ -172,7 +173,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     MegaMenuModule,
     SplitterModule,
     QuillModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    ChipModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -269,6 +271,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     SplitterModule,
     QuillModule,
     ConfirmDialogModule,
+    ChipModule,
   ],
   providers: []
 })

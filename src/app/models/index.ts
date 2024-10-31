@@ -17,3 +17,5 @@ export * from './workplan';
 export * from './category';
 export * from './periodicity';
 export * from './normativity'
+export * from './appointment'
+export * from './validity'

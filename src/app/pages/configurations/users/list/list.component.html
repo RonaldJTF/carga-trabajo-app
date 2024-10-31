@@ -61,7 +61,7 @@
             </td>
             <td pRipple class="cursor-pointer" (click)="editPerson(person.id)">
               <div class="flex align-items-center ">
-                <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
+                <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; overflow: hidden; ">
                   <img [src]="person.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
                        style="width: 100%; height: auto"/>
                 </div>

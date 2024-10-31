@@ -40,7 +40,7 @@
                                         {{salaryScale.normatividad.nombre | uppercase}}
                                         <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span> 
                                     </span>
-                                    <span style="white-space: nowrap;" [class]="'mr-auto status-badge status-' + (salaryScale.normatividad.estado | validity ).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
+                                    <span style="white-space: nowrap;" [class]="'mr-auto validity-badge validity-' + (salaryScale.normatividad.estado | validity ).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
                                 </div>
                                 <div class="ml-auto flex align-items-center">
                                     <button (click)="showDetailOfNormativity(detailOfNormativity, $event)"  pButton pRipple icon="pi pi-eye"
@@ -163,7 +163,7 @@
     <div class="flex flex-column md:flex-row align-items-center w-full">
         <label class="text-left font-medium  w-full md:w-auto">Normatividad</label>
         <div style="margin-left: auto; ">
-            <button *ngIf="salaryScaleFormGroup?.value.idNormatividad" (click)="onDeleteNormativity(normativity, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+            <button *ngIf="salaryScaleFormGroup?.value.idNormatividad" (click)="removeNormativity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="salaryScaleFormGroup?.value.idNormatividad" (click)="onGoToUpdateNormativity(normativity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewNormativity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
             <p-menu #normativityMenu [popup]="true" [model]=""  ></p-menu>
@@ -174,17 +174,20 @@
                         [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
                         [style]="{'max-height':'250px', 'overflow':'auto'}"
                         (onClick)="changeNormativity($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <div>{{item.label }}</div>
+                                <button (click)="onDeleteNormativity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+                            </div>
+                        </ng-template>
                     </p-listbox>
                 </ng-template>
             </p-overlayPanel>
         </div>
     </div> 
 
-    <div  *ngIf="salaryScaleFormGroup?.value.normatividad as normativity; else sNoNormativity" class="flex align-items-center w-full">
+    <div  *ngIf="salaryScaleFormGroup?.value.normatividad as normativity; else sNoNormativity">
         <span class="text-500">{{normativity.nombre | uppercase}}</span>
-        <div style="margin-left: auto; ">
-            <button pButton pRipple (click)="removeNormativity()" type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" pTooltip="Remover" tooltipPosition="bottom"></button>
-        </div>
     </div>
 
     <ng-template #sNoNormativity>

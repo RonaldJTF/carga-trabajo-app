@@ -1,0 +1,204 @@
+<ng-container *ngIf="!loading else sLoading">
+    <div class="card p-0">
+        <p-treeTable  #treeTableOfAppointments [value]="tree" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments" 
+            (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
+            [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': '600px' }">
+            <ng-template pTemplate="caption">
+                <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+                    <div class="flex align-items-center flex-wrap">
+                        <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                            <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                        </button>
+                        <div *ngIf="isAdmin" class="_badge-container m-1">
+                            <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedAppointments()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                class="p-button-danger " [disabled]="!totalSelectedAppointments">
+                                <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                            </button>
+                            <span *ngIf="totalSelectedAppointments"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{totalSelectedAppointments}}</span>
+                        </div>
+                    </div>
+                    <div class="flex align-items-center flex-wrap">
+                        <span class="p-input-icon-left m-1">
+                            <i class="pi pi-search"></i>
+                            <input type="search" pInputText placeholder="Buscar"  (input)="onFilter(treeTableOfAppointments, $event)">
+                        </span>
+                        <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Agregar filtro" tooltipPosition="bottom"></button>
+
+                        <p-overlayPanel #filterOptionsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+                            <ng-template pTemplate>
+                                <ng-container *ngTemplateOutlet="filterOptionsTemplate"></ng-container>
+                            </ng-template>
+                        </p-overlayPanel>
+                    </div>
+                </div>
+
+                <div class="surface-100 px-3 pb-1">
+                    <ng-container *ngFor="let item of confirmedFilters | keyvalue">
+                        <ng-container *ngFor="let obj of transformToArray(item.value); let i = index">
+                            <p-chip [label]="getNestedProperty(obj, filterProps[item.key].valueKey)" [icon]="filterProps[item.key].icon" [removable]="true" styleClass="m-1" (onRemove)="onRemoveFilter(item.key, i)"></p-chip>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-center flex align-items-center justify-content-center" style="white-space: nowrap" ttSortableColumn="nombre" >
+                        Nombre<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
+                    </th>
+                    <ng-container *ngIf="comparisonObjects;">
+                        <th *ngFor="let obj of comparisonObjects" class="text-center w-10rem" style="white-space: nowrap">
+                            {{obj.label | titlecase}}
+                        </th>
+                    </ng-container>
+                    <th class="w-5rem"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowNode let-item="rowData">
+                <tr>
+                    <td style="min-width: 300px;">
+                        <div class="flex align-items-center">
+
+                            <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
+                            <p-treeTableCheckbox *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
+                            
+                            <div *ngIf="item.type == 'STRUCTURE' "  class="flex align-items-center w-full">
+                                <div *ngIf="item.srcIcono; else sNoIcon" style="border-radius: 50%; overflow: hidden; min-width: 3rem;" class="w-3rem h-3rem ">
+                                    <img [src]="item.srcIcono" style="width: 100%; height: auto"/>
+                                </div>
+                                <ng-template #sNoIcon>
+                                    <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-gray-100 border-circle flex-shrink-0">
+                                        <i class="pi pi-book text-xl text-gray-500"></i>
+                                    </div>
+                                </ng-template>
+                                <div class="ml-2 flex flex-column">
+                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="text-sm text-500">Dependencia</span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="item.type == 'VALIDITY' " class="flex align-items-center w-full">
+                                <div class="flex  flex-column">
+                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="text-sm text-500">Vigencia</span>
+                                </div>
+                                <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto validity-badge validity-' + (item.estado | validity ).classStyle">{{item.anio}}</span>
+                            </div>
+
+                            <div *ngIf="item.type == 'LEVEL' " class="flex align-items-center w-full">
+                                <div class="flex  flex-column">
+                                    <span class="font-medium">{{item.descripcion | uppercase}}</span>
+                                    <span class="text-sm text-500">Nivel de ocupación</span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="item.type == 'SALARYSCALE' " class="flex align-items-center w-full">
+                                <div *ngIf="item.id else sGeneralInfo" class="flex  flex-column">
+                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="text-sm text-500">Escala salarial</span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="item.type == 'SCOPE' " class="flex align-items-center w-full">
+                                <div class="flex  flex-column">
+                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="text-sm text-500">Alcance</span>
+                                </div>
+                            </div>
+
+                            <ng-template #sGeneralInfo>
+                                <span class="font-medium text-500 ">Información detallada</span>
+                            </ng-template>
+                        </div>
+                    </td>
+
+                    <td *ngFor="let _ of comparisonObjects" class="text-center w-10rem">
+                        <ng-container *ngIf="item.isLastGroup">
+                            <ng-container *ngFor="let obj of item.items">
+                                    <div *ngIf="obj[comparisonAtrribute.comparisonKey] == _[comparisonAtrribute.comparisonKey]" class="_appointment-info-container p-1 border-round flex flex-column" 
+                                        (mouseenter)="toggleIcon(true, obj.id)" (mouseleave)="toggleIcon(false, obj.id)" style="position: relative;">
+                                        <p-tag [value]="obj.totalCargo" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos designados" tooltipPosition="bottom"></p-tag>
+                                        <span class="text-500">{{obj.asignacionBasica | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                                        <app-appointment-menu-item  *ngIf="menuItemsOfAppointment?.length" [toggleIcon]="showedIcons[obj.id]" [id]="obj.id" [menuItems]="menuItemsOfAppointment" ></app-appointment-menu-item>                   
+                                    </div>
+                            </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf="!item.isLastGroup">
+                            <span class="font-medium text-500">{{item.comparisonsPercomparisonKey[_[comparisonAtrribute.comparisonKey]] | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                        </ng-container>
+                    </td>
+
+                    <td class="w-5rem">
+                        <div class="flex justify-content-end">
+                            <app-menu-item [menuItems]="menuItemsOfAppointmentGroup" [value]="item"></app-menu-item>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="2" class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
+                </tr>
+            </ng-template>
+        </p-treeTable>
+        <div class="text-500 text-sm mx-2 mb-2 my-3">Cargos designados</div>
+    </div>
+</ng-container>
+
+<ng-template #sLoading>
+    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>
+
+<ng-template #filterOptionsTemplate>
+    <div class="flex align-items-center mb-3">
+        <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+          <i  class="pi pi-filter text-xl text-blue-500"></i>
+        </div>
+        <div class="flex flex-column ">
+          <h5 class="m-0 text-700">Opciones de filtrado</h5>
+          <span class="text-500">Opciones de filtrado en función de parámetros establecidos</span>
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label class="font-medium" for="idAlcance">Dependencias</label>
+        <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" [(ngModel)]="filtersBy.dependencies"
+                      [showClear]="false" [filter]="true" display="chip"
+                      containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                      [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true" selectionMode="multiple" [metaKeySelection]="false">
+          <ng-template let-node pTemplate="default">
+            <div class="flex align-items-center cursor-pointer" pRipple>
+              <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
+                   style="border-radius: 50%; overflow: hidden;">
+                <img [src]="node.data.srcIcono"
+                     [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                     style="width: 100%; height: auto" alt=""/>
+              </div>
+              <ng-template #sNoItemIcon>
+                <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                  <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                </div>
+              </ng-template>
+              <div class="flex flex-column ml-2">
+                <span>{{ node.label }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </p-treeSelect>
+    </div>
+
+    <div class="field p-fluid">
+        <label class="font-medium" for="idAlcance">Vigencias</label>
+        <p-multiSelect [options]="validityOptions" [(ngModel)]="filtersBy.validities" display="chip" optionLabel="nombre"
+            [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+        </p-multiSelect>
+    </div>
+
+    <div class="flex flex-wrap justify-content-end mt-3">
+        <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2" 
+            (click)="cancelFilterOptions()" pTooltip="Cancelar" tooltipPosition="bottom">
+        </button>
+        <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined"
+            (click)="filterAppointments()" pTooltip="Filtrar" tooltipPosition="bottom">
+        </button>
+    </div>
+</ng-template>

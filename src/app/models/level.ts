@@ -3,6 +3,7 @@ import { Normativity } from "./normativity";
 export class Level{
     id: number;
     descripcion: string;
+    nombre: string;
     escalasSalariales: SalaryScale[];
     loaded: boolean;
 }

@@ -29,7 +29,9 @@ import {
   WorkplanService,
   ScopeService,
   PeriodicityService,
-  CategoryService
+  CategoryService,
+  ValidityService,
+  AppointmentService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -44,6 +46,7 @@ import {Router} from "@angular/router";
 import {DialogService} from "primeng/dynamicdialog";
 import { levelReducer } from '@store/level.reducer';
 import { NormativityService } from './services/normativity.service';
+import { appointmentReducer } from '@store/appointment.reducer';
 
 @NgModule({
   declarations: [
@@ -58,7 +61,7 @@ import { NormativityService } from './services/normativity.service';
     ToastModule,
     ConfirmDialogModule,
     QuillModule.forRoot(),
-    StoreModule.forRoot({structure: structureReducer, workplan: workplanReducer, stage: stageReducer, level: levelReducer}),
+    StoreModule.forRoot({structure: structureReducer, workplan: workplanReducer, stage: stageReducer, level: levelReducer, appointment: appointmentReducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production
@@ -69,7 +72,7 @@ import { NormativityService } from './services/normativity.service';
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
-    NormativityService, ScopeService,
+    NormativityService, ScopeService, ValidityService, AppointmentService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},

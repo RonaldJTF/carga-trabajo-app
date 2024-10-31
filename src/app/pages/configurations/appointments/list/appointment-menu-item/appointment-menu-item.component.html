@@ -1,0 +1,4 @@
+<span *ngIf="toggleIcon" (click)="openMenu(menuIcon, $event)" class="_badge" #iconOfOptions>
+    <i class="pi pi-ellipsis-v"></i>
+</span>
+<p-tieredMenu #menuIcon [popup]="true" [id]="id" [model]="items" [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-tieredMenu>

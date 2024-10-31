@@ -138,39 +138,17 @@ export class LevelComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  /* loadLevelInformation(id: number) {
-    this.updateMode = id !== undefined;
-
-    if (!this.updateMode) {
-        this.formLevel = this.levelService.getLevelFormGroup();
-        this.updateRowGroupMetaData();
-        return;
-    }
-
-    if (this.mustRechargeLevelFormGroup) {
-        this.loadingLevel = true;
-        this.levelService.getLevelById(id).subscribe({
-            next: (levelData) => {
-                this.formLevel = this.levelService.initializeLevelFormGroup(levelData);
-                this.updateRowGroupMetaData();
-                this.levelService.setMustRechargeLevelFormGroup(false);
-                this.loadingLevel = false;
-            },
-        });
-    } else {
-        this.formLevel = this.levelService.getLevelFormGroup();
-        this.updateRowGroupMetaData();
-    }
-  } */
-  
-
   getNormativities(): void {
     this.normativityService.getFilteredNormativities({estado: '1', esEscalaSalarial: '1'}).subscribe({
       next: (e) => {
         this.normativityOptions = e?.map( o => ({value: o, label: o.nombre}))
       }
     });
+  }
+  show(e, event: Event){
+    event.preventDefault()
+    event.stopPropagation();
+    console.log(e)
   }
 
   updateLevel(payload: Level, id: number): void {

@@ -73,6 +73,13 @@ export class AppMenuComponent implements OnInit {
             routerLink: ['/configurations/levels'],
           },
           {
+            label: 'Cargos',
+            icon: 'pi pi-user',
+            color: 'primary',
+            description: 'Gestión de cargos',
+            routerLink: ['/configurations/appointments'],
+          },
+          {
             label: 'Estructuras',
             icon: 'pi pi-sitemap',
             color: 'primary',

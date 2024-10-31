@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <p-treeSelect *ngIf="structureOptions?.length" [options]="structureOptions" [(ngModel)]="dependency"
+        <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" [(ngModel)]="dependency"
                       [showClear]="false" [filter]="true" (onNodeSelect)="onChangeDependency()"
                       containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
                       [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">

@@ -6,7 +6,7 @@
         <div class="card p-0 pb-2">
             <p-table #dt [value]="levels" rowGroupMode="subheader" sortMode="single"
                 [paginator]="true" [rows]="10" [(selection)]="selectedLevels" selectionMode="multiple"
-                [globalFilterFields]="['nombre', 'descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                [globalFilterFields]="['descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
                 <ng-template pTemplate="caption">
                     <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
@@ -161,7 +161,7 @@
                                     {{salaryScale.normatividad.nombre | uppercase}}
                                     <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span> 
                                 </span>
-                                <span style="white-space: nowrap;" [class]="'mr-auto status-badge status-' + (salaryScale.normatividad.estado | validity).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
+                                <span style="white-space: nowrap;" [class]="'mr-auto validity-badge validity-' + (salaryScale.normatividad.estado | validity).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
                             </div>
                             <div class="ml-auto flex align-items-center">
                                 <button (click)="showDetailOfNormativity(detailOfNormativity, $event)"  pButton pRipple icon="pi pi-eye"

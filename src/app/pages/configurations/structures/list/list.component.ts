@@ -20,10 +20,10 @@ export class ListComponent implements OnInit, OnDestroy{
   MESSAGE = MESSAGE;
   /*Nota: PATH_NO_MANAGED_BY_PARENT hace referencia a todas aquellas rutas que no son gestionadas por aquellas estructuras que figuran como padre de
    elementos de su mismo tipo, es decir, si es una estructura actividad y tiene subactividades, esta no pueden gestionarse (asignar tiempo usual, tiempo max, etc.)*/
-  PATH_NO_MANAGED_BY_PARENT: string[] = ['action/activity'];
+  PATH_NO_MANAGED_BY_PARENT: string[] = ['configurations/structures/action/activity'];
 
   /*Nota: PATH_NO_MANAGED_IF_HAS_ACTIVITY hace referencia a todas aquellas rutas que no son gestionadas si ya la estructura tiene una actividad gestionada*/
-  PATH_NO_MANAGED_IF_HAS_ACTIVITY: string[] = ['action/sub-item'];
+  PATH_NO_MANAGED_IF_HAS_ACTIVITY: string[] = ['configurations/structures/action/sub-item'];
 
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
@@ -300,13 +300,12 @@ export class ListComponent implements OnInit, OnDestroy{
     const idStructure = event.item.id;
     let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
     this.router.navigate([path], {
-      relativeTo: this.route,
       skipLocationChange: true,
       queryParams: {
         idStructure: this.cryptoService.encryptParam(idStructure),
         idParent: this.cryptoService.encryptParam(structure.id),
         idActivity: this.cryptoService.encryptParam(structure.actividad?.id),
-        idTipology: this.cryptoService.encryptParam(path == 'action/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia),
+        idTipology: this.cryptoService.encryptParam(path == 'configurations/structures/action/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia),
         defaultOrder: this.cryptoService.encryptParam(childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1)
       }});
   }

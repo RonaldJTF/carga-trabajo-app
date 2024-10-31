@@ -28,3 +28,5 @@ export * from './category.service';
 export * from './scope.service';
 export * from './level.service';
 export * from './normativity.service';
+export * from './validity.service';
+export * from './appointment.service'

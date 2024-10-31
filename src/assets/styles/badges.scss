@@ -51,6 +51,31 @@
 }
 
 
+.validity-badge {
+    border-radius: var(--border-radius);
+    padding: .25em .5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: .875rem;
+    letter-spacing: .3px;
+}
+
+.validity-badge {
+    &.validity-active {
+        background: #C8E6C9;
+        color: #256029;
+    }
+    &.validity-inactive {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+    &.validity-unknown {
+        background: #cfcfcf;
+        color: #4f4f4f;
+    }
+}
+
+
 .answer-status-badge {
     border-radius: var(--border-radius);
     padding: .25em .5rem;

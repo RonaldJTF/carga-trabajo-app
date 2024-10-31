@@ -1,3 +1,4 @@
+import { AppointmentState } from "@store/appointment.reducer";
 import { LevelState } from "@store/level.reducer";
 import {StageState} from "@store/stage.reducer";
 import {StructureState} from "@store/structure.reducer";
@@ -8,4 +9,5 @@ export interface AppState {
   workplan: WorkplanState,
   stage: StageState,
   level: LevelState,
+  appointment: AppointmentState,
 }
