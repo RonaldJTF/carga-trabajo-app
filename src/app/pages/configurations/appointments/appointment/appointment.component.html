@@ -1,1 +1,204 @@
-<p>appointment works!</p>
+<form *ngIf="!loadingAppointment else sLoadingAppointment" class="p-0" [formGroup]="formAppointment">
+    <ng-container *ngTemplateOutlet="validityOptionTemplate; context: {validity: formAppointment.get('vigencia').value}"></ng-container>
+
+    <div class="field p-fluid mt-3">
+        <label htmlFor="idEstructura" class="font-medium">Dependencia</label>
+        <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" formControlName="dependencyInTree" optionLabel="label" optionValue="key"
+                      [showClear]="false" [filter]="true" [showClear]="true"
+                      containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                      [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
+          <ng-template let-node pTemplate="default">
+            <div class="flex align-items-center cursor-pointer" pRipple>
+              <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
+                   style="border-radius: 50%; overflow: hidden;">
+                <img [src]="node.data.srcIcono"
+                     [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                     style="width: 100%; height: auto" alt=""/>
+              </div>
+              <ng-template #sNoItemIcon>
+                <div
+                  class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                  <i
+                    class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                </div>
+              </ng-template>
+              <div class="flex flex-column ml-2">
+                <span>{{ node.label }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </p-treeSelect>
+        <div *ngIf="formAppointment.controls['idEstructura'].errors && (formAppointment.controls['idEstructura'].touched||formAppointment.controls['idEstructura'].dirty)">
+            <div *ngIf="formAppointment.controls['idEstructura'].errors?.['required']">
+                <small id="text-help" class="p-error">Seleccione una dependencia</small>
+            </div>  
+        </div>
+    </div>
+
+    <div class="grid grid-nogutter">
+        <div class="field p-fluid col-12 md:col-6 md:pr-2">
+            <label class="font-medium" for="idNivel">Nivel ocupacional</label>
+            <p-dropdown id="idNivel" inputId="idNivel" [autoDisplayFirst]="false"
+                        [options]="levels" optionValue="id" optionLabel="descripcion" [filter]="true"
+                        [showClear]="true"
+                        formControlName="idNivel" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+            </p-dropdown>
+            <div *ngIf="formAppointment.controls['idNivel'].errors && (formAppointment.controls['idNivel'].touched||formAppointment.controls['idNivel'].dirty)">
+                <div *ngIf="formAppointment.controls['idNivel'].errors?.['required']">
+                    <small id="text-help" class="p-error">Seleccione un nivel ocupacional</small>
+                </div>  
+            </div>
+        </div>
+
+        <div class="field p-fluid col-12 md:col-6 md:pl-2">
+            <label htmlFor="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
+            <p-dropdown *ngIf="!loadingSalaryScales else sLoadingSalaryScales"  id="idEscalaSalarial" inputId="idEscalaSalarial" [autoDisplayFirst]="false"
+                        [options]="salaryScales" optionValue="id" optionLabel="nombre" [filter]="true"
+                        [showClear]="true"
+                        formControlName="idEscalaSalarial" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+            </p-dropdown>
+            <ng-template #sLoadingSalaryScales>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-spin pi-spinner text-xl"></i>
+                    <input type="text" [disabled]="true" pInputText value="Cargando..."/>
+                </span>
+            </ng-template>
+        </div>
+    </div>
+
+    <ng-container *ngTemplateOutlet="normativityOptionTemplate; context: {normativity: formAppointment.get('normatividad').value}"></ng-container>
+
+    <div class="grid grid-nogutter mt-3">
+        <div class="field p-fluid col-12 md:col-6 md:pr-2">
+            <label htmlFor="asignacionBasica" class="font-medium">Asignación básica</label>
+            <input pInputText id="asignacionBasica" type="number" aria-describedby="text-help" formControlName="asignacionBasica"/>
+            <div *ngIf="formAppointment.controls['asignacionBasica'].errors && (formAppointment.controls['asignacionBasica'].touched||formAppointment.controls['asignacionBasica'].dirty)">
+                <div *ngIf="formAppointment.controls['asignacionBasica'].errors?.['required']">
+                    <small id="text-help" class="p-error">Ingresa una asignación básica para el cargo</small>
+                </div>  
+            </div>
+        </div>
+
+        <div class="field p-fluid col-12 md:col-6 md:pl-2">
+            <label htmlFor="totalCargos" class="font-medium">Total de cargos</label>
+            <input pInputText id="totalCargos" type="number" aria-describedby="text-help" formControlName="totalCargos"/>
+            <div *ngIf="formAppointment.controls['totalCargos'].errors && (formAppointment.controls['totalCargos'].touched||formAppointment.controls['totalCargos'].dirty)">
+                <div *ngIf="formAppointment.controls['totalCargos'].errors?.['required']">
+                    <small id="text-help" class="p-error">Ingresa el total de cargos</small>
+                </div>  
+            </div>
+        </div>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitAppointment($event)"
+        (cancel)="onCancelAppointment($event)"
+        (delete)="onDeleteAppointment($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formAppointment.invalid">
+    </app-form-action-button>
+</form>
+
+<ng-template #sLoadingAppointment>
+    <app-loading></app-loading>
+</ng-template>
+
+<ng-template #validityOptionTemplate let-validity="validity">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Vigencia</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formAppointment?.value.idVigencia" (click)="removeValidity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formAppointment?.value.idVigencia" (click)="onGoToUpdateValidity(validity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewValidity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #validityMenu [popup]="true" [model]=""  ></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Vigencias"  (click)="validityOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #validityOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="validityOptions" [filter]="true" title="Vigencias"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeValidity($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <span>{{item.label }}</span>
+                                <div class="ml-auto">
+                                    <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(item.value.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(item.value.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+                                    <button (click)="onDeleteValidity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div  *ngIf="formAppointment?.value.vigencia as validity; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
+        <span class="text-500">{{validity.nombre | uppercase}}</span>
+        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto m-2 validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
+    </div>
+
+    <ng-template #sNoValidity>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_VIGENCIA_ASOCIADA"></app-no-result>
+    </ng-template>
+
+    <div *ngIf="formAppointment.controls['idVigencia'] && formAppointment.controls['idVigencia'].errors && (formAppointment.controls['idVigencia'].touched || formAppointment.controls['idVigencia'].dirty)">
+        <div *ngIf="formAppointment.controls['idVigencia'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una vigencia para la designación de cargos</small>
+        </div>  
+    </div>
+</ng-template>
+
+<ng-template #normativityOptionTemplate let-normativity="normativity">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Normatividad</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formAppointment?.value.idNormatividad" (click)="removeNormativity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formAppointment?.value.idNormatividad" (click)="onGoToUpdateNormativity(normativity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewNormativity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #normativityMenu [popup]="true" [model]=""  ></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Normatividades"  (click)="normativityOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #normativityOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="normativityOptions" [filter]="true" title="Normatividades"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeNormativity($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <div>{{item.label }}</div>
+                                <button (click)="onDeleteNormativity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div *ngIf="normativity; else sNoNormativity" class="surface-100 border-round p-3 mt-2">
+        <div class="flex align-items-center">
+            <div class="flex flex-column" >
+                <span class="text-500">{{normativity.nombre | uppercase}}</span>
+                <span class="text-blue-500 text-sm" >{{normativity.alcance?.nombre | titlecase}}</span>
+            </div>
+            <button (click)="showDetailOfNormativity(detailOfNormativity, $event)"  pButton pRipple icon="pi pi-eye"
+                class="ml-auto p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+        </div>
+        <div #detailOfNormativity style="display: none; max-height: 500px; overflow-y: auto;" class="ql-snow w-full">
+            <div class="ql-editor" [innerHTML] ="normativity?.descripcion ?? '' | sanitizeHtml"></div>
+        </div>
+    </div>
+    <div *ngIf="formAppointment.controls['idNormatividad'] && formAppointment.controls['idNormatividad'].errors && (formAppointment.controls['idNormatividad'].touched || formAppointment.controls['idNormatividad'].dirty)">
+        <div *ngIf="formAppointment.controls['idNormatividad'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una normatividad sobre la que se soporta la asignación laboral</small>
+        </div>  
+    </div>
+    <ng-template #sNoNormativity>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_NORMATIVIDAD_ASOCIADA"></app-no-result>
+    </ng-template>
+</ng-template>

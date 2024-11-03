@@ -54,7 +54,7 @@ export class AppMenuComponent implements OnInit {
         ],
       },
       {
-        label: 'Configuración',
+        label: 'Gestión',
         visible: this.isAdministrator || this.isOperator || this.isSuperAdmin,
         items: [
           {
@@ -73,11 +73,25 @@ export class AppMenuComponent implements OnInit {
             routerLink: ['/configurations/levels'],
           },
           {
-            label: 'Cargos',
-            icon: 'pi pi-user',
+            label: 'Cargos laborales',
+            icon: 'pi pi-briefcase',
             color: 'primary',
-            description: 'Gestión de cargos',
-            routerLink: ['/configurations/appointments'],
+            items: [
+              {
+                label: 'Vigencias',
+                icon: 'pi pi-calendar',
+                color: 'primary',
+                description: 'Gestión de las vigencias para las asignaciones laborales',
+                routerLink: ['/configurations/validities'],
+              },
+              {
+                label: 'Designación de cargos',
+                icon: 'pi pi-users',
+                color: 'primary',
+                description: 'Gestión de la designación de cargos laborales por dependencia',
+                routerLink: ['/configurations/appointments']
+              }
+            ]
           },
           {
             label: 'Estructuras',

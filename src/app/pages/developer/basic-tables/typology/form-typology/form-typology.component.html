@@ -12,8 +12,7 @@
   </div>
 
   <form class="p-0" [formGroup]="formTipologia">
-    <div class="grid">
-      <div class="field p-fluid col-12 m-0">
+      <div class="field p-fluid">
         <label htmlFor="nombre" class="font-medium">Nombre</label>
         <input type="text" id="nombre" pInputText formControlName="nombre">
         <div *ngIf="nombreNoValido">
@@ -22,7 +21,7 @@
           </div>
         </div>
       </div>
-      <div class="field p-fluid col-12 m-0">
+      <div class="field p-fluid">
         <label htmlFor="claseEstado" class="font-medium">Define icono y color</label>
         <p-splitter [style]="{'height': '150px'}" [panelSizes]="[50,50]">
           <ng-template pTemplate>
@@ -59,23 +58,23 @@
           </ng-template>
         </p-splitter>
       </div>
-      <div class="field p-fluid col-12 xl:col-6 m-0">
-        <label for="idTipologiaSiguiente"> <span class="font-medium">Tipologia siguiente </span><span>(opcional)</span></label>
-        <p-dropdown id="idTipologiaSiguiente" inputId="idTipologiaSiguiente" [autoDisplayFirst]="false" [options]="typologies" optionValue="id" optionLabel="nombre"
-                    [filter]="true" [showClear]="true" formControlName="idTipologiaSiguiente" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
-        <div *ngIf="idTipologiaSiguienteNoValido">
-          <div *ngIf="controls['idTipologiaSiguiente'].errors?.['required']">
-            <small class="p-error">Seleccione un tipo de documento</small>
+
+      <div class="grid grid-nogutter">
+        <div class="field p-fluid col-12 xl:col-6 xl:pr-2">
+          <label for="idTipologiaSiguiente"> <span class="font-medium">Tipologia siguiente </span><span>(opcional)</span></label>
+          <p-dropdown id="idTipologiaSiguiente" inputId="idTipologiaSiguiente" [autoDisplayFirst]="false" [options]="typologies" optionValue="id" optionLabel="nombre"
+                      [filter]="true" [showClear]="true" formControlName="idTipologiaSiguiente" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+          <div *ngIf="idTipologiaSiguienteNoValido">
+            <div *ngIf="controls['idTipologiaSiguiente'].errors?.['required']">
+              <small class="p-error">Seleccione un tipo de documento</small>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="grid col-12 xl:col-6">
-        <div class="field p-fluid col-12 m-0 p-0">
-          <label for="esDependencia" class="col-12"><span class="font-medium">Es dependencia </span><span>(opcional)</span></label>
-          <p-inputSwitch class="p-fluid ml-3" id="esDependencia" formControlName="esDependencia"></p-inputSwitch>
+        <div class="field p-fluid col-12 xl:col-6 xl:pl-2 flex flex-column ">
+          <label for="esDependencia"><span class="font-medium">Es dependencia </span><span>(opcional)</span></label>
+          <p-inputSwitch class="p-fluid" id="esDependencia" formControlName="esDependencia"></p-inputSwitch>
         </div>
       </div>
-    </div>
     <app-form-action-button [updateMode]="updateMode"
                             (createOrUpdate)="onSubmitTypology($event)"
                             (cancel)="onCancelTypology($event)"

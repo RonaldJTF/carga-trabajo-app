@@ -6,7 +6,7 @@ import {PasswordModule} from 'primeng/password';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {
-  ActivityExpirationPipe, CapitalizeFirstLetterPipe, DarkenColorPipe, DateRangePipe, FileIconPipe, FileSizePipe,
+  ActivityExpirationPipe, DarkenColorPipe, DateRangePipe, FileIconPipe, FileSizePipe,
   FirstNamePipe, LightenColorPipe, PluralizePipe, PrettyDatePipe, SanitizeHtmlPipe, StatePipe, TimeAgoPipe, TimeNamePipe,
   ValidityPipe
 } from '@pipes';
@@ -75,6 +75,8 @@ import { QuillEditorComponent } from './quill-editor/quill-editor.component';
 import { QuillModule } from 'ngx-quill';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChipModule } from 'primeng/chip';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { AppConfigModule } from '../layout/config/config.module';
 
 @NgModule({
   declarations: [
@@ -107,7 +109,6 @@ import { ChipModule } from 'primeng/chip';
     FileSizePipe,
     SanitizeHtmlPipe,
     PrettyDatePipe,
-    CapitalizeFirstLetterPipe,
     TimeAgoPipe,
     FileIconPipe,
     LightenColorPipe,
@@ -145,7 +146,6 @@ import { ChipModule } from 'primeng/chip';
     InputNumberModule,
     DialogModule,
     TableModule,
-    MenuModule,
     DataViewModule,
     TagModule,
     InputMaskModule,
@@ -175,6 +175,8 @@ import { ChipModule } from 'primeng/chip';
     QuillModule,
     ConfirmDialogModule,
     ChipModule,
+    RadioButtonModule,
+    AppConfigModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -208,7 +210,6 @@ import { ChipModule } from 'primeng/chip';
     FileSizePipe,
     SanitizeHtmlPipe,
     PrettyDatePipe,
-    CapitalizeFirstLetterPipe,
     TimeAgoPipe,
     FileIconPipe,
     LightenColorPipe,
@@ -242,7 +243,6 @@ import { ChipModule } from 'primeng/chip';
     InputNumberModule,
     DialogModule,
     TableModule,
-    MenuModule,
     DataViewModule,
     TagModule,
     InputMaskModule,
@@ -272,6 +272,8 @@ import { ChipModule } from 'primeng/chip';
     QuillModule,
     ConfirmDialogModule,
     ChipModule,
+    RadioButtonModule,
+    AppConfigModule,
   ],
   providers: []
 })

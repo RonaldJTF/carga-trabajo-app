@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as LevelActions from "@store/level.actions";
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';

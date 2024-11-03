@@ -8,6 +8,7 @@ const routes: Routes = [
   {path: 'levels', loadChildren: ()=>import('./levels/levels.module').then(m=>m.LevelsModule)},
   {path: 'normativities', loadChildren: ()=>import('./normativities/normativities.module').then(m=>m.NormativitiesModule)},
   {path: 'appointments', loadChildren: ()=>import('./appointments/appointments.module').then(m=>m.AppointmentsModule)},
+  {path: 'validities', loadChildren: ()=>import('./validities/validities.module').then(m=>m.ValiditiesModule)},
 ];
 
 @NgModule({

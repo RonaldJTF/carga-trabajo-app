@@ -16,6 +16,8 @@ export const MESSAGE = {
     NO_AVANCE_TAREAS: "No se encontraron avances de tareas",
     NO_ESCALAS_SALARIALES: "No se encontraron escalas salariales",
     NO_ESCALAS_SALARIALES_VIGENTES: "No se encontraron escalas salariales vigentes",
-    NO_NORMATIVIDAD_ASOCIADA: "No se encontró normatividad asociada"
-};
-
+    NO_NORMATIVIDAD_ASOCIADA: "No se encontró normatividad asociada",
+    NO_VIGENCIA_ASOCIADA: "No se encontró vigencia asociada",
+    NO_VARIABLE_ASOCIADA: "No se encontró variable asociada",
+    NO_VALORES_VARIABLES_EN_VIGENCIA: "No se encontraron valores para las variables en la vigencia"
+}

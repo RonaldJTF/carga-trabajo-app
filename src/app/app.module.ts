@@ -47,6 +47,8 @@ import {DialogService} from "primeng/dynamicdialog";
 import { levelReducer } from '@store/level.reducer';
 import { NormativityService } from './services/normativity.service';
 import { appointmentReducer } from '@store/appointment.reducer';
+import { VariableService } from './services/variable.service';
+import { validityReducer } from '@store/validity.reducer';
 
 @NgModule({
   declarations: [
@@ -61,7 +63,7 @@ import { appointmentReducer } from '@store/appointment.reducer';
     ToastModule,
     ConfirmDialogModule,
     QuillModule.forRoot(),
-    StoreModule.forRoot({structure: structureReducer, workplan: workplanReducer, stage: stageReducer, level: levelReducer, appointment: appointmentReducer}),
+    StoreModule.forRoot({structure: structureReducer, workplan: workplanReducer, stage: stageReducer, level: levelReducer, appointment: appointmentReducer, validity: validityReducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production
@@ -72,7 +74,7 @@ import { appointmentReducer } from '@store/appointment.reducer';
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
-    NormativityService, ScopeService, ValidityService, AppointmentService,
+    NormativityService, ScopeService, ValidityService, AppointmentService, VariableService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},

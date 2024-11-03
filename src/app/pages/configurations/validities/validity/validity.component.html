@@ -1,0 +1,179 @@
+
+<form *ngIf="!loadingValidity else sLoadingValidity" class="p-0" [formGroup]="formValidity">
+    <div class="field p-fluid">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+        <div *ngIf="formValidity.controls['nombre'].errors && (formValidity.controls['nombre'].touched||formValidity.controls['nombre'].dirty)">
+            <div *ngIf="formValidity.controls['nombre'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa un nombre</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="anio" class="font-medium">Año</label>
+        <p-calendar [showClear]="true" [showIcon]="true" inputId="anio" formControlName="anio"  view="year" dateFormat="yy" icon="pi pi-calendar"></p-calendar>
+        <div *ngIf="formValidity.controls['anio'].errors && (formValidity.controls['anio'].touched||formValidity.controls['anio'].dirty)">
+            <div *ngIf="formValidity.controls['anio'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa un año</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="field p-fluid flex align-items-center  ">
+        <label htmlFor="estado" class="font-medium mr-2">Estado</label>
+        <p-inputSwitch id="estado" formControlName="estado"></p-inputSwitch>
+    </div>
+  
+    <p-divider layout="horizontal" align="center" class="w-full">
+        <span class="text-500">Variables parametrizadas</span>
+    </p-divider>
+
+    <ng-container *ngIf="valueInValidityFormGroup">
+        <ng-container *ngTemplateOutlet="formValueInValidityTemplate; context: { $implicit: valueInValidityFormGroup}"></ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="valuesInValidityFormArray.controls?.length else sNoValueInValidity" formArrayName="valoresVigencia">
+        <div  *ngIf="!valueInValidityFormGroup"  class="flex align-items-center justify-content-end mb-2"> 
+            <button pButton pRipple type="button"  class="p-button-text" (click)="openNewValueInValidity()" >
+                <i class="pi pr-2 pi-plus"></i>
+                <span>Parametrizar variable en la vigencia</span>
+            </button>
+        </div>
+
+        <p-table #tableOfValuesInValidity [value]="valuesInValidityFormArray.controls"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
+            <ng-template pTemplate="body" let-valueInValidityControl let-rowIndex="rowIndex">
+                <ng-container *ngIf="valueInValidityControl.value as valueInValidity">
+                    <tr>
+                        <td [ngClass]="{'_border-left-primary': indexOfValueInValidity == rowIndex, '_border-left-transparent': indexOfValueInValidity != rowIndex}" class="_border-left-5">
+                            <div class="flex flex-column justify-content-start">
+                                <span>{{ valueInValidity.variable.nombre }}</span>
+                                <span class="text-500">{{ valueInValidity.variable.descripcion }}</span>
+                            </div>
+                        </td>
+                        <td class="w-10rem  text-right">
+                            <span class="text-500" pTooltip="Valor" tooltipPosition="bottom">{{valueInValidity.valor}}</span>
+                        </td>
+                        <td class="w-5rem">
+                            <div class="flex align-items-center justify-content-end">
+                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfValueInValidity" [index]="rowIndex"></app-menu-item>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-template>
+        </p-table>
+        
+        <div class="text-500 text-sm mx-2 mb-2 my-3">Parametrización de variables en la vigencia</div>
+    </ng-container>
+
+    <ng-template #sNoValueInValidity>
+        <app-go-to-if-not-found *ngIf="!valueInValidityFormGroup" [imageSize]="IMAGE_SIZE.LARGE" buttonLabel="Crear nueva parametrización"(go)="openNewValueInValidity()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+    </ng-template>
+
+    <div class="bg-blue-50 border-round-xl flex align-items-center p-4 my-3">
+        <i class="pi pi-info-circle text-3xl text-blue-500 mr-2"></i>
+        <span class="text-blue-500 text-justify">
+            Solo puede tener un máximo de una vigencia activa, ya que es esta la que se utiliza para gestionar las asignaciones laborales.
+        </span>
+    </div>
+
+    <div class="mt-3">
+        <app-form-action-button [updateMode]="updateMode"
+            (createOrUpdate)="onSubmitValidity($event)"
+            (cancel)="onCancelValidity($event)"
+            (delete)="onDeleteValidity($event)"
+            [showDeleteButton] = "updateMode"
+            [creatingOrUpdating] = "creatingOrUpdating"
+            [deleting] = "deleting"
+            [deleteMessage]="DELETE_MESSAGE"
+            [disabledCreateOrUpdateButton] = "formValidity.invalid">
+        </app-form-action-button>
+    </div>
+</form>
+
+<ng-template #sLoadingValidity>
+    <app-loading></app-loading>
+</ng-template>
+
+<ng-template #formValueInValidityTemplate let-valueInValidityFormGroup>
+    <div [formGroup]="valueInValidityFormGroup" class="surface-100 border-round surface-border mb-3 p-3 _border-left-5 " 
+        [ngClass]="{'_border-left-primary': indexOfValueInValidity >= 0, '_border-left-transparent': indexOfValueInValidity < 0 }">
+        <div class="flex align-items-center mb-3">
+            <div class="w-2rem h-2rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-2 flex-shrink-0">
+                <i  class="pi pi-pencil text-blue-500"></i>
+            </div>
+            <div class="flex flex-column ">
+                <span class="text-left font-medium text-500">Gestión de la variable</span>
+                <span class="text-500 text-sm">{{indexOfValueInValidity < 0 ? 'Creación' : 'Modificación'}}</span>
+            </div>
+        </div>
+
+        <ng-container *ngTemplateOutlet="variableTemplate; context: {variable: valueInValidityFormGroup.get('variable').value}"></ng-container> 
+
+        <div *ngIf="valueInValidityFormGroup.get('variable')?.value" class="flex align-items-center mt-3">
+            <span class="text-right font-medium " style="white-space: nowrap;" >{{valueInValidityFormGroup.get('variable').value.nombre}} </span>
+            <span class="font-medium mx-2"> = </span>
+            <input pInputText id="valor" type="number" formControlName="valor" class="w-full pb-1 pl-1 border-none border-bottom-1 shadow-none _input-value"
+            [ngClass]="{'ng-dirty ng-invalid': hasErrors(valueInValidityFormGroup.get('valor'))}" /> 
+
+        </div>
+                    
+        <div class="flex flex-wrap justify-content-end mt-3">
+            <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2" 
+                (click)="cancelValueInValidity($event)" pTooltip="Cancelar" tooltipPosition="bottom">
+            </button>
+            <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined" type="submit" 
+                (click)="submitValueInValidty($event)" [disabled]="valueInValidityFormGroup.invalid" pTooltip="Agregar" tooltipPosition="bottom">
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #variableTemplate let-variable="variable">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Variable</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="valueInValidityFormGroup?.value.idVariable" (click)="removeVariable()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="valueInValidityFormGroup?.value.idVariable" (click)="onGoToUpdateVariable(variable.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #variableMenu [popup]="true" [model]=""  ></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Variables"  (click)="variableOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #variableOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="variableOptions" [filter]="true" title="Variables"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeVariable($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <div>{{item.label }}</div>
+                                <button *ngIf="!parseStringToBoolean(item.value.primaria) else sNoDeleteButton"  (click)="onDeleteVariable(item.value, $event)" pButton pRipple 
+                                    type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+                                <ng-template #sNoDeleteButton>
+                                    <i class="pi pi-trash text-500 ml-auto p-3" pTooltip="Deshabilitado" tooltipPosition="bottom"></i>
+                                </ng-template>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div *ngIf="valueInValidityFormGroup?.value.variable as variable; else sNoVariable"  class="flex flex-column">
+        <span class="text-500">{{variable.nombre | uppercase}}</span>
+        <span class="text-500 text-sm">{{variable.descripcion}}</span>
+    </div>
+
+    <ng-template #sNoVariable>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_VARIABLE_ASOCIADA"></app-no-result>
+    </ng-template>
+
+    <div *ngIf="valueInValidityFormGroup.controls['idVariable'] && valueInValidityFormGroup.controls['idVariable'].errors && (valueInValidityFormGroup.controls['idVariable'].touched || valueInValidityFormGroup.controls['idVariable'].dirty)">
+        <div *ngIf="valueInValidityFormGroup.controls['idVariable'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una variable a parametrizar en la vigencia</small>
+        </div>  
+    </div>
+</ng-template>

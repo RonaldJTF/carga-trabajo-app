@@ -80,7 +80,6 @@ export const levelReducer = createReducer(
   on(LevelActions.removeSalaryScaleToLevel, (state, { salaryScaleId }) => {
     const items = [...state.items];
     const level = findLevelToSalaryScale(salaryScaleId, items);
-    console.log(level)
     if (level?.escalasSalariales){
       level.escalasSalariales = level.escalasSalariales.filter(e => e.id != salaryScaleId ) 
     }

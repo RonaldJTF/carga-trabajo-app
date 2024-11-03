@@ -42,8 +42,10 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th class="text-center flex align-items-center justify-content-center" style="white-space: nowrap" ttSortableColumn="nombre" >
-                        Nombre<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
+                    <th ttSortableColumn="nombre" >
+                        <div class="text-center flex align-items-center justify-content-center" style="white-space: nowrap" >
+                            Nombre<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
+                        </div>
                     </th>
                     <ng-container *ngIf="comparisonObjects;">
                         <th *ngFor="let obj of comparisonObjects" class="text-center w-10rem" style="white-space: nowrap">
@@ -116,7 +118,7 @@
                             <ng-container *ngFor="let obj of item.items">
                                     <div *ngIf="obj[comparisonAtrribute.comparisonKey] == _[comparisonAtrribute.comparisonKey]" class="_appointment-info-container p-1 border-round flex flex-column" 
                                         (mouseenter)="toggleIcon(true, obj.id)" (mouseleave)="toggleIcon(false, obj.id)" style="position: relative;">
-                                        <p-tag [value]="obj.totalCargo" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos designados" tooltipPosition="bottom"></p-tag>
+                                        <p-tag [value]="obj.totalCargos" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos designados" tooltipPosition="bottom"></p-tag>
                                         <span class="text-500">{{obj.asignacionBasica | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                                         <app-appointment-menu-item  *ngIf="menuItemsOfAppointment?.length" [toggleIcon]="showedIcons[obj.id]" [id]="obj.id" [menuItems]="menuItemsOfAppointment" ></app-appointment-menu-item>                   
                                     </div>

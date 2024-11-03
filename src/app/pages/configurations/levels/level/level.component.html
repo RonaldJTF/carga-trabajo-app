@@ -38,7 +38,7 @@
                                 <div class="flex flex-column ml-2 justify-content-start">
                                     <span class="font-medium text-500">
                                         {{salaryScale.normatividad.nombre | uppercase}}
-                                        <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span> 
+                                        <span class="text-500">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span> 
                                     </span>
                                     <span style="white-space: nowrap;" [class]="'mr-auto validity-badge validity-' + (salaryScale.normatividad.estado | validity ).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
                                 </div>
@@ -58,7 +58,7 @@
                         <td [ngClass]="{'_border-left-primary': indexOfSalaryScale == rowIndex, '_border-left-transparent': indexOfSalaryScale != rowIndex}" class="_border-left-5">
                             <div class="flex flex-column justify-content-start">
                                 <span>{{ salaryScale.nombre }}</span>
-                                <span class="text-500 font-italic">Código: {{ salaryScale.codigo }}</span>
+                                <span class="text-500">Código: {{ salaryScale.codigo }}</span>
                             </div>
                         </td>
                         <td class="w-6rem">
@@ -110,11 +110,11 @@
 </ng-template>
 
 <ng-template #formSalaryScaleTemplate let-salaryScaleFormGroup>
-    <div [formGroup]="salaryScaleFormGroup" class="surface-100 border-round surface-border p-3 _border-left-5 " 
+    <div [formGroup]="salaryScaleFormGroup" class="surface-100 border-round surface-border mb-3 p-3 _border-left-5 " 
         [ngClass]="{'_border-left-primary': indexOfSalaryScale >= 0, '_border-left-transparent': indexOfSalaryScale < 0 }">
         <div class="flex align-items-center mb-3">
             <div class="w-2rem h-2rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-2 flex-shrink-0">
-                <i  class="pi pi-pencil text-xs text-blue-500"></i>
+                <i  class="pi pi-pencil text-blue-500"></i>
             </div>
             <div class="flex flex-column ">
                 <span class="text-left font-medium text-500">Gestión de la escala salarial</span>
@@ -186,7 +186,7 @@
         </div>
     </div> 
 
-    <div  *ngIf="salaryScaleFormGroup?.value.normatividad as normativity; else sNoNormativity">
+    <div *ngIf="normativity else sNoNormativity">
         <span class="text-500">{{normativity.nombre | uppercase}}</span>
     </div>
 

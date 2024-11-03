@@ -145,11 +145,6 @@ export class LevelComponent implements OnInit, OnDestroy {
       }
     });
   }
-  show(e, event: Event){
-    event.preventDefault()
-    event.stopPropagation();
-    console.log(e)
-  }
 
   updateLevel(payload: Level, id: number): void {
     this.levelService.updateLevel(id, payload).subscribe({
@@ -157,7 +152,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.store.dispatch(LevelActions.updateFromList({level: e}));
         this.router.navigate([this.ROUTE_TO_BACK]);
         this.creatingOrUpdating = false;
-        this.levelService.resetSalaryScale();
+        this.levelService.resetFormInformation();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -171,7 +166,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.store.dispatch(LevelActions.addToList({level: e}));
         this.router.navigate([this.ROUTE_TO_BACK]);
         this.creatingOrUpdating = false;
-        this.levelService.resetSalaryScale();
+        this.levelService.resetFormInformation();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -203,7 +198,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.store.dispatch(LevelActions.removeFromList({id: this.level.id}));
         this.router.navigate([this.ROUTE_TO_BACK]);
         this.deleting = false;
-        this.levelService.resetSalaryScale();
+        this.levelService.resetFormInformation();
       },
       error: (error) => {
         this.deleting = false;
@@ -214,7 +209,7 @@ export class LevelComponent implements OnInit, OnDestroy {
   onCancelLevel(event : Event): void {
     event.preventDefault();
     this.router.navigate([this.ROUTE_TO_BACK]);
-    this.levelService.resetSalaryScale();
+    this.levelService.resetFormInformation();
   }
 
   openNewSalaryScale(){
@@ -280,7 +275,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.normativityService.deleteNormativity(normativity.id).subscribe({
           next: () => {
             this.levelService.removeSalaryScalesByNormativity(normativity.id);
-            this.normativityOptions = this.normativityOptions.filter(e => e.value?.id == normativity.id)
+            this.normativityOptions = this.normativityOptions.filter(e => e.value?.id != normativity.id)
             this.updateRowGroupMetaData();
           },
         });
@@ -297,30 +292,6 @@ export class LevelComponent implements OnInit, OnDestroy {
       </div>
       `
     )
-  }
-
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-    const salaryScales = this.escalasSalarialesFormArray.controls?.map(e => e.value);
-    if (salaryScales) {
-        for (let i = 0; i < salaryScales.length; i++) {
-            const rowData = salaryScales[i];
-            const normativityName = rowData?.normatividad?.nombre || '';
-            if (i === 0) {
-                this.rowGroupMetadata[normativityName] = { index: 0, size: 1 };
-            }
-            else {
-                const previousRowData = salaryScales[i - 1];
-                const previousRowGroup = previousRowData?.normatividad?.nombre;
-                if (normativityName === previousRowGroup) {
-                    this.rowGroupMetadata[normativityName].size++;
-                }
-                else {
-                    this.rowGroupMetadata[normativityName] = { index: i, size: 1 };
-                }
-            }
-        }
-    }
   }
 
   parseStringToBoolean(str: string): boolean{
@@ -344,6 +315,30 @@ export class LevelComponent implements OnInit, OnDestroy {
         iconElement.classList.remove('pi-eye-slash');
         iconElement.classList.add('pi-eye');
       }
+    }
+  }
+
+  private updateRowGroupMetaData() {
+    this.rowGroupMetadata = {};
+    const salaryScales = this.escalasSalarialesFormArray.controls?.map(e => e.value);
+    if (salaryScales) {
+        for (let i = 0; i < salaryScales.length; i++) {
+            const rowData = salaryScales[i];
+            const normativityName = rowData?.normatividad?.nombre || '';
+            if (i === 0) {
+                this.rowGroupMetadata[normativityName] = { index: 0, size: 1 };
+            }
+            else {
+                const previousRowData = salaryScales[i - 1];
+                const previousRowGroup = previousRowData?.normatividad?.nombre;
+                if (normativityName === previousRowGroup) {
+                    this.rowGroupMetadata[normativityName].size++;
+                }
+                else {
+                    this.rowGroupMetadata[normativityName] = { index: i, size: 1 };
+                }
+            }
+        }
     }
   }
 }

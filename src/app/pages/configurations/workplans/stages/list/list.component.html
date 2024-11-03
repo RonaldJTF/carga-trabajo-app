@@ -173,7 +173,7 @@
                               <span class="text-left font-medium ml-1">Entregables: </span>
                               <span class="text-left">{{task.entregable}}</span>
                             </div>
-                            <div class="mb-1 text-xs text-blue-500">
+                            <div class="mb-1 text-sm text-blue-500">
                               Desde el {{task.fechaInicio | prettyDate : "date"}} hasta el {{ task.fechaFin | prettyDate : "date" }}
                             </div>
                             <span style="font-size: 0.75rem; white-space: nowrap" [class]="'mr-auto activity-expiration-badge activity-expiration-' +
@@ -288,7 +288,7 @@
           <div class="flex flex-row align-items-center">
             <div class="flex flex-column align-items-center justify-content-start">
               <span class="w-full text-500 font-medium">{{ followUp.fecha | date: 'dd/MM/yyyy, h:mm a' }}</span>
-              <span class="text-blue-500 text-xs w-full">{{ followUp.fecha | timeAgo }}</span>
+              <span class="text-blue-500 text-sm w-full">{{ followUp.fecha | timeAgo }}</span>
             </div>
             <div class="ml-auto flex align-items-center pl-2">
               <app-percent [size]="80" shape="linear" labelPosition="right" [value]="followUp.porcentajeAvance"></app-percent>
@@ -505,7 +505,7 @@
           <ng-template #eventContentTemplate let-event let-item="data">
             <div class="px-2 py-1 flex flex-column border-round-xs" [class]="'activity-expiration-border-left activity-expiration-'+item.status?.classStyle">
               <span  style="color:{{event.backgroundColor | darkenColor}};">{{event.title }}</span>
-              <span class="text-xs" style="color:{{event.backgroundColor | darkenColor:0.25}};">{{item.parent}}</span>
+              <span class="text-sm" style="color:{{event.backgroundColor | darkenColor:0.25}};">{{item.parent}}</span>
             </div>
           </ng-template>
       </app-calendar>

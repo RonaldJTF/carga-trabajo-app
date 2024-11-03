@@ -198,7 +198,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   }
 
   getValidities() {
-    this.validityService.getpathValidities().subscribe({
+    this.validityService.getValidities().subscribe({
       next: (e) => {
         this.validityOptions = e;
       }

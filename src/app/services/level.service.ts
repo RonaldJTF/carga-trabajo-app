@@ -55,6 +55,10 @@ export class LevelService {
     return this.webRequestService.getWithHeaders(`${this.pathLevel}/salary-scale`, {idNivel: levelId});
   }
 
+  getSalaryScalesByLevelIdAndActive(levelId: number) {
+    return this.webRequestService.getWithHeaders(`${this.pathLevel}/salary-scale`, {idNivel: levelId, estado: '1'});
+  }
+
   deleteSalaryScale(idSalaryScale: number){
     return this.webRequestService.deleteWithHeaders(`${this.pathLevel}/salary-scale/${idSalaryScale}`);
   }
@@ -72,7 +76,7 @@ export class LevelService {
   }
 
   createLevelFormGroup(){
-    this.resetSalaryScale();
+    this.resetFormInformation();
     this.levelFormGroup = this.formBuilder.group({
       descripcion: ['', Validators.required],
       escalasSalariales: this.formBuilder.array([])
@@ -132,6 +136,13 @@ export class LevelService {
     this.resetSalaryScale();
   }
 
+  resetFormInformation(){
+    this._mustRechargeLevelFormGroup.next(true);
+    this._level.next(null);
+    this.levelFormGroup = null;
+    this.resetSalaryScale();
+  }
+
   resetSalaryScale(){
     this._indexOfSalaryScale.next(-1);
     this._salaryScaleFormGroup.next(null);
@@ -167,8 +178,12 @@ export class LevelService {
 
     /*Si el elemento que se tiene modificando o creando tiene en el momento la misma normatividad eliminada, o es un elemento 
     que parte de uno de esa normatividad, entonces es reestablecido a valores iniciales*/
-    if(formGroup?.get('idNormatividad').value == normativityId || actualWasRemoved){
-      this.resetSalaryScale();
+    if(formGroup?.get('idNormatividad').value == normativityId){
+      if(actualWasRemoved){
+        this.resetSalaryScale(); //El elemento es una modificación
+      }else{
+        this.setNormativityToSalaryScale(null); //El elemento es nuevo
+      }
     }
   }
 

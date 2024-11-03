@@ -1,3 +1,7 @@
+import { Normativity } from "./normativity";
+import { Structure } from "./structure";
+import { Validity } from "./validity";
+
 export class Appointment{
     id: number;
     asignacionBasica: number;
@@ -8,4 +12,7 @@ export class Appointment{
     idEscalaSalarial: number;
     idAlcance: number;
     idVigencia: number;
+    vigencia: Validity;
+    estructura: Structure;
+    normatividad: Normativity;
 }

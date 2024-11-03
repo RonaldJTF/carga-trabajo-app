@@ -1,0 +1,26 @@
+._input-text{
+    background: transparent !important;
+    border-radius: 0px !important;
+}
+
+._input-value{
+    background: transparent !important;
+    border-radius: 0px !important;
+}
+
+._border-left-5{
+    border-left-width: 5px !important;
+    border-left-style: solid;
+    
+    &._border-left-primary{
+        border-left-color:  var(--primary-200) !important;
+    }
+
+    &._border-left-transparent{
+        border-left-color: transparent !important;
+    }
+}
+
+::ng-deep  .p-listbox-empty-message{
+    text-align: center;
+}

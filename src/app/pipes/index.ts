@@ -1,4 +1,3 @@
-export * from './capitalize-first-letter/capitalize-first-letter.pipe';
 export * from  './darken-color/darken-color.pipe';
 export * from './date-range/date-range.pipe';
 export * from './expiration/activity-expiration.pipe';
