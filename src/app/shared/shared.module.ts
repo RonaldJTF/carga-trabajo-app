@@ -77,6 +77,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChipModule } from 'primeng/chip';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { AppConfigModule } from '../layout/config/config.module';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ExpressionComponent } from './expression/expression.component';
 
 @NgModule({
   declarations: [
@@ -103,6 +105,7 @@ import { AppConfigModule } from '../layout/config/config.module';
     WarningComponent,
     DialogComponent,
     QuillEditorComponent,
+    ExpressionComponent,
 
     FirstNamePipe,
     StatePipe,
@@ -121,6 +124,7 @@ import { AppConfigModule } from '../layout/config/config.module';
 
     ImageFallbackDirective,
     SvgColorDirective,
+    ExpressionComponent,
   ],
   imports: [
     CommonModule,
@@ -177,6 +181,7 @@ import { AppConfigModule } from '../layout/config/config.module';
     ChipModule,
     RadioButtonModule,
     AppConfigModule,
+    ToggleButtonModule,
   ],
   exports: [
     FunctionalityComponent,
@@ -201,6 +206,7 @@ import { AppConfigModule } from '../layout/config/config.module';
     WarningComponent,
     DialogComponent,
     QuillEditorComponent,
+    ExpressionComponent,
 
     ImageFallbackDirective,
     SvgColorDirective,
@@ -274,6 +280,7 @@ import { AppConfigModule } from '../layout/config/config.module';
     ChipModule,
     RadioButtonModule,
     AppConfigModule,
+    ToggleButtonModule
   ],
   providers: []
 })

@@ -1,0 +1,115 @@
+
+<ng-container *ngIf="!loading else sLoading">
+    <div *ngIf="!rules.length else data">
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva regla'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+    </div>
+    <ng-template #data>
+        <div class="card p-0 pb-2">
+            <p-table #dt [value]="rules" rowGroupMode="subheader" sortMode="single"
+                [paginator]="true" [rows]="10" [(selection)]="selectedRules" selectionMode="multiple"
+                [globalFilterFields]="['nombre']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+                        <div class="flex align-items-center flex-wrap">
+                            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                            </button>
+                            <div *ngIf="isAdmin" class="_badge-container m-1">
+                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedRules()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                    class="p-button-danger " [disabled]="!selectedRules?.length">
+                                    <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                </button>
+                                <span *ngIf="selectedRules?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedRules.length}}</span>
+                            </div>
+                        </div>
+                        <div class="m-1">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox *ngIf="isAdmin"></p-tableHeaderCheckbox>
+                        </th>
+                        <th class="text-center" style="min-width: 300px; white-space: nowrap" pSortableColumn="nombre">
+                            Reglas<p-sortIcon field="nombre"></p-sortIcon>
+                        </th>
+                        <th class="w-3rem"></th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-variable let-rowIndex="rowIndex" let-expanded="expanded">
+                    <tr>
+                        <td>
+                            <div class="flex flex-row align-items-center">
+                                <div class="h-3rem flex align-items-center mr-2">
+                                    <button type="button" pButton pRipple [pRowToggler]="variable" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                </div>
+                                <p-tableCheckbox *ngIf="isAdmin" [value]="variable"></p-tableCheckbox>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <div class="flex flex-column" >
+                                    <span class="font-medium">{{variable.nombre}}</span>
+                                    <span class="text-500" >{{variable.descripcion}}</span>
+                                </div>
+                                <div class="ml-auto">
+                                    <span *ngIf="parseStringToBoolean(variable.porVigencia)" style="white-space: nowrap;"  class="ml-auto badge badge-blue">Por vigencia</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(variable.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(variable.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex align-items-center justify-content-end">
+                                <div class="mr-2">
+                                    <p-badge *ngIf="parseStringToBoolean(variable.primaria)" value="P" severity="success" pTooltip="Primaria" tooltipPosition="bottom" styleClass="m-1"></p-badge>
+                                    <p-badge *ngIf="parseStringToBoolean(variable.global)" value="G" severity="warning" pTooltip="Global" tooltipPosition="bottom" styleClass="m-1"></p-badge>
+                                </div>
+                                <app-menu-item [menuItems]="menuItemsOfRule" [id]="variable.id" [value]="variable"></app-menu-item>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-rule>
+                    <tr>
+                        <td colspan="4" class="hover:surface-0 p-0">
+                            <ng-container *ngIf="rule.condiciones; else sNoConfiguredConditions">
+                                <div class="px-3 py-2 flex align-items-center justify-content-center">
+                                    <app-expression [expression]="rule.condiciones"></app-expression>
+                                </div>
+                                <div class="text-500 text-sm px-3 py-2 mb-2">Parametrización de la regla</div>
+                            </ng-container>
+                            <ng-template #sNoConfiguredConditions>
+                                <div class="p-3">
+                                    <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM" [message]="MESSAGE.NO_CONDICIONES_PARA_REGLA"></app-no-result>
+                                </div>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4" class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </ng-template>
+</ng-container>
+
+<ng-template #sLoading>
+    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>
+
+
+  

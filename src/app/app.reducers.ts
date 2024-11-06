@@ -1,8 +1,10 @@
 import { AppointmentState } from "@store/appointment.reducer";
 import { LevelState } from "@store/level.reducer";
+import { RuleState } from "@store/rule.reducer";
 import {StageState} from "@store/stage.reducer";
 import {StructureState} from "@store/structure.reducer";
 import { ValidityState } from "@store/validity.reducer";
+import { VariableState } from "@store/variable.reducer";
 import {WorkplanState} from "@store/workplan.reducer";
 
 export interface AppState {
@@ -12,4 +14,6 @@ export interface AppState {
   level: LevelState,
   appointment: AppointmentState,
   validity: ValidityState,
+  variable: VariableState,
+  rule: RuleState,
 }

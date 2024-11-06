@@ -137,7 +137,7 @@
         <div style="margin-left: auto; ">
             <button *ngIf="valueInValidityFormGroup?.value.idVariable" (click)="removeVariable()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="valueInValidityFormGroup?.value.idVariable" (click)="onGoToUpdateVariable(variable.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
-            <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <button (click)="openNewVariable()" pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
             <p-menu #variableMenu [popup]="true" [model]=""  ></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Variables"  (click)="variableOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #variableOptionsOverlayPanel [showCloseIcon]="true">

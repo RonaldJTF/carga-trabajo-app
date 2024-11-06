@@ -31,7 +31,8 @@ import {
   PeriodicityService,
   CategoryService,
   ValidityService,
-  AppointmentService
+  AppointmentService,
+  RuleService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -49,6 +50,9 @@ import { NormativityService } from './services/normativity.service';
 import { appointmentReducer } from '@store/appointment.reducer';
 import { VariableService } from './services/variable.service';
 import { validityReducer } from '@store/validity.reducer';
+import { variableReducer } from '@store/variable.reducer';
+import { MathjaxService } from './services/mathjax.service';
+import { ruleReducer } from '@store/rule.reducer';
 
 @NgModule({
   declarations: [
@@ -63,7 +67,16 @@ import { validityReducer } from '@store/validity.reducer';
     ToastModule,
     ConfirmDialogModule,
     QuillModule.forRoot(),
-    StoreModule.forRoot({structure: structureReducer, workplan: workplanReducer, stage: stageReducer, level: levelReducer, appointment: appointmentReducer, validity: validityReducer}),
+    StoreModule.forRoot({
+      structure: structureReducer, 
+      workplan: workplanReducer, 
+      stage: stageReducer, 
+      level: levelReducer, 
+      appointment: appointmentReducer, 
+      validity: validityReducer, 
+      variable: variableReducer,
+      rule: ruleReducer,
+    }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production
@@ -74,7 +87,7 @@ import { validityReducer } from '@store/validity.reducer';
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
     StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
-    NormativityService, ScopeService, ValidityService, AppointmentService, VariableService,
+    NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},

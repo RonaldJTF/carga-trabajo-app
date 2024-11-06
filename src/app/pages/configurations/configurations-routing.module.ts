@@ -9,6 +9,8 @@ const routes: Routes = [
   {path: 'normativities', loadChildren: ()=>import('./normativities/normativities.module').then(m=>m.NormativitiesModule)},
   {path: 'appointments', loadChildren: ()=>import('./appointments/appointments.module').then(m=>m.AppointmentsModule)},
   {path: 'validities', loadChildren: ()=>import('./validities/validities.module').then(m=>m.ValiditiesModule)},
+  {path: 'variables', loadChildren: ()=>import('./variables/variables.module').then(m=>m.VariablesModule)},
+  {path: 'rules', loadChildren: ()=>import('./rules/rules.module').then(m=>m.RulesModule)},
 ];
 
 @NgModule({

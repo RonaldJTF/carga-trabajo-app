@@ -19,5 +19,7 @@ export const MESSAGE = {
     NO_NORMATIVIDAD_ASOCIADA: "No se encontró normatividad asociada",
     NO_VIGENCIA_ASOCIADA: "No se encontró vigencia asociada",
     NO_VARIABLE_ASOCIADA: "No se encontró variable asociada",
-    NO_VALORES_VARIABLES_EN_VIGENCIA: "No se encontraron valores para las variables en la vigencia"
+    NO_VALORES_VARIABLES_EN_VIGENCIA: "No se encontraron valores para las variables en la vigencia",
+    NO_EXPRESION_PARA_VARIABLE: "No se encontró una expresión para la variable",
+    NO_CONDICIONES_PARA_REGLA: "No se encontraron condiciones para la regla",
 }

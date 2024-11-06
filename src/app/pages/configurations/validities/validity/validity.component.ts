@@ -22,6 +22,7 @@ import { VariableService } from 'src/app/services/variable.service';
 export class ValidityComponent implements OnInit {
   IMAGE_SIZE = IMAGE_SIZE;
   MESSAGE = MESSAGE;
+  ROUTE_TO_BACK: string = '/configurations/validities';
 
   DELETE_MESSAGE = `
       ¿Está seguro de eliminar la vigencia?
@@ -76,7 +77,7 @@ export class ValidityComponent implements OnInit {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
     
-    this.backRoute = this.route.snapshot.queryParams['backRoute'];
+    this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
 
     this.indexOfValueInValiditySubscription =  this.validityService.indexOfValueInValidity$.subscribe(e => this.indexOfValueInValidity = e);
     this.valueInValidityFormGroupSubscription = this.validityService.valueInValidityFormGroup$.subscribe(e => this.valueInValidityFormGroup = e);
@@ -136,7 +137,7 @@ export class ValidityComponent implements OnInit {
     this.validityService.updateValidity(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(ValidityActions.updateFromList({validity: e}));
-        this.backRoute ? this.router.navigate([this.backRoute], {skipLocationChange: true}) : this.urlService.goBack();
+        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.validityService.resetFormInformation();
 
@@ -153,7 +154,7 @@ export class ValidityComponent implements OnInit {
     this.validityService.createValidity(payload).subscribe({
       next: (e) => {
         this.store.dispatch(ValidityActions.updateFromList({validity: e}));
-        this.backRoute ? this.router.navigate([this.backRoute], {skipLocationChange: true}) : this.urlService.goBack();
+        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.validityService.resetFormInformation();
       },
@@ -181,7 +182,7 @@ export class ValidityComponent implements OnInit {
     this.validityService.deleteValidity(this.validity.id).subscribe({
       next: () => {
         this.store.dispatch(ValidityActions.removeFromList({id: this.validity.id}));
-        this.backRoute ? this.router.navigate([this.backRoute], {skipLocationChange: true}) : this.urlService.goBack();
+        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.deleting = false;
         this.validityService.resetFormInformation();
         //Removemos del formulario de asignación de cargos la vigencia si es la que se tiene definida
@@ -195,7 +196,7 @@ export class ValidityComponent implements OnInit {
 
   onCancelValidity(event : Event): void {
     event.preventDefault();
-    this.backRoute ? this.router.navigate([this.backRoute], {skipLocationChange: true}) : this.urlService.goBack();
+    this.router.navigate([this.backRoute], {skipLocationChange: true});
     this.validityService.resetFormInformation();
   }
 
@@ -236,7 +237,7 @@ export class ValidityComponent implements OnInit {
 
   openNewVariable() {
     const backRoute = this.validity ? `${'/configurations/validities/'+ this.cryptoService.encryptParam(this.validity.id)}` : '/configurations/validities/create';
-    this.router.navigate(['/configurations/variables/create'], { skipLocationChange: true, queryParams: {backRoute: backRoute, isSalaryScale: true}});
+    this.router.navigate(['/configurations/variables/create'], { skipLocationChange: true, queryParams: {backRoute: backRoute}});
   }
 
   onGoToUpdateVariable (id : any, event: Event): void{

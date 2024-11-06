@@ -45,11 +45,13 @@
 
                 <ng-template pTemplate="body" let-validity let-rowIndex="rowIndex" let-expanded="expanded">
                     <tr>
-                        <td class="flex flex-row align-items-center">
-                            <div class="h-3rem flex align-items-center mr-2">
-                                <button type="button" pButton pRipple [pRowToggler]="validity" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        <td>
+                            <div class="flex flex-row align-items-center">
+                                <div class="h-3rem flex align-items-center mr-2">
+                                    <button type="button" pButton pRipple [pRowToggler]="validity" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                </div>
+                                <p-tableCheckbox *ngIf="isAdmin" [value]="validity"></p-tableCheckbox>
                             </div>
-                            <p-tableCheckbox *ngIf="isAdmin" [value]="validity"></p-tableCheckbox>
                         </td>
                         <td>
                             <div class="flex">

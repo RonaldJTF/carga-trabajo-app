@@ -17,6 +17,10 @@ export class VariableService {
     return this.webRequestService.getWithHeaders(`${this.pathVariable}/${id}`);
   }
 
+  getVariables(): Observable<Variable[]>{
+    return this.webRequestService.getWithHeaders(`${this.pathVariable}`);
+  }
+
   /**
    * Obtiene todas las variables que dependen de una vigencia, por ejemplo el salario mínimo, y que estan activas
    * @returns Variable[]
@@ -36,4 +40,9 @@ export class VariableService {
   deleteVariable(idVariable: number): Observable<Variable> {
     return this.webRequestService.deleteWithHeaders(`${this.pathVariable}/${idVariable}`);
   }
+
+  deleteSelectedVariables(payload: number[]): Observable<Variable[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathVariable, undefined, payload);
+  }
+
 }

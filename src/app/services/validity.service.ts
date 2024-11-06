@@ -201,7 +201,7 @@ export class ValidityService {
     }
     //Si el elemento que se tiene modificando o creando es de la misma variable, entonces es actualizado también.
     if(formGroup?.get('idVariable').value == variable.id){
-      formGroup.get('normatividad').setValue(variable);
+      formGroup.get('variable').setValue(variable);
     }
   }
   

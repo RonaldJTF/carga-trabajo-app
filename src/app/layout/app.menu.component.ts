@@ -85,6 +85,20 @@ export class AppMenuComponent implements OnInit {
                 routerLink: ['/configurations/validities'],
               },
               {
+                label: 'Variables',
+                icon: 'pi pi-arrow-right-arrow-left',
+                color: 'primary',
+                description: 'Gestión de las variables consideradas en las compensaciones laborales',
+                routerLink: ['/configurations/variables'],
+              },
+              {
+                label: 'Reglas',
+                icon: 'pi pi-check-square',
+                color: 'primary',
+                description: 'Gestión de las reglas consideradas en las compensaciones laborales',
+                routerLink: ['/configurations/rules'],
+              },
+              {
                 label: 'Designación de cargos',
                 icon: 'pi pi-users',
                 color: 'primary',
