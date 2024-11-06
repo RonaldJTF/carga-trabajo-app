@@ -87,12 +87,13 @@ export class CryptojsService {
     const key = this.generateKey(salt, uuid);
     const iv = uuidv5(salt, uuid).replace(/-/g, '');
     const encrypted = CryptoJS.AES.encrypt(value.toString(), key, {iv: CryptoJS.enc.Hex.parse(iv), padding: CryptoJS.pad.Pkcs7}).toString();
-    return btoa(`${uuid}|${encrypted}`);
+    return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(`${uuid}|${encrypted}`));
   }
 
   private decryptParam(encrypted: string): string {
-    encrypted = atob(encrypted);
-    const [uuid, encodedEncrypted] = encrypted.split('|');
+    const decryptedString = CryptoJS.enc.Base64.parse(encrypted).toString(CryptoJS.enc.Utf8);
+
+    const [uuid, encodedEncrypted] = decryptedString.split('|');
     const salt = this.generateSalt(uuid);
     const key = this.generateKey(salt, uuid);
     const iv = uuidv5(salt, uuid).replace(/-/g, '');

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
 import {CryptojsService} from "./cryptojs.service";
+import {Category, Compensation, LevelCompensation} from "@models";
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ export class CompensationService {
   /**
    * Services COMPENACIÓN LABORAL
    */
-  getCompesations(): Observable<string[]> {
+  getCompesations(): Observable<Compensation[]> {
     return this.webRequestService.getWithHeaders(this.pathCompensation);
   }
 
@@ -54,7 +55,7 @@ export class CompensationService {
   /**
    * Servicios CATEGORIAS
    */
-  getCategories(): Observable<string[]> {
+  getCategories(): Observable<Category[]> {
     return this.webRequestService.getWithHeaders(this.pathCategory);
   }
 
@@ -77,7 +78,7 @@ export class CompensationService {
   /**
    * Services COMPENACIÓN LABORAL NIVEL VIGENCIA
    */
-  getLevelCompensations(idLevel: string): Observable<any> {
+  getLevelCompensations(idLevel: string): Observable<LevelCompensation[]> {
     return this.webRequestService.getWithHeaders(`${this.pathLevelCompensation}/${idLevel}`);
   }
 
@@ -97,7 +98,7 @@ export class CompensationService {
     return this.webRequestService.deleteWithHeaders(`${this.pathLevelCompensation}/${idLevelCompensation}`);
   }
 
-  deleteSelectedLevelCompensations(payload: string[]): Observable<string[]> {
+  deleteSelectedLevelCompensations(payload: string[]): Observable<any[]> {
     return this.webRequestService.deleteWithHeaders(`${this.pathLevelCompensation}`, undefined, payload);
   }
 

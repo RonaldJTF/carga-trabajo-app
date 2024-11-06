@@ -38,7 +38,7 @@ export class BasicTablesService {
   }
 
   // Servicios ROL
-  getRoles(): Observable<string[]> {
+  getRoles(): Observable<Role[]> {
     return this.webRequestService.getWithHeaders(this.pathRole);
   }
 
@@ -63,11 +63,11 @@ export class BasicTablesService {
   }
 
   // Servicios GENERO
-  getGenders(): Observable<string[]> {
+  getGenders(): Observable<Gender[]> {
     return this.webRequestService.getWithHeaders(this.pathGender);
   }
 
-  getGender(idGender: string): Observable<string> {
+  getGender(idGender: string): Observable<Gender> {
     return this.webRequestService.getWithHeaders(`${this.pathGender}/${idGender}`);
   }
 

@@ -63,13 +63,8 @@
               <div class="flex flex-column justify-content-start">
                 <span>{{ vigencia.escalaSalarial.nombre }}</span>
                 <span class="text-500 font-italic">Código: {{ vigencia.escalaSalarial.codigo }}</span>
-                <p-table #dt [value]="levelCompensation" rowGroupMode="subheader" sortMode="single" sortField="vigencia.compensacionLaboral.nombre" groupRowsBy="vigencia.compensacionLaboral.nombre">
-                  <ng-template pTemplate="groupheader" let-compensacion>
-                    <tr pRowGroupHeader>
-                      <td class="text-500">{{ compensacion.compensacionLaboral.nombre }}</td>
-                    </tr>
-                  </ng-template>
-                </p-table>
+                <td class="text-500">{{ vigencia.compensacionLaboral.nombre }}</td>
+
               </div>
             </td>
             <td class="w-6rem">

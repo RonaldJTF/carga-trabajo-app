@@ -92,7 +92,7 @@ export class FormLevelCompensationComponent implements OnInit {
   getCompensations() {
     this.compensationService.getCompesations().subscribe({
       next: (res) => {
-        this.compensation = this.cryptojsService.decryptResponse<Compensation>(res);
+        this.compensation = res;
         this.loadCompensationsOptions();
       }
     })
@@ -123,18 +123,27 @@ export class FormLevelCompensationComponent implements OnInit {
   }
 
   loadCompensationsOptions() {
-    this.compensationOptions = this.compensation?.map((objeto: Compensation) => {
-      return {
-        label: objeto.categoria.nombre,
-        value: objeto,
-        items: [{
+    this.compensationOptions = this.compensation?.reduce((acc, objeto: Compensation) => {
+      const categoria = objeto.categoria.nombre;
+      const existingCategory = acc.find(item => item.label === categoria);
+      if (existingCategory) {
+        existingCategory.items.push({
           label: objeto.nombre,
           value: objeto
-        }
-        ]
-      };
-    });
+        });
+      } else {
+        acc.push({
+          label: categoria,
+          items: [{
+            label: objeto.nombre,
+            value: objeto
+          }]
+        });
+      }
+      return acc;
+    }, []);
   }
+
 
   getInitialValue() {
     this.idLevel = this.route.snapshot.queryParams['idLevel'];

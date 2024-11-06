@@ -11,16 +11,15 @@ export class PersonService {
   private pathPerson = 'person';
 
   constructor(
-    private webRequestService: WebRequestService,
-    private cryptoService: CryptojsService,
+    private webRequestService: WebRequestService
   ) {
   }
 
-  getPeople(): Observable<string[]> {
+  getPeople(): Observable<Person[]> {
     return this.webRequestService.getWithHeaders(this.pathPerson);
   }
 
-  getPerson(idPerson: string): Observable<string> {
+  getPerson(idPerson: string): Observable<Person> {
     return this.webRequestService.getWithHeaders(`${this.pathPerson}/${idPerson}`);
   }
 
@@ -36,7 +35,7 @@ export class PersonService {
     return this.webRequestService.deleteWithHeaders(`${this.pathPerson}/${id}`);
   }
 
-  deleteSelectedPeople(payload: string[]): Observable<Structure[]> {
+  deleteSelectedPeople(payload: string[]): Observable<Person[]> {
     return this.webRequestService.deleteWithHeaders(this.pathPerson, undefined, payload);
   }
 

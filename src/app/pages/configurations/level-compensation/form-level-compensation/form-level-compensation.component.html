@@ -33,14 +33,14 @@
 
   <div class="grid">
     <div class="field p-fluid col-12 sm:col-6 m-0">
-      <label htmlFor="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
+      <label for="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
       <p-dropdown id="idEscalaSalarial" inputId="idEscalaSalarial" [autoDisplayFirst]="false"
                   [options]="salaryScales" optionValue="id" optionLabel="nombre" [filter]="true"
                   [showClear]="true" formControlName="idEscalaSalarial" [placeholder]="MESSAGE.SELECCIONA_OPCION"
                   [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
     </div>
     <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-      <label htmlFor="idRegla" class="font-medium">Regla</label>
+      <label for="idRegla" class="font-medium">Regla</label>
       <p-dropdown id="idRegla" inputId="idRegla" [autoDisplayFirst]="false"
                   [options]="rules" optionValue="id" optionLabel="nombre" [filter]="true"
                   [showClear]="true" formControlName="idRegla" [placeholder]="MESSAGE.SELECCIONA_OPCION"
@@ -49,7 +49,7 @@
   </div>
 
   <div class="field p-fluid">
-    <label htmlFor="idVariable" class="font-medium">Variable</label>
+    <label for="idVariable" class="font-medium">Variable</label>
     <p-dropdown id="idVariable" inputId="idVariable" [autoDisplayFirst]="false"
                 [options]="variables" optionValue="id" optionLabel="nombre" [filter]="true"
                 [showClear]="true" formControlName="idVariable" [placeholder]="MESSAGE.SELECCIONA_OPCION"
@@ -78,7 +78,7 @@
         </div>
       </ng-template>
       <ng-template let-item pTemplate="item">
-        <div class="flex align-items-center gap-2">
+        <div class="flex align-items-center gap-2 w-full h-1rem ml-3">
           <div>{{ item.label }}</div>
           <button (click)="deleteCompensation(item, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto" pTooltip="Eliminar" tooltipPosition="bottom"></button>
         </div>

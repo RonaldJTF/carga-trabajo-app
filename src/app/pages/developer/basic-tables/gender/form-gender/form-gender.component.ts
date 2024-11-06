@@ -56,7 +56,7 @@ export class FormGenderComponent implements OnInit {
   getGender(idGender: string) {
     this.basicTablesService.getGender(idGender).subscribe({
       next: (result) => {
-        this.assignValuesToForm(JSON.parse(this.cryptoService.decryptParamAsString(result)));
+        this.assignValuesToForm(result);
       }
     })
   }

@@ -16,7 +16,7 @@ export class UserService {
   constructor(private webRequestService: WebRequestService) {
   }
 
-  loadRoles(): Observable<string[]> {
+  loadRoles(): Observable<Role[]> {
     return this.webRequestService.getWithHeaders(this.pathRole);
   }
 

@@ -71,7 +71,7 @@ export class FormCategoryComponent implements OnInit {
   getCategory(idCategory: string) {
     this.compensationService.getCategory(idCategory).subscribe({
       next: (res) => {
-        this.category = JSON.parse(this.cryptoService.decryptParamAsString(res));
+        this.category = res;
         this.assignValuesToForm(this.category);
       },
       error: (err) => {

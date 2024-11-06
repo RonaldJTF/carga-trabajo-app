@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MESSAGE} from "@labels/labels";
 import {IMAGE_SIZE} from "@utils";
-import {Subscription} from "rxjs";
+import {finalize, Subscription} from "rxjs";
 import {Compensation} from "@models";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthenticationService, CompensationService, ConfirmationDialogService, CryptojsService} from "@services";
@@ -71,9 +71,14 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   getCompensations() {
-    this.compensationService.getCompesations().subscribe({
+    this.loading = true;
+    this.compensationService.getCompesations().pipe(
+      finalize(() => {
+        this.loading = false;
+      })
+    ).subscribe({
       next: (res) => {
-        this.store.dispatch(CompensationActions.setList({compensations: this.cryptojsService.decryptResponse<Compensation>(res)}));
+        this.store.dispatch(CompensationActions.setList({compensations: res}));
       }
     })
   }
@@ -94,6 +99,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   onManagementCompensations(idCompensation: number, event: Event) {
+    console.log(idCompensation)
     this.router.navigate(['create'], {
       queryParams: {idCompensation: this.cryptojsService.encryptParam(idCompensation)},
       relativeTo: this.route,

@@ -91,7 +91,7 @@ export class FormUserPersonComponent implements OnInit {
   getUserPerson(personId: string) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
-        this.person = JSON.parse(this.cryptoService.decryptParamAsString(data));
+        this.person = data;
         if (this.person.usuario) {
           this.person.usuario.roles.map((rol: Role) => this.addRol(rol));
           this.onValidacionCredenciales(this.person);
@@ -133,7 +133,7 @@ export class FormUserPersonComponent implements OnInit {
   loadRoles() {
     this.userService.loadRoles().subscribe({
       next: (e) => {
-        this.roles = this.decriptList<Role>(e);
+        this.roles = e;
         this.loadRolesOptions();
       },
     });
@@ -253,12 +253,4 @@ export class FormUserPersonComponent implements OnInit {
     }
   }
 
-  decriptList<T>(param: string[]): T[] {
-    let list: T[] = [];
-    param.forEach(item => {
-      let elemnt: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
-      list.push(elemnt);
-    })
-    return list;
-  }
 }

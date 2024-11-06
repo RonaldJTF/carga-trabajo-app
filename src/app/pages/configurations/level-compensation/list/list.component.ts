@@ -6,6 +6,7 @@ import {MESSAGE} from "@labels/labels";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Table} from "primeng/table";
 import {MenuItem} from "primeng/api";
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-list',
@@ -64,9 +65,14 @@ export class ListComponent implements OnInit {
   }
 
   getLevelCompensations(idLevel: string) {
-    this.compensationService.getLevelCompensations(idLevel).subscribe({
+    this.loading = true;
+    this.compensationService.getLevelCompensations(idLevel).pipe(
+      finalize(() => {
+        this.loading = false;
+      })
+    ).subscribe({
       next: (res) => {
-        this.levelCompensation = this.cryptojsService.decryptResponse<LevelCompensation>(res);
+        this.levelCompensation = res;
         console.log(this.levelCompensation)
       }
     })
@@ -118,7 +124,7 @@ export class ListComponent implements OnInit {
     console.log("Editando...-> ", id);
   }
 
-  parseStringToBoolean(str: string): boolean{
+  parseStringToBoolean(str: string): boolean {
     return Methods.parseStringToBoolean(str);
   }
 }

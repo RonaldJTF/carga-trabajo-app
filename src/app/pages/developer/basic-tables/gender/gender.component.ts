@@ -55,7 +55,7 @@ export class GenderComponent implements OnInit {
       })
     ).subscribe({
       next: (res) => {
-        this.genders = this.decryptList<Gender>(res);
+        this.genders = res;
       }
     })
   }
@@ -108,15 +108,6 @@ export class GenderComponent implements OnInit {
         this.desmarkAll();
       });
     });
-  }
-
-  decryptList<T>(param: string[]): T[] {
-    let list: T[] = [];
-    param.forEach(item => {
-      let element: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
-      list.push(element);
-    })
-    return list;
   }
 
 }

@@ -92,6 +92,7 @@ export class FormCompensationComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe(() => {
       this.idCompensation = this.route.snapshot.queryParams['idCompensation'];
+      console.log(this.idCompensation)
       this.idCategory = this.route.snapshot.queryParams['idCategory'];
       if (this.idCompensation != null) {
         this.updateMode = true;
@@ -103,7 +104,7 @@ export class FormCompensationComponent implements OnInit {
   getCategories() {
     this.compensationService.getCategories().subscribe({
       next: (res) => {
-        this.categories = this.cryptoService.decryptResponse<Category>(res);
+        this.categories = res;
         this.loadCategoriesOptions();
         if (this.idCategory !== null) {
           this.assignCategory(this.idCategory);
@@ -147,7 +148,7 @@ export class FormCompensationComponent implements OnInit {
   getCompensation(idCompensation: string) {
     this.compensationService.getCompensation(idCompensation).subscribe({
       next: (res) => {
-        this.compensation = JSON.parse(this.cryptoService.decryptParamAsString(res));
+        this.compensation = res;
         this.assignValuesToForm(this.compensation)
       }
     })
