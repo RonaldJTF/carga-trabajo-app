@@ -199,12 +199,12 @@ export class Methods {
 
   static cloneFormGroup(formGroup: FormGroup): FormGroup {
     const clonedGroup = new FormGroup({});
-  
+
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
-      
+
       if (control instanceof FormGroup) {
-        clonedGroup.addControl(key, Methods.cloneFormGroup(control)); 
+        clonedGroup.addControl(key, Methods.cloneFormGroup(control));
       } else if (control instanceof FormArray) {
         clonedGroup.addControl(key, this.cloneFormArray(control));
       } else if (control instanceof FormControl) {
@@ -213,7 +213,7 @@ export class Methods {
     });
     return clonedGroup;
   }
-  
+
   static cloneFormArray(formArray: FormArray): FormArray {
     const clonedArray = new FormArray([]);
     formArray.controls.forEach(control => {
@@ -224,5 +224,13 @@ export class Methods {
       }
     });
     return clonedArray;
+  }
+
+  /**
+   * Transforma, de una cadena de texto, la primera letra en mayuscula y el restos en miniscula.
+   * @param text cadena de texto a modificar.
+   */
+  static capitalizeFirstLetter(text: string){
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
 }

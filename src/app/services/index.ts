@@ -25,9 +25,10 @@ export * from './sentry-init.service';
 export * from './scope.service'
 export * from './periodicity.service';
 export * from './category.service';
-export * from './scope.service';
 export * from './level.service';
 export * from './normativity.service';
 export * from './validity.service';
 export * from './appointment.service';
 export * from './rule.service';
+export * from './normativitytype.service'
+export * from './compensation.service';

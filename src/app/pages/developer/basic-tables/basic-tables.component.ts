@@ -70,22 +70,34 @@ export class BasicTablesComponent implements OnInit {
         }
       },
       {
-        title: 'Servidores FTPs',
-        icon: 'pi pi-folder',
-        url: 'ftp',
-        label: 'Gestión de los servidores FTPs que alojan archivos soportes',
+        title: 'Alcance',
+        icon: 'pi pi-compass',
+        url: 'scope',
+        label: 'Gestión de alcance',
         iconStyle: 'primary',
-        state: {
-          message: 'Realizar modificaciones en la configuración de los servidores FTPs puede causar inconvenientes en el acceso y almacenamiento de los archivos soportes.',
-          severity: 'warn',
-          show: true
-        }
+        state: {}
+      },
+      {
+        title: 'Documentos de identidad',
+        icon: 'pi pi-id-card',
+        url: 'document-type',
+        label: 'Gestión de los tipos de documentos de identidad',
+        iconStyle: 'primary',
+        state: {}
       },
       {
         title: 'Géneros',
         icon: 'pi pi-circle',
         url: 'gender',
         label: 'Gestión de las categorías de los géneros disponibles para los perfiles de usuario',
+        iconStyle: 'primary',
+        state: {}
+      },
+      {
+        title: 'Periodicidad',
+        icon: 'pi pi-calendar-plus',
+        url: 'periodicity',
+        label: 'Gestión de periodicidad',
         iconStyle: 'primary',
         state: {}
       },
@@ -97,6 +109,18 @@ export class BasicTablesComponent implements OnInit {
         iconStyle: 'primary',
         state: {
           message: 'Realizar cambios en los roles puede impactar en la seguridad y en el control de acceso del aplicativo. Por favor, revise cuidadosamente los cambios.',
+          severity: 'warn',
+          show: true
+        }
+      },
+      {
+        title: 'Servidores FTPs',
+        icon: 'pi pi-folder',
+        url: 'ftp',
+        label: 'Gestión de los servidores FTPs que alojan archivos soportes',
+        iconStyle: 'primary',
+        state: {
+          message: 'Realizar modificaciones en la configuración de los servidores FTPs puede causar inconvenientes en el acceso y almacenamiento de los archivos soportes.',
           severity: 'warn',
           show: true
         }
@@ -114,26 +138,10 @@ export class BasicTablesComponent implements OnInit {
         }
       },
       {
-        title: 'Documentos de identidad',
-        icon: 'pi pi-id-card',
-        url: 'document-type',
-        label: 'Gestión de los tipos de documentos de identidad',
-        iconStyle: 'primary',
-        state: {}
-      },
-      {
-        title: 'Alcance',
-        icon: 'pi pi-compass',
-        url: 'scope',
-        label: 'Gestión de alcance',
-        iconStyle: 'primary',
-        state: {}
-      },
-      {
-        title: 'Periodicidad',
-        icon: 'pi pi-calendar-plus',
-        url: 'periodicity',
-        label: 'Gestión de periodicidad',
+        title: 'Tipos de normatividad',
+        icon: 'pi pi-book',
+        url: 'normativity-type',
+        label: 'Gestión de tipos de normatividad',
         iconStyle: 'primary',
         state: {}
       }

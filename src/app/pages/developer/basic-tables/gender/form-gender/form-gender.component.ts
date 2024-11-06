@@ -20,7 +20,7 @@ export class FormGenderComponent implements OnInit {
 
   deleting: boolean = false;
 
-  idGender: number;
+  idGender: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -46,17 +46,17 @@ export class FormGenderComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.idGender = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.idGender = params['id'];
         this.updateMode = true;
         this.getGender(this.idGender);
       }
     });
   }
 
-  getGender(idGender: number) {
+  getGender(idGender: string) {
     this.basicTablesService.getGender(idGender).subscribe({
       next: (result) => {
-        this.assignValuesToForm(result);
+        this.assignValuesToForm(JSON.parse(this.cryptoService.decryptParamAsString(result)));
       }
     })
   }
@@ -91,7 +91,7 @@ export class FormGenderComponent implements OnInit {
     }
   }
 
-  updateGender(idGender: number, gender: Gender): void {
+  updateGender(idGender: string, gender: Gender): void {
     let message = '¿Está seguro de actualizar el registro?';
     this.confirmationDialogService.showEventConfirmationDialog(
       message,

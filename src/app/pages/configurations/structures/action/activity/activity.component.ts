@@ -1,7 +1,6 @@
-import {Location} from '@angular/common';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {AppState} from 'src/app/app.reducers';
 import * as StructureActions from "@store/structure.actions";
@@ -38,8 +37,6 @@ export class ActivityComponent implements OnInit, OnDestroy {
     private store: Store<AppState>,
     private structureService: StructureService,
     private levelService: LevelService,
-    private location: Location,
-    private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private urlService: UrlService,
@@ -160,7 +157,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
         this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });
@@ -173,7 +170,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
         this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
-      error: (error) => {
+      error: () => {
         this.creatingOrUpdating = false;
       },
     });
@@ -201,7 +198,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
         this.urlService.goBack();
         this.deleting = false;
       },
-      error: (error) => {
+      error: () => {
         this.deleting = false;
       },
     });

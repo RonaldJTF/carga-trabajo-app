@@ -29,6 +29,11 @@ export class ChangePasswordComponent implements OnInit {
   ) {
   }
 
+  /**
+   * Implementación del de OnInit.
+   * Obtien el paramatro que llega con la URL.
+   * Si el parametro no es nulo, se procede a la construcción del formulario.
+   */
   ngOnInit() {
     this.tokenPassword = this.activatedRoute.snapshot.params['id'];
     if (this.tokenPassword) {
@@ -36,7 +41,12 @@ export class ChangePasswordComponent implements OnInit {
     }
   }
 
-  buildForm(token: number): void {
+  /**
+   * Método que construye el formularios con los campos se seran utilizado para recolectar la informacion.
+   * Se marcan algunos campos del formulario como requeridos
+   * @param token
+   */
+  buildForm(token: any): void {
     this.formChangePassword = this.formBuilder.group({
       tokenPassword: token,
       password: ["", Validators.compose([Validators.required])],
@@ -44,6 +54,12 @@ export class ChangePasswordComponent implements OnInit {
     })
   }
 
+  /**
+   * Método privado que toma un parámetro nombreAtributo que representa el nombre de un atributo en un formulario.
+   * Devuelve un valor booleano que indica si el atributo del formulario es inválido y ha sido modificado o tocado por el usuario.
+   * @param nombreAtributo cadena de texto con el nombre del campo a verificar.
+   * @private
+   */
   private isValido(nombreAtributo: string) {
     return (
       this.formChangePassword.get(nombreAtributo)?.invalid &&
@@ -52,18 +68,32 @@ export class ChangePasswordComponent implements OnInit {
     );
   }
 
+  /**
+   * Devuelve totos los controles del formulario `formChangePassword`
+   */
   get controls() {
     return this.formChangePassword.controls;
   }
 
+  /**
+   * Devuelve un valor booleano para validar si campo `password` del formulario es valido.
+   */
   get passwordNoValido() {
     return this.isValido('password');
   }
 
+  /**
+   * Devuelve un valor booleano para validar si campo `confirmPassword` del formulario es valido.
+   */
   get confirmPasswordNoValido() {
     return this.isValido('confirmPassword');
   }
 
+  /**
+   * Este método se ejecuta cuando se envía un formulario de cambio de contraseña.
+   * El método primero verifica si el formulario es válido utilizando la propiedad invalid del formulario.
+   * Si el formulario no es válido, se marca como tocado y se detiene la ejecución del método.
+   */
   onSubmit() {
     if (this.formChangePassword.invalid) {
       this.formChangePassword.markAllAsTouched();
@@ -90,6 +120,9 @@ export class ChangePasswordComponent implements OnInit {
     }
   }
 
+  /**
+   * Redirecciona a la paguina login.
+   */
   login() {
     this.router.navigate(['account/auth/login']).then();
   }

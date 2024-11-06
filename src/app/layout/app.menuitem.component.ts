@@ -18,7 +18,7 @@ import {LayoutService, MenuService} from "@services";
         <span class="layout-menuitem-text">{{ item.label }}</span>
         <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
       </a>
-      <a *ngIf="(item.routerLink && !item.items) && item.visible !== false" (click)="itemClick($event)"
+      <a *ngIf="(item.routerLink ) && item.visible !== false" (click)="itemClick($event)"
          [ngClass]="item.class"
          [routerLink]="item.routerLink" routerLinkActive="active-route"
          [routerLinkActiveOptions]="item.routerLinkActiveOptions||{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"

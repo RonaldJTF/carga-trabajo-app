@@ -23,7 +23,7 @@
                                     </div>
                                     <i *ngIf="isAdmin && isSuperAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
                                     <ng-container *ngIf="isSuperAdmin">
-                                        <p-menu #menu [popup]="true" [model]="menuItemsOfDownload"  [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
+                                        <p-menu  #menu [popup]=" true" [model]="menuItemsOfDownload" [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
                                         <div class="_badge-container m-1">
                                             <button type="button" pRipple pButton style="position: relative;" icon="pi pi-angle-down" class="m-1  p-button-rounded p-button-info p-button-text" label="Descargar" (click)="menu.toggle($event)"></button>
                                             <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" style="top: 0px; right: -5px; "  pTooltip="Click para desmarcar">{{totalSelected}}</span>
@@ -31,7 +31,7 @@
                                     </ng-container>
                                 </div>
                                 <div class="m-1">
-                                    <span class="p-input-icon-left">
+                                  <span class="p-input-icon-left">
                                         <i class="pi pi-search"></i>
                                         <input type="search" pInputText placeholder="Buscar"  (input)="onFilter($event, true)">
                                     </span>

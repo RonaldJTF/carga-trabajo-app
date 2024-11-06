@@ -1,6 +1,9 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+/**
+ * Esta directiva establece en un SVG el color del tema configurado en la aplicación.
+ */
 @Directive({
   selector: '[appSvgColor]'
 })
@@ -16,6 +19,15 @@ export class SvgColorDirective implements OnInit {
     this.loadSvg();
   }
 
+  /**
+   * Este código define un método privado llamado `loadSvg()` que carga un archivo SVG utilizando una solicitud HTTP GET.
+   * La ruta del archivo SVG se especifica en la variable `svgPath`.
+   * El método luego analiza el archivo SVG utilizando la API DOMParser y establece el atributo `fill` de todos los elementos `path` en el SVG con el valor de la variable `appSvgColor`.
+   * Si se especifica un `svgElementSelector`, el método solo establece el atributo `fill` de los elementos que coinciden con el selector.
+   * El método también establece el atributo `width` del SVG con el valor de la variable `svgWidth` y establece el atributo `height` en `auto`.
+   * Finalmente, el método reemplaza el contenido del elemento al que se aplica la directiva con el documento SVG analizado.
+   * @private
+   */
   private loadSvg() {
     this.http.get(this.svgPath, { responseType: 'text' }).subscribe(svg => {
       const parser = new DOMParser();

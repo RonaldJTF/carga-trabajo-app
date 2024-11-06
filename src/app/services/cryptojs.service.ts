@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
-import { v4 as uuidv4 } from 'uuid';
+import {Injectable} from '@angular/core';
+import {v4 as uuidv4, v5 as uuidv5} from 'uuid';
+
+//import * as Crypto from 'crypto-js'
 
 @Injectable({
   providedIn: 'root'
@@ -77,21 +79,24 @@ export class CryptojsService {
   }
 
   encryptParam(value: number | string): string {
-    if (value == null) {return null;}
+    if (value == null) {
+      return null;
+    }
     const uuid = uuidv4();
     const salt = this.generateSalt(uuid);
-    const key = this.generateKey(uuid, salt);
-    const encrypted = CryptoJS.AES.encrypt(value.toString(), key.toString()).toString();
-    const encodedEncrypted = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encrypted));
-    return `${uuid}|${encodedEncrypted}`;
+    const key = this.generateKey(salt, uuid);
+    const iv = uuidv5(salt, uuid).replace(/-/g, '');
+    const encrypted = CryptoJS.AES.encrypt(value.toString(), key, {iv: CryptoJS.enc.Hex.parse(iv), padding: CryptoJS.pad.Pkcs7}).toString();
+    return btoa(`${uuid}|${encrypted}`);
   }
 
   private decryptParam(encrypted: string): string {
+    encrypted = atob(encrypted);
     const [uuid, encodedEncrypted] = encrypted.split('|');
     const salt = this.generateSalt(uuid);
-    const key = this.generateKey(uuid, salt);
-    const temp = CryptoJS.enc.Base64.parse(encodedEncrypted).toString(CryptoJS.enc.Utf8);
-    const decrypted = CryptoJS.AES.decrypt(temp, key.toString());
+    const key = this.generateKey(salt, uuid);
+    const iv = uuidv5(salt, uuid).replace(/-/g, '');
+    const decrypted = CryptoJS.AES.decrypt(encodedEncrypted, key, {iv: CryptoJS.enc.Hex.parse(iv), padding: CryptoJS.pad.Pkcs7});
     return decrypted.toString(CryptoJS.enc.Utf8);
   }
 
@@ -108,4 +113,16 @@ export class CryptojsService {
     }
     return this.decryptParam(encrypted);
   }
+
+  decryptResponse<T>(param: string[]): T[] {
+    let list: T[] = [];
+    if (param !== null) {
+      param.forEach(item => {
+        let element: T = JSON.parse(this.decryptParamAsString(item));
+        list.push(element);
+      })
+    }
+    return list;
+  }
+
 }

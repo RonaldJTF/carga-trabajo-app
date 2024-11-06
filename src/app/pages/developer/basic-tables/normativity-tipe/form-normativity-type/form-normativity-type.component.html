@@ -1,0 +1,47 @@
+<div class="card">
+    <div class="flex align-items-center justify-content-between mb-4">
+      <div class="flex align-items-center">
+        <div
+          class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+          <i class="pi pi-id-card text-xl text-primary-500"></i>
+        </div>
+        <div class="flex flex-column ">
+          <h5 class="m-0 text-700">Tipo de normatividad</h5>
+          <span class="text-500">Configura y administra el tipo de normatividad.</span>
+        </div>
+      </div>
+    </div>
+  
+    <form class="p-0" [formGroup]="formNormativityType">
+      <div class="grid">
+        <div class="field p-fluid col-12 xl:col-6 m-0">
+            <label htmlFor="abreviatura" class="font-medium">Nombre</label>
+            <input type="text" id="nombre" pInputText formControlName="nombre">
+            <div *ngIf="nombreNoValido">
+              <div *ngIf="controls['nombre'].errors?.['required']">
+                <small class="p-error">Ingrese el nombre.</small>
+              </div>
+            </div>
+        </div>
+        <div class="field p-fluid col-12 xl:col-6 m-0">
+          <label htmlFor="descripcion" class="font-medium">Descripción</label>
+          <input type="text" id="descripcion" pInputText formControlName="descripcion">
+          <div *ngIf="descripcionNoValido">
+            <div *ngIf="controls['descripcion'].errors?.['required']">
+              <small class="p-error">Ingrese la descripción</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-form-action-button [updateMode]="updateMode"
+                               (createOrUpdate)="onSubmitNormativityType($event)"
+                              (cancel)="onCancelNormativityType($event)"
+                               (delete)="onDeleteNormativityType($event)"
+                              [showDeleteButton]="updateMode"
+                              [creatingOrUpdating]="creatingOrUpdating"
+                               [deleting]="deleting"
+                              [disabledCreateOrUpdateButton]="formNormativityType.invalid">
+      </app-form-action-button>
+    </form>
+  </div>
+  

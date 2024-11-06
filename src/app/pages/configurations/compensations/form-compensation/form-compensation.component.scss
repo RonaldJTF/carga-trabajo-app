@@ -1,0 +1,10 @@
+.item-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-delete {
+  color: blue; /* Puedes ajustar el estilo del ícono según prefieras */
+  cursor: pointer;
+}

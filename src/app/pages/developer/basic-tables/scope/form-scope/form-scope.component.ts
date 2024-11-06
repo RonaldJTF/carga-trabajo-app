@@ -5,6 +5,7 @@ import {finalize} from "rxjs";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
 import { Scope } from '@models';
 
+
 @Component({
   selector: 'app-form-scope',
   templateUrl: './form-scope.component.html',
@@ -51,7 +52,7 @@ export class FormScopeComponent implements OnInit {
 
 
   getScope(idScope: number) {
-    
+
     this.basicTablesService.getScope(idScope).subscribe({
       next: (result) => {
         this.assignValuesToForm(result);

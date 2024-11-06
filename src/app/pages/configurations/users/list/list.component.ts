@@ -52,7 +52,7 @@ export class ListComponent implements OnInit{
     this.loading = true;
     this.personService.getPeople().subscribe({
       next: (data) => {
-        this.people = data;
+        this.people = this.cryptoService.decryptResponse<Person>(data);
       },
       complete: () => {
         this.loading = false;
@@ -73,7 +73,7 @@ export class ListComponent implements OnInit{
   }
 
   deleteSelectedPeople() {
-    let peopleIds: number[] = this.selectedPeople.map(item => item.id);
+    let peopleIds: string[] = this.selectedPeople.map(item => this.cryptoService.encryptParam(item.id));
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.personService.deleteSelectedPeople(peopleIds)
@@ -81,7 +81,7 @@ export class ListComponent implements OnInit{
             next: () => {
               this.desmarkAll();
               for (let idPerson of peopleIds) {
-                this.filterPeople(idPerson);
+                this.filterPeople(this.cryptoService.decryptParamAsNumber(idPerson));
               }
             }
           });
@@ -91,7 +91,7 @@ export class ListComponent implements OnInit{
 
   onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.personService.delete(idPerson).subscribe(() => {
+      this.personService.delete(this.cryptoService.encryptParam(idPerson)).subscribe(() => {
         this.filterPeople(idPerson);
         this.desmarkAll();
       });
@@ -115,5 +115,4 @@ export class ListComponent implements OnInit{
   desmarkAll() {
     this.selectedPeople = [];
   }
-
 }

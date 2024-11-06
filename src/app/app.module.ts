@@ -32,7 +32,8 @@ import {
   CategoryService,
   ValidityService,
   AppointmentService,
-  RuleService
+  RuleService,
+  NormativityTypeService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -53,11 +54,12 @@ import { validityReducer } from '@store/validity.reducer';
 import { variableReducer } from '@store/variable.reducer';
 import { MathjaxService } from './services/mathjax.service';
 import { ruleReducer } from '@store/rule.reducer';
+import {compensationReducer} from "@store/compensation.reducer";
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotFoundComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -76,6 +78,7 @@ import { ruleReducer } from '@store/rule.reducer';
       validity: validityReducer, 
       variable: variableReducer,
       rule: ruleReducer,
+      compensation: compensationReducer,
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -85,7 +88,7 @@ import { ruleReducer } from '@store/rule.reducer';
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
-    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, GenderService, PersonService,
+    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, NormativityTypeService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

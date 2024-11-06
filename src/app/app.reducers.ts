@@ -6,6 +6,8 @@ import {StructureState} from "@store/structure.reducer";
 import { ValidityState } from "@store/validity.reducer";
 import { VariableState } from "@store/variable.reducer";
 import {WorkplanState} from "@store/workplan.reducer";
+import {Compensation} from "@models";
+import {CompensationState} from "@store/compensation.reducer";
 
 export interface AppState {
   structure: StructureState,
@@ -16,4 +18,5 @@ export interface AppState {
   validity: ValidityState,
   variable: VariableState,
   rule: RuleState,
+  compensation: CompensationState,
 }

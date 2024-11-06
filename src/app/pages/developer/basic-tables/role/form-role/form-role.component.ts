@@ -20,7 +20,7 @@ export class FormRoleComponent implements OnInit {
 
   deleting: boolean = false;
 
-  idRol: number;
+  idRol: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,17 +40,17 @@ export class FormRoleComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.idRol = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.idRol = params['id'];
         this.updateMode = true;
         this.getRole(this.idRol);
       }
     });
   }
 
-  getRole(idRol: number) {
+  getRole(idRol: string) {
     this.basicTablesService.getRole(idRol).subscribe({
       next: (result) => {
-        this.assignValuesToForm(result);
+        this.assignValuesToForm(JSON.parse(this.cryptoService.decryptParamAsString(result)));
       }
     })
   }
@@ -97,7 +97,7 @@ export class FormRoleComponent implements OnInit {
     }
   }
 
-  updateRole(idRol: number, rol: Role): void {
+  updateRole(idRol: string, rol: Role): void {
     let message = '¿Está seguro de actualizar el registro?';
     this.confirmationDialogService.showEventConfirmationDialog(
       message,

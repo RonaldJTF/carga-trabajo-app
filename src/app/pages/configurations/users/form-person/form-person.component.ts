@@ -29,7 +29,7 @@ export class FormPersonComponent implements OnInit {
 
   personCopy: Person = new Person();
 
-  personId: number = null;
+  personId: string = null;
 
   param: string;
 
@@ -77,14 +77,12 @@ export class FormPersonComponent implements OnInit {
 
   getInitialValue() {
     this.route.params.subscribe((params) => {
-      this.param = params['id'];
+      if (params['id'] != null) {
+        this.personId = params['id'];
+        this.updateMode = true;
+        this.getPerson(this.personId);
+      }
     });
-    console.log("Parametro persona ID: ", this.param);
-    if (this.param != null) {
-      this.personId = this.cryptoService.decryptParamAsNumber(this.param);
-      this.updateMode = true;
-      this.getPerson(this.personId);
-    }
   }
 
   getRole() {
@@ -94,16 +92,17 @@ export class FormPersonComponent implements OnInit {
 
   getDocumentTypes(): void {
     this.documentTypeService.getDocumentType().subscribe({
-      next: (item) => {
-        this.documentTypes = item;
+      next: (resp) => {
+        this.documentTypes = this.decriptList<DocumentType>(resp);
+
       }
     });
   }
 
   getGender(): void {
     this.genderService.getGenders().subscribe({
-      next: (item) => {
-        this.genders = item;
+      next: (resp) => {
+        this.genders = this.decriptList<Gender>(resp);
       }
     });
   }
@@ -169,12 +168,12 @@ export class FormPersonComponent implements OnInit {
     return this.isValido('idGenero');
   }
 
-  getPerson(personId: number) {
+  getPerson(personId: string) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
-        this.person = data;
+        this.person = JSON.parse(this.cryptoService.decryptParamAsString(data));
         if (this.person) {
-          this.personCopy = data;
+          this.personCopy = this.person;
           this.assignValuesToForm(this.person);
         }
       }
@@ -193,7 +192,7 @@ export class FormPersonComponent implements OnInit {
     this.formPerson.get('idGenero').setValue(person.idGenero);
   }
 
-  updatePerson(id: number, payload: any): void {
+  updatePerson(id: string, payload: any): void {
     payload.srcFoto = ''
     this.personService.update(id, payload).subscribe({
       next: () => {
@@ -208,11 +207,11 @@ export class FormPersonComponent implements OnInit {
 
   createPerson(payload: any): void {
     this.personService.create(payload).subscribe({
-      next: () => {
+      next: (res) => {
         this.urlService.goBack();
         this.creatingOrUpdating = false;
       },
-      error: () => {
+      error: (err) => {
         this.creatingOrUpdating = false;
       },
     });
@@ -221,11 +220,12 @@ export class FormPersonComponent implements OnInit {
   onSubmitPerson(event: Event): void {
     this.formData.delete('person');
     event.preventDefault();
-    this.formData.append('person', JSON.stringify(this.formPerson.value));
+    this.formData.append('person', this.cryptoService.encryptParam(JSON.stringify(this.formPerson.value)));
     if (this.formPerson.invalid) {
       this.formPerson.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
+      console.log(this.formPerson.value)
       this.updateMode ? this.updatePerson(this.personId, this.formData) : this.createPerson(this.formData);
     }
   }
@@ -306,4 +306,12 @@ export class FormPersonComponent implements OnInit {
     return null;
   }
 
+  decriptList<T>(param: string[]): T[] {
+    let list: T[] = [];
+    param.forEach(item => {
+      let elemnt: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
+      list.push(elemnt);
+    })
+    return list;
+  }
 }

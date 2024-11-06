@@ -31,9 +31,9 @@ export class AppMenuComponent implements OnInit {
   }
 
   initializeRoles() {
-    const {isSuperAdministrator, isDesarrollador, isAdministrator, isOperator} = this.authService.roles();
+    const {isSuperAdministrator, isDeveloper, isAdministrator, isOperator} = this.authService.roles();
     this.isSuperAdmin = isSuperAdministrator;
-    this.isDesarrollador = isDesarrollador;
+    this.isDesarrollador = isDeveloper;
     this.isAdministrator = isAdministrator;
     this.isOperator = isOperator;
   }
@@ -72,47 +72,49 @@ export class AppMenuComponent implements OnInit {
             description: 'Gestión de los niveles ocupacionales en el ámbito laboral',
             routerLink: ['/configurations/levels'],
           },
+          
           {
-            label: 'Cargos laborales',
-            icon: 'pi pi-briefcase',
+            label: 'Estructuras',
+            icon: 'pi pi-sitemap',
             color: 'primary',
+            description: 'Gestión de dependencias, procesos, procedimientos y actividades',
+            routerLink: ['/configurations/structures'],
             items: [
-              {
-                label: 'Vigencias',
-                icon: 'pi pi-calendar',
-                color: 'primary',
-                description: 'Gestión de las vigencias para las asignaciones laborales',
-                routerLink: ['/configurations/validities'],
-              },
-              {
-                label: 'Variables',
-                icon: 'pi pi-arrow-right-arrow-left',
-                color: 'primary',
-                description: 'Gestión de las variables consideradas en las compensaciones laborales',
-                routerLink: ['/configurations/variables'],
-              },
-              {
-                label: 'Reglas',
-                icon: 'pi pi-check-square',
-                color: 'primary',
-                description: 'Gestión de las reglas consideradas en las compensaciones laborales',
-                routerLink: ['/configurations/rules'],
-              },
               {
                 label: 'Designación de cargos',
                 icon: 'pi pi-users',
                 color: 'primary',
                 description: 'Gestión de la designación de cargos laborales por dependencia',
                 routerLink: ['/configurations/appointments']
-              }
-            ]
-          },
-          {
-            label: 'Estructuras',
-            icon: 'pi pi-sitemap',
-            color: 'primary',
-            description: 'Gestión de dependencias, procesos, procedimientos y actividades',
-            routerLink: ['/configurations/structures']
+              },
+              {
+              label: 'Cargos laborales',
+              icon: 'pi pi-briefcase',
+              color: 'primary',
+              items: [
+                {
+                  label: 'Vigencias',
+                  icon: 'pi pi-calendar',
+                  color: 'primary',
+                  description: 'Gestión de las vigencias para las asignaciones laborales',
+                  routerLink: ['/configurations/validities'],
+                },
+                {
+                  label: 'Variables',
+                  icon: 'pi pi-arrow-right-arrow-left',
+                  color: 'primary',
+                  description: 'Gestión de las variables consideradas en las compensaciones laborales',
+                  routerLink: ['/configurations/variables'],
+                },
+                {
+                  label: 'Reglas',
+                  icon: 'pi pi-check-square',
+                  color: 'primary',
+                  description: 'Gestión de las reglas consideradas en las compensaciones laborales',
+                  routerLink: ['/configurations/rules'],
+                },
+              ]
+            }],
           },
           {
             label: 'Planes de trabajo',
@@ -120,6 +122,13 @@ export class AppMenuComponent implements OnInit {
             color: 'primary',
             description: 'Gestión de planes de trabajos',
             routerLink: ['/configurations/workplans']
+          },
+          {
+            label: 'Compensaciones laborales',
+            icon: 'pi pi-money-bill',
+            color: 'primary',
+            description: 'Gestión de compensaciones laborales',
+            routerLink: ['/configurations/compensations']
           },
         ],
       },
