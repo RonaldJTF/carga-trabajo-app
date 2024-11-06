@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Workplan} from "@models";
 import {CryptojsService} from "./cryptojs.service";
 
 @Injectable({
@@ -12,6 +11,12 @@ export class CompensationService {
   private pathCompensation = 'compensation';
 
   private pathCategory = this.pathCompensation.concat('/category');
+
+  private pathLevelCompensation = this.pathCompensation.concat('/level');
+
+  private pathRule = 'rule';
+
+  private pathVariable = 'validity/variable'
 
   constructor(
     private webRequestService: WebRequestService,
@@ -68,5 +73,42 @@ export class CompensationService {
   deleteCategory(idCategory: string): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathCategory}/${idCategory}`);
   }
+
+  /**
+   * Services COMPENACIÓN LABORAL NIVEL VIGENCIA
+   */
+  getLevelCompensations(idLevel: string): Observable<any> {
+    return this.webRequestService.getWithHeaders(`${this.pathLevelCompensation}/${idLevel}`);
+  }
+
+  getLevelCompensation(idLevelCompensation: string): Observable<any> {
+    return this.webRequestService.getWithHeaders(`${this.pathLevelCompensation}/${idLevelCompensation}`);
+  }
+
+  createLevelCompensation(payload: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathLevelCompensation, payload);
+  }
+
+  updateLevelCompensation(id: string, payload: any): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathLevelCompensation}/${id}`, payload);
+  }
+
+  deleteLevelCompensation(idLevelCompensation: string): Observable<any> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathLevelCompensation}/${idLevelCompensation}`);
+  }
+
+  deleteSelectedLevelCompensations(payload: string[]): Observable<string[]> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathLevelCompensation}`, undefined, payload);
+  }
+
+  //
+  getRules(){
+    return this.webRequestService.getWithHeaders(this.pathRule);
+  }
+
+  getVariables(){
+    return this.webRequestService.getWithHeaders(this.pathVariable);
+  }
+
 
 }

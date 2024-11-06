@@ -73,7 +73,7 @@ export class ListComponent implements OnInit, OnDestroy {
   getCompensations() {
     this.compensationService.getCompesations().subscribe({
       next: (res) => {
-        this.store.dispatch(CompensationActions.setList({compensations: this.cryptojsService.decryptList<Compensation>(res)}));
+        this.store.dispatch(CompensationActions.setList({compensations: this.cryptojsService.decryptResponse<Compensation>(res)}));
       }
     })
   }

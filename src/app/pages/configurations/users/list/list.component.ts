@@ -52,7 +52,7 @@ export class ListComponent implements OnInit{
     this.loading = true;
     this.personService.getPeople().subscribe({
       next: (data) => {
-        this.people = this.decriptList<Person>(data);
+        this.people = this.cryptoService.decryptResponse<Person>(data);
       },
       complete: () => {
         this.loading = false;
@@ -114,14 +114,5 @@ export class ListComponent implements OnInit{
 
   desmarkAll() {
     this.selectedPeople = [];
-  }
-
-  decriptList<T>(param: string[]): T[] {
-    let list: T[] = [];
-    param.forEach(item => {
-      let elemnt: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
-      list.push(elemnt);
-    })
-    return list;
   }
 }

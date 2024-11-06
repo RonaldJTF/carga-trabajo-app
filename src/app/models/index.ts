@@ -18,3 +18,5 @@ export * from './compensation';
 export * from './category';
 export * from './periodicity';
 export * from './normativity';
+export * from './rule';
+export * from './variable';

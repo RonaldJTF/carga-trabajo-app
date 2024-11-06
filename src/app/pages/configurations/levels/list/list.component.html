@@ -1,6 +1,9 @@
 <ng-container *ngIf="!loading else sLoading">
     <div *ngIf="!levels.length else data">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo nivel ocupacional'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+      <button pButton pRipple type="button"  class="p-button-text _button-go" (click)="onGoToUpdateCompensation('1',$event)" >
+        <i class="pi pr-2 pi-user-edit"></i>
+      </button>
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo nivel ocupacional'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="!isAdmin"></app-go-to-if-not-found>
     </div>
     <ng-template #data>
         <div class="card p-0 pb-2">
@@ -129,7 +132,7 @@
         <span class="text-500">Detalle del nivel junto a sus escalas salariales</span>
       </div>
     </div>
-  
+
     <div class="flex align-items-center mb-1">
       <div *ngIf="level" class="flex flex-column">
         <span class="font-medium">{{level?.descripcion | uppercase}}</span>
@@ -145,7 +148,7 @@
         </p-selectButton>
       </div>
     </div>
-  
+
     <ng-container *ngIf="!loadingLevel else sLoadingLevel">
       <ng-container *ngIf="filteredSalaryScales?.length; else sNoSalaryScales">
         <p-table #tableOfSalaryScales [value]="filteredSalaryScales"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
@@ -159,7 +162,7 @@
                             <div class="flex flex-column ml-2 justify-content-start">
                                 <span class="font-medium text-500">
                                     {{salaryScale.normatividad.nombre | uppercase}}
-                                    <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span> 
+                                    <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span>
                                 </span>
                                 <span style="white-space: nowrap;" [class]="'mr-auto status-badge status-' + (salaryScale.normatividad.estado | validity).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
                             </div>
@@ -201,7 +204,7 @@
       </ng-container>
       <ng-template #sNoSalaryScales>
         <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" buttonLabel="Gestionar escala salarial"(go)="onGoToUpdateLevel(level.id, $event)" [message]="MESSAGE.NO_ESCALAS_SALARIALES" [showButton]="isAdmin"></app-go-to-if-not-found>
-      </ng-template>  
+      </ng-template>
     </ng-container>
     <ng-template #sLoadingLevel>
         <app-loading></app-loading>

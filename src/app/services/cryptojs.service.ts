@@ -114,7 +114,7 @@ export class CryptojsService {
     return this.decryptParam(encrypted);
   }
 
-  decryptList<T>(param: string[]): T[] {
+  decryptResponse<T>(param: string[]): T[] {
     let list: T[] = [];
     if (param !== null) {
       param.forEach(item => {

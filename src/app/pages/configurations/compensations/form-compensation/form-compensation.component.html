@@ -69,6 +69,7 @@
                           [disabledCreateOrUpdateButton]="formCompensation.invalid">
   </app-form-action-button>
 </form>
+
 <p-overlayPanel #categoryOptionsOverlayPanel [showCloseIcon]="true">
   <ng-template pTemplate>
     <p-listbox [options]="categoryOptions" optionLabel="label" [filter]="true" title="Categorías" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" [style]="{'max-height':'250px', 'overflow':'auto'}" (onClick)="addCategory($event.value.value)">

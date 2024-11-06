@@ -9,14 +9,15 @@ import {NotFoundComponent} from './pages/not-found/not-found.component';
   imports: [
     RouterModule.forRoot([
       { path: "account", loadChildren: () => import("./pages/account/account.module").then((m) => m.AccountModule)},
-      { path: '',
+      {
+        path: '',
         component: AppLayoutComponent,
         children: [
-          {path: '', loadChildren: ()=>import('./pages/dashboard/dashboard.module').then(m=>m.DashboardModule), canActivate: [adminOrOperatorGuard]},
-          {path: 'configurations', loadChildren: ()=>import('./pages/configurations/configurations.module').then(m=>m.ConfigurationsModule), canActivate:[adminOrOperatorGuard]},
-          {path: 'developer', loadChildren: ()=>import('./pages/developer/developer.module').then(m=>m.DeveloperModule), canActivate: [developerGuard]},
+          { path: '', loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule),canActivate: [adminOrOperatorGuard]},
+          { path: 'configurations', loadChildren: () => import('./pages/configurations/configurations.module').then(m => m.ConfigurationsModule), canActivate:[adminOrOperatorGuard]},
+          { path: 'developer', loadChildren: () => import('./pages/developer/developer.module').then(m => m.DeveloperModule), canActivate: [developerGuard]},
         ],
-        canActivate: [authGuard]},
+     canActivate: [authGuard]},
       { path: '**', component: NotFoundComponent}
   ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })
   ],
