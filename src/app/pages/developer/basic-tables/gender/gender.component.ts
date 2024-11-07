@@ -55,7 +55,7 @@ export class GenderComponent implements OnInit {
       })
     ).subscribe({
       next: (res) => {
-        this.genders = this.decryptList<Gender>(res);
+        this.genders = res;
       }
     })
   }

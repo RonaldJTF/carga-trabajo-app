@@ -55,7 +55,7 @@ export class RoleComponent implements OnInit {
       })
     ).subscribe({
       next: (res) => {
-        this.roles = this.decryptList<Role>(res);
+        this.roles = res;
       }
     })
   }

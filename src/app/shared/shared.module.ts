@@ -79,7 +79,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { AppConfigModule } from '../layout/config/config.module';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ExpressionComponent } from './expression/expression.component';
-
+import { MenubarModule } from 'primeng/menubar';
 @NgModule({
     declarations: [
         FunctionalityComponent,
@@ -181,6 +181,7 @@ import { ExpressionComponent } from './expression/expression.component';
         RadioButtonModule,
         AppConfigModule,
         ToggleButtonModule,
+        MenubarModule,
     ],
     exports: [
         FunctionalityComponent,
@@ -278,11 +279,11 @@ import { ExpressionComponent } from './expression/expression.component';
         ChipModule,
         RadioButtonModule,
         AppConfigModule,
-        ToggleButtonModule
+        ToggleButtonModule,
+        MenubarModule
     ],
   providers: []
 })
 export class SharedModule {
 }
 export {CalendarComponent, DialogComponent}
-

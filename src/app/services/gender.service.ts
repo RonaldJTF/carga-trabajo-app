@@ -14,7 +14,7 @@ export class GenderService {
     private webRequestService: WebRequestService
   ) {}
 
-  getGenders(): Observable<string[]> {
+  getGenders(): Observable<Gender[]> {
     return this.webRequestService.getWithHeaders(this.pathGender);
   }
 }

@@ -19,6 +19,13 @@ import {AppState} from "../../../../app.reducers";
 
 import * as CompensationActions from "@store/compensation.actions";
 
+const functionality: Functionality = {
+  label: 'Compensaciones laborales',
+  icon: 'pi pi-money-bill',
+  color: 'primary',
+  description: 'Gestión de compensaciones laborales'
+};
+
 @Component({
   selector: 'app-form-compensation',
   templateUrl: './form-compensation.component.html',
@@ -51,13 +58,6 @@ export class FormCompensationComponent implements OnInit {
 
   formCompensation: FormGroup;
 
-  functionality: Functionality = {
-    label: 'Compensaciones laborales',
-    icon: 'pi pi-money-bill',
-    color: 'primary',
-    description: 'Gestión de compensaciones laborales'
-  };
-
   constructor(
     private formBuilder: FormBuilder,
     private compensationService: CompensationService,
@@ -72,7 +72,7 @@ export class FormCompensationComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.menuService.onFunctionalityChange(this.functionality);
+    this.menuService.onFunctionalityChange(functionality);
     this.buildForm();
     this.getInitialValue();
     this.getCategories();
@@ -92,6 +92,7 @@ export class FormCompensationComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe(() => {
       this.idCompensation = this.route.snapshot.queryParams['idCompensation'];
+      console.log(this.idCompensation)
       this.idCategory = this.route.snapshot.queryParams['idCategory'];
       if (this.idCompensation != null) {
         this.updateMode = true;
@@ -103,7 +104,7 @@ export class FormCompensationComponent implements OnInit {
   getCategories() {
     this.compensationService.getCategories().subscribe({
       next: (res) => {
-        this.categories = this.cryptoService.decryptResponse<Category>(res);
+        this.categories = res;
         this.loadCategoriesOptions();
         if (this.idCategory !== null) {
           this.assignCategory(this.idCategory);
@@ -226,15 +227,16 @@ export class FormCompensationComponent implements OnInit {
   onDeleteCompensation(event: Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.compensationService.deleteCompensation(this.idCompensation).subscribe({
+    this.compensationService.deleteCompensation(this.idCompensation).pipe(
+      finalize(() => {
+        this.deleting = false;
+      })
+    ).subscribe({
       next: () => {
         this.store.dispatch(CompensationActions.removeFromList({id: this.cryptoService.decryptParamAsNumber(this.idCompensation)}));
         this.goBack();
         this.deleting = false;
-      },
-      error: () => {
-        this.deleting = false;
-      },
+      }
     });
   }
 

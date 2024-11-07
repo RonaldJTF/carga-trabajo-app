@@ -50,7 +50,7 @@ export class FormRoleComponent implements OnInit {
   getRole(idRol: string) {
     this.basicTablesService.getRole(idRol).subscribe({
       next: (result) => {
-        this.assignValuesToForm(JSON.parse(this.cryptoService.decryptParamAsString(result)));
+        this.assignValuesToForm(result);
       }
     })
   }

@@ -14,7 +14,7 @@ export class DocumentTypeService {
   ) {
   }
 
-  getDocumentType(): Observable<string[]> {
+  getDocumentType(): Observable<DocumentType[]> {
     return this.webRequestService.getWithHeaders(this.pathTipoDocumento);
   }
 }

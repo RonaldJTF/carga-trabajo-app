@@ -1,0 +1,104 @@
+<ng-container *ngIf="!loading else sLoading">
+  <div *ngIf="!levelCompensation.length else data">
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva compensación laboral'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+  </div>
+  <ng-template #data>
+    <div class="card p-0 pb-2">
+      <p-table #dt [value]="levelCompensation" rowGroupMode="subheader" sortMode="single" sortField="vigencia.nombre" groupRowsBy="vigencia.nombre"
+               [paginator]="true" [rows]="10" [(selection)]="selectedLevelCompensation" selectionMode="multiple"
+               [globalFilterFields]="['nombre', 'descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+               currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+            <div class="flex align-items-center flex-wrap">
+              <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+              </button>
+              <div *ngIf="isAdmin" class="_badge-container m-1">
+                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedLevelCompensation()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger " [disabled]="!selectedLevelCompensation?.length">
+                  <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                </button>
+                <span *ngIf="selectedLevelCompensation?.length" (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{ selectedLevelCompensation.length }}</span>
+              </div>
+            </div>
+            <div class="m-1">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input type="search" pInputText placeholder="Buscar" (input)="onGlobalFilter(dt, $event)">
+              </span>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="4" class="text-center" style="min-width: 300px; white-space: nowrap" pSortableColumn="nombre">
+              {{ levelCompensation[0].nivel.descripcion }}
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="groupheader" let-vigencia>
+          <tr pRowGroupHeader>
+            <td pRipple colspan="3">
+              <div class="flex flex-column justify-content-start">
+                <span class="font-medium text-500">
+                  {{ vigencia.vigencia.nombre | uppercase }}
+                  <span class="text-500 font-italic">({{ vigencia.vigencia.anio | lowercase }})</span>
+                </span>
+                <span style="white-space: nowrap;" [class]="'mr-auto status-badge status-' + (vigencia.vigencia.estado | validity ).classStyle">{{ (vigencia.vigencia.estado | validity).value }}</span>
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="flex align-items-center justify-content-end">
+                <app-menu-item [menuItems]="items" [id]="vigencia.id"></app-menu-item>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-vigencia>
+          <tr>
+            <td>
+              <div class="flex flex-column justify-content-start">
+                <span>{{ vigencia.escalaSalarial.nombre }}</span>
+                <span class="text-500 font-italic">Código: {{ vigencia.escalaSalarial.codigo }}</span>
+                <td class="text-500">{{ vigencia.compensacionLaboral.nombre }}</td>
+
+              </div>
+            </td>
+            <td class="w-6rem">
+              <span *ngIf="vigencia.escalaSalarial.incrementoPorcentual" class="text-green-500" pTooltip="Incremento porcentual" tooltipPosition="bottom">{{ vigencia.escalaSalarial.incrementoPorcentual }}%<i class="pi pi-arrow-up-right"></i></span>
+            </td>
+            <td class="w-3rem text-center">
+              <i class="pi" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(vigencia.escalaSalarial.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(vigencia.escalaSalarial.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+            </td>
+            <td class="w-5rem">
+              <div class="flex align-items-center justify-content-end">
+                <!--<app-menu-item *ngIf="isAdmin"></app-menu-item>-->
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="groupfooter" let-vigencia>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center">{{ MESSAGE.NO_REGISTROS }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </ng-template>
+  <div class="flex flex-wrap justify-content-end m-0 p-0 mt-3">
+    <button pButton pRipple icon="pi pi-undo" class="p-button-secondary" (click)="goBack()">
+      <span class="hidden-xs p-button-label pl-2">Volver</span>
+    </button>
+  </div>
+</ng-container>
+
+<ng-template #sLoading>
+  <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+</ng-template>

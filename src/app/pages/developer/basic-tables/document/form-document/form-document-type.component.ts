@@ -42,7 +42,7 @@ export class FormDocumentTypeComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.idDocumentType = this.cryptoService.decryptParamAsNumber(params['id']);
+        this.idDocumentType = params['id'];
         this.updateMode = true;
         this.getDocumentType(this.idDocumentType);
       }
@@ -51,7 +51,6 @@ export class FormDocumentTypeComponent implements OnInit {
 
 
   getDocumentType(idDocumentType: number) {
-    
     this.basicTablesService.getDocumentType(idDocumentType).subscribe({
       next: (result) => {
         this.assignValuesToForm(result);

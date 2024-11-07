@@ -36,10 +36,11 @@ export class ListComponent implements OnInit, OnDestroy{
 
   filteredSalaryScales: SalaryScale[] = [];
   rowGroupMetadata: any;
-  
+
   menuItemsOfLevel: MenuItem[] = [];
   menuItemsOfNormativity: MenuItem[] = [];
   menuItemsOfSalaryScale: MenuItem[] = [];
+  menuBarItems: MenuItem[] = [];
 
   viewModeOptions: any[] = [
     {icon: 'pi pi-check-circle', value: 'active', tooltip: 'Activas'},
@@ -68,6 +69,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.initMenus();
     //Reestablecemos a valores iniciales cuando vayamos a editar o a gestionar las escalas salariales del nivel ocupacional
     this.levelService.setMustRechargeLevelFormGroup(true);
+    this.initMenus();
   }
 
   ngOnDestroy(): void {
@@ -78,6 +80,7 @@ export class ListComponent implements OnInit, OnDestroy{
   initMenus() {
     this.menuItemsOfLevel = [
       {label: 'Gestión de escalas salariales', icon: 'pi pi-cog',command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
+      {label: 'Gestión de compensaciones laborales', icon: 'pi pi-money-bill',command: (e) => this.onGoToUpdateCompensation(e.item.id, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteLevel(e)},
     ];
@@ -90,6 +93,16 @@ export class ListComponent implements OnInit, OnDestroy{
     this.menuItemsOfSalaryScale = [
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteSalaryScale(e)},
     ];
+
+    const backRoute = '/configurations/levels';
+    this.menuBarItems = [
+      {label: 'Compensaciones laborales', icon: 'pi pi-money-bill', visible: this.isAdmin, command: ()=>{this.router.navigate(['configurations/compensations'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}},
+      {label: 'Parametrizaciones', icon: 'pi pi-cog', visible: this.isAdmin, items: [
+        {label: 'Variables', icon: 'pi pi-arrow-right-arrow-left', command: ()=>{this.router.navigate(['configurations/variables'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}},
+        {label: 'Reglas', icon: 'pi pi-check-square', command: ()=>{this.router.navigate(['configurations/rules'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}},
+      ]},
+    ];
+
   }
 
   getLevels(){
@@ -118,7 +131,7 @@ export class ListComponent implements OnInit, OnDestroy{
       })
     }
   }
-  
+
   loadSalaryScalesToTable(idLevel: number, isLoaded: boolean, expanded: boolean){
     if(!expanded && !isLoaded){
       this.loadingLevelById[idLevel] = true;
@@ -224,9 +237,9 @@ export class ListComponent implements OnInit, OnDestroy{
       ¿Está seguro de eliminar la normatividad <strong>${normativity?.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
-            Eliminar la normatividad implica eliminar todas las escalas salariales configuradas, 
-            incluidas aquellas que están asociadas a otros niveles ocupacionales que dependan de la misma normatividad. 
+            <strong>Advertencia:</strong>
+            Eliminar la normatividad implica eliminar todas las escalas salariales configuradas,
+            incluidas aquellas que están asociadas a otros niveles ocupacionales que dependan de la misma normatividad.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -238,11 +251,11 @@ export class ListComponent implements OnInit, OnDestroy{
     if (elementRef.style.display === 'none' || !elementRef.style.display) {
       elementRef.style.display = 'block';
     } else {
-      elementRef.style.display = 'none'; 
+      elementRef.style.display = 'none';
     }
     const button = event.currentTarget as HTMLElement;
     // Cambiar el ícono del botón que muestra el detalle
-    const iconElement = button.querySelector('span'); 
+    const iconElement = button.querySelector('span');
     if (iconElement) {
       if (iconElement.classList.contains('pi-eye')) {
         iconElement.classList.remove('pi-eye');
@@ -253,7 +266,7 @@ export class ListComponent implements OnInit, OnDestroy{
       }
     }
   }
-  
+
   onChangeSalaryScaleType(optionType: 'active' | 'all') {
     this.setSalaryScalesFiltered(optionType)
   }
@@ -298,5 +311,13 @@ export class ListComponent implements OnInit, OnDestroy{
             }
         }
     }
+  }
+
+  onGoToUpdateCompensation(idLevel: string, event: Event) {
+    event.preventDefault();
+    this.router.navigate(["/configurations/level-compensation"], {
+      skipLocationChange: false,
+      queryParams: {idLevel: this.cryptoService.encryptParam(idLevel)}
+    }).then()
   }
 }

@@ -13,6 +13,7 @@ const routes: Routes = [
   {path: 'validities', loadChildren: ()=>import('./validities/validities.module').then(m=>m.ValiditiesModule)},
   {path: 'variables', loadChildren: ()=>import('./variables/variables.module').then(m=>m.VariablesModule)},
   {path: 'rules', loadChildren: ()=>import('./rules/rules.module').then(m=>m.RulesModule)},
+  {path: 'level-compensation', loadChildren: ()=>import('./level-compensation/level-compensation.module').then(m=>m.LevelCompensationModule)},
 ];
 
 @NgModule({

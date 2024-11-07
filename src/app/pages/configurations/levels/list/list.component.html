@@ -1,6 +1,9 @@
 <ng-container *ngIf="!loading else sLoading">
     <div *ngIf="!levels.length else data">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo nivel ocupacional'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+      <button pButton pRipple type="button"  class="p-button-text _button-go" (click)="onGoToUpdateCompensation('1',$event)" >
+        <i class="pi pr-2 pi-user-edit"></i>
+      </button>
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo nivel ocupacional'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="!isAdmin"></app-go-to-if-not-found>
     </div>
     <ng-template #data>
         <div class="card p-0 pb-2">
@@ -9,25 +12,27 @@
                 [globalFilterFields]="['descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
                 <ng-template pTemplate="caption">
-                    <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
-                        <div class="flex align-items-center flex-wrap">
-                            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
-                                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-                            </button>
-                            <div *ngIf="isAdmin" class="_badge-container m-1">
-                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedLevels()" pTooltip="Eliminar" tooltipPosition="bottom"
-                                    class="p-button-danger " [disabled]="!selectedLevels?.length">
-                                    <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                    <div class="border-round-top-xl surface-100 p-3">
+                        <p-menubar [model]="menuBarItems">
+                            <ng-template pTemplate="start">
+                                <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                    <span class="p-button-label hidden-lg pl-2">Nuevo</span>
                                 </button>
-                                <span *ngIf="selectedLevels?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedLevels.length}}</span>
-                            </div>
-                        </div>
-                        <div class="m-1">
-                            <span class="p-input-icon-left">
+                                <div *ngIf="isAdmin" class="_badge-container m-1 mr-2">
+                                    <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedLevels()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                        class="p-button-danger " [disabled]="!selectedLevels?.length">
+                                        <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                    </button>
+                                    <span *ngIf="selectedLevels?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedLevels.length}}</span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="end">
+                              <span class="p-input-icon-left m-1">
                                 <i class="pi pi-search"></i>
                                 <input type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
                             </span>
-                        </div>
+                            </ng-template>
+                        </p-menubar>
                     </div>
                 </ng-template>
 
@@ -131,7 +136,7 @@
         <span class="text-500">Detalle del nivel junto a sus escalas salariales</span>
       </div>
     </div>
-  
+
     <div class="flex align-items-center mb-1">
       <div *ngIf="level" class="flex flex-column">
         <span class="font-medium">{{level?.descripcion | uppercase}}</span>
@@ -147,7 +152,7 @@
         </p-selectButton>
       </div>
     </div>
-  
+
     <ng-container *ngIf="!loadingLevel else sLoadingLevel">
       <ng-container *ngIf="filteredSalaryScales?.length; else sNoSalaryScales">
         <p-table #tableOfSalaryScales [value]="filteredSalaryScales"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
@@ -161,7 +166,7 @@
                             <div class="flex flex-column ml-2 justify-content-start">
                                 <span class="font-medium text-500">
                                     {{salaryScale.normatividad.nombre | uppercase}}
-                                    <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span> 
+                                    <span class="text-500 font-italic">({{ salaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span>
                                 </span>
                                 <span style="white-space: nowrap;" [class]="'mr-auto validity-badge validity-' + (salaryScale.normatividad.estado | validity).classStyle">{{ (salaryScale.normatividad.estado | validity).value }}</span>
                             </div>
@@ -203,7 +208,7 @@
       </ng-container>
       <ng-template #sNoSalaryScales>
         <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" buttonLabel="Gestionar escala salarial"(go)="onGoToUpdateLevel(level.id, $event)" [message]="MESSAGE.NO_ESCALAS_SALARIALES" [showButton]="isAdmin"></app-go-to-if-not-found>
-      </ng-template>  
+      </ng-template>
     </ng-container>
     <ng-template #sLoadingLevel>
         <app-loading></app-loading>

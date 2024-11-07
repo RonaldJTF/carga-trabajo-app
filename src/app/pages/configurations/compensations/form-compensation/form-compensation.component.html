@@ -69,11 +69,12 @@
                           [disabledCreateOrUpdateButton]="formCompensation.invalid">
   </app-form-action-button>
 </form>
+
 <p-overlayPanel #categoryOptionsOverlayPanel [showCloseIcon]="true">
   <ng-template pTemplate>
     <p-listbox [options]="categoryOptions" optionLabel="label" [filter]="true" title="Categorías" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" [style]="{'max-height':'250px', 'overflow':'auto'}" (onClick)="addCategory($event.value.value)">
       <ng-template let-item pTemplate="item">
-        <div class="flex align-items-center gap-2 w-full">
+        <div class="flex align-items-center gap-2 w-full h-1rem">
           <div>{{ item.label }}</div>
           <button (click)="deleteCategory(item, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto" pTooltip="Eliminar" tooltipPosition="bottom"></button>
         </div>

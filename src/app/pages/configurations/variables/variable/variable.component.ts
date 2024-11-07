@@ -91,7 +91,7 @@ export class VariableComponent  implements OnInit, OnDestroy {
       primaria: false,
       global: [true, Validators.required],
       valor: ['', Validators.compose([Validators.required, ValidateExpression.validate()])],
-      expresion: '',
+      expresionValor: '',
       nombre: ['', Validators.compose([
         Validators.required, 
         Validators.maxLength(100)
@@ -253,13 +253,13 @@ export class VariableComponent  implements OnInit, OnDestroy {
 
   private setValueAndExpressionInformation(obj: Expression){
     this.formVariable.patchValue({
-      expresion: obj.expressionWithNames,
+      expresionValor: obj.expressionWithNames,
       valor: obj.expressionWithIds
     });
     this.formVariable.get('valor').markAllAsTouched();
-    this.formVariable.get('expresion').markAllAsTouched();
+    this.formVariable.get('expresionValor').markAllAsTouched();
     this.formVariable.get('valor').updateValueAndValidity();
-    this.formVariable.get('expresion').updateValueAndValidity();
+    this.formVariable.get('expresionValor').updateValueAndValidity();
   }
 
   private getExpression(childNodes): Expression{

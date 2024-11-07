@@ -60,6 +60,7 @@ export class ListComponent implements OnInit, OnDestroy{
   expandedNodes: number[];
   orderIsAscending: boolean;
 
+  menuBarItems: MenuItem[] = [];
   menuItemsOfDownload: MenuItem[] = [
     {label: 'Reporte de tiempos en PDF', escape: false, icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
@@ -100,6 +101,12 @@ export class ListComponent implements OnInit, OnDestroy{
     });
     this.dependencySubscription = this.dependency$.subscribe( e => this.dependencyMenuItems = this.getMenuItemsOfStructure(e));
     this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
+
+    const backRoute = '/configurations/structures';
+    this.menuBarItems = [
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', visible: this.isSuperAdmin, items: this.menuItemsOfDownload},
+      {label: 'Designación de cargos', icon: 'pi pi-users', visible: this.isAdmin, command: ()=>{this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}}
+    ];
   }
 
   ngOnDestroy(): void {

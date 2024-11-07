@@ -52,7 +52,7 @@ export class ListComponent implements OnInit{
     this.loading = true;
     this.personService.getPeople().subscribe({
       next: (data) => {
-        this.people = this.cryptoService.decryptResponse<Person>(data);
+        this.people = data;
       },
       complete: () => {
         this.loading = false;

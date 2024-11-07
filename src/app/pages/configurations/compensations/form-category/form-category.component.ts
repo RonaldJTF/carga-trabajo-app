@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CompensationService, CryptojsService, MenuService} from "@services";
 import {Category, Functionality} from "@models";
 import {finalize} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 
 @Component({
   selector: 'app-form-category',
@@ -58,9 +58,9 @@ export class FormCategoryComponent implements OnInit {
   }
 
   getInitialValue() {
-    this.route.params.subscribe(() => {
-      this.idCategory = this.route.snapshot.queryParams['idCategory'];
-      this.idCompensation = this.route.snapshot.queryParams['idCompensation'];
+    this.route.queryParams.subscribe((params: Params) => {
+      this.idCategory = params['idCategory'];
+      this.idCompensation = params['idCompensation'];
       if (this.idCategory != null) {
         this.updateMode = true;
         this.getCategory(this.idCategory);
@@ -71,7 +71,7 @@ export class FormCategoryComponent implements OnInit {
   getCategory(idCategory: string) {
     this.compensationService.getCategory(idCategory).subscribe({
       next: (res) => {
-        this.category = JSON.parse(this.cryptoService.decryptParamAsString(res));
+        this.category = res;
         this.assignValuesToForm(this.category);
       },
       error: (err) => {

@@ -91,6 +91,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   menuItemsOfTaskInCalendar: MenuItem[] = []
 
+  menuBarItems: MenuItem[] = [];
   menuItemsOfDownload: MenuItem[] = [
     {
       label: 'Reporte de avance', icon: 'pi pi-file-excel', automationId: "excel", command: (e) => {
@@ -122,6 +123,9 @@ export class ListComponent implements OnInit, OnDestroy {
     this.isOperator = isOperator;
     this.isSuperAdmin = isSuperAdministrator;
     
+    this.menuBarItems = [
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', visible: this.isSuperAdmin, items: this.menuItemsOfDownload}
+    ];
 
     this.menuItemsOfTaskInCalendar = [
       {

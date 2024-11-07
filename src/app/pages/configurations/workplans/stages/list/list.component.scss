@@ -36,3 +36,14 @@
 :host ::ng-deep .p-datatable-scrollable-body{
     overflow-y: auto !important;
 }
+
+::ng-deep .p-menubar{
+    padding: 0px;
+    border: none;
+    background-color: var(--surface-100);
+  }
+  
+  ::ng-deep ul.p-menubar-root-list > li > a {
+    padding: 1rem !important;
+  }
+  

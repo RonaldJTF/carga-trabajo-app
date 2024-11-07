@@ -23,4 +23,5 @@ export const MESSAGE = {
     NO_VALORES_VARIABLES_EN_VIGENCIA: "No se encontraron valores para las variables en la vigencia",
     NO_EXPRESION_PARA_VARIABLE: "No se encontró una expresión para la variable",
     NO_CONDICIONES_PARA_REGLA: "No se encontraron condiciones para la regla",
+    NO_COMPENSACIONES_LABORALES_CONFIGURADAS: "No se encontró compensación laboral parametrizada"
 }

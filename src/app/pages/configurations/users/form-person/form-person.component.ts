@@ -93,7 +93,7 @@ export class FormPersonComponent implements OnInit {
   getDocumentTypes(): void {
     this.documentTypeService.getDocumentType().subscribe({
       next: (resp) => {
-        this.documentTypes = this.decriptList<DocumentType>(resp);
+        this.documentTypes = resp;
 
       }
     });
@@ -102,7 +102,7 @@ export class FormPersonComponent implements OnInit {
   getGender(): void {
     this.genderService.getGenders().subscribe({
       next: (resp) => {
-        this.genders = this.decriptList<Gender>(resp);
+        this.genders = resp;
       }
     });
   }
@@ -171,7 +171,7 @@ export class FormPersonComponent implements OnInit {
   getPerson(personId: string) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
-        this.person = JSON.parse(this.cryptoService.decryptParamAsString(data));
+        this.person = data;
         if (this.person) {
           this.personCopy = this.person;
           this.assignValuesToForm(this.person);

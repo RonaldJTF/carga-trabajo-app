@@ -16,23 +16,19 @@
   z-index: 1;
 }
 
+._buttom-more-info {
+  width: 25px !important;
+  height: 25px !important;
+}
 
-:host ::ng-deep .p-treetable-header {
+
+:host ::ng-deep .p-datatable-header {
   border: none;
   background-color: transparent;
   padding: 0px;
 }
 
-:host ::ng-deep .p-treetable-scrollable-body {
-  overflow-y: auto !important;
-}
-
-::ng-deep .p-menubar{
-  padding: 0px;
+:host ::ng-deep .p-paginator{
   border: none;
-  background-color: var(--surface-100);
-}
-
-::ng-deep ul.p-menubar-root-list > li > a {
-  padding: 1rem !important;
+  padding-bottom: 0px;
 }

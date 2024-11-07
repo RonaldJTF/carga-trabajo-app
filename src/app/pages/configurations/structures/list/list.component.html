@@ -9,33 +9,27 @@
                     <p-treeTable  #treeTableDependency [value]="dependencies" selectionMode="checkbox" [(selection)]="selectedNodesOfDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                      [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
                         <ng-template pTemplate="caption">
-                            <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
-                                <div class="flex align-items-center flex-wrap">
-                                    <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
-                                        <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-                                    </button>
-                                    <div *ngIf="isAdmin" class="_badge-container m-1">
-                                        <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfDependency, true)" pTooltip="Eliminar" tooltipPosition="bottom"
-                                            class="p-button-danger " [disabled]="!totalSelected">
-                                            <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                            <div class="border-round-top-xl surface-100 p-3">
+                                <p-menubar [model]="menuBarItems">
+                                    <ng-template pTemplate="start">
+                                        <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                            <span class="p-button-label hidden-lg pl-2">Nuevo</span>
                                         </button>
-                                        <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" pTooltip="Click para desmarcar">{{totalSelected}}</span>
-                                    </div>
-                                    <i *ngIf="isAdmin && isSuperAdmin" class="pi pi-bars p-toolbar-separator m-1 hidden-lg"></i>
-                                    <ng-container *ngIf="isSuperAdmin">
-                                        <p-menu  #menu [popup]=" true" [model]="menuItemsOfDownload" [appendTo]="'body'" [baseZIndex]="1000" [styleClass]="'my-1'"></p-menu>
-                                        <div class="_badge-container m-1">
-                                            <button type="button" pRipple pButton style="position: relative;" icon="pi pi-angle-down" class="m-1  p-button-rounded p-button-info p-button-text" label="Descargar" (click)="menu.toggle($event)"></button>
-                                            <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" style="top: 0px; right: -5px; "  pTooltip="Click para desmarcar">{{totalSelected}}</span>
+                                        <div *ngIf="isAdmin" class="_badge-container m-1 mr-2">
+                                            <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfDependency, true)" pTooltip="Eliminar" tooltipPosition="bottom"
+                                                class="p-button-danger " [disabled]="!totalSelected">
+                                                <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                            </button>
+                                            <span *ngIf="totalSelected"  (click)="desmarkAll(true)" class="_badge" pTooltip="Click para desmarcar">{{totalSelected}}</span>
                                         </div>
-                                    </ng-container>
-                                </div>
-                                <div class="m-1">
-                                  <span class="p-input-icon-left">
-                                        <i class="pi pi-search"></i>
-                                        <input type="search" pInputText placeholder="Buscar"  (input)="onFilter($event, true)">
-                                    </span>
-                                </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="end">
+                                        <span class="m-1 p-input-icon-left">
+                                            <i class="pi pi-search"></i>
+                                            <input type="search" pInputText placeholder="Buscar"  (input)="onFilter($event, true)">
+                                        </span>
+                                    </ng-template>
+                                </p-menubar>
                             </div>
                         </ng-template>
                         <ng-template pTemplate="header">

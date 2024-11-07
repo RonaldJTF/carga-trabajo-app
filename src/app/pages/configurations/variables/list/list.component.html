@@ -83,9 +83,9 @@
                 <ng-template pTemplate="rowexpansion" let-variable>
                     <tr>
                         <td colspan="4" class="hover:surface-0 p-0">
-                            <ng-container *ngIf="variable.expresion; else sNoConfiguredValues">
+                            <ng-container *ngIf="variable.expresionValor; else sNoConfiguredValues">
                                 <div class="px-3 py-2 flex align-items-center justify-content-center">
-                                    <app-expression [expression]="variable.expresion"></app-expression>
+                                    <app-expression [expression]="variable.expresionValor"></app-expression>
                                 </div>
                                 <div class="text-500 text-sm px-3 py-2 mb-2">Parametrización de la variable</div>
                             </ng-container>

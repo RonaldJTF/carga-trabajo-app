@@ -7,6 +7,6 @@ export class Variable{
     global: string;
     porVigencia: string;
     estado: string;
-    expresion: string;
+    expresionValor: string;
     variablesRelacionadas: Variable[];
   }

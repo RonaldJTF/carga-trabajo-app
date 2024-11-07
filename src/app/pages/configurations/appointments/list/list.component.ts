@@ -40,6 +40,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   @ViewChild('filterOptionsOverlayPanel') filterOptionsOverlayPanel: OverlayPanel;
   @ViewChild('treeTableOfAppointments') treeTableOfAppointments: TreeTable;
+  @ViewChild('detailOfAppointmentOverlayPanel') detailOfAppointmentOverlayPanel: OverlayPanel;
 
   isAdmin: boolean;
   loading: boolean;
@@ -49,6 +50,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   selectedNodesOfAppointments: TreeNode | TreeNode[] | null;
 
   appointments: Appointment[];
+  selectedAppointment: Appointment;
   appointmentsSubscription: Subscription;
   expandedNodesSubscription: Subscription;
 
@@ -135,6 +137,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   initMenuItems(){
     this.menuItemsOfAppointment = [
+      {label: 'Ver detalles', icon: 'pi pi-eye', command: (e) => this.viewDetailOfAppointment(e.item.id, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateAppointment(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteAppointment(e)},
     ];
@@ -321,6 +324,11 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.store.dispatch(AppointmentActions.removeFromExpandedNodes({key: event.node.data.type + '|' + event.node.data.id}));
   }
 
+  viewDetailOfAppointment(appointmentId: any, event: Event) {
+    this.detailOfAppointmentOverlayPanel.toggle(event);
+    this.selectedAppointment = this.appointments.find(e => e.id == appointmentId);
+  }
+
   private isObjectEmpty(obj) {
     return Object.values(obj).every(value =>
         value === null ||
@@ -391,7 +399,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
                 }
                 comparisonsPercomparisonKey.set(
                   obj[comparisonAtrribute.comparisonKey], 
-                  comparisonsPercomparisonKey.get(obj[comparisonAtrribute.comparisonKey]) + obj.asignacionBasica
+                  comparisonsPercomparisonKey.get(obj[comparisonAtrribute.comparisonKey]) + obj.asignacionTotal
                 ); 
               }
             });
