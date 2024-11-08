@@ -32,3 +32,4 @@ export * from './appointment.service';
 export * from './rule.service';
 export * from './normativitytype.service'
 export * from './compensation.service';
+export * from './primary-variable.service';

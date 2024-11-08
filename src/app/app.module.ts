@@ -33,7 +33,8 @@ import {
   ValidityService,
   AppointmentService,
   RuleService,
-  NormativityTypeService
+  NormativityTypeService,
+  PrimaryVariableService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -88,7 +89,7 @@ import {compensationReducer} from "@store/compensation.reducer";
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
-    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, NormativityTypeService, GenderService, PersonService,
+    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, NormativityTypeService, PrimaryVariableService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

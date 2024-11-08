@@ -25,6 +25,8 @@ import { PeriodicityComponent } from './periodicity/periodicity.component';
 import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-periodicity.component';
 import { NormativityTypeComponent } from './normativity-tipe/normativity-type.component';
 import { FormNormativityTypeComponent } from './normativity-tipe/form-normativity-type/form-normativity-type.component';
+import { PrimaryVariableComponent } from './primary-variable/primary-variable.component';
+import { FormPrimaryVariableComponent } from './primary-variable/form-primary-variable/form-primary-variable.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { FormNormativityTypeComponent } from './normativity-tipe/form-normativit
     PeriodicityComponent,
     FormPeriodicityComponent,
     NormativityTypeComponent,
-    FormNormativityTypeComponent
+    FormNormativityTypeComponent,
+    PrimaryVariableComponent,
+    FormPrimaryVariableComponent
   ],
   imports: [BasicTablesRoutingModule, SharedModule]
 })

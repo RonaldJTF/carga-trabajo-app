@@ -144,6 +144,14 @@ export class BasicTablesComponent implements OnInit {
         label: 'Gestión de tipos de normatividad',
         iconStyle: 'primary',
         state: {}
+      },
+      {
+        title: 'Variables primarias',
+        icon: 'pi pi-key',
+        url: 'primary-variable',
+        label: 'Gestión de variables primarias',
+        iconStyle: 'primary',
+        state: {}
       }
     ]
   }

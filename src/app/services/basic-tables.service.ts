@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity, Normativity, NormativityType} from "@models";
+import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity, Normativity, NormativityType, Variable} from "@models";
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +31,8 @@ export class BasicTablesService {
   private pathPeriodicity = 'periodicity';
 
   private pathNormativityType = 'normativity-type';
+  
+  private pathPrimaryVariable = 'primary-variable';
 
   constructor(
     private webRequestService: WebRequestService
@@ -339,5 +341,31 @@ export class BasicTablesService {
 
   deleteSelectedNormativityType(payload: number[]): Observable<NormativityType[]> {
     return this.webRequestService.deleteWithHeaders(this.pathNormativityType, undefined, payload);
+  }
+  
+  // Servicios PrimaryVariable 
+
+  getPrimaryVariable(idPrimaryVariable: number){
+    return this.webRequestService.getWithHeaders(`${this.pathPrimaryVariable}/${idPrimaryVariable}`);
+  }
+
+  getPrimaryVariables(): Observable<Variable[]> {
+    return this.webRequestService.getWithHeaders(`${this.pathPrimaryVariable}`);
+  }
+
+  createPrimaryVariable(primaryVariable: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathPrimaryVariable, primaryVariable);
+  }
+
+  updatePrimaryVariable(id: number, primaryVariable: Variable): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathPrimaryVariable}/${id}`, primaryVariable);
+  }
+
+  deletePrimaryVariable(idPrimaryVariable: number): Observable<Variable> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathPrimaryVariable}/${idPrimaryVariable}`);
+  }
+
+  deleteSelectedPrimaryVariable(payload: number[]): Observable<Variable[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathPrimaryVariable, undefined, payload);
   }
 }

@@ -25,6 +25,8 @@ import { PeriodicityComponent } from './periodicity/periodicity.component';
 import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-periodicity.component';
 import { NormativityTypeComponent } from './normativity-tipe/normativity-type.component';
 import { FormNormativityTypeComponent } from './normativity-tipe/form-normativity-type/form-normativity-type.component';
+import { PrimaryVariableComponent } from './primary-variable/primary-variable.component';
+import { FormPrimaryVariableComponent } from './primary-variable/form-primary-variable/form-primary-variable.component';
 
 const routes: Routes = [{
   path: '', component: BasicTablesComponent, children: [
@@ -64,7 +66,10 @@ const routes: Routes = [{
     {path: 'create-periodicity/:id', component: FormPeriodicityComponent},
     {path: 'normativity-type', component: NormativityTypeComponent},
     {path: 'create-normativity-type', component: FormNormativityTypeComponent},
-    {path: 'create-normativity-type/:id', component: FormNormativityTypeComponent}
+    {path: 'create-normativity-type/:id', component: FormNormativityTypeComponent},
+    {path: 'primary-variable', component: PrimaryVariableComponent},
+    {path: 'create-primary-variable', component: FormPrimaryVariableComponent},
+    {path: 'create-primary-variable/:id', component: FormPrimaryVariableComponent},
   ]
 }];
 
