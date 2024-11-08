@@ -4,19 +4,14 @@
       <div class="flex flex-column align-items-center text-center">
         <div class="_button-container">
           <div class="mb-3 _image-container">
-            <img id="avatarPerson" [src]="personCopy?.srcFoto"
-                 [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"/>
+            <img id="avatarPerson" [src]="personCopy?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"/>
           </div>
-          <button pButton pRipple type="button" icon="pi pi-camera"
-                  class="p-button-rounded p-button-text p-button-info _button-icon"
-                  pTooltip="Seleccionar foto" tooltipPosition="bottom">
-            <input class="cursor-pointer" id="foto" type="file" #fileInput (change)="onFileSelect(fileInput)"
-                   style="z-index: 1000"/>
+          <button pButton pRipple type="button" icon="pi pi-camera" class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Seleccionar foto" tooltipPosition="bottom">
+            <input class="cursor-pointer" id="foto" type="file" #fileInput (change)="onFileSelect(fileInput)" style="z-index: 1000"/>
           </button>
         </div>
         <div *ngIf="loadFile" class="_badge-container m-1">
-          <p-message severity="{{severity}}" text="{{fileInfo}}">
-          </p-message>
+          <p-message severity="{{severity}}" text="{{fileInfo}}"></p-message>
           <span (click)="previewFoto(null)" class="_badge" pTooltip="Click para cancelar"><i
             class="pi pi-times"></i></span>
         </div>

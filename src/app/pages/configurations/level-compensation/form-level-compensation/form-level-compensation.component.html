@@ -1,19 +1,88 @@
 <form class="p-0" [formGroup]="formLevelCompensation">
   <div class="field">
-    <label htmlFor="nombre" class="font-medium">Compensación laboral</label>
+    <div class="flex flex-wrap justify-content-between">
+      <div class="flex align-items-center flex-wrap">
+        <span class="text-left font-medium w-full md:w-auto">Vigencia</span>
+      </div>
+      <div class="flex align-items-center flex-wrap">
+        <button *ngIf="validityFormControl.value" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text" pTooltip="Remover" tooltipPosition="bottom" (click)="removeValidity()"></button>
+        <button *ngIf="validityFormControl.value" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text" pTooltip="Editar" tooltipPosition="bottom" (click)="onGoToUpdateValidity(validityFormControl.value, $event)"></button>
+        <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text" pTooltip="Crear" tooltipPosition="bottom" (click)="createValidity()"></button>
+        <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text" label="Vigencias" (click)="validityOptionsOverlayPanel.toggle($event)"></button>
+      </div>
+    </div>
     <div class="surface-100 border-round">
       <div class="border-round-xl p-3">
-        <div class="flex flex-wrap justify-content-between">
+        <div *ngIf="validityFormControl.value as validity; else sNoValidity" class="flex justify-content-between w-full">
           <div class="flex align-items-center flex-wrap">
-            <!--<span class="text-left font-medium w-full md:w-auto">Compensación laboral</span>-->
+            <span class="text-500">{{ validity.nombre | uppercase }}</span>
           </div>
           <div class="flex align-items-center flex-wrap">
-            <button *ngIf="compensationFormControl.value" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text" pTooltip="Remover" tooltipPosition="bottom" (click)="removeCompensation()"></button>
-            <button *ngIf="compensationFormControl.value" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text" pTooltip="Editar" tooltipPosition="bottom" (click)="editCompensation(compensationFormControl.value)"></button>
-            <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text" pTooltip="Crear" tooltipPosition="bottom" (click)="createCompensation()"></button>
-            <button *ngIf="compensationOptions.length" pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text" label="Compensación" (click)="compensationOptionsOverlayPanel.toggle($event)"></button>
+            <span pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto m-2 validity-badge validity-' + (validity.estado | validity ).classStyle">{{ validity.anio }}</span>
           </div>
         </div>
+        <div *ngIf="invalidField('vigencia') && controls('vigencia')">
+          <small class="p-error">Seleccione una compensación laboral</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="field p-fluid ">
+    <label for="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
+    <button pButton pRipple type="button" icon="pi pi-question-circle" class="p-button-rounded p-button-text p-button-info _button-icon z-5" pTooltip="información" tooltipPosition="bottom" (click)="infoSalariScale.toggle($event)"></button>
+    <p-dropdown id="idEscalaSalarial" inputId="idEscalaSalarial" [autoDisplayFirst]="false"
+                [options]="salaryScales" optionValue="id" optionLabel="nombre" [filter]="true"
+                [showClear]="true" formControlName="idEscalaSalarial" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+  </div>
+
+
+  <div class="grid">
+    <div class="field p-fluid col-12 sm:col-6 m-0 _button-container">
+      <label for="variable" class="font-medium">Variable</label>
+      <p-dropdown id="variable" inputId="variable" [autoDisplayFirst]="false"
+                  [options]="variables" optionLabel="nombre" [filter]="true"
+                  [showClear]="true" formControlName="variable" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                  [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+      <div *ngIf="invalidField('variable') && controls('variable')">
+        <small class="p-error">Seleccione una variable</small>
+      </div>
+      <div class="px-3 py-2 flex align-items-center justify-content-center mt-3 surface-100 border-round">
+        <app-expression [expression]="variableFormControl.value?.valor"></app-expression>
+      </div>
+    </div>
+
+    <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3">
+      <label for="regla" class="font-medium">Regla</label>
+      <p-dropdown id="regla" inputId="regla" [autoDisplayFirst]="false"
+                  [options]="rules" optionLabel="nombre" [filter]="true"
+                  [showClear]="true" formControlName="regla" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                  [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+      <div *ngIf="invalidField('regla') && controls('regla')">
+        <small class="p-error">Seleccione una regla</small>
+      </div>
+      <div class="px-3 py-2 flex align-items-center justify-content-center mt-3 surface-100 border-round">
+        <app-expression [expression]="ruleFromControl.value?.condiciones"></app-expression>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="flex flex-wrap justify-content-between">
+      <div class="flex align-items-center flex-wrap">
+        <span class="text-left font-medium w-full md:w-auto">Compensación laboral</span>
+      </div>
+      <div class="flex align-items-center flex-wrap">
+        <button *ngIf="compensationFormControl.value" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text" pTooltip="Remover" tooltipPosition="bottom" (click)="removeCompensation()"></button>
+        <button *ngIf="compensationFormControl.value" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text" pTooltip="Editar" tooltipPosition="bottom" (click)="editCompensation(compensationFormControl.value)"></button>
+        <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text" pTooltip="Crear" tooltipPosition="bottom" (click)="createCompensation()"></button>
+        <button *ngIf="compensationOptions.length" pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text" label="Compensación" (click)="compensationOptionsOverlayPanel.toggle($event)"></button>
+      </div>
+    </div>
+    <div class="surface-100 border-round">
+      <div class="border-round-xl p-3">
         <div *ngIf="compensationFormControl.value" class="flex align-items-center w-full">
           <div class="flex align-items-center ">
             <div class="flex flex-column">
@@ -31,31 +100,6 @@
     </div>
   </div>
 
-  <div class="grid">
-    <div class="field p-fluid col-12 sm:col-6 m-0">
-      <label for="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
-      <p-dropdown id="idEscalaSalarial" inputId="idEscalaSalarial" [autoDisplayFirst]="false"
-                  [options]="salaryScales" optionValue="id" optionLabel="nombre" [filter]="true"
-                  [showClear]="true" formControlName="idEscalaSalarial" [placeholder]="MESSAGE.SELECCIONA_OPCION"
-                  [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
-    </div>
-    <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-      <label for="idRegla" class="font-medium">Regla</label>
-      <p-dropdown id="idRegla" inputId="idRegla" [autoDisplayFirst]="false"
-                  [options]="rules" optionValue="id" optionLabel="nombre" [filter]="true"
-                  [showClear]="true" formControlName="idRegla" [placeholder]="MESSAGE.SELECCIONA_OPCION"
-                  [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
-    </div>
-  </div>
-
-  <div class="field p-fluid">
-    <label for="idVariable" class="font-medium">Variable</label>
-    <p-dropdown id="idVariable" inputId="idVariable" [autoDisplayFirst]="false"
-                [options]="variables" optionValue="id" optionLabel="nombre" [filter]="true"
-                [showClear]="true" formControlName="idVariable" [placeholder]="MESSAGE.SELECCIONA_OPCION"
-                [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
-  </div>
-
   <app-form-action-button [deleting]="deleting"
                           [updateMode]="updateMode"
                           [showDeleteButton]="updateMode"
@@ -70,7 +114,7 @@
 
 <p-overlayPanel #compensationOptionsOverlayPanel [showCloseIcon]="true">
   <ng-template pTemplate>
-    <p-listbox [options]="compensationOptions" [group]="true" optionLabel="label" [filter]="true" title="Categorías" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" [style]="{'max-height':'250px', 'overflow':'auto'}" (onClick)="addCompensation($event.value.value)">
+    <p-listbox [options]="compensationOptions" [group]="true" optionLabel="label" [filter]="true" title="Categorías" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" [style]="{'max-height':'250px', 'overflow':'auto'}" (onClick)="changeCompensation($event.value.value)">
       <ng-template let-group pTemplate="group">
         <div class="flex align-items-center gap-2">
           <div>{{ group.label }}</div>
@@ -78,7 +122,7 @@
         </div>
       </ng-template>
       <ng-template let-item pTemplate="item">
-        <div class="flex align-items-center gap-2 w-full h-1rem ml-3">
+        <div class="flex align-items-center gap-2 w-full h-2rem ml-3">
           <div>{{ item.label }}</div>
           <button (click)="deleteCompensation(item, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto" pTooltip="Eliminar" tooltipPosition="bottom"></button>
         </div>
@@ -86,3 +130,33 @@
     </p-listbox>
   </ng-template>
 </p-overlayPanel>
+
+<p-overlayPanel #validityOptionsOverlayPanel [showCloseIcon]="true">
+  <ng-template pTemplate>
+    <p-listbox [options]="validityOptions" [filter]="true" title="Vigencias" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS" [style]="{'max-height':'250px', 'overflow':'auto'}" (onClick)="changeValidity($event.value)">
+      <ng-template let-item pTemplate="item">
+        <div class="flex align-items-center gap-2 w-full h-2rem ml-3">
+          <span>{{ item.label }}</span>
+          <div class="ml-auto">
+            <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(item.value.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(item.value.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+            <button (click)="deleteValidity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5" pTooltip="Eliminar" tooltipPosition="bottom"></button>
+          </div>
+        </div>
+      </ng-template>
+    </p-listbox>
+  </ng-template>
+</p-overlayPanel>
+
+<p-overlayPanel #infoSalariScale [showCloseIcon]="false" [styleClass]="'w-15rem m-0'">
+  <ng-template pTemplate>
+    <div class="bg-blue-50 border-round-xl flex align-items-center p-4 my-3">
+      <i class="pi pi-info-circle text-3xl text-blue-500 mr-2"></i>
+      <span class="text-blue-500 text-justify">Dejar en blanco para aplicar la configuración a todos los elementos de la lista.</span>
+    </div>
+  </ng-template>
+</p-overlayPanel>
+
+
+<ng-template #sNoValidity>
+  <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_VIGENCIA_ASOCIADA"></app-no-result>
+</ng-template>

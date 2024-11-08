@@ -61,16 +61,16 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   }
   filterHasChanged: boolean = false;
   confirmedFilters: FiltersBy;
-  
+
   structureOptions: TreeNode<Structure>[] = [];
   validityOptions: Validity[] = [];
 
   comparisonAtrribute: ComparisonAtrribute =  {comparisonKey: 'idAlcance', comparisonValue: 'alcance', comparisonLabel: 'nombre'};
   groupAttributes : GroupAttribute[] = [
-    {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE'},    
+    {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE'},
     {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY'},
-    {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL'}, 
-    {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE'}, 
+    {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL'},
+    {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE'},
   ];
   comparisonObjects: any[] = [];
 
@@ -156,7 +156,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
    */
   getSelectedRealAppointments(){
     return (this.selectedNodesOfAppointments as TreeNode[])?.filter(e => e.data.type == this.groupAttributes[this.groupAttributes.length - 1].type);
-  } 
+  }
 
   openFilterOptions(event: Event){
     this.filterOptionsOverlayPanel.show(event);
@@ -187,7 +187,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
           map.set(item[this.comparisonAtrribute.comparisonKey], item[this.comparisonAtrribute.comparisonValue]);
         }
         return map;
-      }, new Map()).values() 
+      }, new Map()).values()
     );
     this.comparisonObjects = list?.map(e => ({[this.comparisonAtrribute.comparisonKey]: e['id'], label: e[this.comparisonAtrribute.comparisonLabel]}));
   }
@@ -361,7 +361,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     const groupValues = groupAttributes.map( e => e.groupValue);
     const types = groupAttributes.map( e => e.type);
     const expandedNodes = this.expandedNodes;
-    
+
     const comparisonAtrribute = this.comparisonAtrribute;
     const comparisonKeys = [...new Set(list.map(item => item[comparisonAtrribute.comparisonKey]))];
 
@@ -383,7 +383,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
     function buildTree(grouped, level = 0) {
         if (level >= groupKeys.length) return [];
-        
+
         const result = [];
         for (const key in grouped) {
             const children = buildTree(
@@ -398,22 +398,22 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
                   comparisonsPercomparisonKey.set(obj[comparisonAtrribute.comparisonKey], 0);
                 }
                 comparisonsPercomparisonKey.set(
-                  obj[comparisonAtrribute.comparisonKey], 
+                  obj[comparisonAtrribute.comparisonKey],
                   comparisonsPercomparisonKey.get(obj[comparisonAtrribute.comparisonKey]) + obj.asignacionTotal
-                ); 
+                );
               }
             });
 
             result.push({
-                data: { 
-                  [groupKeys[level]]: key, 
-                  type: types[level],  
+                data: {
+                  [groupKeys[level]]: key,
+                  type: types[level],
                   ... (groupValues[level] != null ? grouped[key][0][groupValues[level]] :  grouped[key][0]),
                   items: grouped[key],
                   isLastGroup: level == groupKeys.length - 1,
                   total: grouped[key].length,
                   comparisonsPercomparisonKey: Object.fromEntries(comparisonsPercomparisonKey)
-                }, 
+                },
                 children: children,
                 expanded: expandedNodes.includes(types[level] + '|' + key),
             });

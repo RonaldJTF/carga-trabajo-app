@@ -28,7 +28,7 @@ export class ValidityComponent implements OnInit {
       ¿Está seguro de eliminar la vigencia?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
+            <strong>Advertencia:</strong>
             Eliminar la vigencia implica eliminar todas las parametrizaciones de los valores de las variables y los cargos designados en esa vigencia.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
@@ -58,6 +58,8 @@ export class ValidityComponent implements OnInit {
   variableOptions: SelectItem[] = [];
   menuItemsOfValueInValidity: MenuItem[] = [];
 
+  idLevel: string;
+
   constructor(
     private store: Store<AppState>,
     private confirmationDialogService: ConfirmationDialogService,
@@ -76,14 +78,18 @@ export class ValidityComponent implements OnInit {
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
-    
+
     this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
+
+    this.idLevel = this.route.snapshot.queryParams['idLevel'];
+
+    console.log("Quiero Editar:- ", this.idLevel);
 
     this.indexOfValueInValiditySubscription =  this.validityService.indexOfValueInValidity$.subscribe(e => this.indexOfValueInValidity = e);
     this.valueInValidityFormGroupSubscription = this.validityService.valueInValidityFormGroup$.subscribe(e => this.valueInValidityFormGroup = e);
     this.mustRechargeValueInValidityFormGroupSubscription = this.validityService.mustRechargeValidityFormGroup$.subscribe(e => this.mustRechargeValidityFormGroup = e);
     this.validitySubscription = this.validityService.validity$.subscribe(e => this.validity = e)
-    
+
     if (this.mustRechargeValidityFormGroup){
       this.validityService.createValidityFormGroup();
     }
@@ -137,7 +143,7 @@ export class ValidityComponent implements OnInit {
     this.validityService.updateValidity(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(ValidityActions.updateFromList({validity: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
+        this.router.navigate([this.backRoute], {skipLocationChange: true, queryParams: this.idLevel ? {idLevel: this.idLevel} : null});
         this.creatingOrUpdating = false;
         this.validityService.resetFormInformation();
 
@@ -263,8 +269,8 @@ export class ValidityComponent implements OnInit {
       ¿Está seguro de eliminar la variable <strong>${variable?.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
-            Eliminar la variable implica eliminar todas parametrizaciones de su valor en cada una de las vigencias donde se ha relacionado. 
+            <strong>Advertencia:</strong>
+            Eliminar la variable implica eliminar todas parametrizaciones de su valor en cada una de las vigencias donde se ha relacionado.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>

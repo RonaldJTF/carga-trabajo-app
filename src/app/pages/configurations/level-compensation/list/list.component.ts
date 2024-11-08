@@ -5,8 +5,14 @@ import {IMAGE_SIZE, Methods} from "@utils";
 import {MESSAGE} from "@labels/labels";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Table} from "primeng/table";
-import {MenuItem} from "primeng/api";
+import {MenuItem, TreeNode} from "primeng/api";
 import {finalize} from "rxjs";
+import {TreeTable} from "primeng/treetable";
+
+class GroupAttribute {
+  groupKey: 'idVigencia';
+  groupValue: string;
+}
 
 @Component({
   selector: 'app-list',
@@ -31,6 +37,13 @@ export class ListComponent implements OnInit {
 
   levelCompensation: LevelCompensation[] = [];
 
+  groupLevelCompensation: any = [];
+
+  tree: TreeNode[] = [];
+
+  expandedRows: { [vigenciaId: string]: { [escalaId: string]: boolean } } = {};
+
+
   constructor(
     private authService: AuthenticationService,
     private compensationService: CompensationService,
@@ -41,6 +54,14 @@ export class ListComponent implements OnInit {
   ) {
   }
 
+  toggleRow(vigenciaId: string, escalaId: string): void {
+    if (!this.expandedRows[vigenciaId]) {
+      this.expandedRows[vigenciaId] = {};
+    }
+    this.expandedRows[vigenciaId][escalaId] = !this.expandedRows[vigenciaId][escalaId];
+  }
+
+
   ngOnInit() {
     const {isAdministrator} = this.authService.roles();
     this.isAdmin = isAdministrator;
@@ -50,7 +71,7 @@ export class ListComponent implements OnInit {
 
   initMenu() {
     this.items = [
-      {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.edit(parseInt(e.item.id))},
+      {label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.editValidity(parseInt(e.item.id))},
       {label: 'Eliminar', icon: 'pi pi-trash', command: (e) => this.onDelete(parseInt(e.item.id))},
     ];
   }
@@ -73,9 +94,41 @@ export class ListComponent implements OnInit {
     ).subscribe({
       next: (res) => {
         this.levelCompensation = res;
-        console.log(this.levelCompensation)
+        this.groupLevelCompensation = this.groupByValidityAndScale(this.levelCompensation);
+        this.tree = this.buildTreeNode(this.groupLevelCompensation)
+        console.log(this.tree)
       }
     })
+  }
+
+  groupByValidityAndScale(data: any[]) {
+    const grouped = {};
+
+    data.forEach((item) => {
+      const vigenciaId = item.vigencia.id;
+      const escalaSalarial = item.escalaSalarial
+      const escalaId = item.escalaSalarial?.id;
+
+      if (!grouped[vigenciaId]) {
+        grouped[vigenciaId] = {...item.vigencia, escalas: {}};
+      }
+
+      if (!grouped[vigenciaId].escalas[escalaId]) {
+        grouped[vigenciaId].escalas[escalaId] = {
+          escalaSalarial: escalaSalarial,
+          items: []
+        };
+      }
+
+      grouped[vigenciaId].escalas[escalaId].items.push(item);
+    });
+
+    return Object.values(grouped).map((vigencia: any) => {
+      return {
+        ...vigencia,
+        escalas: Object.values(vigencia.escalas),
+      };
+    });
   }
 
   deleteSelectedLevelCompensation() {
@@ -120,11 +173,67 @@ export class ListComponent implements OnInit {
     });
   }
 
-  edit(id: number) {
+  editValidity(id: number) {
     console.log("Editando...-> ", id);
+    this.router.navigate(['/configurations/validities/create', this.cryptojsService.encryptParam(id)], {
+      skipLocationChange: true,
+      queryParams: {idLevel: this.idLevel}
+    }).then();
   }
 
   parseStringToBoolean(str: string): boolean {
     return Methods.parseStringToBoolean(str);
   }
+
+
+  buildTreeNode(data: any): TreeNode[] {
+    return data.map((nodeData: any) => this.createNode(nodeData));
+  }
+
+
+  createNode(data: any): TreeNode {
+    let node: TreeNode = {
+      label: '',
+      data: data,
+      expanded: true,
+      children: []
+    };
+
+    // Determina el tipo de nodo en base a las propiedades disponibles en `data`
+    if (data.nombre && data.anio !== undefined) {
+      // Nodo de Vigencia
+      node.label = `${data.nombre} - Año: ${data.anio}`;
+      node.children = [
+        {
+          label: 'Valores de Vigencia',
+          expanded: true,
+          children: this.buildTreeNode(data.valoresVigencia || [])
+        },
+        {
+          label: 'Escalas Salariales',
+          expanded: true,
+          children: this.buildTreeNode(data.escalas || [])
+        }
+      ];
+    } else if (data.valor !== undefined && data.variable) {
+      // Nodo de Valor de Vigencia
+      node.label = `Valor: ${data.valor} - Variable: ${data.variable.nombre}`;
+    } else if (data.escalaSalarial) {
+      // Nodo de Escala Salarial
+      node.label = `${data.escalaSalarial.nombre} - Código: ${data.escalaSalarial.codigo}`;
+      node.children = this.buildTreeNode(data.items || []);
+    } else if (data.compensacionLaboral && data.nivel) {
+      // Nodo de Item
+      node.label = `${data.compensacionLaboral.nombre} - ${data.nivel.nombre}`;
+      node.children = [
+        this.createNode({label: `Compensación: ${data.compensacionLaboral.nombre}`, data: data.compensacionLaboral}),
+        this.createNode({label: `Variable: ${data.variable.nombre}`, data: data.variable}),
+        this.createNode({label: `Regla: ${data.regla.nombre}`, data: data.regla})
+      ];
+    }
+
+    return node;
+  }
+
+
 }

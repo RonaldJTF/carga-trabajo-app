@@ -17,11 +17,8 @@ export class CompensationService {
 
   private pathRule = 'rule';
 
-  private pathVariable = 'validity/variable'
-
   constructor(
-    private webRequestService: WebRequestService,
-    private cryptoService: CryptojsService
+    private webRequestService: WebRequestService
   ) {
   }
 
@@ -107,9 +104,6 @@ export class CompensationService {
     return this.webRequestService.getWithHeaders(this.pathRule);
   }
 
-  getVariables(){
-    return this.webRequestService.getWithHeaders(this.pathVariable);
-  }
 
 
 }
