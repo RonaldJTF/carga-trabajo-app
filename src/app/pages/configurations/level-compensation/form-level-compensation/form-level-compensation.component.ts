@@ -1,13 +1,20 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {CompensationService, ConfirmationDialogService, CryptojsService, LevelService} from "@services";
+import {
+  CompensationService,
+  ConfirmationDialogService,
+  CryptojsService,
+  LevelService,
+  ValidityService
+} from "@services";
 import {Compensation, LevelCompensation, Rule, SalaryScale, Variable} from "@models";
-import {IMAGE_SIZE} from "@utils";
+import {IMAGE_SIZE, Methods} from "@utils";
 import {MESSAGE} from "@labels/labels";
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {SelectItem} from "primeng/api";
 import {OverlayPanel} from "primeng/overlaypanel";
 import {finalize} from "rxjs";
+import {VariableService} from "../../../../services/variable.service";
 
 @Component({
   selector: 'app-form-level-compensation',
@@ -34,6 +41,8 @@ export class FormLevelCompensationComponent implements OnInit {
 
   levelCompensation: LevelCompensation = new LevelCompensation();
 
+  validityOptions: SelectItem[] = [];
+
   compensationOptions: SelectItem[] = [];
 
   compensation: Compensation[] = [];
@@ -48,14 +57,17 @@ export class FormLevelCompensationComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private compensationService: CompensationService,
+    private variableService: VariableService,
     private formBuilder: FormBuilder,
     private cryptojsService: CryptojsService,
     private confirmationDialogService: ConfirmationDialogService,
     private levelService: LevelService,
+    private validityService: ValidityService
   ) {
   }
 
   ngOnInit() {
+    this.loadValidities();
     this.getVariable();
     this.getRole();
     this.getCompensations();
@@ -66,10 +78,10 @@ export class FormLevelCompensationComponent implements OnInit {
   buildForm() {
     this.formLevelCompensation = this.formBuilder.group({
       compensacion: ['', Validators.required],
-      idEscalaSalarial: [''],
-      idVigencia: [''],
-      idRegla: ['', Validators.required],
-      idVariable: ['', Validators.required]
+      idEscalaSalarial: ['', Validators.required],
+      vigencia: ['', Validators.required],
+      regla: ['', Validators.required],
+      variable: ['', Validators.required]
     });
   }
 
@@ -87,6 +99,18 @@ export class FormLevelCompensationComponent implements OnInit {
 
   get compensationFormControl(): FormControl {
     return this.formLevelCompensation.get('compensacion') as FormControl;
+  }
+
+  get validityFormControl(): FormControl {
+    return this.formLevelCompensation.get('vigencia') as FormControl;
+  }
+
+  get ruleFromControl(): FormControl {
+    return this.formLevelCompensation.get('regla') as FormControl;
+  }
+
+  get variableFormControl(): FormControl {
+    return this.formLevelCompensation.get('variable') as FormControl;
   }
 
   getCompensations() {
@@ -115,11 +139,49 @@ export class FormLevelCompensationComponent implements OnInit {
   }
 
   getVariable() {
-    this.compensationService.getVariables().subscribe({
+    this.variableService.getVariables().subscribe({
       next: (res) => {
         this.variables = res;
       }
     })
+  }
+
+  loadValidities(): void {
+    this.validityService.getValidities().subscribe({
+      next: (res) => {
+        this.validityOptions = res?.map(o => ({value: o, label: o.nombre}));
+        res?.find(o => {
+          Methods.parseStringToBoolean(o.estado) && this.formLevelCompensation.get('vigencia').patchValue(o)
+        });
+      }
+    });
+  }
+
+  removeValidity() {
+    const validityControl = this.formLevelCompensation.get('vigencia');
+    validityControl.reset();
+    validityControl.markAsTouched();
+  }
+
+  onGoToUpdateValidity(id: any, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.validityService.setMustRechargeValidityFormGroup(true);
+
+    const backRoute = this.levelCompensation ? `${'/configurations/level-compensation/create/' + this.cryptojsService.encryptParam(this.levelCompensation.id)}` : '/configurations/level-compensation/create';
+    this.router.navigate(["/configurations/validities", this.cryptojsService.encryptParam(id.id)], {
+      skipLocationChange: true,
+      queryParams: {backRoute: backRoute, idLevel: this.idLevel}
+    }).then()
+  }
+
+  createValidity() {
+    this.validityService.setMustRechargeValidityFormGroup(true);
+    const backRoute = this.levelCompensation ? `${'/configurations/level-compensation/create/' + this.cryptojsService.encryptParam(this.levelCompensation.id)}` : '/configurations/level-compensation/create';
+    this.router.navigate(['/configurations/validities/create'], {
+      skipLocationChange: true,
+      queryParams: {backRoute: backRoute}
+    }).then();
   }
 
   loadCompensationsOptions() {
@@ -173,6 +235,7 @@ export class FormLevelCompensationComponent implements OnInit {
   }
 
   editCompensation(compensation: any) {
+    console.log(compensation)
     const queryParams = {idCategory: this.cryptojsService.encryptParam(compensation.idCategoria)};
     if (compensation.id) {
       queryParams['idCompensation'] = this.cryptojsService.encryptParam(compensation.id);
@@ -197,7 +260,7 @@ export class FormLevelCompensationComponent implements OnInit {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.compensationService.deleteCompensation(this.cryptojsService.encryptParam(e.value.id)).subscribe({
-          next: (res) => {
+          next: () => {
             this.goBack();
           },
         });
@@ -215,10 +278,43 @@ export class FormLevelCompensationComponent implements OnInit {
     )
   }
 
-  addCompensation(compensation: any) {
+  deleteValidity(e: any, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.compensationService.deleteCompensation(this.cryptojsService.encryptParam(e.value.id)).subscribe({
+          next: () => {
+            this.goBack();
+          },
+        });
+      },
+      `
+      ¿Está seguro de eliminar la compensación <strong>${e.value.nombre}</strong>?
+      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
+        <span>
+        <strong>Advertencia:</strong>
+        Al eliminar la copensación, todas las compensaciones laborales relacionadas con ella también serán eliminadas.
+        Por favor, asegúrese de comprender el impacto de esta acción antes de proceder.
+        </span>
+      </div>
+      `
+    )
+  }
+
+  changeCompensation(compensation: any) {
     this.formLevelCompensation.get('compensacion').setValue(compensation);
     this.compensationOptionsOverlayPanel.hide();
     this.loadCompensationsOptions();
+  }
+
+  changeValidity(validity: any) {
+    this.formLevelCompensation.get('vigencia').setValue(validity);
+    this.compensationOptionsOverlayPanel.hide();
+  }
+
+  parseStringToBoolean(str: string): boolean {
+    return Methods.parseStringToBoolean(str);
   }
 
   onCancelLevelCompensation(event: Event): void {
@@ -237,7 +333,6 @@ export class FormLevelCompensationComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.goBack();
-        this.deleting = false;
       }
     });
   }
@@ -259,10 +354,10 @@ export class FormLevelCompensationComponent implements OnInit {
       id: payload.id ?? null,
       idNivel: this.cryptojsService.decryptParamAsNumber(this.idLevel),
       idCompensacionLaboral: payload.compensacion.id ?? null,
-      idEscalaSalarial: payload.idEscalaSalarial,
-      idRegla: payload.idRegla ?? null,
-      idVariable: payload.idVariable,
-      idVigencia: 1
+      idEscalaSalarial: payload.idEscalaSalarial ?? null,
+      idRegla: payload.regla.id,
+      idVariable: payload.variable.id,
+      idVigencia: payload.vigencia.id
     };
   }
 
@@ -272,7 +367,7 @@ export class FormLevelCompensationComponent implements OnInit {
         this.creatingOrUpdating = false;
       })
     ).subscribe({
-      next: (res) => {
+      next: () => {
         this.goBack();
       }
     })
@@ -285,7 +380,7 @@ export class FormLevelCompensationComponent implements OnInit {
         this.creatingOrUpdating = false;
       })
     ).subscribe({
-      next: (res) => {
+      next: () => {
         this.goBack();
       }
     })
@@ -294,7 +389,7 @@ export class FormLevelCompensationComponent implements OnInit {
   goBack() {
     this.router.navigate(['/configurations/level-compensation'], {
       skipLocationChange: true,
-      queryParams:{idLevel: this.idLevel}
+      queryParams: {idLevel: this.idLevel}
     }).then();
   }
 

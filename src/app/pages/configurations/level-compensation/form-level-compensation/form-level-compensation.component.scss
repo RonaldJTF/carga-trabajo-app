@@ -1,0 +1,13 @@
+._button-container {
+  position: relative;
+  display: inline-block;
+}
+
+._button-icon {
+  position: absolute;
+  top: 3px;
+  right: 230px;
+  padding: 3px 8px;
+  z-index: 1;
+  cursor: pointer;
+}

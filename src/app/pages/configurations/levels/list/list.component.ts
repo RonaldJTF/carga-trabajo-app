@@ -316,7 +316,7 @@ export class ListComponent implements OnInit, OnDestroy{
   onGoToUpdateCompensation(idLevel: string, event: Event) {
     event.preventDefault();
     this.router.navigate(["/configurations/level-compensation"], {
-      skipLocationChange: false,
+      skipLocationChange: true,
       queryParams: {idLevel: this.cryptoService.encryptParam(idLevel)}
     }).then()
   }
