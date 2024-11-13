@@ -1,8 +1,5 @@
 <ng-container *ngIf="!loading else sLoading">
     <div *ngIf="!levels.length else data">
-      <button pButton pRipple type="button"  class="p-button-text _button-go" (click)="onGoToUpdateCompensation('1',$event)" >
-        <i class="pi pr-2 pi-user-edit"></i>
-      </button>
         <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo nivel ocupacional'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="!isAdmin"></app-go-to-if-not-found>
     </div>
     <ng-template #data>

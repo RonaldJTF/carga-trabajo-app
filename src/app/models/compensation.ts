@@ -1,9 +1,9 @@
 import {Periodicity} from "./periodicity";
 import {Category} from "./category";
 import {Level, SalaryScale} from "./level";
-import {Scope} from "./normativity";
 import {Rule} from "./rule";
 import {Variable} from "./variable";
+import { Validity } from "./validity";
 
 export class Compensation {
   id?: number;
@@ -27,7 +27,7 @@ export class LevelCompensation{
   nivel: Level;
   compensacionLaboral: Compensation;
   escalaSalarial: SalaryScale;
-  vigencia: Scope;
+  vigencia: Validity;
   regla: Rule;
   variable: Variable;
   valorAplicado: number;

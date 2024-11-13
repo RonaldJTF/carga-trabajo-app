@@ -1,0 +1,97 @@
+<form *ngIf="!loadingCompensation else sLoadingCompensation" class="p-0" [formGroup]="formCompensation">
+    <ng-container *ngTemplateOutlet="categoryOptionTemplate; context: {category: formCompensation.get('categoria').value}"></ng-container>
+
+    <div class="field p-fluid mt-3">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+        <div *ngIf="formCompensation.controls['nombre'].errors && (formCompensation.controls['nombre'].touched||formCompensation.controls['nombre'].dirty)">
+            <div *ngIf="formCompensation.controls['nombre'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa un nombre</small>
+            </div>  
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="idPeriodicidad" class="font-medium">Periodicidad</label>
+        <p-dropdown id="idPeriodicidad" inputId="idPeriodicidad" [autoDisplayFirst]="false"
+                    [options]="periodicities" optionValue="id" optionLabel="nombre" [filter]="true"
+                    [showClear]="true"
+                    formControlName="idPeriodicidad" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                    [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+        </p-dropdown>
+        <div *ngIf="formCompensation.controls['idPeriodicidad'].errors && (formCompensation.controls['idPeriodicidad'].touched||formCompensation.controls['idPeriodicidad'].dirty)">
+            <div *ngIf="formCompensation.controls['idPeriodicidad'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa una periodicidad</small>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="field p-fluid flex align-items-center">
+        <label htmlFor="estado" class="font-medium mr-2">Estado</label>
+        <p-inputSwitch id="estado" formControlName="estado"></p-inputSwitch>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitCompensation($event)"
+        (cancel)="onCancelCompensation($event)"
+        (delete)="onDeleteCompensation($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formCompensation.invalid">
+    </app-form-action-button>
+</form>
+
+<ng-template #sLoadingCompensation>
+    <app-loading></app-loading>
+</ng-template>
+
+<ng-template #categoryOptionTemplate let-category="category">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Categoría</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formCompensation?.value.idCategoria" (click)="removeCategory()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formCompensation?.value.idCategoria" (click)="onGoToUpdateCategory(category.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewCategory()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #categoryMenu [popup]="true" [model]=""></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Categorias"  (click)="categoryOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #categoryOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="categoryOptions" [filter]="true" title="Categorías"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeCategory($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <span>{{item.label }}</span>
+                                <div class="ml-auto">
+                                    <button (click)="onDeleteCategory(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div  *ngIf="category; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
+        <span class="text-500">{{category.nombre | uppercase}}</span>
+    </div>
+
+    <ng-template #sNoValidity>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_CATEGORIA_ASOCIADA"></app-no-result>
+    </ng-template>
+
+    <div *ngIf="formCompensation.controls['idCategoria'] && formCompensation.controls['idCategoria'].errors && (formCompensation.controls['idCategoria'].touched || formCompensation.controls['idCategoria'].dirty)">
+        <div *ngIf="formCompensation.controls['idCategoria'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una categoría para la compensación laboral</small>
+        </div>  
+    </div>
+</ng-template>

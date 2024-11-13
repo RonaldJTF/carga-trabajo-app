@@ -30,7 +30,7 @@ export const compensationReducer = createReducer(
   }),
 
   on(CompensationActions.removeFromList, (state, {id}) => {
-    return {...state, items: state.items.filter(e => e.id !== id)};
+    return {...state, items: state.items.filter(e => e.id != id)};
   }),
 
   on(CompensationActions.removeItemsFromList, (state, {compensationIds}) => {
@@ -55,4 +55,8 @@ export const compensationReducer = createReducer(
     ...state,
     item: JSON.parse(JSON.stringify(state.items.find(item => item.id == id)))
   })),
+
+  on(CompensationActions.removeFromListWithCategoryId, (state, {categoryId}) => {
+    return {...state, items: state.items.filter(e => e.idCategoria != categoryId)};
+  }),
 )

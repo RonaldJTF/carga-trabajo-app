@@ -11,6 +11,6 @@ export class RulesComponent {
     label: 'Reglas',
     icon: 'pi pi-check-square',
     color: 'primary',
-    description: 'Gestión de las reglas consideradas en las compensaciones laborales',
+    description: 'Gestión de las reglas que definen la aplicación de las compensaciones laborales',
   };
 }

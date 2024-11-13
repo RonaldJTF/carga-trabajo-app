@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MESSAGE} from "@labels/labels";
 import {IMAGE_SIZE} from "@utils";
-import {finalize, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 import {Compensation} from "@models";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AuthenticationService, CompensationService, ConfirmationDialogService, CryptojsService} from "@services";
+import {AuthenticationService, CompensationCategoryService, CompensationService, ConfirmationDialogService, CryptojsService} from "@services";
 import {Table} from "primeng/table";
 import {MenuItem} from "primeng/api";
 import {Store} from "@ngrx/store";
@@ -18,24 +18,26 @@ import * as CompensationActions from "@store/compensation.actions";
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit, OnDestroy {
-
   protected readonly MESSAGE = MESSAGE;
-
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
-  loading: boolean = false;
+  @ViewChild('dt') dt!: Table;
 
+  loading: boolean = false;
   isAdmin: boolean;
 
   compensation: Compensation;
-
   compensations: Compensation[] = [];
 
   compensationsSubscription: Subscription;
-
   compensationSubscription: Subscription;
 
-  selectedCompentations: Compensation[] = [];
+  selectedCompensations: Compensation[] = [];
+
+  menuItemsOfCompesantion: MenuItem[] = [];
+  menuItemsOfCategory: MenuItem[] = [];
+
+  rowGroupMetadata: any;
 
   constructor(
     private router: Router,
@@ -43,6 +45,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private authService: AuthenticationService,
     private confirmationDialogService: ConfirmationDialogService,
     private compensationService: CompensationService,
+    private compensationCategoryService: CompensationCategoryService,
     private cryptojsService: CryptojsService,
     private store: Store<AppState>,
   ) {
@@ -52,45 +55,55 @@ export class ListComponent implements OnInit, OnDestroy {
     const {isAdministrator} = this.authService.roles();
     this.isAdmin = isAdministrator;
 
-    this.compensationsSubscription = this.store.select(state => state.compensation.items).subscribe(e => {
-      this.compensations = e;
-      this.compensations?.forEach(e => {
-        e['menuItems'] = this.getMenuItemsOfCompensation(e);
-      })
-    });
+    this.compensationsSubscription = this.store.select(state => state.compensation.items).subscribe(e => this.compensations = e);
     this.compensationSubscription = this.store.select(state => state.compensation.item).subscribe(e => this.compensation = e);
+    this.initMenuItems();
     this.getCompensations();
   }
 
+  ngOnDestroy(): void {
+    this.compensationsSubscription?.unsubscribe();
+    this.compensationSubscription?.unsubscribe();
+  }
+
+  initMenuItems(){
+    this.menuItemsOfCompesantion = [
+      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onManagementCompensations(e.item.id, e.originalEvent)},
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteCompensation(e)},
+    ];
+    this.menuItemsOfCategory = [
+      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoUpdateCategory(e.item.id, e.originalEvent)},
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteCategory(e)},
+    ]
+  }
+
   desmarkAll() {
-    this.selectedCompentations = [];
+    this.selectedCompensations = [];
   }
 
-  onGlobalFilter(table: Table, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  openNew() {
+    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true});
   }
 
-  getCompensations() {
+  getCompensations(){
     this.loading = true;
-    this.compensationService.getCompesations().pipe(
-      finalize(() => {
+    this.compensationService.getCompesations().subscribe({
+      next: (data) => {
+        this.store.dispatch(CompensationActions.setList({compensations: data as Compensation[]}));
         this.loading = false;
-      })
-    ).subscribe({
-      next: (res) => {
-        this.store.dispatch(CompensationActions.setList({compensations: res}));
-      }
+      },
+      error: ()=>{this.loading = false}
     })
   }
 
   deleteSelectedCompensations() {
-    let compensationIds: string[] = this.selectedCompentations.map(item => this.cryptojsService.encryptParam(item.id));
+    let compensationIds: number[] = this.selectedCompensations.map(item => item.id);
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.compensationService.deleteSelectedCompensations(compensationIds)
           .subscribe({
             next: () => {
-              this.store.dispatch(CompensationActions.removeItemsFromList({compensationIds: this.selectedCompentations.map(item => item.id)}));
+              this.store.dispatch(CompensationActions.removeItemsFromList({compensationIds: this.selectedCompensations.map(item => item.id)}));
               this.desmarkAll();
             }
           });
@@ -98,17 +111,13 @@ export class ListComponent implements OnInit, OnDestroy {
     )
   }
 
-  onManagementCompensations(idCompensation: number, event: Event) {
-    console.log(idCompensation)
-    this.router.navigate(['create'], {
-      queryParams: {idCompensation: this.cryptojsService.encryptParam(idCompensation)},
-      relativeTo: this.route,
-      skipLocationChange: true,
-    }).then();
+  onManagementCompensations(idCompensation: any, event: Event) {
+    const backRoute = '/configurations/compensations/';
+    this.router.navigate([this.cryptojsService.encryptParam(idCompensation)], {relativeTo: this.route, skipLocationChange: true,  queryParams: {backRoute: backRoute}});
   }
 
   onDeleteCompensation(event: any) {
-    let id = this.cryptojsService.encryptParam(event.item.id);
+    let id = event.item.id;
     event.originalEvent.preventDefault();
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
@@ -123,35 +132,70 @@ export class ListComponent implements OnInit, OnDestroy {
     )
   }
 
-  openNew() {
-    this.router.navigate(['create'], {
-      relativeTo: this.route,
-      skipLocationChange: true
-    }).then();
+  onGoUpdateCategory(id: any, event: Event) {
+    const backRoute = 'configurations/compensations/';
+    this.router.navigate(['configurations/compensation-categories', this.cryptojsService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
-  private getMenuItemsOfCompensation(compensation: Compensation): MenuItem [] {
-    if (!compensation) {
-      return [];
+  onDeleteCategory(event: any) {
+    let id = event.item.id;
+    event.originalEvent.preventDefault();
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.compensationCategoryService.deleteCategory(id)
+          .subscribe({
+            next: () => {
+              this.store.dispatch(CompensationActions.removeFromListWithCategoryId({categoryId: id}));
+              this.desmarkAll();
+            }
+          });
+      },
+      `
+      ¿Está seguro de eliminar la categoría <strong>${event.data?.nombre}</strong>?
+      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
+        <span>
+            <strong>Advertencia:</strong> 
+            Eliminar la categoría implica eliminar todas las compensaciones laborales asociadas con ella.
+            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
+        </span>
+      </div>
+      `
+    )
+  }
+
+  onSort() {
+    this.updateRowGroupMetaData(this.dt?.filteredValue ?? this.dt?.value ?? this.compensations);
+  }
+
+  onFilter() {
+    this.updateRowGroupMetaData(this.dt?.filteredValue ?? this.dt?.value ?? this.compensations);
+  }
+
+  applyFilterGlobal($event, stringVal) {
+    this.dt.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
+    this.updateRowGroupMetaData(this.dt.filteredValue);
+  }
+
+  updateRowGroupMetaData(compesations: Compensation[]) {
+    this.rowGroupMetadata = {};
+    if (compesations) {
+      for (let i = 0; i < compesations.length; i++) {
+        const rowData = compesations[i];
+        const categoryName = rowData?.categoria?.nombre || '';
+        if (i === 0) {
+          this.rowGroupMetadata[categoryName] = { index: 0, size: 1 };
+        }
+        else {
+          const previousRowData = compesations[i - 1];
+          const previousRowGroup = previousRowData?.categoria?.nombre;
+          if (categoryName === previousRowGroup) {
+            this.rowGroupMetadata[categoryName].size++;
+          }
+          else {
+            this.rowGroupMetadata[categoryName] = { index: i, size: 1 };
+          }
+        }
+      }
     }
-    return [
-      {
-        label: 'Editar',
-        icon: 'pi pi-pencil',
-        visible: this.isAdmin,
-        command: (e) => this.onManagementCompensations(parseInt(e.item.id), e.originalEvent)
-      },
-      {
-        label: 'Eliminar',
-        icon: 'pi pi-trash',
-        visible: this.isAdmin,
-        command: (e) => this.onDeleteCompensation(e)
-      },
-
-    ];
-  }
-
-  ngOnDestroy(): void {
-    this.compensationsSubscription?.unsubscribe();
   }
 }

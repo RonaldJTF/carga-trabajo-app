@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
 import { Rule, Variable } from '@models';
 import { Store } from '@ngrx/store';
-import { CryptojsService, RuleService, UrlService } from '@services';
+import { CryptojsService, LevelCompensationService, RuleService, UrlService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { ValidateExpression } from '@validations/validateExpression';
 import { AppState } from 'src/app/app.reducers';
@@ -41,6 +41,7 @@ export class RuleComponent  implements OnInit, OnDestroy {
     private store: Store<AppState>,
     private ruleService: RuleService,
     private variableService: VariableService,
+    private levelCompensationService: LevelCompensationService,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
@@ -131,8 +132,8 @@ export class RuleComponent  implements OnInit, OnDestroy {
       next: (e) => {
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
-        //Actualizamos de las escalas salariales la nueva información de la normatividad
-        //this.levelService.updateRuleInSalaryScales(e);
+        //Actualizamos del formulario de relación de compensación laboral de niveles en una vigencia la nueva información de la regla
+        this.levelCompensationService.updateRuleInLevelCompensation(e);
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -175,8 +176,8 @@ export class RuleComponent  implements OnInit, OnDestroy {
       next: () => {
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.deleting = false;
-        //Removemos de la lista de scalas salariales que se están gestionando todas aquellas asociadas a esta normatividad
-        //this.levelService.removeSalaryScalesByRule(this.rule.id);
+        //Removemos del formulario de relación de compensación laboral de niveles en una vigencia la regla si es la que se aplica
+        this.levelCompensationService.removeRuleInLevelCompensation(this.rule.id);
       },
       error: (error) => {
         this.deleting = false;
@@ -212,13 +213,26 @@ export class RuleComponent  implements OnInit, OnDestroy {
       this.insertVariable(parseInt(data));
     }
   }
-
+  
   updateExpressionFromInputText(event) {
     const editableInput = event.target;
-    const obj =  this.getExpression(editableInput.childNodes);
-    this.setConditionsAndConditionsExpression(obj);
+    if(this.allowedCharacter(editableInput.childNodes)){
+      const obj =  this.getExpression(editableInput.childNodes);
+      this.setConditionsAndConditionsExpression(obj);
+    }
   }
-  
+
+  private allowedCharacter(childNodes){
+    const allowedCharacters = /^[+\-*/><=()0-9.\s ]*$/;
+    for (let node of childNodes ?? []){
+      if (node.nodeType === Node.TEXT_NODE && !allowedCharacters.test( node.nodeValue)) {
+        node.nodeValue =node.nodeValue.split('').filter(char => allowedCharacters.test(char)).join('');
+        return false;
+      }
+    }
+    return true;
+  }
+
   private updateExpression(editableInput) {
     const obj =  this.getExpression(editableInput.childNodes);
     this.setConditionsAndConditionsExpression(obj);
@@ -314,7 +328,7 @@ export class RuleComponent  implements OnInit, OnDestroy {
   }
 
   private extractExpressions(expression) {
-    const regex = /\$\[\d+\]|<=|>=|==|[\+\-\*\/\<\>\&\|]|\d+(\.\d+)?/g;
+    const regex = /\$\[\d+\]|<=|>=|==|[\(\)\+\-\*\/\<\>\&\|]|\d+(\.\d+)?/g;
     return expression.match(regex);
   }
 }

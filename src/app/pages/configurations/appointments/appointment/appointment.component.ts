@@ -117,6 +117,9 @@ export class AppointmentComponent implements OnInit, OnDestroy {
       this.updateMode = false;
       this.formAppointment = this.appointmentService.getAppointmentFormGroup();
       this.appointmentService.setMustRechargeAppointmentFormGroup(false);
+      if(this.formAppointment.get('idNivel').value){
+        this.loadSalaryScale(this.formAppointment.get('idNivel').value);  
+      }
     }else{
       this.updateMode = true;
       if (this.mustRechargeAppointmentFormGroup){
@@ -130,6 +133,9 @@ export class AppointmentComponent implements OnInit, OnDestroy {
         });
       }else{
         this.formAppointment = this.appointmentService.getAppointmentFormGroup();
+        if(this.formAppointment.get('idNivel').value){
+          this.loadSalaryScale(this.formAppointment.get('idNivel').value);  
+        }
       }
     }
   }
@@ -158,7 +164,6 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.levelService.getLevels().subscribe({
       next: (e) => {
         this.levels = e;
-        this.salaryScales = null;
       }
     });
   }
@@ -268,31 +273,6 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.router.navigate(["/configurations/validities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute, isSalaryScale: true}})
   }
 
-  onDeleteValidity(validity: Validity, event: Event): void{
-    event.preventDefault();
-    event.stopPropagation();
-    this.confirmationDialogService.showDeleteConfirmationDialog(
-      () => {
-        this.validityService.deleteValidity(validity.id).subscribe({
-          next: () => {
-            this.appointmentService.removeValidityInAppointment(validity.id);
-            this.validityOptions = this.validityOptions.filter(e => e.value?.id != validity.id);
-          },
-        });
-      },
-      `
-      ¿Está seguro de eliminar la vigencia <strong>${validity?.nombre}</strong>?
-      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
-        <span>
-            <strong>Advertencia:</strong> 
-            Eliminar la vigencia implica eliminar todas las parametrizaciones de los valores de las variables y los cargos designados en esa vigencia.
-            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
-        </span>
-      </div>
-      `
-    )
-  }
-
   changeNormativity(data: any){
     this.appointmentService.setNormativityToAppointment(data.value);
     this.normativityOptionsOverlayPanel.hide();
@@ -312,32 +292,6 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     const backRoute = this.appointment ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointment.id)}` : '/configurations/appointments/create';
     this.router.navigate(["/configurations/normativities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
-  }
-
-  onDeleteNormativity(normativity: Normativity, event: Event): void{
-    event.preventDefault();
-    event.stopPropagation();
-    this.confirmationDialogService.showDeleteConfirmationDialog(
-      () => {
-        this.normativityService.deleteNormativity(normativity.id).subscribe({
-          next: () => {
-            this.appointmentService.removeNormativityInAppointment(normativity.id);
-            this.normativityOptions = this.normativityOptions.filter(e => e.value?.id != normativity.id)
-          },
-        });
-      },
-      `
-      ¿Está seguro de eliminar la normatividad <strong>${normativity?.nombre}</strong>?
-      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
-        <span>
-            <strong>Advertencia:</strong> 
-            Eliminar la normatividad implica eliminar todas las asignaciones laborales, 
-            incluidas aquellas que están asociadas en otras vigencias y que dependen de la misma normatividad. 
-            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
-        </span>
-      </div>
-      `
-    )
   }
 
   showDetailOfNormativity(elementRef: HTMLDivElement, event: Event) {

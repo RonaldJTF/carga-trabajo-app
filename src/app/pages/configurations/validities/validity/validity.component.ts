@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
 import { Validity, ValueInValidity, Variable } from '@models';
 import { Store } from '@ngrx/store';
-import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, UrlService, ValidityService } from '@services';
+import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelCompensationService, UrlService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { MenuItem, SelectItem } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
@@ -66,6 +66,7 @@ export class ValidityComponent implements OnInit {
     private validityService: ValidityService,
     private variableService: VariableService,
     private appointmentService: AppointmentService,
+    private levelCompensationService: LevelCompensationService,
     private authService: AuthenticationService,
     private location: Location,
     private router: Router,
@@ -80,10 +81,6 @@ export class ValidityComponent implements OnInit {
     this.isAdmin = isAdministrator;
 
     this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
-
-    this.idLevel = this.route.snapshot.queryParams['idLevel'];
-
-    console.log("Quiero Editar:- ", this.idLevel);
 
     this.indexOfValueInValiditySubscription =  this.validityService.indexOfValueInValidity$.subscribe(e => this.indexOfValueInValidity = e);
     this.valueInValidityFormGroupSubscription = this.validityService.valueInValidityFormGroup$.subscribe(e => this.valueInValidityFormGroup = e);
@@ -143,12 +140,14 @@ export class ValidityComponent implements OnInit {
     this.validityService.updateValidity(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(ValidityActions.updateFromList({validity: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true, queryParams: this.idLevel ? {idLevel: this.idLevel} : null});
+        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.validityService.resetFormInformation();
 
         //Actualizamos del formulario de asignación salarial la nueva información de la vigencia
         this.appointmentService.updateValidityInAppointment(e);
+        //Actualizamos del formulario de relación de compensación laboral de niveles en una vigencia la nueva información de la vigencia
+        this.levelCompensationService.updateValidityInLevelCompensation(e);
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -193,6 +192,8 @@ export class ValidityComponent implements OnInit {
         this.validityService.resetFormInformation();
         //Removemos del formulario de asignación de cargos la vigencia si es la que se tiene definida
         this.appointmentService.removeValidityInAppointment(this.validity.id);
+        //Removemos del formulario de relación de compensación laboral de niveles en una vigencia la vigencia si es la que se tiene definida
+        this.levelCompensationService.removeValidityInLevelCompensation(this.validity.id);
       },
       error: (error) => {
         this.deleting = false;

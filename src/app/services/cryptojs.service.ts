@@ -102,14 +102,15 @@ export class CryptojsService {
   }
 
   decryptParamAsNumber(encrypted: string): number {
-    if (encrypted == null || encrypted == '') {
+    console.log(encrypted)
+    if (encrypted == undefined || encrypted == null || encrypted == '') {
       return null;
     }
     return Number(this.decryptParam(encrypted));
   }
 
   decryptParamAsString(encrypted: string): string {
-    if (encrypted == null || encrypted == '') {
+    if (encrypted == undefined || encrypted == null || encrypted == '') {
       return null;
     }
     return this.decryptParam(encrypted);

@@ -9,7 +9,6 @@ import { IMAGE_SIZE, Methods } from '@utils';
 import { MenuItem } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
-import { MathjaxService } from 'src/app/services/mathjax.service';
 import { Table } from 'primeng/table';
 
 @Component({
@@ -37,8 +36,7 @@ export class ListComponent implements OnInit, OnDestroy{
     private authService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
-    private cryptoService: CryptojsService,
-    private mathJaxService: MathjaxService
+    private cryptoService: CryptojsService
   ){}
 
   ngOnInit(): void {

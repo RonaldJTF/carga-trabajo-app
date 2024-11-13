@@ -4,29 +4,32 @@
   </div>
   <ng-template #data>
     <div class="card p-0 pb-2">
-      <p-table #dt [value]="compensations" rowGroupMode="subheader" sortMode="single"
-               [paginator]="true" [rows]="10" [(selection)]="selectedCompentations" selectionMode="multiple"
-               [globalFilterFields]="['nombre', 'descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+      <p-table #dt [value]="compensations" rowGroupMode="subheader" sortMode="single" (onSort)="onSort()" (onFilter)="onFilter()" groupRowsBy="categoria.nombre" sortField="categoria.nombre"
+               [paginator]="true" [rows]="10" [(selection)]="selectedCompensations" selectionMode="multiple"
+               [globalFilterFields]="['nombre', 'descripcion', 'categoria.nombre']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
         <ng-template pTemplate="caption">
-          <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
-            <div class="flex align-items-center flex-wrap">
-              <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
-                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-              </button>
-              <div *ngIf="isAdmin" class="_badge-container m-1">
-                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedCompensations()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger " [disabled]="!selectedCompentations?.length">
-                  <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
-                </button>
-                <span *ngIf="selectedCompentations?.length" (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{ selectedCompentations.length }}</span>
-              </div>
-            </div>
-            <div class="m-1">
-              <span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input type="search" pInputText placeholder="Buscar" (input)="onGlobalFilter(dt, $event)">
-              </span>
-            </div>
+          <div class="border-round-top-xl surface-100 p-3">
+            <p-menubar>
+              <ng-template pTemplate="start">
+                  <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                      <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                  </button>
+                  <div *ngIf="isAdmin" class="_badge-container m-1 mr-2">
+                      <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedCompensations()" pTooltip="Eliminar" tooltipPosition="bottom"
+                          class="p-button-danger " [disabled]="!selectedCompensations?.length">
+                          <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                      </button>
+                      <span *ngIf="selectedCompensations?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedCompensations.length}}</span>
+                  </div>
+              </ng-template>
+              <ng-template pTemplate="end">
+                <span class="p-input-icon-left m-1">
+                  <i class="pi pi-search"></i>
+                  <input type="search" pInputText placeholder="Buscar" (input)="applyFilterGlobal($event, 'contains')">
+                </span>
+              </ng-template>
+            </p-menubar>
           </div>
         </ng-template>
 
@@ -43,7 +46,23 @@
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-compensation>
+        <ng-template pTemplate="body" let-compensation let-rowIndex="rowIndex">
+          <tr pRowGroupHeader *ngIf="rowGroupMetadata[compensation.categoria.nombre]?.index === rowIndex">
+            <td colspan="3">
+              <div class="flex align-items-center">
+                <div  class="flex flex-column">
+                  <span class="font-medium">{{compensation.categoria.nombre | uppercase}}</span>
+                  <span class="text-500">{{compensation.categoria.descripcion}}</span>
+                </div>
+                <div class="ml-auto flex align-items-center justify-content-end">
+                  <div class="mr-2">
+                      <p-badge [value]="rowGroupMetadata[compensation.categoria.nombre]?.size ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                  </div>
+                  <app-menu-item [menuItems]="menuItemsOfCategory" [id]="compensation.idCategoria"></app-menu-item>
+              </div>
+            </div>
+            </td>
+          </tr>
           <tr>
             <td *ngIf="isAdmin">
               <p-tableCheckbox [value]="compensation"></p-tableCheckbox>
@@ -56,9 +75,8 @@
             </td>
             <td class="text-center">
               <div class="flex align-items-center justify-content-end">
-                <app-menu-item [menuItems]="compensation.menuItems" [id]="compensation.id"></app-menu-item>
+                <app-menu-item [menuItems]="menuItemsOfCompesantion" [id]="compensation.id"></app-menu-item>
               </div>
-
             </td>
           </tr>
         </ng-template>

@@ -1,0 +1,204 @@
+<form *ngIf="!loadingLevelCompensation else sLoadingLevelCompensation" class="p-0" [formGroup]="formLevelCompensation">
+    <div class="mb-3">
+        <ng-container *ngTemplateOutlet="validityOptionTemplate; context: {validity: formLevelCompensation.get('vigencia').value}"></ng-container>
+    </div>
+
+    <div class="mb-3">
+        <ng-container *ngTemplateOutlet="compensationOptionTemplate; context: {compensation: formLevelCompensation.get('compensacionLaboral').value}"></ng-container>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
+        <p-dropdown *ngIf="!loadingSalaryScales else sLoadingSalaryScales"  id="idEscalaSalarial" inputId="idEscalaSalarial" [autoDisplayFirst]="false"
+                    [options]="salaryScales" optionValue="id" optionLabel="nombre" [filter]="true"
+                    [showClear]="true"
+                    formControlName="idEscalaSalarial" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                    [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+        </p-dropdown>
+        <ng-template #sLoadingSalaryScales>
+            <span class="p-input-icon-left">
+                <i class="pi pi-spin pi-spinner text-xl"></i>
+                <input type="text" [disabled]="true" pInputText value="Cargando..."/>
+            </span>
+        </ng-template>
+    </div>
+
+    <div class="grid grid-nogutter">
+        <div class="col-12 md:col-6 md:pr-2 mb-3">
+            <ng-container *ngTemplateOutlet="ruleOptionTemplate; context: {rule: formLevelCompensation.get('regla').value}"></ng-container>
+        </div>
+        <div class="col-12 md:col-6 md:pl-2 mb-3">
+            <ng-container *ngTemplateOutlet="variableOptionTemplate; context: {variable: formLevelCompensation.get('variable').value}"></ng-container>
+        </div>
+    </div>
+
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitLevelCompensation($event)"
+        (cancel)="onCancelLevelCompensation($event)"
+        (delete)="onDeleteLevelCompensation($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formLevelCompensation.invalid">
+    </app-form-action-button>
+</form>
+
+<ng-template #sLoadingLevelCompensation>
+    <app-loading></app-loading>
+</ng-template>
+
+<ng-template #validityOptionTemplate let-validity="validity">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Vigencia</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formLevelCompensation?.value.idVigencia" (click)="removeValidity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formLevelCompensation?.value.idVigencia" (click)="onGoToUpdateValidity(validity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewValidity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #validityMenu [popup]="true" [model]=""></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Vigencias"  (click)="validityOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #validityOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="validityOptions" [filter]="true" title="Vigencias"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeValidity($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <span>{{item.label }}</span>
+                                <div class="ml-auto">
+                                    <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(item.value.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(item.value.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div  *ngIf="formLevelCompensation?.value.vigencia as validity; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
+        <span class="text-500">{{validity.nombre | uppercase}}</span>
+        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto m-2 validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
+    </div>
+
+    <ng-template #sNoValidity>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_VIGENCIA_ASOCIADA"></app-no-result>
+    </ng-template>
+
+    <div *ngIf="formLevelCompensation.controls['idVigencia'] && formLevelCompensation.controls['idVigencia'].errors && (formLevelCompensation.controls['idVigencia'].touched || formLevelCompensation.controls['idVigencia'].dirty)">
+        <div *ngIf="formLevelCompensation.controls['idVigencia'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una vigencia</small>
+        </div>  
+    </div>
+</ng-template>
+
+
+<ng-template #compensationOptionTemplate let-compensation="compensation">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Compensación laboral</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formLevelCompensation?.value.idCompensacionLaboral" (click)="removeCompensation()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formLevelCompensation?.value.idCompensacionLaboral" (click)="onGoToUpdateCompensation(compensation.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewCompensation()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #compensationMenu [popup]="true" [model]=""></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Compensaciones laborales"  (click)="compensationOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #compensationOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="compensationOptions"  [group]="true" [filter]="true" title="Compensaciones"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeCompensation($event)">
+                        <ng-template let-group pTemplate="group">
+                            <div class="flex align-items-center">
+                                <span>{{ group.label }}</span>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div  *ngIf="compensation; else sNoCompensation" class="flex align-items-center surface-100 border-round p-3 mt-2">
+        <span class="text-500">{{compensation.nombre | uppercase}}</span>
+    </div>
+
+    <ng-template #sNoCompensation>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_COMPENSACION_LABORAL_ASOCIADA"></app-no-result>
+    </ng-template>
+
+    <div *ngIf="formLevelCompensation.controls['idCompensacionLaboral'] && formLevelCompensation.controls['idCompensacionLaboral'].errors && (formLevelCompensation.controls['idCompensacionLaboral'].touched || formLevelCompensation.controls['idCompensacionLaboral'].dirty)">
+        <div *ngIf="formLevelCompensation.controls['idCompensacionLaboral'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una compensación laboral</small>
+        </div>  
+    </div>
+</ng-template>
+
+
+<ng-template #ruleOptionTemplate let-rule="rule">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Regla</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formLevelCompensation?.value.idRegla" (click)="removeRule()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formLevelCompensation?.value.idRegla" (click)="onGoToUpdateRule(rule.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewRule()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #ruleMenu [popup]="true" [model]=""></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Reglas"  (click)="ruleOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #ruleOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="ruleOptions" [filter]="true" title="Reglas"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeRule($event)">
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div class="flex flex-column align-items-center surface-100 border-round p-3 mt-2">
+        <span *ngIf="rule?.nombre" class="text-500 text-left w-full" >{{rule.nombre}}:</span>
+        <app-expression [expression]="rule?.expresionCondiciones"></app-expression>
+    </div>
+
+    <div *ngIf="formLevelCompensation.controls['idRegla'] && formLevelCompensation.controls['idRegla'].errors && (formLevelCompensation.controls['idRegla'].touched || formLevelCompensation.controls['idRegla'].dirty)">
+        <div *ngIf="formLevelCompensation.controls['idRegla'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una regla que defina el valor a aplicar sobre la compensación laboral</small>
+        </div>  
+    </div>
+</ng-template>
+
+
+<ng-template #variableOptionTemplate let-variable="variable">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Variable</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formLevelCompensation?.value.idVariable" (click)="removeVariable()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formLevelCompensation?.value.idVariable" (click)="onGoToUpdateVariable(variable.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewVariable()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <p-menu #variableMenu [popup]="true" [model]=""></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Variables"  (click)="variableOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #variableOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="variableOptions" [filter]="true" title="Variables"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeVariable($event)">
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div class="flex flex-column align-items-center surface-100 border-round p-3 mt-2">
+        <span *ngIf="variable?.nombre" class="text-500 text-left w-full" >{{variable.nombre}}:</span>
+        <app-expression [expression]="variable?.expresionValor"></app-expression>
+    </div>
+
+    <div *ngIf="formLevelCompensation.controls['idVariable'] && formLevelCompensation.controls['idVariable'].errors && (formLevelCompensation.controls['idVariable'].touched || formLevelCompensation.controls['idVariable'].dirty)">
+        <div *ngIf="formLevelCompensation.controls['idVariable'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una variable que defina el valor a aplicar sobre la compensación laboral</small>
+        </div>  
+    </div>
+</ng-template>

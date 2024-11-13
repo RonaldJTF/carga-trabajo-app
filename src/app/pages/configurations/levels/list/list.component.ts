@@ -80,7 +80,7 @@ export class ListComponent implements OnInit, OnDestroy{
   initMenus() {
     this.menuItemsOfLevel = [
       {label: 'Gestión de escalas salariales', icon: 'pi pi-cog',command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
-      {label: 'Gestión de compensaciones laborales', icon: 'pi pi-money-bill',command: (e) => this.onGoToUpdateCompensation(e.item.id, e.originalEvent)},
+      {label: 'Gestión de compensaciones laborales', icon: 'pi pi-money-bill',command: (e) => this.onGoToManagementCompensation(e.item.id, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteLevel(e)},
     ];
@@ -313,11 +313,9 @@ export class ListComponent implements OnInit, OnDestroy{
     }
   }
 
-  onGoToUpdateCompensation(idLevel: string, event: Event) {
+  onGoToManagementCompensation(idLevel: string, event: Event) {
     event.preventDefault();
-    this.router.navigate(["/configurations/level-compensation"], {
-      skipLocationChange: true,
-      queryParams: {idLevel: this.cryptoService.encryptParam(idLevel)}
-    }).then()
+    event.stopPropagation();
+    this.router.navigate(["/configurations/level-compensations"], {skipLocationChange: true, queryParams: {idLevel: this.cryptoService.encryptParam(idLevel)}})
   }
 }

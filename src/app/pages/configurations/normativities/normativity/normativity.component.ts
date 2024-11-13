@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
 import { Normativity, NormativityType, Scope } from '@models';
 import { Store } from '@ngrx/store';
-import { CryptojsService, LevelService, NormativityService, ScopeService, UrlService } from '@services';
+import { CryptojsService, LevelService, NormativityService, ScopeService, UrlService, AppointmentService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { AppState } from 'src/app/app.reducers';
 
@@ -45,6 +45,7 @@ export class NormativityComponent implements OnInit {
     private store: Store<AppState>,
     private normativityService: NormativityService,
     private levelService: LevelService,
+    private appointmentService: AppointmentService,
     private scopeService: ScopeService,
     private location: Location,
     private router: Router,
@@ -132,6 +133,8 @@ export class NormativityComponent implements OnInit {
         this.creatingOrUpdating = false;
         //Actualizamos de las escalas salariales la nueva información de la normatividad
         this.levelService.updateNormativityInSalaryScales(e);
+        //Actualizamos de las asignaciones laborales la nueva información de la normatividad
+        this.appointmentService.updateNormativityInAppointment(e);
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -173,6 +176,8 @@ export class NormativityComponent implements OnInit {
         this.deleting = false;
         //Removemos de la lista de scalas salariales que se están gestionando todas aquellas asociadas a esta normatividad
         this.levelService.removeSalaryScalesByNormativity(this.normativity.id);
+        //Removemos del formulario de asignación salarial la normatividad eliminada.
+        this.appointmentService.removeNormativityInAppointment(this.normativity.id);
       },
       error: (error) => {
         this.deleting = false;

@@ -19,13 +19,13 @@ export class AppointmentService {
   public mustRechargeAppointmentFormGroup$ = this._mustRechargeAppointmentFormGroup.asObservable();
   public appointment$ = this._appointment.asObservable();
 
-
   constructor(
     private webRequestService: WebRequestService,
     private formBuilder : FormBuilder,
   ) { }
+  
   getAppointments(filterIds: any) {
-    return this.webRequestService.getWithHeaders(this.pathAppointment, filterIds, );
+    return this.webRequestService.getWithHeaders(this.pathAppointment, filterIds);
   }
 
   getAppointment(id: number) {

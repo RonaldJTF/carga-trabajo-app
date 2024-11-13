@@ -127,7 +127,6 @@
                                 <span>{{item.label }}</span>
                                 <div class="ml-auto">
                                     <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(item.value.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(item.value.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
-                                    <button (click)="onDeleteValidity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
                                 </div>
                             </div>
                         </ng-template>
@@ -168,12 +167,6 @@
                         [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
                         [style]="{'max-height':'250px', 'overflow':'auto'}"
                         (onClick)="changeNormativity($event)">
-                        <ng-template let-item pTemplate="item">
-                            <div class="flex align-items-center gap-2 w-full">
-                                <div>{{item.label }}</div>
-                                <button (click)="onDeleteNormativity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
-                            </div>
-                        </ng-template>
                     </p-listbox>
                 </ng-template>
             </p-overlayPanel>

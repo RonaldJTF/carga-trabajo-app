@@ -14,7 +14,7 @@ export class PeriodicityService {
   ) {
   }
 
-  getPeriodicity(): Observable<Periodicity[]> {
+  getPeriodicities(): Observable<Periodicity[]> {
     return this.webRequestService.getWithHeaders(this.pathPeriodicidad);
   }
 }

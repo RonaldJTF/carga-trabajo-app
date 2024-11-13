@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
-import {Observable} from "rxjs";
-import {CryptojsService} from "./cryptojs.service";
+import {BehaviorSubject, Observable} from "rxjs";
 import {Category, Compensation, LevelCompensation} from "@models";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Methods } from '@utils';
 
 @Injectable({
   providedIn: 'root'
@@ -11,20 +12,22 @@ export class CompensationService {
 
   private pathCompensation = 'compensation';
 
-  private pathCategory = this.pathCompensation.concat('/category');
+  private compensationFormGroup: FormGroup;
 
-  private pathLevelCompensation = this.pathCompensation.concat('/level');
+  private _mustRechargeCompensationFormGroup: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true); 
+  private _mustCloseForm: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false); 
+  private _compensation: BehaviorSubject<Compensation> = new BehaviorSubject<Compensation>(null); 
 
-  private pathRule = 'rule';
+  public mustRechargeCompensationFormGroup$ = this._mustRechargeCompensationFormGroup.asObservable();
+  public mustCloseForm$ = this._mustCloseForm.asObservable();
+  public compensation$ = this._compensation.asObservable();
+
 
   constructor(
-    private webRequestService: WebRequestService
-  ) {
-  }
+    private webRequestService: WebRequestService,
+    private formBuilder : FormBuilder,
+  ) { }
 
-  /**
-   * Services COMPENACIÓN LABORAL
-   */
   getCompesations(): Observable<Compensation[]> {
     return this.webRequestService.getWithHeaders(this.pathCompensation);
   }
@@ -37,73 +40,86 @@ export class CompensationService {
     return this.webRequestService.postWithHeaders(this.pathCompensation, compensation);
   }
 
-  updateCompensation(id: string, compensation: any): Observable<any> {
+  updateCompensation(id: number, compensation: any): Observable<any> {
     return this.webRequestService.putWithHeaders(`${this.pathCompensation}/${id}`, compensation);
   }
 
-  deleteCompensation(idCompensation: string): Observable<any> {
+  deleteCompensation(idCompensation: number): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathCompensation}/${idCompensation}`);
   }
 
-  deleteSelectedCompensations(payload: string[]): Observable<string[]> {
+  deleteSelectedCompensations(payload: number[]): Observable<string[]> {
     return this.webRequestService.deleteWithHeaders(`${this.pathCompensation}`, undefined, payload);
   }
 
-  /**
-   * Servicios CATEGORIAS
-   */
-  getCategories(): Observable<Category[]> {
-    return this.webRequestService.getWithHeaders(this.pathCategory);
+  /*********************************************************************************************************************/
+  /****************************************** SECTION OF FORMS TO COMPENSATION *****************************************/
+  /*********************************************************************************************************************/
+
+  setMustRechargeCompensationFormGroup(mustRechargeCompensationFormGroup: boolean){
+    this._mustRechargeCompensationFormGroup.next(mustRechargeCompensationFormGroup);
   }
 
-  getCategory(idCategory: string): Observable<any> {
-    return this.webRequestService.getWithHeaders(`${this.pathCategory}/${idCategory}`);
+  getCompensationFormGroup(){
+    return this.compensationFormGroup;
   }
 
-  createCategory(category: any): Observable<any> {
-    return this.webRequestService.postWithHeaders(this.pathCategory, category);
+  createCompensationFormGroup(){
+    this.resetFormInformation();
+    this.compensationFormGroup = this.formBuilder.group({
+      nombre: ['', Validators.required],
+      descripcion: '',
+      estado: true,
+      idCategoria: ['', Validators.required],
+      idPeriodicidad: ['', Validators.required],
+      categoria: null,
+    })
+    return this.compensationFormGroup;
   }
 
-  updateCategory(id: string, category: any): Observable<any> {
-    return this.webRequestService.putWithHeaders(`${this.pathCategory}/${id}`, category);
+  initializeCompensationFormGroup(compensation: Compensation): FormGroup {
+    this._compensation.next(compensation);
+    this.compensationFormGroup.get('idCategoria').setValue(compensation.idCategoria);
+    this.compensationFormGroup.get('idPeriodicidad').setValue(compensation.idPeriodicidad);
+    this.compensationFormGroup.get('estado').setValue(Methods.parseStringToBoolean(compensation.estado));
+    this.compensationFormGroup.get('nombre').setValue(compensation.nombre);
+    this.compensationFormGroup.get('descripcion').setValue(compensation.descripcion);
+    this.compensationFormGroup.get('categoria').setValue(compensation.categoria);
+    return this.compensationFormGroup;
   }
 
-  deleteCategory(idCategory: string): Observable<any> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathCategory}/${idCategory}`);
+  resetFormInformation(){
+    this._mustRechargeCompensationFormGroup.next(true);
+    this._compensation.next(null);
+    this.compensationFormGroup = null;
+    this.setMustCloseForm(false);
   }
 
-  /**
-   * Services COMPENACIÓN LABORAL NIVEL VIGENCIA
-   */
-  getLevelCompensations(idLevel: string): Observable<LevelCompensation[]> {
-    return this.webRequestService.getWithHeaders(`${this.pathLevelCompensation}/${idLevel}`);
+  setCategoryToCompensation(category: Category){
+    const formGroup = this.compensationFormGroup;
+    formGroup?.get('idCategoria').markAsTouched();
+    formGroup?.get('idCategoria').setValue(category?.id);
+    formGroup?.get('categoria').setValue(category);
   }
 
-  getLevelCompensation(idLevelCompensation: string): Observable<any> {
-    return this.webRequestService.getWithHeaders(`${this.pathLevelCompensation}/${idLevelCompensation}`);
+  updateCategoryInCompensation(category: Category){
+    const formGroup = this.compensationFormGroup;
+    if(formGroup?.get('idCategoria').value == category.id){
+      formGroup.get('categoria').setValue(category);
+    }
   }
 
-  createLevelCompensation(payload: any): Observable<any> {
-    return this.webRequestService.postWithHeaders(this.pathLevelCompensation, payload);
+  removeCategoryInCompensation(categoryId: number){
+    const formGroup = this.compensationFormGroup;
+    if(formGroup?.get('idCategoria').value == categoryId){
+      this.setCategoryToCompensation(null);
+      if(this._compensation.value?.idCategoria == categoryId){//Estaba editando una compensacion laboral con esa categoría inicialmente, por lo que ya fué eliminada, asi que se limpia todo;
+        this.setMustCloseForm(true);
+      }
+    }
   }
 
-  updateLevelCompensation(id: string, payload: any): Observable<any> {
-    return this.webRequestService.putWithHeaders(`${this.pathLevelCompensation}/${id}`, payload);
+  setMustCloseForm(mustCloseForm: boolean){
+    this._mustCloseForm.next(mustCloseForm);
   }
-
-  deleteLevelCompensation(idLevelCompensation: string): Observable<any> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathLevelCompensation}/${idLevelCompensation}`);
-  }
-
-  deleteSelectedLevelCompensations(payload: string[]): Observable<any[]> {
-    return this.webRequestService.deleteWithHeaders(`${this.pathLevelCompensation}`, undefined, payload);
-  }
-
-  //
-  getRules(){
-    return this.webRequestService.getWithHeaders(this.pathRule);
-  }
-
-
-
 }

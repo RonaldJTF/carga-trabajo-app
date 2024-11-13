@@ -22,7 +22,7 @@ export class ExpressionComponent implements AfterViewInit{
   }
 
   ngAfterViewInit() {
-    this.mathJaxService.renderMath();
+    //this.mathJaxService.renderMath();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

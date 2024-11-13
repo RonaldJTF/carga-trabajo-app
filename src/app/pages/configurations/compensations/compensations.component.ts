@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {MenuService} from "@services";
+import { Functionality } from '@models';
 
 @Component({
   selector: 'app-compensations',
@@ -7,10 +7,10 @@ import {MenuService} from "@services";
   styleUrls: ['./compensations.component.scss']
 })
 export class CompensationsComponent {
-
-  constructor(
-    public menuService: MenuService
-  ) {
-  }
-
+  functionality: Functionality = {
+    label: 'Compensaciones laborales',
+    icon: 'pi pi-money-bill',
+    color: 'primary',
+    description: 'Gestión de las compensaciones laborales de los niveles ocupacionales'
+  };
 }

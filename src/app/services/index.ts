@@ -24,7 +24,7 @@ export * from 'src/app/pages/configurations/users/change-password/service/change
 export * from './sentry-init.service';
 export * from './scope.service'
 export * from './periodicity.service';
-export * from './category.service';
+export * from './compensation-category.service';
 export * from './level.service';
 export * from './normativity.service';
 export * from './validity.service';
@@ -33,3 +33,5 @@ export * from './rule.service';
 export * from './normativitytype.service'
 export * from './compensation.service';
 export * from './primary-variable.service';
+export * from './level-compensation.service';
+export * from './compensation-category.service';

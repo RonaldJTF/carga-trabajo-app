@@ -8,7 +8,10 @@ import { MenuService } from '@services';
   styleUrls: ['./appointments.component.scss']
 })
 export class AppointmentsComponent{
-  constructor(
-    public menuService: MenuService
-  ){}
+  functionality: Functionality = {
+    label: 'Designación de cargos',
+    icon: 'pi pi-users',
+    color: 'primary',
+    description: 'Gestión de la designación de cargos por dependencias, vigencias y niveles ocupacionales'
+  };
 }

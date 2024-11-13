@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
 import { Variable } from '@models';
 import { Store } from '@ngrx/store';
-import { CryptojsService, UrlService, ValidityService } from '@services';
+import { CryptojsService, LevelCompensationService, UrlService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { ValidateExpression } from '@validations/validateExpression';
 import { Subscription } from 'rxjs';
@@ -55,6 +55,7 @@ export class VariableComponent  implements OnInit, OnDestroy {
     private store: Store<AppState>,
     private variableService: VariableService,
     private validityService: ValidityService,
+    private levelCompensationService: LevelCompensationService,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
@@ -114,6 +115,7 @@ export class VariableComponent  implements OnInit, OnDestroy {
       this.updateMode = true;
     }
   }
+  
   loadVariables(): void {
     this.variableService.getVariables().subscribe({
       next: (e) => {
@@ -161,6 +163,8 @@ export class VariableComponent  implements OnInit, OnDestroy {
         this.creatingOrUpdating = false;
         //Actualizamos de las asignaciones de las variables en una vigencia con la nueva información de la variable
         this.validityService.updateVariableInValuesInValidity(e);
+        //Actualizamos del formulario de relación de compensación laboral de niveles en una vigencia la nueva información de la variable
+        this.levelCompensationService.updateVariableInLevelCompensation(e);
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -205,6 +209,8 @@ export class VariableComponent  implements OnInit, OnDestroy {
         this.deleting = false;
         //Removemos de la lista de valores de las variables en la vigencia para la variable que se gestionan
         this.validityService.removeValuesInValidityByVariable(this.variable.id);
+        //Removemos del formulario de relación de compensación laboral de niveles en una vigencia la variable si es la que se aplica
+        this.levelCompensationService.removeVariableInLevelCompensation(this.variable.id);
       },
       error: (error) => {
         this.deleting = false;
@@ -242,8 +248,21 @@ export class VariableComponent  implements OnInit, OnDestroy {
 
   updateExpressionFromInputText(event) {
     const editableInput = event.target;
-    const obj =  this.getExpression(editableInput.childNodes);
-    this.setValueAndExpressionInformation(obj);
+    if(this.allowedCharacter(editableInput.childNodes)){
+      const obj =  this.getExpression(editableInput.childNodes);
+      this.setValueAndExpressionInformation(obj);
+    }
+  }
+
+  private allowedCharacter(childNodes){
+    const allowedCharacters = /^[+\-*/><=()0-9.\s ]*$/;
+    for (let node of childNodes ?? []){
+      if (node.nodeType === Node.TEXT_NODE && !allowedCharacters.test( node.nodeValue)) {
+        node.nodeValue =node.nodeValue.split('').filter(char => allowedCharacters.test(char)).join('');
+        return false;
+      }
+    }
+    return true;
   }
   
   private updateExpression(editableInput) {
@@ -341,7 +360,7 @@ export class VariableComponent  implements OnInit, OnDestroy {
   }
 
   private extractExpressions(expression) {
-    const regex = /\$\[\d+\]|[\+\-\*\/]|\d+(\.\d+)?/g;
+    const regex = /\$\[\d+\]|[\(\)\+\-\*\/]|\d+(\.\d+)?/g;
     return expression.match(regex);
   }
 }

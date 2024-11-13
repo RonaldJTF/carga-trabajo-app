@@ -1,0 +1,28 @@
+<form [formGroup]="formCategory">
+    <div class="field p-fluid mt-3">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+        <div *ngIf="formCategory.controls['nombre'].errors && (formCategory.controls['nombre'].touched||formCategory.controls['nombre'].dirty)">
+            <div *ngIf="formCategory.controls['nombre'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingresa un nombre</small>
+            </div>  
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
+    </div>
+  
+    <app-form-action-button [deleting]="deleting"
+                            [updateMode]="updateMode"
+                            [showDeleteButton]="updateMode"
+                            [creatingOrUpdating]="creatingOrUpdating"
+                            (cancel)="onCancelCategory($event)"
+                            (delete)="onDeleteCategory($event)"
+                            (createOrUpdate)="onSubmitCategory($event)"
+                            [deleteMessage]="DELETE_MESSAGE"
+                            [disabledCreateOrUpdateButton]="formCategory.invalid">
+    </app-form-action-button>
+</form>
+  

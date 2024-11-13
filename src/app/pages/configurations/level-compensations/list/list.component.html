@@ -1,0 +1,148 @@
+<ng-container *ngIf="!loading else sLoading">
+    <div *ngIf="!levelCompensations.length else data">
+      <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Asociar compensación laboral'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+    </div>
+    <ng-template #data>
+      <div class="card p-0 pb-2">
+        <p-table #dt [value]="levelCompensations" rowGroupMode="subheader" sortMode="single" (onSort)="onSort()" (onFilter)="onFilter()" sortField="order"
+                 [paginator]="true" [rows]="3" [(selection)]="selectedLevelCompensations" selectionMode="multiple"  [exportHeader]="'customExportHeader'"
+                 [globalFilterFields]="['nombre', 'descripcion', 'vigencia.nombre']" [rowsPerPageOptions]="[3, 20, 30]" [showCurrentPageReport]="true"
+                 currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
+          <ng-template pTemplate="caption">
+            <div class="border-round-top-xl surface-100 p-3">
+              <p-menubar>
+                <ng-template pTemplate="start">
+                    <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                        <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+                    </button>
+                    <div *ngIf="isAdmin" class="_badge-container m-1 mr-2">
+                        <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedCompensations()" pTooltip="Eliminar" tooltipPosition="bottom"
+                            class="p-button-danger " [disabled]="!selectedLevelCompensations?.length">
+                            <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                        </button>
+                        <span *ngIf="selectedLevelCompensations?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedLevelCompensations.length}}</span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="end">
+                  <span class="p-input-icon-left m-1">
+                    <i class="pi pi-search"></i>
+                    <input type="search" pInputText placeholder="Buscar" (input)="applyFilterGlobal($event, 'contains')">
+                  </span>
+                </ng-template>
+              </p-menubar>
+            </div>
+          </ng-template>
+  
+          <ng-template pTemplate="header">
+            <tr>
+              <th *ngIf="isAdmin" style="width: 3rem">
+                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              </th>
+              <th class="text-center" style="min-width: 300px; white-space: nowrap" pSortableColumn="nombre">
+                Compensación laboral
+                <p-sortIcon field="nombre"></p-sortIcon>
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+  
+          <ng-template pTemplate="body" let-levelCompensation let-rowIndex="rowIndex">
+            <tr pRowGroupHeader *ngIf="rowGroupMetadata[levelCompensation.idVigencia]?.index === rowIndex || rowIndex%NUMBER_OF_ROWS==0">
+              <td colspan="3">
+                  <div class="flex align-items-center">
+                      <span class="font-medium  w-full text-center">
+                        {{levelCompensation.vigencia.nombre | uppercase}}
+                        <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia]?.index !== rowIndex && rowIndex%NUMBER_OF_ROWS==0"> (continuación)</span>
+                      </span>
+                      <div class="ml-auto flex align-items-center justify-content-end">
+                        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'mr-2 validity-badge validity-' + (levelCompensation.vigencia.estado | validity ).classStyle">{{levelCompensation.vigencia.anio}}</span>                    
+                        <app-menu-item [menuItems]="menuItemsOfValidity" [id]="levelCompensation.idVigencia"></app-menu-item>
+                    </div>
+                  </div>
+              </td>
+            </tr>
+            <tr pRowGroupHeader *ngIf="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial]?.index === rowIndex || rowIndex%NUMBER_OF_ROWS==0">
+              <td colspan="3">
+                <div *ngIf="levelCompensation.escalaSalarial; else sCommonCompensations"  class="flex align-items-center">
+                  <div class="flex flex-column">
+                    <span class="font-medium">
+                      {{levelCompensation.escalaSalarial.nombre| uppercase}}
+                      <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial]?.index !== rowIndex && rowIndex%NUMBER_OF_ROWS==0"> (continuación)</span>
+                    </span>
+                    <span class="text-500">Código: {{levelCompensation.escalaSalarial.codigo}}</span>
+                  </div>
+                  <div class="ml-auto flex align-items-center justify-content-end">
+                    <div class="mr-2">
+                        <p-badge [value]="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial ?? '']?.size ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                    </div>
+                    <app-menu-item [menuItems]="[]" [id]="levelCompensation.idEscalaSalarial"></app-menu-item>
+                  </div>
+                </div>
+                <ng-template #sCommonCompensations>
+                  <div class="flex align-items-center">
+                    <span class="font-medium text-500">
+                      Compensaciones laborales aplicadas a todas las escalas salariales del nivel ocupacional
+                      <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial ?? '']?.index !== rowIndex && rowIndex%NUMBER_OF_ROWS==0">(continuación)</span>
+                    </span>
+                    <div class="ml-auto flex align-items-center">
+                      <div class="mr-2">
+                        <p-badge [value]="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial ?? '']?.size ?? 0"
+                          severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                      </div>
+                      <button (click)="detailCommonCompensationOverlayPanel.toggle($event)" pButton pRipple icon="pi pi-info-circle"
+                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver información" tooltipPosition="bottom"></button>
+                    </div>
+                    <p-overlayPanel #detailCommonCompensationOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+                      <ng-template pTemplate>
+                        <div class="flex align-items-center mb-3">
+                          <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                            <i class="pi pi-info-circle text-xl text-blue-500"></i>
+                          </div>
+                          <div class="flex flex-column ">
+                            <h5 class="m-0 text-700">Información</h5>
+                            <span class="text-500">Detalle sobre la consideración de las compensaciones laborales comunes a las escalas salariales</span>
+                          </div>
+                        </div>
+                        <div class="p-3 text-justify border-round bg-blue-50">
+                          Las compensaciones laborales clasificadas como "comunes" se aplican a todas las escalas salariales de manera general.
+                          Sin embargo, si una escala salarial específica incluye una compensación laboral que también figura como común,
+                          se dará prioridad a la especificación de esa escala particular.
+                          En este caso, la compensación común se ignora para evitar duplicidades o conflictos en la aplicación de beneficios.
+                        </div>
+                      </ng-template>
+                    </p-overlayPanel>
+                  </div>
+                </ng-template>
+              </td>
+            </tr>
+            <tr>
+              <td *ngIf="isAdmin">
+                <p-tableCheckbox [value]="levelCompensation"></p-tableCheckbox>
+              </td>
+              <td pRipple class="cursor-pointer" (click)="onManagementLevelCompensations(levelCompensation.id, $event)">
+                <div class="flex flex-column justify-content-start">
+                  <span class="font-medium">{{ levelCompensation.compensacionLaboral.nombre }}</span>
+                  <span class="text-500">{{ levelCompensation.compensacionLaboral.descripcion }}</span>
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="flex align-items-center justify-content-end">
+                  <app-menu-item [menuItems]="menuItemsOfLevelCompesantion" [id]="levelCompensation.id"></app-menu-item>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center">{{ MESSAGE.NO_REGISTROS }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </ng-template>
+  </ng-container>
+  
+  <ng-template #sLoading>
+    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+  </ng-template>
+  

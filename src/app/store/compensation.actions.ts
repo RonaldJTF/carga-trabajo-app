@@ -8,3 +8,5 @@ export const removeItemsFromList = createAction('[Configuration of Compensation]
 export const updateFromList = createAction('[Configuration of Compensation] Update an item into list', props<{ compensation: Compensation }>());
 export const setMustRecharge = createAction('[Configuration of Compensation] set if list must be recharged', props<{ mustRecharge: boolean }>());
 export const setItemFromList = createAction('[Configuration of Compensation] set the item from list', props<{ id: number }>());
+
+export const removeFromListWithCategoryId = createAction('[Configuration of Compensation] Remove from the list all compensations by categoryId', props<{ categoryId: number }>());

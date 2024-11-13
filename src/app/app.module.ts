@@ -29,12 +29,14 @@ import {
   WorkplanService,
   ScopeService,
   PeriodicityService,
-  CategoryService,
+  CompensationCategoryService,
   ValidityService,
   AppointmentService,
   RuleService,
   NormativityTypeService,
-  PrimaryVariableService
+  PrimaryVariableService,
+  LevelCompensationService,
+  CompensationService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -56,6 +58,7 @@ import { variableReducer } from '@store/variable.reducer';
 import { MathjaxService } from './services/mathjax.service';
 import { ruleReducer } from '@store/rule.reducer';
 import {compensationReducer} from "@store/compensation.reducer";
+import { levelCompensationReducer } from '@store/levelCompensation.reducer';
 
 @NgModule({
   declarations: [
@@ -80,6 +83,7 @@ import {compensationReducer} from "@store/compensation.reducer";
       variable: variableReducer,
       rule: ruleReducer,
       compensation: compensationReducer,
+      levelCompensation: levelCompensationReducer
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -89,9 +93,9 @@ import {compensationReducer} from "@store/compensation.reducer";
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
-    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CategoryService, NormativityTypeService, PrimaryVariableService, GenderService, PersonService,
+    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CompensationCategoryService, NormativityTypeService, PrimaryVariableService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
-    NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService,
+    NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService, LevelCompensationService, CompensationService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},

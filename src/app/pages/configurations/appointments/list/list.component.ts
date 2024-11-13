@@ -145,8 +145,6 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.menuItemsOfAppointmentGroup = [
       {label: 'Eliminar asignaciones', icon: 'pi pi-trash', command: (e) => { this.onDeleteAppointments(e) }},
     ];
-
-
   }
 
   /**
@@ -174,7 +172,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
         this.store.dispatch(AppointmentActions.setList({appointments: data as Appointment[]}));
         this.loading = false;
         this.filtering = false;
-      }
+      },
+      error: ()=>{this.loading = false}
     })
   }
 
@@ -398,9 +397,9 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
                   comparisonsPercomparisonKey.set(obj[comparisonAtrribute.comparisonKey], 0);
                 }
                 comparisonsPercomparisonKey.set(
-                  obj[comparisonAtrribute.comparisonKey],
-                  comparisonsPercomparisonKey.get(obj[comparisonAtrribute.comparisonKey]) + obj.asignacionTotal
-                );
+                  obj[comparisonAtrribute.comparisonKey], 
+                  comparisonsPercomparisonKey.get(obj[comparisonAtrribute.comparisonKey]) + obj.asignacionTotal*obj.totalCargos
+                ); 
               }
             });
 
