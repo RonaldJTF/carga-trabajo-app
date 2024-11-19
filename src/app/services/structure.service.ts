@@ -75,6 +75,29 @@ export class StructureService {
     )
   }
 
+  downloadReportFlat(type: string, structureIds: number[]): Observable<number>{
+    const options = {
+      responseType: 'blob',
+      observe: 'events',
+      reportProgress: true
+    };
+    return this.webRequestService.getWithHeaders(`${this.pathStructure}/report-plained`, {type: type, structureIds: JSON.stringify(structureIds ?? [])}, null, options).pipe(
+      map(e => {
+        switch (e.type) {
+          case HttpEventType.DownloadProgress:
+            return Math.round((100 * e.loaded) / (e.total || 1));
+
+          case HttpEventType.Response:
+            this.handleFileDownload(e);
+            return 100;
+
+          default:
+            return 0;
+        }
+      })
+    )
+  }
+
   getActivityById(id: number){
     return this.webRequestService.getWithHeaders(`${this.pathStructure}/activity/${id}`);
   }

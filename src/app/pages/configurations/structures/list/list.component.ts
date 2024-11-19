@@ -63,7 +63,9 @@ export class ListComponent implements OnInit, OnDestroy{
   menuBarItems: MenuItem[] = [];
   menuItemsOfDownload: MenuItem[] = [
     {label: 'Reporte de tiempos en PDF', escape: false, icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
+    {separator: true},
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
+    {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-list', automationId:"excel", command: (e) => { this.reportFlat(e) }},
   ]
 
   @ViewChild('menu') menu!: Menu;
@@ -418,6 +420,36 @@ export class ListComponent implements OnInit, OnDestroy{
       element.value = downloadProgress;
     }
     this.cdr.detectChanges();
+  }
+
+  reportFlat(data: any, idStructure?: number){
+    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
+      if (menuItem) {
+        menuItem.icon = icon;
+        menuItem.disabled = disabled;
+        menuItem.label = label;
+      }
+    };
+    const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
+    const initialIcon = menuItem?.icon;
+    const initialState = menuItem?.disabled;
+    const initialLabel = menuItem?.label;
+
+    let automationId = data.item.automationId;
+
+    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
+    const structureIds = idStructure
+      ? [idStructure]
+      : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
+    this.structureService.downloadReportFlat(automationId, structureIds).pipe(
+      finalize(()=>{
+        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
+      })
+    ).subscribe({
+      next: (res) => {
+        this.reportUploaded(menuItem, automationId, res);
+      }
+    });
   }
 
 }
