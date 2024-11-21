@@ -355,7 +355,7 @@ export class FormPrimaryVariableComponent  implements OnInit, OnDestroy {
   }
 
   private extractExpressions(expression) {
-    const regex = /\$\[\d+\]|[\+\-\*\/]|\d+(\.\d+)?/g;
+    const regex = /\$\[\d+\]|[\+\-\*\/\(\)]|\d+(\.\d+)?/g;
     return expression.match(regex);
   }
 }

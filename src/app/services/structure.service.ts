@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
-import { map, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { Structure } from '@models';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 
@@ -10,6 +10,9 @@ import {HttpEventType, HttpResponse} from '@angular/common/http';
 export class StructureService {
 
   private pathStructure: string = 'structure'
+
+  private structuresSubject: BehaviorSubject<Structure[]> = new BehaviorSubject<Structure[]>([]);  // Para manejar las estructuras localmente
+  public structures$: Observable<Structure[]> = this.structuresSubject.asObservable();  // Exposición de las estructuras como un Observable
 
   constructor(
     private webRequestService: WebRequestService
@@ -130,6 +133,14 @@ export class StructureService {
     const contentDisposition = response.headers.get('content-disposition');
     const matches = /filename="?([^"]+)"?/.exec(contentDisposition);
     return matches != null ? matches[1] : 'archivo_descargado';
+  }
+
+  pasteMovedStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
+    return this.webRequestService.putWithHeaders(`${this.pathStructure}/move/${newParentId}`, null, {copiedStructureId: copiedStructureId});
+  }
+
+  pasteStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
+    return this.webRequestService.postWithHeaders(`${this.pathStructure}/copy/${newParentId}`, null, {copiedStructureId: copiedStructureId});
   }
 
 }

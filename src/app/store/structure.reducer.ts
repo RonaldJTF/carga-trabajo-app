@@ -192,6 +192,45 @@ export const structureReducer = createReducer(
       dependency: dependency
     }
   }),
+
+  on(StructureActions.moveStructureTo, (state, {structure, newParentId}) => {
+    const items = JSON.parse(JSON.stringify(state.items));
+    const filteredItems = filtrarNodosArbol (items, [structure.id]);
+
+    let parentStructure = findStructure(newParentId, filteredItems);
+    if (!parentStructure.subEstructuras){parentStructure.subEstructuras = []}
+    parentStructure.subEstructuras.push(structure)
+    const dependency = findStructure(state.dependency?.id, filteredItems);
+    return {
+      ...state,
+      items: filteredItems,
+      dependency: dependency
+    }
+  }),
+
+  on(StructureActions.copyStructureTo, (state, {structure, newParentId}) => {
+    const items = JSON.parse(JSON.stringify(state.items));
+    let parentStructure = findStructure(newParentId, items);
+    if (!parentStructure.subEstructuras){parentStructure.subEstructuras = []}
+    parentStructure.subEstructuras.push(structure)
+    const dependency = findStructure(state.dependency?.id, items);
+    return {
+      ...state,
+      items: items,
+      dependency: dependency
+    }
+  }),
+
+  on(StructureActions.relaodStructuresInStore, (state) => {
+    const items = JSON.parse(JSON.stringify(state.items));
+    const dependency = findStructure(state.dependency?.id, items);
+    return {
+      ...state,
+      items: items,
+      dependency: dependency
+    }
+  }),
+
 );
 
 
@@ -226,22 +265,6 @@ export function findStructure(id: number, structures: Structure[]): Structure{
   }
   return null;
 }
-
-
-/*function replaceStructureInList(list: Structure[], newStructure: Structure) {
-  for (let i = 0; i < list.length; i++) {
-    const current = list[i];
-    if (current.id === newStructure.id) {
-      list[i] = newStructure;
-      return;
-    }
-    const subEstructuras = current.subEstructuras;
-    if (subEstructuras && subEstructuras.length > 0) {
-      replaceStructureInList(subEstructuras, newStructure);
-    }
-  }
-}*/
-
 
 export function reasingOrder(structures: Structure[], inferiorOrder: number, increment: number, superiorOrden?: number){
   structures.forEach(e => {

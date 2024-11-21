@@ -17,3 +17,6 @@ export const removeActivityFromStructure = createAction('[Configuration of Struc
 export const setOrderIsAscending = createAction('[Configuration of Structures] Set the order of structures', props<{ orderIsAscending: boolean }>());
 export const order = createAction('[Configuration of Structures] Order to structures');
 
+export const moveStructureTo = createAction('[Configuration of Structures] Move an structure to a new parent structure', props<{ structure: Structure, newParentId: number }>());
+export const copyStructureTo = createAction('[Configuration of Structures] Copy an structure to a new parent structure', props<{ structure: Structure, newParentId: number }>());
+export const relaodStructuresInStore = createAction('[Configuration of Structures] Reload the structures: items and dependency');

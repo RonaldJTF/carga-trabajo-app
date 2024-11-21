@@ -49,7 +49,7 @@
                                         <div class="text-500">{{structure.descripcion}}</div>
                                     </div>
                                     <div *ngIf="structure.menuItems?.length" style="margin-left: auto; ">
-                                        <app-menu-item [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
+                                        <app-menu-item [menuItems]="structure.menuItems" [id]="structure.id" [value]="structure"></app-menu-item>
                                     </div>
                                 </td>
                             </tr>
@@ -76,7 +76,7 @@
                                             <div  class="flex align-items-center mb-2">
                                                 <div *ngIf="isAdmin" class="_badge-container mr-2">
                                                     <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfStructuresNoDependency, false)" pTooltip="Eliminar" tooltipPosition="bottom"
-                                                        class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency">
+                                                        class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency"> 
                                                     </button>
                                                     <span *ngIf="totalSelectedStructuresNoDependency"  (click)="desmarkAll(false)" class="_badge"
                                                         pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
@@ -125,7 +125,7 @@
                                                 <div style="margin-left: auto; ">
                                                     <div class="flex align-items-center ml-3">
                                                         <button *ngIf="hasDetailToShow(structure)" (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                                                        <app-menu-item *ngIf="structure.menuItems?.length" [menuItems]="structure.menuItems" [id]="structure.id"></app-menu-item>
+                                                        <app-menu-item *ngIf="structure.menuItems?.length" [menuItems]="structure.menuItems" [id]="structure.id" [value]="structure"></app-menu-item>
                                                     </div>
                                                     <p-overlayPanel #detailMessage [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 xl:w-7'">
                                                         <ng-template pTemplate>
