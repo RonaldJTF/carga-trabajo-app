@@ -1,17 +1,19 @@
 import {createReducer, on} from "@ngrx/store";
-import {LevelCompensation} from "@models";
+import {LevelCompensation, ValueByRule} from "@models";
 import * as LevelCompensationActions from "@store/levelCompensation.actions";
 
 export interface LevelCompensationState {
   items: LevelCompensation[];
   item: LevelCompensation;
   mustRecharge: boolean;
+  levelId: number;
 }
 
 export const initialState: LevelCompensationState = {
   items: [],
   item: new LevelCompensation(),
   mustRecharge: true,
+  levelId: null,
 };
 
 export const levelCompensationReducer = createReducer(
@@ -51,8 +53,43 @@ export const levelCompensationReducer = createReducer(
     mustRecharge: mustRecharge,
   })),
 
-  on(LevelCompensationActions.setItemFromList, (state, {id}) => ({
+  on(LevelCompensationActions.updateValuesByRulesToLevelCompensation, (state, { levelCompensationId, valuesByRules }) => {
+    const items = [...state.items];
+    let index = items.findIndex(item => item.id === levelCompensationId);
+    if (index !== -1){
+      items[index].valoresCompensacionLabNivelVigencia = valuesByRules;
+      items[index].loaded = true;
+    }
+    return { ...state, items:items};
+  }),
+
+  on(LevelCompensationActions.removeValueByRuleToLevelCompensation, (state, { valueByRuleId }) => {
+    const items = [...state.items];
+    const levelCompensation = findLevelCompensationToValueByRule(valueByRuleId, items);
+    if (levelCompensation?.valoresCompensacionLabNivelVigencia){
+      levelCompensation.valoresCompensacionLabNivelVigencia = levelCompensation.valoresCompensacionLabNivelVigencia.filter(e => e.id != valueByRuleId ) 
+    }
+    return {...state, items:items};
+  }),
+
+  on(LevelCompensationActions.setLevelIdOnWorking, (state, {levelId}) => ({
     ...state,
-    item: JSON.parse(JSON.stringify(state.items.find(item => item.id == id)))
+    levelId: levelId
   })),
 )
+
+
+/**
+ * Encuentra el levelCompensation que contiene el valueByRule (a través del id).
+ * @param valueByRuleId 
+ * @param valuesByRules 
+ * @returns 
+ */
+function findLevelCompensationToValueByRule(valueByRuleId: number, levelCompensations: LevelCompensation[]) {
+  for (const levelCompensation of levelCompensations) {
+    const index = levelCompensation.valoresCompensacionLabNivelVigencia?.findIndex(e => e.id == valueByRuleId);
+    if (index != undefined && index !== -1) {return levelCompensation};
+  }
+  return null;
+}
+

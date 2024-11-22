@@ -122,13 +122,14 @@ export class CompensationCategoryComponent implements OnInit {
 
   onDeleteCategory(event : Event): void {
     event.preventDefault();
+    const categoryId = this.category.id;
     this.deleting = true;
-    this.compensationCategory.deleteCategory(this.category.id).subscribe({
+    this.compensationCategory.deleteCategory(categoryId).subscribe({
       next: () => {
         this.backRoute ? this.router.navigate([this.backRoute], {skipLocationChange: true}) : this.urlService.goBack();
         this.deleting = false;
         //Removemos del formulario de la compensación laboral la categoria eliminada.
-        this.compensationService.removeCategoryInCompensation(this.category.id);
+        this.compensationService.removeCategoryInCompensation(categoryId);
       },
       error: (error) => {
         this.deleting = false;

@@ -121,15 +121,15 @@ export class WorkplanService {
     return this.webRequestService.deleteWithHeaders(`${this.pathFollowUp}/${payload}`, undefined, payload);
   }
 
-  downloadReport(type: string, stageIds: number[], idWorkplan: number): Observable<HttpResponse<any>>{
+  downloadReport(type: string, stageIds: number[], workplanId: number): Observable<HttpResponse<any>>{
     const options = {
       responseType: 'blob' as 'json',
       observe: 'response' as 'body'
     };
 
     let params: any = {type: type}
-    if (idWorkplan){
-      params['idWorkplan'] = idWorkplan;
+    if (workplanId){
+      params['workplanId'] = workplanId;
     }
     if(stageIds){
       params['stageIds'] = JSON.stringify(stageIds);

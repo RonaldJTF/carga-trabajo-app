@@ -22,6 +22,16 @@ export class VariableService {
   }
 
   /**
+   * Obtiene la lista de variables que están activas, son globales y no son primarias, pero también obtiene las variables activas que no se configurado como
+   * globales y que se han asociado al nivel y que están activas. Nota: Tambien se traen las variables que se han definido como no globales 
+   * y que no se han relacionado a ningún nivel en compensacionLabNivelVigencia.
+   * @returns Rule[]
+   */
+  getGlobalAndLevelActiveVariables(levelId: number): Observable<Variable[]>{
+    return this.webRequestService.getWithHeaders(`${this.pathVariable}/active`, {levelId: levelId});
+  }
+
+  /**
    * Obtiene todas las variables que dependen de una vigencia, por ejemplo el salario mínimo, y que estan activas
    * @returns Variable[]
    */

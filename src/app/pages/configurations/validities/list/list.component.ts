@@ -23,6 +23,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
   isAdmin: boolean;
   loading: boolean = false;
+  loadingValidityById: any = {};
 
   validities: Validity[] = [];
   validitiesSubscription: Subscription;
@@ -148,5 +149,17 @@ export class ListComponent implements OnInit, OnDestroy{
         });
       }
     )
+  }
+
+  loadValuesInValidityToTable(validityId: number, isLoaded: boolean, expanded: boolean){
+    if(!expanded && !isLoaded){
+      this.loadingValidityById[validityId] = true;
+      this.validityService.getValuesInValidityByValidityId(validityId).subscribe({
+        next: (e) =>{
+          this.store.dispatch(ValidityActions.updateValuesInValitiyToValidity({validityId: validityId, valuesInValidity: e}));
+          this.loadingValidityById[validityId] = false;
+        }
+      })
+    }
   }
 }

@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService } from '@services';
 import { AppState } from 'src/app/app.reducers';
 import { Location } from '@angular/common';
-import { IMAGE_SIZE, Methods } from '@utils';
+import { IMAGE_SIZE, Methods, Url } from '@utils';
 import { MESSAGE } from '@labels/labels';
 import { NormativityService } from 'src/app/services/normativity.service';
 import { MenuItem, SelectItem } from 'primeng/api';
@@ -44,6 +44,7 @@ export class LevelComponent implements OnInit, OnDestroy {
   levelSubscription: Subscription;
   
   rowGroupMetadata: any = {};
+  backRoute: string;
 
   normativityOptions: SelectItem[] = [];
 
@@ -67,6 +68,8 @@ export class LevelComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
+
+    this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
 
     this.indexOfSalaryScaleSubscription =  this.levelService.indexOfSalaryScale$.subscribe(e => this.indexOfSalaryScale = e);
     this.salaryScaleFormGroupSubscription = this.levelService.salaryScaleFormGroup$.subscribe(e => this.salaryScaleFormGroup = e);
@@ -150,9 +153,9 @@ export class LevelComponent implements OnInit, OnDestroy {
     this.levelService.updateLevel(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(LevelActions.updateFromList({level: e}));
-        this.router.navigate([this.ROUTE_TO_BACK]);
         this.creatingOrUpdating = false;
         this.levelService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -164,9 +167,9 @@ export class LevelComponent implements OnInit, OnDestroy {
     this.levelService.createLevel(payload).subscribe({
       next: (e) => {
         this.store.dispatch(LevelActions.addToList({level: e}));
-        this.router.navigate([this.ROUTE_TO_BACK]);
         this.creatingOrUpdating = false;
         this.levelService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -196,9 +199,9 @@ export class LevelComponent implements OnInit, OnDestroy {
     this.levelService.deleteLevel(this.level.id).subscribe({
       next: () => {
         this.store.dispatch(LevelActions.removeFromList({id: this.level.id}));
-        this.router.navigate([this.ROUTE_TO_BACK]);
         this.deleting = false;
         this.levelService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.deleting = false;
@@ -208,8 +211,8 @@ export class LevelComponent implements OnInit, OnDestroy {
 
   onCancelLevel(event : Event): void {
     event.preventDefault();
-    this.router.navigate([this.ROUTE_TO_BACK]);
     this.levelService.resetFormInformation();
+    this.goBack();
   }
 
   openNewSalaryScale(){
@@ -340,5 +343,10 @@ export class LevelComponent implements OnInit, OnDestroy {
             }
         }
     }
+  }
+
+  private goBack(){
+    let obj = Url.extractPathAndParams(this.backRoute);
+    this.router.navigate([obj.path], {skipLocationChange: true, queryParams: obj.queryParams});
   }
 }

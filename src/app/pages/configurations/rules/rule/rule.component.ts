@@ -171,13 +171,14 @@ export class RuleComponent  implements OnInit, OnDestroy {
 
   onDeleteRule(event : Event): void {
     event.preventDefault();
+    const ruleId = this.rule.id;
     this.deleting = true;
-    this.ruleService.deleteRule(this.rule.id).subscribe({
+    this.ruleService.deleteRule(ruleId).subscribe({
       next: () => {
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.deleting = false;
         //Removemos del formulario de relación de compensación laboral de niveles en una vigencia la regla si es la que se aplica
-        this.levelCompensationService.removeRuleInLevelCompensation(this.rule.id);
+        this.levelCompensationService.removeRuleInLevelCompensation(ruleId);
       },
       error: (error) => {
         this.deleting = false;
@@ -320,7 +321,6 @@ export class RuleComponent  implements OnInit, OnDestroy {
     containerDiv.appendChild(valueSpan);
     containerDiv.appendChild(iconSpan);
     
-    // Insertar al final y mover el cursor
     editableInput.appendChild(containerDiv);
     editableInput.appendChild(document.createTextNode(' '));
     

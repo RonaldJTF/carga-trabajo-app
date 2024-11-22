@@ -48,7 +48,7 @@
                         <td>
                             <div class="flex flex-row align-items-center">
                                 <div class="h-3rem flex align-items-center mr-2">
-                                    <button type="button" pButton pRipple [pRowToggler]="validity" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    <button  (click)="loadValuesInValidityToTable(validity.id, validity.loaded, expanded)" type="button" pButton pRipple [pRowToggler]="validity" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                                 </div>
                                 <p-tableCheckbox *ngIf="isAdmin" [value]="validity"></p-tableCheckbox>
                             </div>
@@ -61,8 +61,8 @@
                         </td>
                         <td class="text-center">
                             <div class="flex align-items-center justify-content-end">
-                                <div class="mr-2">
-                                    <p-badge [value]="validity.valoresVigencia?.length ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                                <div *ngIf="validity.valoresVigencia?.length" class="mr-2">
+                                    <p-badge [value]="validity.valoresVigencia?.length" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
                                 </div>
                                 <app-menu-item [menuItems]="menuItemsOfValidity" [id]="validity.id" [value]="validity"></app-menu-item>
                             </div>
@@ -72,23 +72,30 @@
                 <ng-template pTemplate="rowexpansion" let-validity>
                     <tr>
                         <td colspan="3" class="hover:surface-0 p-0">
-                            <ng-container *ngIf="validity.valoresVigencia.length; else sNoConfiguredValues">
-                                <div *ngFor="let valueInValidity of validity.valoresVigencia; let i = index" class="px-3 py-2 flex align-items-center hover:surface-hover">
-                                    <span class="font-medium m-2">{{i+1}}.</span>
-                                    <div class="flex flex-column">
-                                        <span class="font-medium">{{valueInValidity.variable.nombre}}</span>
-                                        <span class="text-500 text-sm" >{{valueInValidity.variable.descripcion}}</span>
+                            <ng-container *ngIf="!loadingValidityById[validity.id]; else sLoadingValidityWithValuesInValidity" >
+                                <ng-container *ngIf="validity.valoresVigencia.length; else sNoConfiguredValues">
+                                    <div *ngFor="let valueInValidity of validity.valoresVigencia; let i = index" class="px-3 py-2 flex align-items-center hover:surface-hover">
+                                        <span class="font-medium m-2">{{i+1}}.</span>
+                                        <div class="flex flex-column">
+                                            <span class="font-medium">{{valueInValidity.variable.nombre}}</span>
+                                            <span class="text-500 text-sm" >{{valueInValidity.variable.descripcion}}</span>
+                                        </div>
+                                        <div class="ml-auto flex align-items-center justify-content-end">
+                                            <span class="font-medium text-500 mr-2" pTooltip="Valor" tooltipPosition="bottom">{{valueInValidity.valor}}</span>
+                                            <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfValueInValidity" [id]="valueInValidity.id"></app-menu-item>
+                                        </div>
                                     </div>
-                                    <div class="ml-auto flex align-items-center justify-content-end">
-                                        <span class="font-medium text-500 mr-2" pTooltip="Valor" tooltipPosition="bottom">{{valueInValidity.valor}}</span>
-                                        <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfValueInValidity" [id]="valueInValidity.id"></app-menu-item>
+                                    <div class="text-500 text-sm px-3 py-2 mb-2">Parametrización de variables en la vigencia</div>
+                                </ng-container>
+                                <ng-template #sNoConfiguredValues>
+                                    <div class="p-3">
+                                        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.MEDIUM" buttonLabel="Gestionar variables en la vigencia"(go)="onGoToUpdateValidity(validity.id, $event)" [message]="MESSAGE.NO_VALORES_VARIABLES_EN_VIGENCIA" [showButton]="isAdmin"></app-go-to-if-not-found>
                                     </div>
-                                </div>
-                                <div class="text-500 text-sm px-3 py-2 mb-2">Parametrización de variables en la vigencia</div>
+                                </ng-template>
                             </ng-container>
-                            <ng-template #sNoConfiguredValues>
+                            <ng-template #sLoadingValidityWithValuesInValidity>
                                 <div class="p-3">
-                                    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.MEDIUM" buttonLabel="Gestionar variables en la vigencia"(go)="onGoToUpdateValidity(validity.id, $event)" [message]="MESSAGE.NO_VALORES_VARIABLES_EN_VIGENCIA" [showButton]="isAdmin"></app-go-to-if-not-found>
+                                    <app-loading></app-loading>
                                 </div>
                             </ng-template>
                         </td>

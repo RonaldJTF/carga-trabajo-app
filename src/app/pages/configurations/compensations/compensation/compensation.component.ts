@@ -7,7 +7,7 @@ import { MESSAGE } from '@labels/labels';
 import { Category, Compensation, Periodicity } from '@models';
 import { Store } from '@ngrx/store';
 import { AuthenticationService, CompensationCategoryService, CompensationService, ConfirmationDialogService, CryptojsService, LevelCompensationService, LevelService, NormativityService, PeriodicityService, UrlService } from '@services';
-import { IMAGE_SIZE, Methods } from '@utils';
+import { IMAGE_SIZE, Methods, Url } from '@utils';
 import { SelectItem } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { Subscription } from 'rxjs';
@@ -71,8 +71,8 @@ export class CompensationComponent implements OnInit, OnDestroy {
     this.compensationSubscription = this.compensationService.compensation$.subscribe(e => this.compensation = e);
     this.mustCloseFormSubscription = this.compensationService.mustCloseForm$.subscribe(e => {
       if(e){
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.compensationService.resetFormInformation();
+        this.goBack();
       }
     });
     if (this.mustRechargeCompensationFormGroup){
@@ -136,9 +136,9 @@ export class CompensationComponent implements OnInit, OnDestroy {
     this.compensationService.updateCompensation(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(CompensationActions.updateFromList({compensation: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.compensationService.resetFormInformation();
+        this.goBack();
         //Actualizamos del formulario de relación de compensación laboral de niveles en una vigencia la nueva información de la compensación
         this.levelCompensationService.updateCompensationInLevelCompensation(e);
       },
@@ -152,9 +152,9 @@ export class CompensationComponent implements OnInit, OnDestroy {
     this.compensationService.createCompensation(payload).subscribe({
       next: (e) => {
         this.store.dispatch(CompensationActions.updateFromList({compensation: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.compensationService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -176,15 +176,16 @@ export class CompensationComponent implements OnInit, OnDestroy {
 
   onDeleteCompensation(event : Event): void {
     event.preventDefault();
+    const compensationId = this.compensation.id;
     this.deleting = true;
-    this.compensationService.deleteCompensation(this.compensation.id).subscribe({
+    this.compensationService.deleteCompensation(compensationId).subscribe({
       next: () => {
-        this.store.dispatch(CompensationActions.removeFromList({id: this.compensation.id}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
+        this.store.dispatch(CompensationActions.removeFromList({id: compensationId}));
         this.deleting = false;
         this.compensationService.resetFormInformation();
+        this.goBack();
         //Removemos del formulario de relación de compensación laboral de niveles en una vigencia la variable si es la que se aplica
-        this.levelCompensationService.removeCompensationInLevelCompensation(this.compensation.id);
+        this.levelCompensationService.removeCompensationInLevelCompensation(compensationId);
       },
       error: (error) => {
         this.deleting = false;
@@ -194,8 +195,8 @@ export class CompensationComponent implements OnInit, OnDestroy {
 
   onCancelCompensation(event : Event): void {
     event.preventDefault();
-    this.router.navigate([this.backRoute], {skipLocationChange: true});
     this.compensationService.resetFormInformation();
+    this.goBack();
   }
 
   changeCategory(data: any){
@@ -246,5 +247,10 @@ export class CompensationComponent implements OnInit, OnDestroy {
   
   parseStringToBoolean(str: string): boolean{
     return Methods.parseStringToBoolean(str);
+  }
+
+  private goBack(){
+    let obj = Url.extractPathAndParams(this.backRoute);
+    this.router.navigate([obj.path], {skipLocationChange: true, queryParams: obj.queryParams});
   }
 }

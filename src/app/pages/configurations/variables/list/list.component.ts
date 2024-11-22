@@ -132,11 +132,11 @@ export class ListComponent implements OnInit, OnDestroy{
         });
       },
       `
-      ¿Está seguro de eliminar la variables?
+      ¿Está seguro de eliminar las variables?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong> 
-            Eliminar esta variable conlleva a eliminar a las otras variables en cascada y las reglas que tienen relación con cada una.  
+            Eliminar estas variables conlleva a eliminar a las otras variables en cascada y las reglas que tienen relación con cada una.  
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>

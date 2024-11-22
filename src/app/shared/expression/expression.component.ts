@@ -34,14 +34,16 @@ export class ExpressionComponent implements AfterViewInit{
 
   private buildExpression(){
     try {
-      if (this.expression != null && this.expression.trim()){
+      if (this.expression != undefined && this.expression != null && this.expression.trim()){
         const math = create(all);
         const node = math.parse(this.expression);
         const latex = node.toTex();
-        this.outExpression = `$$ ${latex} $$`
+        this.outExpression = `$$ ${latex} $$`;
       }else{
         this.outExpression = "No se encontró expresión"
       }
-    }catch{}
+    }catch{
+      console.log('Error of expression')
+    }
   }
 }

@@ -63,14 +63,14 @@
                         </td>
                         <td class="text-center">
                             <div class="flex align-items-center justify-content-end">
-                                <button (click)="loadSalaryScalesToOverlayPanel(level.id, level.loaded, detailOverlayPanel, $event)"  pButton pRipple icon="pi pi-info-circle"
+                                <button (click)="loadSalaryScalesToOverlayPanel(level, detailOverlayPanel, $event)"  pButton pRipple icon="pi pi-info-circle"
                                         class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
                                         pTooltip="Ver detalles" tooltipPosition="bottom"></button>
                                 <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id"></app-menu-item>
                             </div>
                             <p-overlayPanel #detailOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
                                 <ng-template pTemplate>
-                                    <ng-container *ngTemplateOutlet="detailOfLevelTemplate"></ng-container>
+                                    <ng-container *ngTemplateOutlet="detailOfLevelTemplate; context: {level: level}"></ng-container>
                                 </ng-template>
                             </p-overlayPanel>
                         </td>
@@ -123,7 +123,7 @@
     <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
 
-<ng-template #detailOfLevelTemplate>
+<ng-template #detailOfLevelTemplate let-level='level'>
     <div class="flex align-items-center mb-3">
       <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
         <i  class="pi pi-bookmark text-xl text-blue-500"></i>
@@ -134,7 +134,7 @@
       </div>
     </div>
 
-    <div class="flex align-items-center mb-1">
+    <div class="flex align-items-center">
       <div *ngIf="level" class="flex flex-column">
         <span class="font-medium">{{level?.descripcion | uppercase}}</span>
         <span *ngIf="filteredSalaryScales && level.escalasSalariales?.length" class="text-blue-500">{{filteredSalaryScales.length}} de {{level.escalasSalariales.length}} escalas salariales</span>
@@ -142,7 +142,7 @@
       <div class="ml-auto pl-2 flex align-items-center">
         <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
         <i class="pi pi-bars p-toolbar-separator mx-2"></i>
-        <p-selectButton styleClass="flex flex-nowrap" [options]="viewModeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeSalaryScaleType($event)">
+        <p-selectButton styleClass="flex flex-nowrap" [options]="viewModeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeSalaryScaleType(level, $event)">
           <ng-template let-item pTemplate>
             <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
           </ng-template>
@@ -150,7 +150,7 @@
       </div>
     </div>
 
-    <ng-container *ngIf="!loadingLevel else sLoadingLevel">
+    <ng-container *ngIf="!loadingLevelById[level.id] else sLoadingSalaryScales">
       <ng-container *ngIf="filteredSalaryScales?.length; else sNoSalaryScales">
         <p-table #tableOfSalaryScales [value]="filteredSalaryScales"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
             <ng-template pTemplate="body" let-salaryScale let-rowIndex="rowIndex">
@@ -207,7 +207,7 @@
         <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" buttonLabel="Gestionar escala salarial"(go)="onGoToUpdateLevel(level.id, $event)" [message]="MESSAGE.NO_ESCALAS_SALARIALES" [showButton]="isAdmin"></app-go-to-if-not-found>
       </ng-template>
     </ng-container>
-    <ng-template #sLoadingLevel>
+    <ng-template #sLoadingSalaryScales>
         <app-loading></app-loading>
     </ng-template>
 </ng-template>

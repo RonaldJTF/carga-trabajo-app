@@ -21,7 +21,6 @@ class Expression{
 export class FormPrimaryVariableComponent  implements OnInit, OnDestroy {
   IMAGE_SIZE = IMAGE_SIZE;
   MESSAGE = MESSAGE;
-  //ROUTE_TO_BACK: string = '/basic-tables/primary-variable';
 
   DELETE_MESSAGE = `¿Está seguro de eliminar la variable?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
@@ -61,7 +60,6 @@ export class FormPrimaryVariableComponent  implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadVariable(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
-    //this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
     this.buildForm();
     this.loadVariables();
 
@@ -85,8 +83,8 @@ export class FormPrimaryVariableComponent  implements OnInit, OnDestroy {
       estado: [true, Validators.required],
       porVigencia: [false, Validators.required],
       primaria: true,
-      global: [true, Validators.required],
-      valor: ['', Validators.compose([Validators.required, ValidateExpression.validate()])],
+      global: true,
+      valor: ['', Validators.compose([Validators.required])],
       expresionValor: '',
       nombre: ['', Validators.compose([
         Validators.required, 

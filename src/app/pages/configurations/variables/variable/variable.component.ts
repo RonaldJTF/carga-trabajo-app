@@ -31,8 +31,7 @@ export class VariableComponent  implements OnInit, OnDestroy {
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong> 
-            Eliminar la normatividad implica eliminar todas las escalas salariales configuradas, 
-            incluidas aquellas que están asociadas a otros niveles ocupacionales que dependan de la misma normatividad. 
+            Eliminar esta variable conlleva a eliminar a las otras variables en cascada y las reglas que tienen relación con cada una.  
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -202,15 +201,16 @@ export class VariableComponent  implements OnInit, OnDestroy {
 
   onDeleteVariable(event : Event): void {
     event.preventDefault();
+    const variableId = this.variable.id;
     this.deleting = true;
-    this.variableService.deleteVariable(this.variable.id).subscribe({
+    this.variableService.deleteVariable(variableId).subscribe({
       next: () => {
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.deleting = false;
         //Removemos de la lista de valores de las variables en la vigencia para la variable que se gestionan
-        this.validityService.removeValuesInValidityByVariable(this.variable.id);
+        this.validityService.removeValuesInValidityByVariable(variableId);
         //Removemos del formulario de relación de compensación laboral de niveles en una vigencia la variable si es la que se aplica
-        this.levelCompensationService.removeVariableInLevelCompensation(this.variable.id);
+        this.levelCompensationService.removeVariableInLevelCompensation(variableId);
       },
       error: (error) => {
         this.deleting = false;
@@ -352,7 +352,6 @@ export class VariableComponent  implements OnInit, OnDestroy {
     containerDiv.appendChild(valueSpan);
     containerDiv.appendChild(iconSpan);
     
-    // Insertar al final y mover el cursor
     editableInput.appendChild(containerDiv);
     editableInput.appendChild(document.createTextNode(' '));
     

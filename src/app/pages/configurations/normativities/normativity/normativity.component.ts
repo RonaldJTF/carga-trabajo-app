@@ -169,15 +169,16 @@ export class NormativityComponent implements OnInit {
 
   onDeleteNormativity(event : Event): void {
     event.preventDefault();
+    const normativityId = this.normativity.id;
     this.deleting = true;
-    this.normativityService.deleteNormativity(this.normativity.id).subscribe({
+    this.normativityService.deleteNormativity(normativityId).subscribe({
       next: () => {
         this.backRoute ? this.router.navigate([this.backRoute], {skipLocationChange: true}) : this.urlService.goBack();
         this.deleting = false;
         //Removemos de la lista de scalas salariales que se están gestionando todas aquellas asociadas a esta normatividad
-        this.levelService.removeSalaryScalesByNormativity(this.normativity.id);
+        this.levelService.removeSalaryScalesByNormativity(normativityId);
         //Removemos del formulario de asignación salarial la normatividad eliminada.
-        this.appointmentService.removeNormativityInAppointment(this.normativity.id);
+        this.appointmentService.removeNormativityInAppointment(normativityId);
       },
       error: (error) => {
         this.deleting = false;

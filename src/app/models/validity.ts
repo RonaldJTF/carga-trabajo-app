@@ -6,6 +6,7 @@ export class Validity{
     anio: string;
     estado: string;
     valoresVigencia: ValueInValidity[];
+    loaded: boolean;
 }
 
 export class ValueInValidity{

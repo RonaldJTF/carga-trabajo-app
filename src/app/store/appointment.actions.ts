@@ -5,7 +5,7 @@ export const setList = createAction('[Configuration of Appointment] Set the list
 export const addToList = createAction('[Configuration of Appointment] Add item to the list', props<{ appointment: Appointment }>());
 export const removeFromList = createAction('[Configuration of Appointment] Remove from the list an element by its id', props<{ id: number }>());
 export const removeItemsFromList = createAction('[Configuration of Appointment] Remove items from list by id', props<{ appointmentIds: number[] }>());
-export const updateFromList = createAction('[Configuration of Appointment] Update an item into list', props<{ appointment: Appointment }>());
+export const updateFromList = createAction('[Configuration of Appointment] Update an item in list', props<{ appointment: Appointment }>());
 export const setMustRecharge = createAction('[Configuration of Appointment] set if list must be recharged', props<{ mustRecharge: boolean }>());
 export const setItemFromList = createAction('[Configuration of Appointment] set the item from list', props<{ id: number }>());
 

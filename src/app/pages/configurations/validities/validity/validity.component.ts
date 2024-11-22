@@ -7,7 +7,7 @@ import { MESSAGE } from '@labels/labels';
 import { Validity, ValueInValidity, Variable } from '@models';
 import { Store } from '@ngrx/store';
 import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelCompensationService, UrlService, ValidityService } from '@services';
-import { IMAGE_SIZE, Methods } from '@utils';
+import { IMAGE_SIZE, Methods, Url } from '@utils';
 import { MenuItem, SelectItem } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { Subscription } from 'rxjs';
@@ -140,10 +140,9 @@ export class ValidityComponent implements OnInit {
     this.validityService.updateValidity(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(ValidityActions.updateFromList({validity: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.validityService.resetFormInformation();
-
+        this.goBack();
         //Actualizamos del formulario de asignación salarial la nueva información de la vigencia
         this.appointmentService.updateValidityInAppointment(e);
         //Actualizamos del formulario de relación de compensación laboral de niveles en una vigencia la nueva información de la vigencia
@@ -159,9 +158,9 @@ export class ValidityComponent implements OnInit {
     this.validityService.createValidity(payload).subscribe({
       next: (e) => {
         this.store.dispatch(ValidityActions.updateFromList({validity: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.validityService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -183,17 +182,18 @@ export class ValidityComponent implements OnInit {
 
   onDeleteValidity(event : Event): void {
     event.preventDefault();
+    const validityId = this.validity.id;
     this.deleting = true;
-    this.validityService.deleteValidity(this.validity.id).subscribe({
+    this.validityService.deleteValidity(validityId).subscribe({
       next: () => {
-        this.store.dispatch(ValidityActions.removeFromList({id: this.validity.id}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true});
+        this.store.dispatch(ValidityActions.removeFromList({id: validityId}));
         this.deleting = false;
         this.validityService.resetFormInformation();
+        this.goBack();
         //Removemos del formulario de asignación de cargos la vigencia si es la que se tiene definida
-        this.appointmentService.removeValidityInAppointment(this.validity.id);
+        this.appointmentService.removeValidityInAppointment(validityId);
         //Removemos del formulario de relación de compensación laboral de niveles en una vigencia la vigencia si es la que se tiene definida
-        this.levelCompensationService.removeValidityInLevelCompensation(this.validity.id);
+        this.levelCompensationService.removeValidityInLevelCompensation(validityId);
       },
       error: (error) => {
         this.deleting = false;
@@ -203,8 +203,8 @@ export class ValidityComponent implements OnInit {
 
   onCancelValidity(event : Event): void {
     event.preventDefault();
-    this.router.navigate([this.backRoute], {skipLocationChange: true});
     this.validityService.resetFormInformation();
+    this.goBack();
   }
 
   openNewValueInValidity(){
@@ -285,5 +285,10 @@ export class ValidityComponent implements OnInit {
 
   parseStringToBoolean(str: string): boolean{
     return Methods.parseStringToBoolean(str);
+  }
+
+  private goBack(){
+    let obj = Url.extractPathAndParams(this.backRoute);
+    this.router.navigate([obj.path], {skipLocationChange: true, queryParams: obj.queryParams});
   }
 }

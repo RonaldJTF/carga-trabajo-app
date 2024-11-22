@@ -118,7 +118,7 @@
                             <ng-container *ngFor="let obj of item.items">
                                     <div *ngIf="obj[comparisonAtrribute.comparisonKey] == _[comparisonAtrribute.comparisonKey]" class="_appointment-info-container p-1 border-round flex flex-column" 
                                         (mouseenter)="toggleIcon(true, obj.id)" (mouseleave)="toggleIcon(false, obj.id)" style="position: relative;">
-                                        <p-tag [value]="obj.totalCargos" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos designados" tooltipPosition="bottom"></p-tag>
+                                        <p-tag [value]="obj.totalCargos" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos asignados" tooltipPosition="bottom"></p-tag>
                                         <span class="text-500">{{obj.asignacionTotal | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                                         <app-appointment-menu-item  *ngIf="menuItemsOfAppointment?.length" [toggleIcon]="showedIcons[obj.id]" [id]="obj.id" [menuItems]="menuItemsOfAppointment" ></app-appointment-menu-item>                   
                                     </div>
@@ -142,7 +142,7 @@
                 </tr>
             </ng-template>
         </p-treeTable>
-        <div class="text-500 text-sm mx-2 mb-2 my-3">Cargos designados</div>
+        <div class="text-500 text-sm mx-2 mb-2 my-3">Cargos asignados</div>
     </div>
 </ng-container>
 
@@ -158,7 +158,7 @@
             </div>
             <div class="flex flex-column ">
                 <h5 class="m-0 text-700">Información de la asignación de cargos</h5>
-                <span class="text-500">Detalle de la asignación de cargos junto a los valores de las compensaciones laborales que se aplican</span>
+                <span class="text-500">Detalle de la asignación de cargos junto a los valores de las compensaciones laborales que se aplican <strong>anualmente</strong></span>
             </div>
         </div>
       
@@ -167,7 +167,7 @@
                 <span class="font-medium">{{selectedAppointment.asignacionTotal | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                 <span class="text-500 text-sm">Valor total por cargo</span>
             </div>
-            <span class="ml-auto text-3xl text-500 font-medium"  pTooltip="Cargos designados" tooltipPosition="bottom">
+            <span class="ml-auto text-3xl text-500 font-medium"  pTooltip="Cargos asignados" tooltipPosition="bottom">
                 <i class="pi pi-user text-2xl mr-2"></i>{{selectedAppointment.totalCargos}}
             </span>
         </div>
@@ -180,7 +180,10 @@
             <ng-template pTemplate="body" let-levelCompensation let-rowIndex="rowIndex">
                 <tr>
                     <td >
-                        {{ levelCompensation.compensacionLaboral.nombre }}
+                        <div class="flex flex-column">
+                            <span>{{levelCompensation.compensacionLaboral.nombre}}</span>
+                            <span class="text-500 text-sm">{{ levelCompensation.compensacionLaboral.periodicidad.nombre}}</span>
+                        </div>
                     </td>
                     <td class="w-10rem font-medium text-500 text-right"> 
                         <span *ngIf="levelCompensation.valorAplicado else noAplicaValor">{{ levelCompensation.valorAplicado | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
@@ -191,8 +194,13 @@
                 </tr>
             </ng-template>
         </p-table>
-        <div class="text-500 text-sm mx-2 mb-2 my-3">
-            Lista de compensaciones laborales aplicadas. La designación de los cargos se hace bajo la normatividad {{selectedAppointment.normatividad.nombre}}
+        <div class="text-500 text-sm mx-2 my-3">
+            Lista de compensaciones laborales aplicadas. La asignación de los cargos se hace bajo la normatividad {{selectedAppointment.normatividad.nombre}}
+        </div>
+
+        <div class="bg-blue-50 border-round-xl flex flex-column align-items-center p-4 my-3">
+            <span class="font-bold text-blue-500 text-3xl">{{ selectedAppointment.asignacionTotal*selectedAppointment.totalCargos | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+            <span class="text-500">Valor total asignado</span>
         </div>
     </ng-template>
 </p-overlayPanel>

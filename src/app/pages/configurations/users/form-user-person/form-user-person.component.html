@@ -93,7 +93,7 @@
             </ul>
 
             <ng-template #sAddRol>
-              <app-go-to-if-not-found [buttonLabel]="'Agregar rol'"
+              <app-go-to-if-not-found [buttonLabel]="'Agregar rol'" [imageSize]="IMAGE_SIZE.LARGE"
                 [message]="MESSAGE.NO_REGISTRO_ROLES"
                 (go)="rolOptionsOverlayPanel.toggle($event)"></app-go-to-if-not-found>
             </ng-template>

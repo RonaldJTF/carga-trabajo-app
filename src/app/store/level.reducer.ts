@@ -53,11 +53,6 @@ export const levelReducer = createReducer(
     return { ...state, items:items};
   }),
 
-  on(LevelActions.setItemFromList, (state, { id }) => ({
-    ...state,
-    item: JSON.parse(JSON.stringify(state.items.find(item => item.id == id)))
-  })),
-
   on(LevelActions.setMustRecharge, (state, { mustRecharge }) => ({
     ...state,
     mustRecharge: mustRecharge,

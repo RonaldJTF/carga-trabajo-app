@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as LevelActions from "@store/level.actions";
+import * as LevelCompensationActions from "@store/levelCompensation.actions";
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
 import { Level, SalaryScale } from '@models';
@@ -24,11 +25,9 @@ export class ListComponent implements OnInit, OnDestroy{
 
   isAdmin: boolean;
   loading: boolean = false;
-  loadingLevel: boolean = false;
   loadingLevelById: any = {};
 
   levels: Level[] = [];
-  level: Level;
   levelsSubscription: Subscription;
   levelSubscription: Subscription;
 
@@ -64,7 +63,6 @@ export class ListComponent implements OnInit, OnDestroy{
     this.isAdmin = isAdministrator;
 
     this.levelsSubscription =  this.store.select(state => state.level.items).subscribe(e => this.levels = e);
-    this.levelSubscription = this.store.select(state => state.level.item).subscribe(e => this.level=e);
     this.getLevels();
     this.initMenus();
     //Reestablecemos a valores iniciales cuando vayamos a editar o a gestionar las escalas salariales del nivel ocupacional
@@ -113,20 +111,18 @@ export class ListComponent implements OnInit, OnDestroy{
     })
   }
 
-  loadSalaryScalesToOverlayPanel(idLevel:number, isLoaded: boolean, overlayPanel?: OverlayPanel,  event?: Event){
+  loadSalaryScalesToOverlayPanel(level:Level, overlayPanel?: OverlayPanel,  event?: Event){
     if (overlayPanel){
-      this.store.dispatch(LevelActions.setItemFromList({id: idLevel}));
-      this.setSalaryScalesFiltered(this.viewMode)
+      this.setSalaryScalesFiltered(level, this.viewMode)
       overlayPanel.show(event);
     }
-    if(!isLoaded){
-      this.loadingLevel = true;
-      this.levelService.getSalaryScalesByLevelId(idLevel).subscribe({
+    if(!level.loaded){
+      this.loadingLevelById[level.id]  = true;
+      this.levelService.getSalaryScalesByLevelId(level.id).subscribe({
         next: (e) =>{
-          this.store.dispatch(LevelActions.updateSalaryScalesToLevel({levelId: idLevel, salaryScales: e}));
-          this.store.dispatch(LevelActions.setItemFromList({id: idLevel}));
-          this.setSalaryScalesFiltered(this.viewMode)
-          this.loadingLevel = false;
+          this.store.dispatch(LevelActions.updateSalaryScalesToLevel({levelId: level.id, salaryScales: e}));
+          this.setSalaryScalesFiltered(level, this.viewMode)
+          this.loadingLevelById[level.id]  = false;
         }
       })
     }
@@ -267,21 +263,21 @@ export class ListComponent implements OnInit, OnDestroy{
     }
   }
 
-  onChangeSalaryScaleType(optionType: 'active' | 'all') {
-    this.setSalaryScalesFiltered(optionType)
+  onChangeSalaryScaleType(level: Level, optionType: 'active' | 'all') {
+    this.setSalaryScalesFiltered(level, optionType)
   }
 
-  setSalaryScalesFiltered(optionType: 'active' | 'all'){
+  setSalaryScalesFiltered(level:Level, optionType: 'active' | 'all'){
     let order = (a, b) => {
       if (a.idNormatividad < b.idNormatividad) return -1;
       if (a.idNormatividad > b.idNormatividad) return 1;
       return a.nombre.localeCompare(b.nombre);;
     }
     if (optionType == 'active'){
-      this.filteredSalaryScales = this.level.escalasSalariales?.filter(o =>  Methods.parseStringToBoolean(o.estado))?.sort(order);
+      this.filteredSalaryScales = level.escalasSalariales?.filter(o =>  Methods.parseStringToBoolean(o.estado))?.sort(order);
     }
     else{
-      this.filteredSalaryScales = this.level.escalasSalariales?.sort(order);
+      this.filteredSalaryScales = level.escalasSalariales?.sort(order);
     }
     this.updateRowGroupMetaData();
   }
@@ -313,9 +309,10 @@ export class ListComponent implements OnInit, OnDestroy{
     }
   }
 
-  onGoToManagementCompensation(idLevel: string, event: Event) {
+  onGoToManagementCompensation(levelId: any, event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate(["/configurations/level-compensations"], {skipLocationChange: true, queryParams: {idLevel: this.cryptoService.encryptParam(idLevel)}})
+    this.store.dispatch(LevelCompensationActions.setLevelIdOnWorking({levelId: levelId}));
+    this.router.navigate(["/configurations/level-compensations"], {skipLocationChange: true})
   }
 }

@@ -20,7 +20,7 @@ export class PersonService {
     return this.webRequestService.getWithHeaders(this.pathPerson);
   }
 
-  getPerson(idPerson: string): Observable<Person> {
+  getPerson(idPerson: number): Observable<Person> {
     return this.webRequestService.getWithHeaders(`${this.pathPerson}/${idPerson}`);
   }
 
@@ -28,15 +28,15 @@ export class PersonService {
     return this.webRequestService.postWithHeaders(this.pathPerson, payload);
   }
 
-  update(idPerson: string, payload: any): Observable<any> {
+  update(idPerson: number, payload: any): Observable<any> {
     return this.webRequestService.putWithHeaders(`${this.pathPerson}/${idPerson}`, payload);
   }
 
-  delete(id: string): Observable<Person> {
+  delete(id: number): Observable<Person> {
     return this.webRequestService.deleteWithHeaders(`${this.pathPerson}/${id}`);
   }
 
-  deleteSelectedPeople(payload: string[]): Observable<Person[]> {
+  deleteSelectedPeople(payload: number[]): Observable<Person[]> {
     return this.webRequestService.deleteWithHeaders(this.pathPerson, undefined, payload);
   }
 

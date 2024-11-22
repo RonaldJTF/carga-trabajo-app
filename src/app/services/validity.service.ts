@@ -62,6 +62,13 @@ export class ValidityService {
     return this.webRequestService.deleteWithHeaders(`${this.pathValidity}/${this.pathValueInValidity}/${idValueInValidity}`);
   }
 
+  getValuesInValidityByValidityId(validityId: number): Observable<ValueInValidity[]>{
+    return this.webRequestService.getWithHeaders(`${this.pathValidity}/${this.pathValueInValidity}`, {idVigencia: validityId});
+  }
+
+  getValueInValidityByVariableIdAndValidityId(variableId: number, validityId: number): Observable<any>{
+    return this.webRequestService.getWithHeaders(`${this.pathValidity}/${this.pathValueInValidity}/value`, {variableId: variableId, validityId: validityId});
+  }
 
   /*********************************************************************************************************************/
   /******************************************** SECTION OF FORMS TO VALIDITY *******************************************/

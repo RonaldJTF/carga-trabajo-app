@@ -66,6 +66,16 @@ export const validityReducer = createReducer(
     return {...state, items:items};
   }),
 
+  on(ValidityActions.updateValuesInValitiyToValidity, (state, { validityId, valuesInValidity }) => {
+    const items = [...state.items];
+    let index = items.findIndex(item => item.id === validityId);
+    if (index !== -1){
+      items[index].valoresVigencia = valuesInValidity;
+      items[index].loaded = true;
+    }
+    return { ...state, items:items};
+  }),
+
 );
 
 

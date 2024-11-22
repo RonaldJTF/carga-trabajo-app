@@ -29,7 +29,7 @@ export class FormPersonComponent implements OnInit {
 
   personCopy: Person = new Person();
 
-  personId: string = null;
+  personId: number = null;
 
   param: string;
 
@@ -78,7 +78,7 @@ export class FormPersonComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.personId = params['id'];
+        this.personId = this.cryptoService.decryptParamAsNumber(params['id']);
         this.updateMode = true;
         this.getPerson(this.personId);
       }
@@ -168,7 +168,7 @@ export class FormPersonComponent implements OnInit {
     return this.isValido('idGenero');
   }
 
-  getPerson(personId: string) {
+  getPerson(personId: number) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
         this.person = data;
@@ -192,7 +192,7 @@ export class FormPersonComponent implements OnInit {
     this.formPerson.get('idGenero').setValue(person.idGenero);
   }
 
-  updatePerson(id: string, payload: any): void {
+  updatePerson(id: number, payload: any): void {
     payload.srcFoto = ''
     this.personService.update(id, payload).subscribe({
       next: () => {
@@ -220,7 +220,7 @@ export class FormPersonComponent implements OnInit {
   onSubmitPerson(event: Event): void {
     this.formData.delete('person');
     event.preventDefault();
-    this.formData.append('person', this.cryptoService.encryptParam(JSON.stringify(this.formPerson.value)));
+    this.formData.append('person', JSON.stringify(this.formPerson.value));
     if (this.formPerson.invalid) {
       this.formPerson.markAllAsTouched();
     } else {
@@ -304,14 +304,5 @@ export class FormPersonComponent implements OnInit {
       return { 'whitespace': true };
     }
     return null;
-  }
-
-  decriptList<T>(param: string[]): T[] {
-    let list: T[] = [];
-    param.forEach(item => {
-      let elemnt: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
-      list.push(elemnt);
-    })
-    return list;
   }
 }

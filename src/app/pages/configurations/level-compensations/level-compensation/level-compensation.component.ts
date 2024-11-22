@@ -1,14 +1,14 @@
 import { Location } from '@angular/common';
 import * as LevelCompensationActions from "@store/levelCompensation.actions";
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
-import { Compensation, LevelCompensation, Rule, SalaryScale, Validity, Variable} from '@models';
+import { Compensation, LevelCompensation, Rule, SalaryScale, Validity, ValueByRule, Variable} from '@models';
 import { Store } from '@ngrx/store';
 import { AuthenticationService, CompensationService, LevelCompensationService, ConfirmationDialogService, CryptojsService, PeriodicityService, UrlService, ValidityService, LevelService, RuleService } from '@services';
-import { IMAGE_SIZE, Methods } from '@utils';
-import { SelectItem, SelectItemGroup } from 'primeng/api';
+import { IMAGE_SIZE, Methods, Url } from '@utils';
+import { MenuItem, SelectItem, SelectItemGroup } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
@@ -17,7 +17,7 @@ import { VariableService } from 'src/app/services/variable.service';
 @Component({
   selector: 'app-level-compensation',
   templateUrl: './level-compensation.component.html',
-  styleUrls: ['./level-compensation.component.scss']
+  styleUrls: ['./level-compensation.component.scss'],
 })
 export class LevelCompensationComponent implements OnInit, OnDestroy {
   IMAGE_SIZE = IMAGE_SIZE;
@@ -35,13 +35,20 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
   deleting: boolean = false;
   loadingLevelCompensation: boolean = false;
   loadingSalaryScales: boolean = false;
+  loadingValueInValidityOfValueByRule: any = {};
 
+  indexOfValueByRule: number;
   formLevelCompensation !: FormGroup;
+  valueByRuleFormGroup: FormGroup;
   levelCompensation: LevelCompensation;
   mustRechargeLevelCompensationFormGroup: boolean;
+  levelId: number;
 
+  indexOfValueByRuleSubscription: Subscription;
+  valueByRuleFormGroupSubscription: Subscription;
   mustRechargeLevelCompensationFormGroupSubscription: Subscription;
   levelCompensationSubscription: Subscription;
+  levelIdSubscription: Subscription;
 
   backRoute: string;
   validityOptions: SelectItem[] = [];
@@ -51,12 +58,13 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
 
   salaryScales: SalaryScale[] = [];
 
-  //idLevel: number; 
+  menuItemsOfValueByRule: MenuItem[] = [];
+
+  showedIcons: any = {};
 
   constructor(
     private store: Store<AppState>,
     private confirmationDialogService: ConfirmationDialogService,
-    private periodicityService: PeriodicityService,
     private levelCompensationService: LevelCompensationService,
     private compensationService: CompensationService,
     private validityService: ValidityService,
@@ -78,12 +86,14 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     
     this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
 
+    this.levelIdSubscription = this.store.select(state => state.levelCompensation.levelId).subscribe(e => this.levelId = e);
+    this.indexOfValueByRuleSubscription =  this.levelCompensationService.indexOfValueByRule$.subscribe(e => this.indexOfValueByRule = e);
+    this.valueByRuleFormGroupSubscription = this.levelCompensationService.valueByRuleFormGroup$.subscribe(e => this.valueByRuleFormGroup = e);
     this.mustRechargeLevelCompensationFormGroupSubscription = this.levelCompensationService.mustRechargeLevelCompensationFormGroup$.subscribe(e => this.mustRechargeLevelCompensationFormGroup = e);
     this.levelCompensationSubscription = this.levelCompensationService.levelCompensation$.subscribe(e => this.levelCompensation = e);
 
     if (this.mustRechargeLevelCompensationFormGroup){
-      const idLevel = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idLevel']); //Indispensable para los nuevas relaciones
-      this.levelCompensationService.createLevelCompensationFormGroup(idLevel);
+      this.levelCompensationService.createLevelCompensationFormGroup(this.levelId);
     }
 
     const idLevelCompensation = this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']);
@@ -92,21 +102,28 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     this.initMenus();
     this.loadValidities(idLevelCompensation);
     this.loadCompensations();
-    this.loadRules();
-    this.loadVariables();
+    this.loadRules(this.levelId);
+    this.loadVariables(this.levelId);
   }
 
   ngOnDestroy(): void {
     this.mustRechargeLevelCompensationFormGroupSubscription?.unsubscribe();
     this.levelCompensationSubscription?.unsubscribe();
+    this.indexOfValueByRuleSubscription?.unsubscribe();
+    this.valueByRuleFormGroupSubscription?.unsubscribe();
+    this.levelIdSubscription?.unsubscribe();
   }
 
-  get levelId(): number{
-    this.formLevelCompensation = this.levelCompensationService.getLevelCompensationFormGroup();
-    return this.formLevelCompensation.get('idNivel')?.value;
+  get valuesByRulesFormArray(): FormArray{
+    return this.formLevelCompensation.get('valoresCompensacionLabNivelVigencia') as FormArray;
   }
 
-  initMenus(){}
+  initMenus(){
+    this.menuItemsOfValueByRule = [
+      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.modifyValueByRule(e.item['index'], e.originalEvent)},
+      {label: 'remover', icon: 'pi pi-times', visible: this.isAdmin, command: (e) => this.removeValueByRule(e.item['index'])},
+    ];
+  }
   
   loadLevelCompensationInformation(id: any){
     if (id == undefined){
@@ -124,8 +141,8 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
             this.loadingLevelCompensation = false;
             this.extendValidityOptions([e.vigencia ?? []].flat())
             this.extendSalaryScaleOptions([e.escalaSalarial ?? []].flat());
-            this.extendRuleOptions([e.regla ?? []].flat());
-            this.extendVariableOptions([e.variable ?? []].flat());
+            this.extendRuleOptions([e.valoresCompensacionLabNivelVigencia?.filter(o => o.regla).map(e => e.regla) ?? []].flat());
+            this.extendVariableOptions([e.valoresCompensacionLabNivelVigencia?.map(e => e.variable) ?? []].flat());
             this.extendCompensationOptions([e.compensacionLaboral ?? []].flat());
           },
         });
@@ -148,23 +165,23 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
   }
 
   loadCompensations(): void {
-    this.compensationService.getCompesations().subscribe({
+    this.compensationService.getActiveCompesations().subscribe({
       next: (e) => {
         this.extendCompensationOptions(e);
       }
     });
   }
 
-  loadRules(): void {
-    this.ruleService.getRules().subscribe({
+  loadRules(idLevel: number): void {
+    this.ruleService.getGlobalAndLevelActiveRules(idLevel).subscribe({
       next: (e) => {
         this.extendRuleOptions(e);
       }
     });
   }
 
-  loadVariables(): void {
-    this.variableService.getVariables().subscribe({
+  loadVariables(idLevel: number): void {
+    this.variableService.getGlobalAndLevelActiveVariables(idLevel).subscribe({
       next: (e) => {
         this.extendVariableOptions(e);
       }
@@ -186,9 +203,9 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     this.levelCompensationService.updateLevelCompensation(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(LevelCompensationActions.updateFromList({levelCompensation: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true, queryParams: {idLevel: this.cryptoService.encryptParam(payload.idNivel)}});
         this.creatingOrUpdating = false;
         this.levelCompensationService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -200,9 +217,9 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     this.levelCompensationService.createLevelCompensation(payload).subscribe({
       next: (e) => {
         this.store.dispatch(LevelCompensationActions.updateFromList({levelCompensation: e}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true, queryParams: {idLevel: this.cryptoService.encryptParam(payload.idNivel)}});
         this.creatingOrUpdating = false;
         this.levelCompensationService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -227,9 +244,9 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     this.levelCompensationService.deleteLevelCompensation(this.levelCompensation.id).subscribe({
       next: () => {
         this.store.dispatch(LevelCompensationActions.removeFromList({id: this.levelCompensation.id}));
-        this.router.navigate([this.backRoute], {skipLocationChange: true, queryParams: {idLevel: this.cryptoService.encryptParam(this.levelId)}});
         this.deleting = false;
         this.levelCompensationService.resetFormInformation();
+        this.goBack();
       },
       error: (error) => {
         this.deleting = false;
@@ -239,8 +256,8 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
 
   onCancelLevelCompensation(event : Event): void {
     event.preventDefault();
-    this.router.navigate([this.backRoute], {skipLocationChange: true, queryParams: {idLevel: this.cryptoService.encryptParam(this.levelId)}});
     this.levelCompensationService.resetFormInformation();
+    this.goBack();
   }
 
   /*********************** TO VALIDITY ***********************/
@@ -287,7 +304,7 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     this.router.navigate(["/configurations/compensations", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
-  /*********************** TO RULE **********************/
+  /*********************** TO VALUE BY RULE **********************/
   changeRule(data: any){
     this.levelCompensationService.setRuleToLevelCompensation(data.value);
     this.ruleOptionsOverlayPanel.hide();
@@ -312,7 +329,7 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
   /*********************** TO VARIABLE **********************/
   changeVariable(data: any){
     this.levelCompensationService.setVariableToLevelCompensation(data.value);
-    this.ruleOptionsOverlayPanel.hide();
+    this.variableOptionsOverlayPanel.hide();
   }
 
   removeVariable(){
@@ -329,6 +346,49 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     const backRoute = this.levelCompensation ? `${'/configurations/level-compensations/'+ this.cryptoService.encryptParam(this.levelCompensation.id)}` : '/configurations/level-compensations/create';
     this.router.navigate(["/configurations/variables", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
+  }
+
+  openNewValueByRule(){
+    this.levelCompensationService.setNewValueByRule({idCompensacionLabNivelVigencia: this.levelCompensation?.id} as ValueByRule);
+  }
+
+  cancelValueByRule(event: Event){
+    this.levelCompensationService.cancelValueByRule();
+  }
+
+  submitValueByRule(event:Event){
+    if (this.valueByRuleFormGroup.invalid) {
+      this.valueByRuleFormGroup.markAllAsTouched();
+    } else {
+      this.levelCompensationService.submitValueByRule();
+    }
+  }
+
+  modifyValueByRule(index: any, event: Event){
+    event.preventDefault();
+    event.stopPropagation();
+    this.levelCompensationService.modifyValueByRule(index);
+  }
+
+  removeValueByRule(index: number){
+    this.levelCompensationService.removeValueByRule(index);
+  }
+
+  getValueInValidityOfValueByRule(variableId: number){
+    const validityId = this.formLevelCompensation.get('idVigencia').value;
+    this.loadingValueInValidityOfValueByRule[variableId] = true;
+    this.validityService.getValueInValidityByVariableIdAndValidityId(variableId, validityId).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.levelCompensationService.setValueInValidityOfValueByRule(variableId, data);
+        this.loadingValueInValidityOfValueByRule[variableId] = false;
+      },
+      error: ()=>{this.loadingValueInValidityOfValueByRule[variableId] = false}
+    })
+  }
+
+  toggleIcon(show: boolean, id){
+    this.showedIcons[id] = show;
   }
 
   parseStringToBoolean(str: string): boolean{
@@ -382,6 +442,11 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
             items: [{value: newItem, label: newItem.nombre}]
         });
       }
-  });
+    });
+  }
+
+  private goBack(){
+    let obj = Url.extractPathAndParams(this.backRoute);
+    this.router.navigate([obj.path], {skipLocationChange: true, queryParams: obj.queryParams});
   }
 }

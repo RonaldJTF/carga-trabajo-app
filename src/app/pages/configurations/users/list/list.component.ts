@@ -73,7 +73,7 @@ export class ListComponent implements OnInit{
   }
 
   deleteSelectedPeople() {
-    let peopleIds: string[] = this.selectedPeople.map(item => this.cryptoService.encryptParam(item.id));
+    let peopleIds: number[] = this.selectedPeople.map(item => item.id);
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.personService.deleteSelectedPeople(peopleIds)
@@ -81,7 +81,7 @@ export class ListComponent implements OnInit{
             next: () => {
               this.desmarkAll();
               for (let idPerson of peopleIds) {
-                this.filterPeople(this.cryptoService.decryptParamAsNumber(idPerson));
+                this.filterPeople(idPerson);
               }
             }
           });
@@ -91,7 +91,7 @@ export class ListComponent implements OnInit{
 
   onDelete(idPerson: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.personService.delete(this.cryptoService.encryptParam(idPerson)).subscribe(() => {
+      this.personService.delete(idPerson).subscribe(() => {
         this.filterPeople(idPerson);
         this.desmarkAll();
       });

@@ -68,7 +68,7 @@ export class ListComponent implements OnInit, OnDestroy{
     {label: 'Reporte de tiempos en PDF', escape: false, icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
     {separator: true},
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
-    {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-list', automationId:"excel", command: (e) => { this.reportFlat(e) }},
+    {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"flat-excel", command: (e) => { this.download(e) }},
   ]
 
   @ViewChild('menu') menu!: Menu;
@@ -399,13 +399,11 @@ export class ListComponent implements OnInit, OnDestroy{
         if (menuItem) {
             menuItem.icon = icon;
             menuItem.disabled = disabled;
-            menuItem.label = label;
         }
     };
     const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
     const initialIcon = menuItem?.icon;
     const initialState = menuItem?.disabled;
-    const initialLabel = menuItem?.label;
 
     let automationId = data.item.automationId;
 
@@ -415,11 +413,11 @@ export class ListComponent implements OnInit, OnDestroy{
         : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
     this.structureService.downloadReport(automationId, structureIds).pipe(
       finalize(()=>{
-        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
+        updateMenuItem(menuItem, initialIcon, initialState);
       })
     ).subscribe({
       next: (res) => {
-        this.reportUploaded(menuItem, automationId, res);
+        //this.reportUploaded(menuItem, automationId, res);
       }
     });
   }
@@ -442,38 +440,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.cdr.detectChanges();
   }
 
-<<<<<<< Updated upstream
-  reportFlat(data: any, idStructure?: number){
-    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
-      if (menuItem) {
-        menuItem.icon = icon;
-        menuItem.disabled = disabled;
-        menuItem.label = label;
-      }
-    };
-    const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
-    const initialIcon = menuItem?.icon;
-    const initialState = menuItem?.disabled;
-    const initialLabel = menuItem?.label;
 
-    let automationId = data.item.automationId;
-
-    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    const structureIds = idStructure
-      ? [idStructure]
-      : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
-    this.structureService.downloadReportFlat(automationId, structureIds).pipe(
-      finalize(()=>{
-        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
-      })
-    ).subscribe({
-      next: (res) => {
-        this.reportUploaded(menuItem, automationId, res);
-      }
-    });
-  }
-
-=======
   move(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
@@ -527,5 +494,4 @@ export class ListComponent implements OnInit, OnDestroy{
   private relaodStructuresInStore(){
     this.store.dispatch(StructureActions.relaodStructuresInStore());
   }
->>>>>>> Stashed changes
 }

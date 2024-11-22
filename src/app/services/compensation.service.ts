@@ -36,6 +36,10 @@ export class CompensationService {
     return this.webRequestService.getWithHeaders(`${this.pathCompensation}/${idCompensation}`);
   }
 
+  getActiveCompesations(): Observable<Compensation[]> {
+    return this.webRequestService.getWithHeaders(this.pathCompensation, {estado: '1'});
+  }
+
   createCompensation(compensation: any): Observable<any> {
     return this.webRequestService.postWithHeaders(this.pathCompensation, compensation);
   }

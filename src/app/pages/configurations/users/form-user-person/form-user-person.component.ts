@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {SelectItem} from 'primeng/api';
 import {OverlayPanel} from 'primeng/overlaypanel';
-import {Methods} from "@utils";
+import {IMAGE_SIZE, Methods} from "@utils";
 import {MESSAGE} from "@labels/labels";
 import {CryptojsService, PersonService, UrlService, UserService} from "@services";
 import {Person, Role, User} from "@models";
@@ -15,12 +15,13 @@ import {Person, Role, User} from "@models";
 })
 export class FormUserPersonComponent implements OnInit {
   MESSAGE = MESSAGE;
+  IMAGE_SIZE = IMAGE_SIZE;
 
   @ViewChild('rolOptionsOverlayPanel') rolOptionsOverlayPanel: OverlayPanel;
 
   person: Person = new Person();
 
-  personId: string = null;
+  personId: number = null;
 
   formUser: FormGroup;
 
@@ -47,7 +48,7 @@ export class FormUserPersonComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.personId = params['id'];
+        this.personId = this.cryptoService.decryptParamAsNumber(params['id']);
         this.getUserPerson(this.personId);
       }
     });
@@ -60,7 +61,7 @@ export class FormUserPersonComponent implements OnInit {
 
   createFormUser() {
     return this.formBuilder.group({
-      idPersona: [this.cryptoService.decryptParamAsNumber(this.personId)],
+      idPersona: [this.personId],
       username: ['', Validators.required],
       password: ['', Validators.required],
       activo: [false],
@@ -88,7 +89,7 @@ export class FormUserPersonComponent implements OnInit {
     return this.isValido('password');
   }
 
-  getUserPerson(personId: string) {
+  getUserPerson(personId: number) {
     this.personService.getPerson(personId).subscribe({
       next: (data) => {
         this.person = data;
@@ -114,9 +115,6 @@ export class FormUserPersonComponent implements OnInit {
     if (user) {
       this.formUser.get('username')?.disable();
       this.formUser.get('password')?.disable();
-
-      // let inputPass = document.getElementById('password');
-      // inputPass.setAttribute('type', 'password');
     }
   }
 
@@ -133,7 +131,7 @@ export class FormUserPersonComponent implements OnInit {
   loadRoles() {
     this.userService.loadRoles().subscribe({
       next: (e) => {
-        this.roles = this.decriptList<Role>(e);
+        this.roles = e;
         this.loadRolesOptions();
       },
     });
@@ -157,17 +155,15 @@ export class FormUserPersonComponent implements OnInit {
     let payload = this.formUser.value;
     payload.activo = Methods.parseBooleanToString(payload.activo);
     payload.password = this.cryptoService.encrypt(payload.password);
-    payload = this.cryptoService.encryptParam(payload);
     if (this.formUser.invalid) {
       this.formUser.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      console.log(this.formUser.value)
-      this.updateMode ? this.updateUser(this.personId, payload) : this.createUser(payload);
+      this.updateMode ? this.updateUser(this.person.usuario.id, payload) : this.createUser(payload);
     }
   }
 
-  updateUser(id: string, payload: any): void {
+  updateUser(id: number, payload: any): void {
     this.userService.update(id, payload).subscribe({
       next: () => {
         this.urlService.goBack();
@@ -195,7 +191,7 @@ export class FormUserPersonComponent implements OnInit {
   onDeleteUserPerson(event: Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.userService.delete(this.personId).subscribe({
+    this.userService.delete(this.person.usuario.id).subscribe({
       next: () => {
         this.urlService.goBack();
         this.deleting = false;
@@ -251,14 +247,5 @@ export class FormUserPersonComponent implements OnInit {
         }
       })
     }
-  }
-
-  decriptList<T>(param: string[]): T[] {
-    let list: T[] = [];
-    param.forEach(item => {
-      let elemnt: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
-      list.push(elemnt);
-    })
-    return list;
   }
 }

@@ -22,13 +22,22 @@ export class LevelCompensation{
   idCompensacionLaboral: number;
   idEscalaSalarial: number;
   idVigencia: number;
-  idRegla: number;
-  idVariable: number;
   nivel: Level;
   compensacionLaboral: Compensation;
   escalaSalarial: SalaryScale;
   vigencia: Validity;
+  valorAplicado: number;
+  valoresCompensacionLabNivelVigencia: ValueByRule[];
+  loaded: boolean;
+}
+
+
+export class ValueByRule{
+  id: number;
+  idCompensacionLabNivelVigencia: number;
+  idRegla: number;
+  idVariable: number;
   regla: Rule;
   variable: Variable;
-  valorAplicado: number;
+  valueInValidity: number;
 }

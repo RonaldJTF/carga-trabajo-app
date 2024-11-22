@@ -7,7 +7,7 @@
         <ng-container *ngTemplateOutlet="compensationOptionTemplate; context: {compensation: formLevelCompensation.get('compensacionLaboral').value}"></ng-container>
     </div>
 
-    <div class="field p-fluid">
+    <div class="field p-fluid mb-5">
         <label htmlFor="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
         <p-dropdown *ngIf="!loadingSalaryScales else sLoadingSalaryScales"  id="idEscalaSalarial" inputId="idEscalaSalarial" [autoDisplayFirst]="false"
                     [options]="salaryScales" optionValue="id" optionLabel="nombre" [filter]="true"
@@ -23,25 +23,87 @@
         </ng-template>
     </div>
 
-    <div class="grid grid-nogutter">
-        <div class="col-12 md:col-6 md:pr-2 mb-3">
-            <ng-container *ngTemplateOutlet="ruleOptionTemplate; context: {rule: formLevelCompensation.get('regla').value}"></ng-container>
+    <p-divider layout="horizontal" align="center" class="w-full">
+        <span class="text-500">Lista de valores aplicados por regla</span>
+    </p-divider>
+
+    <ng-container *ngIf="valueByRuleFormGroup">
+        <ng-container *ngTemplateOutlet="formValueByRuleTemplate; context: { $implicit: valueByRuleFormGroup}"></ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="valuesByRulesFormArray.controls?.length else sNoValueByRule" formArrayName="valoresCompensacionLabNivelVigencia">
+        <div  *ngIf="!valueByRuleFormGroup"  class="flex align-items-center justify-content-end mb-2"> 
+            <button pButton pRipple type="button"  class="p-button-text" (click)="openNewValueByRule()" >
+                <i class="pi pr-2 pi-plus"></i>
+                <span>Asociar valor por regla</span>
+            </button>
         </div>
-        <div class="col-12 md:col-6 md:pl-2 mb-3">
-            <ng-container *ngTemplateOutlet="variableOptionTemplate; context: {variable: formLevelCompensation.get('variable').value}"></ng-container>
-        </div>
+
+        <p-table #tableOfSalaryScales [value]="valuesByRulesFormArray.controls"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
+            <ng-template pTemplate="body" let-valueByRuleControl let-rowIndex="rowIndex">
+                <ng-container *ngIf="valueByRuleControl.value as valueByRule">
+                    <tr>
+                        <td [ngClass]="{'_border-left-primary': indexOfValueByRule == rowIndex, '_border-left-transparent': indexOfValueByRule != rowIndex}" class="_border-left-5" style="vertical-align: top;">
+                            <div class="flex flex-column justify-content-start">
+                                <span class="font-medium text-500">{{ valueByRule.variable.nombre }}</span>
+                                <span class="text-500">{{ valueByRule.variable.descripcion }}</span>
+                                <span class="text-500 text-sm">Valor</span>
+                                <app-expression *ngIf="!parseStringToBoolean(valueByRule.variable.porVigencia)" [expression]="valueByRule.variable.expresionValor"></app-expression>
+                                <div *ngIf="parseStringToBoolean(valueByRule.variable.porVigencia)" class="flex flex-column align-items-center">
+                                    <div (mouseenter)="toggleIcon(true, valueByRule.idVariable)" (mouseleave)="toggleIcon(false, valueByRule.idVariable)" style="position: relative;">
+                                      <span class="font-medium text-center mt-2">Parametrizable por vigencia</span>
+                                      <span *ngIf="showedIcons[valueByRule.idVariable] && formLevelCompensation.get('idVigencia').value" (click)="getValueInValidityOfValueByRule(valueByRule.idVariable)" class="_icon-badge" #iconOfOptions pTooltip="Ver" tooltipPosition="bottom">
+                                        <i class="pi pi-eye"></i>
+                                      </span>                 
+                                    </div>
+                                    <ng-container *ngIf="!loadingValueInValidityOfValueByRule[valueByRule.idVariable] else sLoadingValueInValidityOfValueByRule">
+                                      <span *ngIf="valueByRule.valueInValidity != null" class="text-blue-500">{{valueByRule.valueInValidity | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                                    </ng-container>
+                                    <ng-template #sLoadingValueInValidityOfValueByRule>
+                                      <span>Loading...</span>
+                                    </ng-template>
+                                </div>                    
+                            </div>
+                        </td>
+                        <td style="vertical-align: top;">
+                            <div *ngIf="valueByRule.regla; else sNoRule" class="flex flex-column justify-content-start">
+                                <span class="font-medium text-500">{{ valueByRule.regla.nombre }}</span>
+                                <span class="text-500">{{ valueByRule.regla.descripcion }}</span>
+                                <span class="text-500 text-sm">Regla</span>
+                                <app-expression if [expression]="valueByRule.regla.expresionCondiciones"></app-expression>
+                            </div>
+                            <ng-template #sNoRule>
+                                <span class="text-500 font-medium">Regla no asignada</span>
+                            </ng-template>
+                        </td>
+                        <td class="w-5rem">
+                            <div class="flex align-items-center justify-content-end">
+                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfValueByRule" [index]="rowIndex"></app-menu-item>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-template>
+        </p-table>
+        
+        <div class="text-500 text-sm mx-2 mb-2 my-3">Valores aplicados por regla</div>
+    </ng-container>
+
+    <ng-template #sNoValueByRule>
+        <app-go-to-if-not-found *ngIf="!valueByRuleFormGroup" [imageSize]="IMAGE_SIZE.LARGE" buttonLabel="Asociar valor por regla"(go)="openNewValueByRule()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+    </ng-template>
+
+    <div class="mt-3">
+        <app-form-action-button [updateMode]="updateMode"
+            (createOrUpdate)="onSubmitLevelCompensation($event)"
+            (cancel)="onCancelLevelCompensation($event)"
+            (delete)="onDeleteLevelCompensation($event)"
+            [showDeleteButton] = "updateMode"
+            [creatingOrUpdating] = "creatingOrUpdating"
+            [deleting] = "deleting"
+            [disabledCreateOrUpdateButton] = "formLevelCompensation.invalid">
+        </app-form-action-button>
     </div>
-
-
-    <app-form-action-button [updateMode]="updateMode"
-        (createOrUpdate)="onSubmitLevelCompensation($event)"
-        (cancel)="onCancelLevelCompensation($event)"
-        (delete)="onDeleteLevelCompensation($event)"
-        [showDeleteButton] = "updateMode"
-        [creatingOrUpdating] = "creatingOrUpdating"
-        [deleting] = "deleting"
-        [disabledCreateOrUpdateButton] = "formLevelCompensation.invalid">
-    </app-form-action-button>
 </form>
 
 <ng-template #sLoadingLevelCompensation>
@@ -77,7 +139,7 @@
         </div>
     </div> 
 
-    <div  *ngIf="formLevelCompensation?.value.vigencia as validity; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
+    <div *ngIf="formLevelCompensation?.value.vigencia as validity; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
         <span class="text-500">{{validity.nombre | uppercase}}</span>
         <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto m-2 validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
     </div>
@@ -92,7 +154,6 @@
         </div>  
     </div>
 </ng-template>
-
 
 <ng-template #compensationOptionTemplate let-compensation="compensation">
     <div class="flex flex-column md:flex-row align-items-center w-full">
@@ -120,7 +181,7 @@
         </div>
     </div> 
 
-    <div  *ngIf="compensation; else sNoCompensation" class="flex align-items-center surface-100 border-round p-3 mt-2">
+    <div *ngIf="compensation; else sNoCompensation" class="flex align-items-center surface-100 border-round p-3 mt-2">
         <span class="text-500">{{compensation.nombre | uppercase}}</span>
     </div>
 
@@ -140,8 +201,8 @@
     <div class="flex flex-column md:flex-row align-items-center w-full">
         <label class="text-left font-medium  w-full md:w-auto">Regla</label>
         <div style="margin-left: auto; ">
-            <button *ngIf="formLevelCompensation?.value.idRegla" (click)="removeRule()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
-            <button *ngIf="formLevelCompensation?.value.idRegla" (click)="onGoToUpdateRule(rule.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button *ngIf="valueByRuleFormGroup?.value.idRegla" (click)="removeRule()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="valueByRuleFormGroup?.value.idRegla" (click)="onGoToUpdateRule(rule.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewRule()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
             <p-menu #ruleMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Reglas"  (click)="ruleOptionsOverlayPanel.toggle($event)"></button>
@@ -157,13 +218,19 @@
         </div>
     </div> 
 
-    <div class="flex flex-column align-items-center surface-100 border-round p-3 mt-2">
-        <span *ngIf="rule?.nombre" class="text-500 text-left w-full" >{{rule.nombre}}:</span>
-        <app-expression [expression]="rule?.expresionCondiciones"></app-expression>
+    <div *ngIf="rule else sNoRule" class="flex flex-column align-items-center mt-2">
+        <span class="text-500 text-left w-full" >{{rule.nombre}}:</span>
+        <app-expression [expression]="rule.expresionCondiciones"></app-expression>
     </div>
 
-    <div *ngIf="formLevelCompensation.controls['idRegla'] && formLevelCompensation.controls['idRegla'].errors && (formLevelCompensation.controls['idRegla'].touched || formLevelCompensation.controls['idRegla'].dirty)">
-        <div *ngIf="formLevelCompensation.controls['idRegla'].errors?.['required']">
+    <ng-template #sNoRule>
+        <div class="flex flex-column align-items-center mt-2">
+            <span class="text-500">Sin condiciones definidas</span>
+        </div>
+    </ng-template>
+
+    <div *ngIf="valueByRuleFormGroup.controls['idRegla'] && valueByRuleFormGroup.controls['idRegla'].errors && (valueByRuleFormGroup.controls['idRegla'].touched || valueByRuleFormGroup.controls['idRegla'].dirty)">
+        <div *ngIf="valueByRuleFormGroup.controls['idRegla'].errors?.['required']">
             <small id="text-help" class="p-error">Seleccione una regla que defina el valor a aplicar sobre la compensación laboral</small>
         </div>  
     </div>
@@ -172,10 +239,10 @@
 
 <ng-template #variableOptionTemplate let-variable="variable">
     <div class="flex flex-column md:flex-row align-items-center w-full">
-        <label class="text-left font-medium  w-full md:w-auto">Variable</label>
+        <label class="text-left font-medium  w-full md:w-auto">Valor</label>
         <div style="margin-left: auto; ">
-            <button *ngIf="formLevelCompensation?.value.idVariable" (click)="removeVariable()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
-            <button *ngIf="formLevelCompensation?.value.idVariable" (click)="onGoToUpdateVariable(variable.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button *ngIf="valueByRuleFormGroup?.value.idVariable" (click)="removeVariable()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="valueByRuleFormGroup?.value.idVariable" (click)="onGoToUpdateVariable(variable.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewVariable()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
             <p-menu #variableMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Variables"  (click)="variableOptionsOverlayPanel.toggle($event)"></button>
@@ -191,14 +258,68 @@
         </div>
     </div> 
 
-    <div class="flex flex-column align-items-center surface-100 border-round p-3 mt-2">
-        <span *ngIf="variable?.nombre" class="text-500 text-left w-full" >{{variable.nombre}}:</span>
-        <app-expression [expression]="variable?.expresionValor"></app-expression>
+    <div *ngIf="variable else sNoVariable" class="flex flex-column align-items-center mt-2">
+        <span  class="text-500 text-left w-full" >{{variable.nombre}}:</span>
+        <app-expression *ngIf="!parseStringToBoolean(variable.porVigencia)" [expression]="variable.expresionValor"></app-expression>
+        <div *ngIf="parseStringToBoolean(variable.porVigencia)" class="flex flex-column align-items-center">
+            <div (mouseenter)="toggleIcon(true, variable.id)" (mouseleave)="toggleIcon(false, variable.id)" style="position: relative;">
+              <span class="font-medium text-center mt-2">Parametrizable por vigencia</span>
+              <span *ngIf="showedIcons[variable.id] && formLevelCompensation.get('idVigencia').value" (click)="getValueInValidityOfValueByRule(variable.id)" class="_icon-badge" #iconOfOptions pTooltip="Ver" tooltipPosition="bottom">
+                <i class="pi pi-eye"></i>
+              </span>                 
+            </div>
+            <ng-container *ngIf="!loadingValueInValidityOfValueByRule[variable.id] else sLoadingValueInValidityOfValueByRule">
+              <span *ngIf="valueByRuleFormGroup.get('valueInValidity').value != null" class="text-blue-500">{{valueByRuleFormGroup.get('valueInValidity').value | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+            </ng-container>
+            <ng-template #sLoadingValueInValidityOfValueByRule>
+              <span>Loading...</span>
+            </ng-template>
+        </div>               
     </div>
 
-    <div *ngIf="formLevelCompensation.controls['idVariable'] && formLevelCompensation.controls['idVariable'].errors && (formLevelCompensation.controls['idVariable'].touched || formLevelCompensation.controls['idVariable'].dirty)">
-        <div *ngIf="formLevelCompensation.controls['idVariable'].errors?.['required']">
+    <ng-template #sNoVariable>
+        <div class="flex flex-column align-items-center mt-2">
+            <span class="text-500">Sin valor definido</span>
+        </div>
+    </ng-template>
+
+    <div *ngIf="valueByRuleFormGroup.controls['idVariable'] && valueByRuleFormGroup.controls['idVariable'].errors && (valueByRuleFormGroup.controls['idVariable'].touched || valueByRuleFormGroup.controls['idVariable'].dirty)">
+        <div *ngIf="valueByRuleFormGroup.controls['idVariable'].errors?.['required']">
             <small id="text-help" class="p-error">Seleccione una variable que defina el valor a aplicar sobre la compensación laboral</small>
         </div>  
+    </div>
+</ng-template>
+
+
+<ng-template #formValueByRuleTemplate let-valueByRuleFormGroup>
+    <div [formGroup]="valueByRuleFormGroup" class="surface-100 border-round surface-border mb-3 p-3 _border-left-5 " 
+        [ngClass]="{'_border-left-primary': indexOfValueByRule >= 0, '_border-left-transparent': indexOfValueByRule < 0 }">
+        <div class="flex align-items-center mb-3">
+            <div class="w-2rem h-2rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-2 flex-shrink-0">
+                <i  class="pi pi-pencil text-blue-500"></i>
+            </div>
+            <div class="flex flex-column ">
+                <span class="text-left font-medium text-500">Gestión del valor por regla</span>
+                <span class="text-500 text-sm">{{indexOfValueByRule < 0 ? 'Creación' : 'Modificación'}}</span>
+            </div>
+        </div>
+
+        <div class="grid grid-nogutter">
+            <div class="col-12 md:col-6 md:pr-3 mb-3 border-none border-dashed md:border-right-2 border-primary-300">
+                <ng-container *ngTemplateOutlet="variableOptionTemplate; context: {variable: valueByRuleFormGroup.get('variable').value}"></ng-container>
+            </div>
+            <div class="col-12 md:col-6 md:pl-3 mb-3">
+                <ng-container *ngTemplateOutlet="ruleOptionTemplate; context: {rule: valueByRuleFormGroup.get('regla').value}"></ng-container>
+            </div>
+        </div>
+                    
+        <div class="flex flex-wrap justify-content-end mt-3">
+            <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2" 
+                (click)="cancelValueByRule($event)" pTooltip="Cancelar" tooltipPosition="bottom">
+            </button>
+            <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined" type="submit" 
+                (click)="submitValueByRule($event)" [disabled]="valueByRuleFormGroup.invalid" pTooltip="Agregar" tooltipPosition="bottom">
+            </button>
+        </div>
     </div>
 </ng-template>
