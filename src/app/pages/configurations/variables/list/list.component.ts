@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
 import { VariableService } from 'src/app/services/variable.service';
 import { Table } from 'primeng/table';
-import { MathjaxService } from 'src/app/services/mathjax.service';
 
 @Component({
   selector: 'app-list',
@@ -40,11 +39,12 @@ export class ListComponent implements OnInit, OnDestroy{
     private router: Router,
     private route: ActivatedRoute,
     private cryptoService: CryptojsService,
-    private mathJaxService: MathjaxService
-  ){}
+  ){
+    this.isNotPrimary = this.isNotPrimary.bind(this);
+  }
 
   ngOnInit(): void {
-    
+
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
 
@@ -63,7 +63,7 @@ export class ListComponent implements OnInit, OnDestroy{
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteVariable(e)},
     ];
     this.menuItemsOfPrimaryVariable = [
-      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateVariable(e.item.id, e.originalEvent)},
+      {label: 'Editar', icon: 'pi pi-pencil', disabled:true, visible: this.isAdmin, command: (e) => this.onGoToUpdateVariable(e.item.id, e.originalEvent)},
     ]
   }
 
@@ -110,8 +110,8 @@ export class ListComponent implements OnInit, OnDestroy{
       ¿Está seguro de eliminar la variable <strong>${event.item.value?.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
-            Eliminar esta variable conlleva a eliminar a las otras variables en cascada <strong>${detail}</strong> y las reglas que tienen relación con ella. 
+            <strong>Advertencia:</strong>
+            Eliminar esta variable conlleva a eliminar a las otras variables en cascada <strong>${detail}</strong> y las reglas que tienen relación con ella.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -135,8 +135,8 @@ export class ListComponent implements OnInit, OnDestroy{
       ¿Está seguro de eliminar las variables?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
-            Eliminar estas variables conlleva a eliminar a las otras variables en cascada y las reglas que tienen relación con cada una.  
+            <strong>Advertencia:</strong>
+            Eliminar estas variables conlleva a eliminar a las otras variables en cascada y las reglas que tienen relación con cada una.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -150,5 +150,9 @@ export class ListComponent implements OnInit, OnDestroy{
 
   parseStringToBoolean(str: string): boolean{
     return Methods.parseStringToBoolean(str);
+  }
+
+  isNotPrimary(event: any) {
+    return !Methods.parseStringToBoolean(event.data.primaria);
   }
 }

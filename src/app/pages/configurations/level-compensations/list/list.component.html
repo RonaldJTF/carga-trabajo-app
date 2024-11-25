@@ -16,7 +16,7 @@
                         <span class="p-button-label hidden-lg pl-2">Nuevo</span>
                     </button>
                     <div *ngIf="isAdmin" class="_badge-container m-1 mr-2">
-                        <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedCompensations()" pTooltip="Eliminar" tooltipPosition="bottom"
+                        <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedLevelCompensations()" pTooltip="Eliminar" tooltipPosition="bottom"
                             class="p-button-danger " [disabled]="!selectedLevelCompensations?.length">
                             <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
                         </button>
@@ -32,7 +32,7 @@
               </p-menubar>
             </div>
           </ng-template>
-  
+
           <ng-template pTemplate="header">
             <tr>
               <th *ngIf="isAdmin" style="width: 3rem">
@@ -45,53 +45,54 @@
               <th></th>
             </tr>
           </ng-template>
-  
+
           <ng-template pTemplate="body" let-levelCompensation let-rowIndex="rowIndex">
             <tr pRowGroupHeader *ngIf="rowGroupMetadata[levelCompensation.idVigencia]?.index === rowIndex || rowIndex%numberOfRows==0">
-              <td colspan="3">
-                  <div class="flex align-items-center">
-                      <span class="font-medium  w-full text-center">
-                        {{levelCompensation.vigencia.nombre | uppercase}}
-                        <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia]?.index !== rowIndex && rowIndex%numberOfRows==0"> (continuación)</span>
-                      </span>
-                      <div class="ml-auto flex align-items-center justify-content-end">
-                        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'mr-2 validity-badge validity-' + (levelCompensation.vigencia.estado | validity ).classStyle">{{levelCompensation.vigencia.anio}}</span>                    
-                        <app-menu-item [menuItems]="menuItemsOfValidity" [id]="levelCompensation.idVigencia"></app-menu-item>
-                    </div>
-                  </div>
+              <td colspan="2">
+                <div class="flex flex-column align-items-center font-medium">
+                  <span>
+                    {{levelCompensation.vigencia.nombre | uppercase}}
+                    <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia]?.index !== rowIndex && rowIndex%numberOfRows==0"> (continuación)</span>
+                  </span>
+                  <span class="text-blue-500">{{levelCompensation.nivel.nombre}}</span>
+                </div>
+
+              </td>
+              <td>
+                <div class="flex align-items-center justify-content-end">
+                  <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'mr-2 validity-badge validity-' + (levelCompensation.vigencia.estado | validity ).classStyle">{{levelCompensation.vigencia.anio}}</span>
+                  <app-menu-item [menuItems]="menuItemsOfValidity" [id]="levelCompensation.idVigencia"></app-menu-item>
+                </div>
               </td>
             </tr>
             <tr pRowGroupHeader *ngIf="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial ?? '']?.index === rowIndex || rowIndex%numberOfRows==0">
-              <td colspan="3">
-                <div *ngIf="levelCompensation.idEscalaSalarial; else sCommonCompensations"  class="flex align-items-center">
-                  <div class="flex flex-column">
-                    <span class="font-medium">
-                      {{levelCompensation.escalaSalarial?.nombre | uppercase}}
-                      <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial]?.index !== rowIndex && rowIndex%numberOfRows==0"> (continuación)</span>
-                    </span>
-                    <span class="text-500">Código: {{levelCompensation.escalaSalarial?.codigo}}</span>
-                  </div>
-                  <div class="ml-auto flex align-items-center justify-content-end">
-                    <div class="mr-2">
-                        <p-badge [value]="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial ?? '']?.size ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
-                    </div>
-                    <app-menu-item [menuItems]="menuItemsOfSalaryScale" [id]="levelCompensation.idEscalaSalarial"></app-menu-item>
-                  </div>
+              <td colspan="2">
+                <div *ngIf="levelCompensation.idEscalaSalarial; else sCommonCompensations"  class="flex flex-column">
+                  <span class="font-medium">
+                    {{levelCompensation.escalaSalarial?.nombre | uppercase}}
+                    <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial]?.index !== rowIndex && rowIndex%numberOfRows==0"> (continuación)</span>
+                  </span>
+                  <span class="text-500">Código: {{levelCompensation.escalaSalarial?.codigo}}</span>
                 </div>
                 <ng-template #sCommonCompensations>
-                  <div class="flex align-items-center">
                     <span class="font-medium text-500">
                       Compensaciones laborales aplicadas a todas las escalas salariales del nivel ocupacional
                       <span class="text-500 font-normal" *ngIf="rowGroupMetadata[levelCompensation.idVigencia]['']?.index !== rowIndex && rowIndex%numberOfRows==0">(continuación)</span>
                     </span>
-                    <div class="ml-auto flex align-items-center">
-                      <div class="mr-2">
-                        <p-badge [value]="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial ?? '']?.size ?? 0"
-                          severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
-                      </div>
-                      <button (click)="detailCommonCompensationOverlayPanel.toggle($event)" pButton pRipple icon="pi pi-info-circle"
-                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver información" tooltipPosition="bottom"></button>
-                    </div>
+                </ng-template>
+              </td>
+              <td>
+                <div class="flex  align-items-center justify-content-end">
+                  <div class="mr-2">
+                    <p-badge [value]="rowGroupMetadata[levelCompensation.idVigencia][levelCompensation.idEscalaSalarial ?? '']?.size ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                  </div>
+
+                  <ng-container *ngIf="levelCompensation.idEscalaSalarial; else sCommonInformation">
+                    <app-menu-item [menuItems]="menuItemsOfSalaryScale" [id]="levelCompensation.idEscalaSalarial"></app-menu-item>
+                  </ng-container>
+                  <ng-template #sCommonInformation>
+                    <button (click)="detailCommonCompensationOverlayPanel.toggle($event)" pButton pRipple icon="pi pi-info-circle"
+                            class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver información" tooltipPosition="bottom"></button>
                     <p-overlayPanel #detailCommonCompensationOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
                       <ng-template pTemplate>
                         <div class="flex align-items-center mb-3">
@@ -111,8 +112,8 @@
                         </div>
                       </ng-template>
                     </p-overlayPanel>
-                  </div>
-                </ng-template>
+                  </ng-template>
+                </div>
               </td>
             </tr>
             <tr>
@@ -148,11 +149,11 @@
       </div>
     </ng-template>
   </ng-container>
-  
+
   <ng-template #sLoading>
     <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
   </ng-template>
-  
+
 
 <ng-template #valuesByRulesTemplate let-levelCompensation="levelCompensation">
   <div class="flex align-items-center mb-3">
@@ -166,7 +167,7 @@
   </div>
 
   <div class="flex">
-    <div class="flex flex-column">
+    <div class="flex flex-column mr-4">
       <span class="font-medium">{{levelCompensation.compensacionLaboral?.nombre | uppercase}}</span>
       <span class="text-500 text-justify">{{levelCompensation.compensacionLaboral?.descripcion}}</span>
       <span class="text-blue-500 text-sm">{{levelCompensation.compensacionLaboral?.categoria.nombre}}</span>
@@ -175,7 +176,7 @@
       <i class="pi pi-calendar text-2xl mr-2"></i>
       <div class="flex flex-column">
         <span>{{levelCompensation.compensacionLaboral?.periodicidad.nombre}}</span>
-        <span class="font-normal text-sm -mt-1">{{levelCompensation.compensacionLaboral?.periodicidad.frecuenciaAnual}} {{'vez' | pluralize : levelCompensation.compensacionLaboral?.periodicidad.frecuenciaAnual}} al año</span>
+        <span class="font-normal text-sm -mt-1" style="white-space: nowrap;">{{levelCompensation.compensacionLaboral?.periodicidad.frecuenciaAnual}} {{'vez' | pluralize : levelCompensation.compensacionLaboral?.periodicidad.frecuenciaAnual}} al año</span>
       </div>
     </div>
   </div>
@@ -185,7 +186,7 @@
       <p-table #tableOfSalaryScales [value]="levelCompensation.valoresCompensacionLabNivelVigencia"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
         <ng-template pTemplate="body" let-valueByRule let-rowIndex="rowIndex">
           <tr>
-            <td style="vertical-align: top;">
+            <td class="w-6" style="vertical-align: top;">
               <div class="flex flex-column justify-content-start">
                 <span class="font-medium text-500">{{ valueByRule.variable.nombre }}</span>
                 <span class="text-500">{{ valueByRule.variable.descripcion }}</span>
@@ -197,7 +198,7 @@
                 </div>
               </div>
             </td>
-            <td style="vertical-align: top;">
+            <td class="w-6" style="vertical-align: top;">
               <div *ngIf="valueByRule.regla; else sNoRule" class="flex flex-column justify-content-start">
                   <span class="font-medium text-500">{{ valueByRule.regla.nombre }}</span>
                   <span class="text-500">{{ valueByRule.regla.descripcion }}</span>

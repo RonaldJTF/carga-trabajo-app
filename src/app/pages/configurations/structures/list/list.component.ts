@@ -47,7 +47,6 @@ export class ListComponent implements OnInit, OnDestroy{
   mustRechargeSubscription: Subscription;
   dependencySubscription: Subscription;
   expandedNodesSubscription: Subscription;
-  structuresSubscription: Subscription;
   orderIsAscendingSubscription: Subscription;
 
 
@@ -110,7 +109,11 @@ export class ListComponent implements OnInit, OnDestroy{
     const backRoute = '/configurations/structures';
     this.menuBarItems = [
       {label: 'Reportes', icon: 'pi pi-fw pi-file', visible: this.isSuperAdmin, items: this.menuItemsOfDownload},
-      {label: 'Designación de cargos', icon: 'pi pi-users', visible: this.isAdmin, command: ()=>{this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}}
+      {label: 'Más', icon: 'pi pi-cog',
+        items: [
+          {label: 'Designación de cargos', icon: 'pi pi-users', visible: this.isAdmin, command: ()=>{this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}}
+        ]
+      }
     ];
   }
 
@@ -165,7 +168,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
       generalMenuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, Methods.parseStringToBoolean(structure?.tipologia?.esDependencia), e.originalEvent)})
       generalMenuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data:structure, command: (e) => this.onDeleteStructure(e)})
-      
+
 
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
@@ -198,8 +201,8 @@ export class ListComponent implements OnInit, OnDestroy{
 
     if (this.structureToMoveOrCopy && structure.tipologia?.idTipologiaSiguiente == this.structureToMoveOrCopy.idTipologia) {
       extraMenuItemOfActions.push({
-        label: 'Pegar', 
-        icon: 'pi pi-file-import', 
+        label: 'Pegar',
+        icon: 'pi pi-file-import',
         command: (e) => this[this.moveOrCopy](e.item['value'])
       });
     }
@@ -454,15 +457,15 @@ export class ListComponent implements OnInit, OnDestroy{
       `¿Está seguro de mover la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> a <strong>${newParent.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
+            <strong>Advertencia:</strong>
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
     `
     )
-    
+
   }
-  
+
   copy(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
@@ -476,8 +479,8 @@ export class ListComponent implements OnInit, OnDestroy{
       `¿Está seguro de copiar la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> a <strong>${newParent.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
-            Copiar implica duplicar los registros en el sistema de información. 
+            <strong>Advertencia:</strong>
+            Copiar implica duplicar los registros en el sistema de información.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -486,7 +489,7 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   private setInformationOfMoveOrCopy(data: any){
-    this.structureToMoveOrCopy = data.item['value']; 
+    this.structureToMoveOrCopy = data.item['value'];
     this.moveOrCopy = data.item.automationId;
     this.relaodStructuresInStore();
   }

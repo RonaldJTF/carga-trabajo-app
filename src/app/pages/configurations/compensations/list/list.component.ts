@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MESSAGE} from "@labels/labels";
-import {IMAGE_SIZE} from "@utils";
+import {IMAGE_SIZE, Methods} from "@utils";
 import {Subscription} from "rxjs";
 import {Compensation} from "@models";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -38,6 +38,7 @@ export class ListComponent implements OnInit, OnDestroy {
   menuItemsOfCategory: MenuItem[] = [];
 
   rowGroupMetadata: any;
+  numberOfRows: number = 10;
 
   constructor(
     private router: Router,
@@ -154,7 +155,7 @@ export class ListComponent implements OnInit, OnDestroy {
       ¿Está seguro de eliminar la categoría <strong>${event.data?.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
+            <strong>Advertencia:</strong>
             Eliminar la categoría implica eliminar todas las compensaciones laborales asociadas con ella.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
@@ -176,23 +177,31 @@ export class ListComponent implements OnInit, OnDestroy {
     this.updateRowGroupMetaData(this.dt.filteredValue);
   }
 
+  onRowsChange(data: number){
+    this.numberOfRows = data;
+  }
+
+  parseStringToBoolean(str: string): boolean{
+    return Methods.parseStringToBoolean(str);
+  }
+
   updateRowGroupMetaData(compesations: Compensation[]) {
     this.rowGroupMetadata = {};
     if (compesations) {
       for (let i = 0; i < compesations.length; i++) {
         const rowData = compesations[i];
-        const categoryName = rowData?.categoria?.nombre || '';
+        const categoryId = rowData?.idCategoria || '';
         if (i === 0) {
-          this.rowGroupMetadata[categoryName] = { index: 0, size: 1 };
+          this.rowGroupMetadata[categoryId] = { index: 0, size: 1 };
         }
         else {
           const previousRowData = compesations[i - 1];
-          const previousRowGroup = previousRowData?.categoria?.nombre;
-          if (categoryName === previousRowGroup) {
-            this.rowGroupMetadata[categoryName].size++;
+          const previousRowGroup = previousRowData?.idCategoria || '';
+          if (categoryId === previousRowGroup) {
+            this.rowGroupMetadata[categoryId].size++;
           }
           else {
-            this.rowGroupMetadata[categoryName] = { index: i, size: 1 };
+            this.rowGroupMetadata[categoryId] = { index: i, size: 1 };
           }
         }
       }

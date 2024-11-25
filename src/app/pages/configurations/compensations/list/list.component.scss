@@ -16,6 +16,38 @@
   z-index: 1;
 }
 
+._periodicity-badge {
+  border-radius: var(--border-radius);
+  padding: .25em .5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: .875rem;
+  letter-spacing: .3px;
+}
+
+._periodicity-badge {
+  &._periodicity-badge-1 {
+    background: #d8bfe7;
+    color: #672183;
+  }
+  &._periodicity-badge-2 {
+    background: #fff1c4;
+    color: #9b7925;
+  }
+  &._periodicity-badge-4 {
+    background: #B3E5FC;
+    color: #23547B;
+  }
+  &._periodicity-badge-12 {
+    background: #bbe2da;
+    color: #217c75;
+  }
+  &._periodicity-badge-365 {
+    background: #C8E6C9;
+    color: #256029;
+  }
+}
+
 :host ::ng-deep .p-datatable-header {
   border: none;
   background-color: transparent;

@@ -1,10 +1,12 @@
 import { Normativity } from "./normativity";
+import {LevelCompensation} from "./compensation";
 
 export class Level{
     id: number;
     descripcion: string;
     nombre: string;
     escalasSalariales: SalaryScale[];
+    compensacionesLabNivelVigencias: LevelCompensation[];
     loaded: boolean;
 }
 

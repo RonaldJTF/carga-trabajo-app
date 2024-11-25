@@ -5,7 +5,7 @@
   <ng-template #data>
     <div class="card p-0 pb-2">
       <p-table #dt [value]="compensations" rowGroupMode="subheader" sortMode="single" (onSort)="onSort()" (onFilter)="onFilter()" groupRowsBy="categoria.nombre" sortField="categoria.nombre"
-               [paginator]="true" [rows]="10" [(selection)]="selectedCompensations" selectionMode="multiple"
+               [paginator]="true" [rows]="numberOfRows" [(selection)]="selectedCompensations" selectionMode="multiple"  (rowsChange)="onRowsChange($event)"
                [globalFilterFields]="['nombre', 'descripcion', 'categoria.nombre']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
         <ng-template pTemplate="caption">
@@ -42,25 +42,32 @@
               Compensación laboral
               <p-sortIcon field="nombre"></p-sortIcon>
             </th>
+            <th class="text-center" style="white-space: nowrap" pSortableColumn="periodicidad.nombre">
+              Periodicidad
+              <p-sortIcon field="periodicidad.nombre"></p-sortIcon>
+            </th>
+            <th class="w-3rem"></th>
             <th></th>
           </tr>
         </ng-template>
 
         <ng-template pTemplate="body" let-compensation let-rowIndex="rowIndex">
-          <tr pRowGroupHeader *ngIf="rowGroupMetadata[compensation.categoria.nombre]?.index === rowIndex">
-            <td colspan="3">
-              <div class="flex align-items-center">
+          <tr pRowGroupHeader *ngIf="rowGroupMetadata[compensation.idCategoria]?.index === rowIndex || rowIndex%numberOfRows==0">
+            <td colspan="4">
                 <div  class="flex flex-column">
-                  <span class="font-medium">{{compensation.categoria.nombre | uppercase}}</span>
+                  <span class="font-medium">{{compensation.categoria.nombre | uppercase}}
+                    <span class="text-500 font-normal" *ngIf="rowGroupMetadata[compensation.idCategoria]?.index !== rowIndex && rowIndex%numberOfRows==0">(continuación)</span>
+                  </span>
                   <span class="text-500">{{compensation.categoria.descripcion}}</span>
                 </div>
-                <div class="ml-auto flex align-items-center justify-content-end">
-                  <div class="mr-2">
-                      <p-badge [value]="rowGroupMetadata[compensation.categoria.nombre]?.size ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
-                  </div>
-                  <app-menu-item [menuItems]="menuItemsOfCategory" [id]="compensation.idCategoria"></app-menu-item>
+            </td>
+            <td>
+              <div class="flex align-items-center justify-content-end">
+                <div class="mr-2">
+                  <p-badge [value]="rowGroupMetadata[compensation.idCategoria]?.size ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                </div>
+                <app-menu-item [menuItems]="menuItemsOfCategory" [id]="compensation.idCategoria"></app-menu-item>
               </div>
-            </div>
             </td>
           </tr>
           <tr>
@@ -73,7 +80,13 @@
                 <span class="text-500">{{ compensation.descripcion }}</span>
               </div>
             </td>
-            <td class="text-center">
+            <td>
+              <span class="_periodicity-badge _periodicity-badge-{{compensation.periodicidad?.frecuenciaAnual}}">{{compensation.periodicidad?.nombre }}</span>
+            </td>
+            <td>
+              <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(compensation.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(compensation.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+            </td>
+            <td>
               <div class="flex align-items-center justify-content-end">
                 <app-menu-item [menuItems]="menuItemsOfCompesantion" [id]="compensation.id"></app-menu-item>
               </div>

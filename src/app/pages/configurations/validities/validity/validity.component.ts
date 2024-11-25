@@ -29,7 +29,7 @@ export class ValidityComponent implements OnInit {
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong>
-            Eliminar la vigencia implica eliminar todas las parametrizaciones de los valores de las variables y los cargos designados en esa vigencia.
+            Eliminar la vigencia implica eliminar todas las parametrizaciones de los valores de las variables designados en esa vigencia.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>

@@ -45,37 +45,31 @@
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-variable let-rowIndex="rowIndex" let-expanded="expanded">
+                <ng-template pTemplate="body" let-rule let-rowIndex="rowIndex" let-expanded="expanded">
                     <tr>
                         <td>
                             <div class="flex flex-row align-items-center">
                                 <div class="h-3rem flex align-items-center mr-2">
-                                    <button type="button" pButton pRipple [pRowToggler]="variable" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    <button type="button" pButton pRipple [pRowToggler]="rule" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                                 </div>
-                                <p-tableCheckbox *ngIf="isAdmin" [value]="variable"></p-tableCheckbox>
+                                <p-tableCheckbox *ngIf="isAdmin" [value]="rule"></p-tableCheckbox>
                             </div>
                         </td>
                         <td>
-                            <div class="flex">
-                                <div class="flex flex-column" >
-                                    <span class="font-medium">{{variable.nombre}}</span>
-                                    <span class="text-500" >{{variable.descripcion}}</span>
-                                </div>
-                                <div class="ml-auto">
-                                    <span *ngIf="parseStringToBoolean(variable.porVigencia)" style="white-space: nowrap;"  class="ml-auto badge badge-blue">Por vigencia</span>
-                                </div>
+                           <div class="flex flex-column" >
+                                <span class="font-medium">{{rule.nombre}}</span>
+                                <span class="text-500" >{{rule.descripcion}}</span>
                             </div>
                         </td>
                         <td>
-                            <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(variable.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(variable.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+                            <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(rule.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(rule.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
                         </td>
-                        <td class="text-center">
+                        <td>
                             <div class="flex align-items-center justify-content-end">
                                 <div class="mr-2">
-                                    <p-badge *ngIf="parseStringToBoolean(variable.primaria)" value="P" severity="success" pTooltip="Primaria" tooltipPosition="bottom" styleClass="m-1"></p-badge>
-                                    <p-badge *ngIf="parseStringToBoolean(variable.global)" value="G" severity="warning" pTooltip="Global" tooltipPosition="bottom" styleClass="m-1"></p-badge>
+                                    <p-badge *ngIf="parseStringToBoolean(rule.global)" value="G" severity="warning" pTooltip="Global" tooltipPosition="bottom" styleClass="m-1"></p-badge>
                                 </div>
-                                <app-menu-item [menuItems]="menuItemsOfRule" [id]="variable.id" [value]="variable"></app-menu-item>
+                                <app-menu-item [menuItems]="menuItemsOfRule" [id]="rule.id" [value]="rule"></app-menu-item>
                             </div>
                         </td>
                     </tr>
@@ -112,4 +106,3 @@
 </ng-template>
 
 
-  

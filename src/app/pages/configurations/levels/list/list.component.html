@@ -180,24 +180,24 @@
                     </td>
                 </tr>
                 <tr>
-                <td >
-                    <div class="flex flex-column justify-content-start">
-                        <span>{{ salaryScale.nombre }}</span>
-                        <span class="text-500 font-italic">Código: {{ salaryScale.codigo }}</span>
-                    </div>
-                </td>
-                <td class="w-6rem">
-                    <span *ngIf="salaryScale.incrementoPorcentual" class="text-green-500" pTooltip="Incremento porcentual" tooltipPosition="bottom">{{salaryScale.incrementoPorcentual}}% <i class="pi pi-arrow-up-right"></i></span>
-                </td>
-                <td class="w-5rem text-center">
-                    <i class="pi" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(salaryScale.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(salaryScale.estado)}"
-                        pTooltip="Estado" tooltipPosition="bottom"></i>
-                </td>
-                <td class="w-5rem">
-                    <div class="flex align-items-center justify-content-end">
-                        <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfSalaryScale" [id]="salaryScale.id" [value]="salaryScale"></app-menu-item>
-                    </div>
-                </td>
+                  <td >
+                      <div class="flex flex-column">
+                          <span>{{ salaryScale.nombre }}</span>
+                          <span class="text-500">Código: {{ salaryScale.codigo }}</span>
+                      </div>
+                  </td>
+                  <td class="w-6rem">
+                      <span *ngIf="salaryScale.incrementoPorcentual" class="text-green-500" pTooltip="Incremento porcentual" tooltipPosition="bottom">{{salaryScale.incrementoPorcentual}}% <i class="pi pi-arrow-up-right"></i></span>
+                  </td>
+                  <td class="w-5rem text-center">
+                      <i class="pi" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(salaryScale.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(salaryScale.estado)}"
+                          pTooltip="Estado" tooltipPosition="bottom"></i>
+                  </td>
+                  <td class="w-5rem">
+                      <div class="flex align-items-center justify-content-end">
+                          <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfSalaryScale" [id]="salaryScale.id" [value]="salaryScale"></app-menu-item>
+                      </div>
+                  </td>
                 </tr>
             </ng-template>
         </p-table>

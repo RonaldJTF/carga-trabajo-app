@@ -12,10 +12,10 @@ export class LevelService {
   private pathLevel: string = 'level';
   private levelFormGroup: FormGroup;
 
-  private _salaryScaleFormGroup: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null); 
-  private _indexOfSalaryScale: BehaviorSubject<number> = new BehaviorSubject<number>(-1); 
-  private _mustRechargeLevelFormGroup: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true); 
-  private _level: BehaviorSubject<Level> = new BehaviorSubject<Level>(null); 
+  private _salaryScaleFormGroup: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null);
+  private _indexOfSalaryScale: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
+  private _mustRechargeLevelFormGroup: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  private _level: BehaviorSubject<Level> = new BehaviorSubject<Level>(null);
 
   public salaryScaleFormGroup$ = this._salaryScaleFormGroup.asObservable();
   public indexOfSalaryScale$ = this._indexOfSalaryScale.asObservable();
@@ -129,7 +129,7 @@ export class LevelService {
     if(index < 0){
       formArray.push(formGroup);
     }else{
-      formArray.removeAt(index); 
+      formArray.removeAt(index);
       formArray.insert(index, formGroup);
     }
     this.orderSalaryScalesFormArray(formArray);
@@ -161,7 +161,7 @@ export class LevelService {
     let totalToMove = 0;
     let actualWasRemoved = false;
     const actualIndex = this._indexOfSalaryScale.value;
-    
+
     for (let i = formArray?.length - 1; i >= 0; i--) {
       const control = formArray.at(i);
       if (control.get('idNormatividad')?.value === normativityId) {
@@ -176,7 +176,7 @@ export class LevelService {
     //Actualizar el index del elemento que se encuentra editando a nueva posición, ya que pudo haberse desplazado
     this._indexOfSalaryScale.next(actualIndex - totalToMove);
 
-    /*Si el elemento que se tiene modificando o creando tiene en el momento la misma normatividad eliminada, o es un elemento 
+    /*Si el elemento que se tiene modificando o creando tiene en el momento la misma normatividad eliminada, o es un elemento
     que parte de uno de esa normatividad, entonces es reestablecido a valores iniciales*/
     if(formGroup?.get('idNormatividad').value == normativityId){
       if(actualWasRemoved){
@@ -204,12 +204,12 @@ export class LevelService {
       this.reassingState (formGroup, normativity);
     }
   }
-  
+
   /**
    * Ajustamos el estado de la escala salarial en función del nuevo estado de la normatividad que lo rige.
    * Si el estado es inactivo, entonces cambia a inactivo el estado de las escalas salariales.
-   * @param control 
-   * @param state 
+   * @param control
+   * @param state
    */
   private reassingState(control: AbstractControl, normativity: Normativity){
     if (!Methods.parseStringToBoolean(normativity.estado)){

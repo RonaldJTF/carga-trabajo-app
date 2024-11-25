@@ -1,6 +1,13 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as LevelCompensationActions from "@store/levelCompensation.actions";
-import {AuthenticationService, CompensationService, ConfirmationDialogService, CryptojsService, LevelCompensationService} from "@services";
+import {
+  AuthenticationService,
+  CompensationService,
+  ConfirmationDialogService,
+  CryptojsService,
+  LevelCompensationService,
+  LevelService
+} from "@services";
 import {LevelCompensation} from "@models";
 import {IMAGE_SIZE, Methods} from "@utils";
 import {MESSAGE} from "@labels/labels";
@@ -32,7 +39,6 @@ export class ListComponent implements OnInit, OnDestroy {
   levelCompensations: LevelCompensation[] = [];
 
   levelCompensationsSubscription: Subscription;
-  levelCompensationSubscription: Subscription;
   levelIdSubscription: Subscription;
 
   selectedLevelCompensations: LevelCompensation[] = [];
@@ -51,7 +57,6 @@ export class ListComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private authService: AuthenticationService,
     private confirmationDialogService: ConfirmationDialogService,
-    private compensationService: CompensationService,
     private levelCompensationService: LevelCompensationService,
     private cryptojsService: CryptojsService,
     private store: Store<AppState>,
@@ -70,7 +75,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.levelCompensationsSubscription?.unsubscribe();
-    this.levelCompensationSubscription?.unsubscribe();
   }
 
   initMenuItems(){
@@ -110,11 +114,11 @@ export class ListComponent implements OnInit, OnDestroy {
     })
   }
 
-  deleteSelectedCompensations() {
+  deleteSelectedLevelCompensations() {
     let compensationIds: number[] = this.selectedLevelCompensations.map(item => item.id);
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.compensationService.deleteSelectedCompensations(compensationIds)
+        this.levelCompensationService.deleteSelectedLevelCompensations(compensationIds)
           .subscribe({
             next: () => {
               this.store.dispatch(LevelCompensationActions.removeItemsFromList({levelCompensationIds: this.selectedLevelCompensations.map(item => item.id)}));
@@ -217,10 +221,10 @@ export class ListComponent implements OnInit, OnDestroy {
   private fieldCompare(a, b){
     const fieldA = a[this.order.field];
     const fieldB = b[this.order.field];
-    
+
     if (fieldA < fieldB) {
       return -1 * this.order.order;
-    } 
+    }
     if (fieldA > fieldB) {
       return 1 * this.order.order;
     }
@@ -251,8 +255,8 @@ export class ListComponent implements OnInit, OnDestroy {
     if (levelsCompensations) {
       levelsCompensations.sort((a, b) => this.compare(a, b));
       this.rowGroupMetadata = {};
-      for (let i = 0; i < levelsCompensations.length; i++) {     
-        levelsCompensations[i]['order'] = i;     
+      for (let i = 0; i < levelsCompensations.length; i++) {
+        levelsCompensations[i]['order'] = i;
         const rowData = levelsCompensations[i];
         const idSalaryScale = rowData?.idEscalaSalarial || '';
         const idValidity = rowData?.idVigencia;

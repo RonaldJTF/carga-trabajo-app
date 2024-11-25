@@ -75,12 +75,12 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
-    
+
     this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
 
     this.mustRechargeAppointmentFormGroupSubscription = this.appointmentService.mustRechargeAppointmentFormGroup$.subscribe(e => this.mustRechargeAppointmentFormGroup = e);
     this.appointmentSubscription = this.appointmentService.appointment$.subscribe(e => this.appointment = e)
-        
+
     if (this.mustRechargeAppointmentFormGroup){
       this.appointmentService.createAppointmentFormGroup();
     }
@@ -109,16 +109,16 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   }
 
   initMenus(){
-    
+
   }
-  
+
   loadAppointmentInformation(id: number){
     if (id == undefined){
       this.updateMode = false;
       this.formAppointment = this.appointmentService.getAppointmentFormGroup();
       this.appointmentService.setMustRechargeAppointmentFormGroup(false);
       if(this.formAppointment.get('idNivel').value){
-        this.loadSalaryScale(this.formAppointment.get('idNivel').value);  
+        this.loadSalaryScale(this.formAppointment.get('idNivel').value);
       }
     }else{
       this.updateMode = true;
@@ -134,7 +134,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
       }else{
         this.formAppointment = this.appointmentService.getAppointmentFormGroup();
         if(this.formAppointment.get('idNivel').value){
-          this.loadSalaryScale(this.formAppointment.get('idNivel').value);  
+          this.loadSalaryScale(this.formAppointment.get('idNivel').value);
         }
       }
     }
@@ -153,7 +153,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
       next: (e) => {
         this.validityOptions = e?.map( o => ({value: o, label: o.nombre}));
         const activeValidity = e?.find(o => Methods.parseStringToBoolean(o.estado));
-        if(!appointmentId){
+        if(!appointmentId && activeValidity){
           this.appointmentService.setValidityToAppointment(activeValidity);
         }
       }
@@ -180,7 +180,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   }
 
   loadNormativities(): void {
-    this.normativityService.getNormativities().subscribe({
+    this.normativityService.getFilteredNormativities({estado: '1', esEscalaSalarial: '0'}).subscribe({
       next: (e) => {
         this.normativityOptions = e?.map( o => ({value: o, label: o.nombre}));
       }
@@ -298,11 +298,11 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     if (elementRef.style.display === 'none' || !elementRef.style.display) {
       elementRef.style.display = 'block';
     } else {
-      elementRef.style.display = 'none'; 
+      elementRef.style.display = 'none';
     }
 
     const button = event.currentTarget as HTMLElement;
-    const iconElement = button.querySelector('span'); 
+    const iconElement = button.querySelector('span');
     if (iconElement) {
       if (iconElement.classList.contains('pi-eye')) {
         iconElement.classList.remove('pi-eye');
@@ -337,5 +337,5 @@ export class AppointmentComponent implements OnInit, OnDestroy {
       }
     }
   }
-  
+
 }

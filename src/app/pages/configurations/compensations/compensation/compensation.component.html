@@ -7,7 +7,7 @@
         <div *ngIf="formCompensation.controls['nombre'].errors && (formCompensation.controls['nombre'].touched||formCompensation.controls['nombre'].dirty)">
             <div *ngIf="formCompensation.controls['nombre'].errors?.['required']">
                 <small id="text-help" class="p-error">Ingresa un nombre</small>
-            </div>  
+            </div>
         </div>
     </div>
 
@@ -79,10 +79,11 @@
                 </ng-template>
             </p-overlayPanel>
         </div>
-    </div> 
+    </div>
 
-    <div  *ngIf="category; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
-        <span class="text-500">{{category.nombre | uppercase}}</span>
+    <div  *ngIf="category; else sNoValidity" class="flex flex-column surface-100 border-round p-3 mt-2">
+      <span class="text-500">{{category.nombre | uppercase}}</span>
+      <span class="text-500 text-sm">{{category.descripcion}}</span>
     </div>
 
     <ng-template #sNoValidity>
@@ -92,6 +93,6 @@
     <div *ngIf="formCompensation.controls['idCategoria'] && formCompensation.controls['idCategoria'].errors && (formCompensation.controls['idCategoria'].touched || formCompensation.controls['idCategoria'].dirty)">
         <div *ngIf="formCompensation.controls['idCategoria'].errors?.['required']">
             <small id="text-help" class="p-error">Seleccione una categoría para la compensación laboral</small>
-        </div>  
+        </div>
     </div>
 </ng-template>

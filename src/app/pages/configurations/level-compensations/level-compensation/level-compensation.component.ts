@@ -83,7 +83,7 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
-    
+
     this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
 
     this.levelIdSubscription = this.store.select(state => state.levelCompensation.levelId).subscribe(e => this.levelId = e);
@@ -124,7 +124,7 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
       {label: 'remover', icon: 'pi pi-times', visible: this.isAdmin, command: (e) => this.removeValueByRule(e.item['index'])},
     ];
   }
-  
+
   loadLevelCompensationInformation(id: any){
     if (id == undefined){
       this.updateMode = false;
@@ -157,7 +157,7 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
       next: (e) => {
         this.extendValidityOptions(e);
         const activeValidity = e?.find(o => Methods.parseStringToBoolean(o.estado));
-        if(!levelCompensationId){
+        if(!levelCompensationId && activeValidity){
           this.levelCompensationService.setValidityToLevelCompensation(activeValidity);
         }
       }
@@ -325,7 +325,7 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     const backRoute = this.levelCompensation ? `${'/configurations/level-compensations/'+ this.cryptoService.encryptParam(this.levelCompensation.id)}` : '/configurations/level-compensations/create';
     this.router.navigate(["/configurations/rules", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
-  
+
   /*********************** TO VARIABLE **********************/
   changeVariable(data: any){
     this.levelCompensationService.setVariableToLevelCompensation(data.value);

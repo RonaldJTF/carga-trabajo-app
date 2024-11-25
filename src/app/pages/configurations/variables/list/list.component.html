@@ -5,7 +5,7 @@
     </div>
     <ng-template #data>
         <div class="card p-0 pb-2">
-            <p-table #dt [value]="variables" rowGroupMode="subheader" sortMode="single"
+            <p-table #dt [value]="variables" rowGroupMode="subheader" sortMode="single" [rowSelectable]="isNotPrimary"
                 [paginator]="true" [rows]="10" [(selection)]="selectedVariables" selectionMode="multiple"
                 [globalFilterFields]="['nombre']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
@@ -52,11 +52,11 @@
                                 <div class="h-3rem flex align-items-center mr-2">
                                     <button type="button" pButton pRipple [pRowToggler]="variable" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                                 </div>
-                                <p-tableCheckbox *ngIf="isAdmin" [value]="variable"></p-tableCheckbox>
+                                <p-tableCheckbox *ngIf="isAdmin" [value]="variable" [disabled]="parseStringToBoolean(variable.primaria)"></p-tableCheckbox>
                             </div>
                         </td>
                         <td>
-                            <div class="flex">
+                            <div class="flex align-items-center">
                                 <div class="flex flex-column" >
                                     <span class="font-medium">{{variable.nombre}}</span>
                                     <span class="text-500" >{{variable.descripcion}}</span>
@@ -69,7 +69,7 @@
                         <td>
                             <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(variable.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(variable.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
                         </td>
-                        <td class="text-center">
+                        <td style="white-space: nowrap;">
                             <div class="flex align-items-center justify-content-end">
                                 <div class="mr-2">
                                     <p-badge *ngIf="parseStringToBoolean(variable.primaria)" value="P" severity="success" pTooltip="Primaria" tooltipPosition="bottom" styleClass="m-1"></p-badge>
@@ -83,17 +83,22 @@
                 <ng-template pTemplate="rowexpansion" let-variable>
                     <tr>
                         <td colspan="4" class="hover:surface-0 p-0">
-                            <ng-container *ngIf="variable.expresionValor; else sNoConfiguredValues">
+                            <ng-container *ngIf="!parseStringToBoolean(variable.primaria); else sPrimaryVariable">
+                              <ng-container *ngIf="variable.expresionValor; else sNoConfiguredValues">
                                 <div class="px-3 py-2 flex align-items-center justify-content-center">
-                                    <app-expression [expression]="variable.expresionValor"></app-expression>
+                                  <app-expression [expression]="variable.expresionValor"></app-expression>
                                 </div>
                                 <div class="text-500 text-sm px-3 py-2 mb-2">Parametrización de la variable</div>
-                            </ng-container>
-                            <ng-template #sNoConfiguredValues>
+                              </ng-container>
+                              <ng-template #sNoConfiguredValues>
                                 <div class="p-3">
-                                    <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM" [message]="MESSAGE.NO_EXPRESION_PARA_VARIABLE"></app-no-result>
+                                  <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM" [message]="MESSAGE.NO_EXPRESION_PARA_VARIABLE"></app-no-result>
                                 </div>
-                            </ng-template>
+                              </ng-template>
+                            </ng-container>
+                          <ng-template #sPrimaryVariable>
+                            <div class="p-3 text-center font-medium">{{variable.nombre}}</div>
+                          </ng-template>
                         </td>
                     </tr>
                 </ng-template>
@@ -112,4 +117,3 @@
 </ng-template>
 
 
-  
