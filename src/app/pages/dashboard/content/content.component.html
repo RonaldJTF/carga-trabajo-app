@@ -77,11 +77,11 @@
   </div>
 
   <div class="flex align-items-center">
-    <div class="flex flex-column">
+    <div class="flex flex-column  mr-4">
       <span class="font-medium">{{datasetOfAdvanceConsolidated?.planTrabajo?.nombre | uppercase}}</span>
       <span class="text-500 text-justify">{{datasetOfAdvanceConsolidated?.planTrabajo?.descripcion}}</span>
     </div>
-    <div class="ml-auto pl-2">
+    <div class="ml-auto">
       <p-selectButton styleClass="flex flex-nowrap" [options]="timeTypeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeTimeType($event)">
         <ng-template let-item pTemplate>
           <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>

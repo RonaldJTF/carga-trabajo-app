@@ -66,7 +66,7 @@
                                 <button (click)="loadSalaryScalesToOverlayPanel(level, detailOverlayPanel, $event)"  pButton pRipple icon="pi pi-info-circle"
                                         class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
                                         pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                                <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id"></app-menu-item>
+                                <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id"  [value]="level"></app-menu-item>
                             </div>
                             <p-overlayPanel #detailOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
                                 <ng-template pTemplate>
@@ -140,7 +140,7 @@
         <span *ngIf="filteredSalaryScales && level.escalasSalariales?.length" class="text-blue-500">{{filteredSalaryScales.length}} de {{level.escalasSalariales.length}} escalas salariales</span>
       </div>
       <div class="ml-auto pl-2 flex align-items-center">
-        <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
+        <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id" [value]="level" [buttonClass]="'p-button-outlined'"></app-menu-item>
         <i class="pi pi-bars p-toolbar-separator mx-2"></i>
         <p-selectButton styleClass="flex flex-nowrap" [options]="viewModeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeSalaryScaleType(level, $event)">
           <ng-template let-item pTemplate>

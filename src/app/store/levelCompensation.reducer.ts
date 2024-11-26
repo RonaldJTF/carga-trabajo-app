@@ -1,19 +1,19 @@
 import {createReducer, on} from "@ngrx/store";
-import {LevelCompensation, ValueByRule} from "@models";
+import {Level, LevelCompensation, ValueByRule} from "@models";
 import * as LevelCompensationActions from "@store/levelCompensation.actions";
 
 export interface LevelCompensationState {
   items: LevelCompensation[];
   item: LevelCompensation;
   mustRecharge: boolean;
-  levelId: number;
+  level: Level;
 }
 
 export const initialState: LevelCompensationState = {
   items: [],
   item: new LevelCompensation(),
   mustRecharge: true,
-  levelId: null,
+  level: new Level(),
 };
 
 export const levelCompensationReducer = createReducer(
@@ -72,9 +72,9 @@ export const levelCompensationReducer = createReducer(
     return {...state, items:items};
   }),
 
-  on(LevelCompensationActions.setLevelIdOnWorking, (state, {levelId}) => ({
+  on(LevelCompensationActions.setLevelOnWorking, (state, {level}) => ({
     ...state,
-    levelId: levelId
+    level: level
   })),
 )
 

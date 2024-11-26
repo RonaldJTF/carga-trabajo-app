@@ -173,8 +173,8 @@
         </div>
 
         <div class="p-3 flex border-bottom-1 surface-border font-medium">
-            <span>Asignación básica</span>
-            <span class="ml-auto">{{selectedAppointment.asignacionBasica  | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+            <span>Asignación básica anual</span>
+            <span class="ml-auto">{{selectedAppointment.asignacionBasicaAnual  | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
         </div>
         <p-table #tableOfSalaryScales [value]="selectedAppointment?.compensacionesLaboralesAplicadas"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
             <ng-template pTemplate="body" let-levelCompensation let-rowIndex="rowIndex">

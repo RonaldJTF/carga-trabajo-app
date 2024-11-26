@@ -72,10 +72,10 @@
 
     <div class="grid grid-nogutter mt-3">
         <div class="field p-fluid col-12 md:col-6 md:pr-2">
-            <label htmlFor="asignacionBasica" class="font-medium">Asignación básica</label>
-            <input pInputText id="asignacionBasica" type="number" aria-describedby="text-help" formControlName="asignacionBasica"/>
-            <div *ngIf="formAppointment.controls['asignacionBasica'].errors && (formAppointment.controls['asignacionBasica'].touched||formAppointment.controls['asignacionBasica'].dirty)">
-                <div *ngIf="formAppointment.controls['asignacionBasica'].errors?.['required']">
+            <label htmlFor="asignacionBasicaMensual" class="font-medium">Asignación básica</label>
+            <input pInputText id="asignacionBasicaMensual" type="number" aria-describedby="text-help" formControlName="asignacionBasicaMensual"/>
+            <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors && (formAppointment.controls['asignacionBasicaMensual'].touched||formAppointment.controls['asignacionBasicaMensual'].dirty)">
+                <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors?.['required']">
                     <small id="text-help" class="p-error">Ingresa una asignación básica para el cargo</small>
                 </div>  
             </div>
@@ -138,7 +138,7 @@
 
     <div  *ngIf="formAppointment?.value.vigencia as validity; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
         <span class="text-500">{{validity.nombre | uppercase}}</span>
-        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto m-2 validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
+        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
     </div>
 
     <ng-template #sNoValidity>

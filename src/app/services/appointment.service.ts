@@ -70,7 +70,7 @@ export class AppointmentService {
       idAlcance: '',
       idNormatividad: ['', Validators.required],
       totalCargos: ['', Validators.compose([Validators.required, Validators.min(0)])],
-      asignacionBasica: ['', Validators.compose([Validators.required, Validators.min(0)])],
+      asignacionBasicaMensual: ['', Validators.compose([Validators.required, Validators.min(0)])],
       vigencia: null,
       dependencyInTree: null,
       normatividad: null,
@@ -95,7 +95,7 @@ export class AppointmentService {
     this.appointmentFormGroup.get('idNormatividad').setValue(appointment.idNormatividad);
     this.appointmentFormGroup.get('idAlcance').setValue(appointment.idAlcance);
     this.appointmentFormGroup.get('totalCargos').setValue(appointment.totalCargos);
-    this.appointmentFormGroup.get('asignacionBasica').setValue(appointment.asignacionBasica);
+    this.appointmentFormGroup.get('asignacionBasicaMensual').setValue(appointment.asignacionBasicaMensual);
     this.appointmentFormGroup.get('vigencia').setValue(appointment.vigencia);
     this.appointmentFormGroup.get('normatividad').setValue(appointment.normatividad);
     this.appointmentFormGroup.get('dependencyInTree').setValue(node);

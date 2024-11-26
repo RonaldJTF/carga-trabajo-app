@@ -5,7 +5,7 @@ import { Validity } from "./validity";
 
 export class Appointment{
     id: number;
-    asignacionBasica: number;
+    asignacionBasicaMensual: number;
     totalCargos: number;
     idEstructura: number;
     idNivel: number;
@@ -18,4 +18,5 @@ export class Appointment{
     normatividad: Normativity;
     asignacionTotal: number;
     compensacionesLaboralesAplicadas: LevelCompensation[];
+    asignacionBasicaAnual: number;
 }

@@ -78,7 +78,7 @@ export class ListComponent implements OnInit, OnDestroy{
   initMenus() {
     this.menuItemsOfLevel = [
       {label: 'Gestión de escalas salariales', icon: 'pi pi-cog',command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
-      {label: 'Gestión de compensaciones laborales', icon: 'pi pi-money-bill',command: (e) => this.onGoToManagementCompensation(e.item.id, e.originalEvent)},
+      {label: 'Gestión de compensaciones laborales', icon: 'pi pi-money-bill',command: (e) => this.onGoToManagementCompensation(e.item['value'], e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteLevel(e)},
     ];
@@ -309,10 +309,10 @@ export class ListComponent implements OnInit, OnDestroy{
     }
   }
 
-  onGoToManagementCompensation(levelId: any, event: Event) {
+  onGoToManagementCompensation(level: Level, event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.store.dispatch(LevelCompensationActions.setLevelIdOnWorking({levelId: levelId}));
+    this.store.dispatch(LevelCompensationActions.setLevelOnWorking({level: level}));
     this.router.navigate(["/configurations/level-compensations"], {skipLocationChange: true})
   }
 }

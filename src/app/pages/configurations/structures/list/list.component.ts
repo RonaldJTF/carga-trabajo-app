@@ -491,10 +491,6 @@ export class ListComponent implements OnInit, OnDestroy{
   private setInformationOfMoveOrCopy(data: any){
     this.structureToMoveOrCopy = data.item['value'];
     this.moveOrCopy = data.item.automationId;
-    this.relaodStructuresInStore();
-  }
-
-  private relaodStructuresInStore(){
     this.store.dispatch(StructureActions.relaodStructuresInStore());
   }
 }

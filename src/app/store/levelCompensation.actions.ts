@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {LevelCompensation, ValueByRule} from "@models";
+import {Level, LevelCompensation, ValueByRule} from "@models";
 
 export const setList = createAction('[Configuration of LevelCompensation] Set the list of compensations', props<{ levelCompensations: LevelCompensation[] }>());
 export const addToList = createAction('[Configuration of LevelCompensation] Add item to the compensation', props<{ levelCompensation: LevelCompensation }>());
@@ -10,4 +10,4 @@ export const setMustRecharge = createAction('[Configuration of LevelCompensation
 
 export const updateValuesByRulesToLevelCompensation =  createAction('[Configuration of LevelCompensation] Update the values by rules to item in list', props<{ levelCompensationId: number, valuesByRules: ValueByRule[] }>());
 export const removeValueByRuleToLevelCompensation = createAction('[Configuration of LevelCompensation] Remove a value by rule by its id to a levelcompensation in list', props<{ valueByRuleId: number }>());
-export const setLevelIdOnWorking = createAction('[Configuration of LevelCompensation] set the id of level we are working on', props<{ levelId: number }>());
+export const setLevelOnWorking = createAction('[Configuration of LevelCompensation] set the level we are working on', props<{ level: Level }>());

@@ -1,4 +1,10 @@
 <form *ngIf="!loadingLevelCompensation else sLoadingLevelCompensation" class="p-0" [formGroup]="formLevelCompensation">
+
+    <div class="field p-fluid">
+        <label class="font-medium">Nivel ocupacional</label>
+        <div class="border-round surface-100 p-3 text-500">{{level.descripcion | uppercase}}</div>
+    </div>
+
     <div class="mb-3">
         <ng-container *ngTemplateOutlet="validityOptionTemplate; context: {validity: formLevelCompensation.get('vigencia').value}"></ng-container>
     </div>
@@ -141,7 +147,7 @@
 
     <div *ngIf="formLevelCompensation?.value.vigencia as validity; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
         <span class="text-500">{{validity.nombre | uppercase}}</span>
-        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto m-2 validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
+        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
     </div>
 
     <ng-template #sNoValidity>

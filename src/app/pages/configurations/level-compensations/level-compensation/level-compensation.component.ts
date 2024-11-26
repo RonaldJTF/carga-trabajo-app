@@ -4,7 +4,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
-import { Compensation, LevelCompensation, Rule, SalaryScale, Validity, ValueByRule, Variable} from '@models';
+import { Compensation, Level, LevelCompensation, Rule, SalaryScale, Validity, ValueByRule, Variable} from '@models';
 import { Store } from '@ngrx/store';
 import { AuthenticationService, CompensationService, LevelCompensationService, ConfirmationDialogService, CryptojsService, PeriodicityService, UrlService, ValidityService, LevelService, RuleService } from '@services';
 import { IMAGE_SIZE, Methods, Url } from '@utils';
@@ -42,13 +42,13 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
   valueByRuleFormGroup: FormGroup;
   levelCompensation: LevelCompensation;
   mustRechargeLevelCompensationFormGroup: boolean;
-  levelId: number;
+  level: Level;
 
   indexOfValueByRuleSubscription: Subscription;
   valueByRuleFormGroupSubscription: Subscription;
   mustRechargeLevelCompensationFormGroupSubscription: Subscription;
   levelCompensationSubscription: Subscription;
-  levelIdSubscription: Subscription;
+  levelSubscription: Subscription;
 
   backRoute: string;
   validityOptions: SelectItem[] = [];
@@ -86,24 +86,24 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
 
     this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
 
-    this.levelIdSubscription = this.store.select(state => state.levelCompensation.levelId).subscribe(e => this.levelId = e);
+    this.levelSubscription = this.store.select(state => state.levelCompensation.level).subscribe(e => this.level = e);
     this.indexOfValueByRuleSubscription =  this.levelCompensationService.indexOfValueByRule$.subscribe(e => this.indexOfValueByRule = e);
     this.valueByRuleFormGroupSubscription = this.levelCompensationService.valueByRuleFormGroup$.subscribe(e => this.valueByRuleFormGroup = e);
     this.mustRechargeLevelCompensationFormGroupSubscription = this.levelCompensationService.mustRechargeLevelCompensationFormGroup$.subscribe(e => this.mustRechargeLevelCompensationFormGroup = e);
     this.levelCompensationSubscription = this.levelCompensationService.levelCompensation$.subscribe(e => this.levelCompensation = e);
 
     if (this.mustRechargeLevelCompensationFormGroup){
-      this.levelCompensationService.createLevelCompensationFormGroup(this.levelId);
+      this.levelCompensationService.createLevelCompensationFormGroup(this.level.id);
     }
 
     const idLevelCompensation = this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']);
-    this.loadSalaryScale(this.levelId);
+    this.loadSalaryScale(this.level.id);
     this.loadLevelCompensationInformation(idLevelCompensation);
     this.initMenus();
     this.loadValidities(idLevelCompensation);
     this.loadCompensations();
-    this.loadRules(this.levelId);
-    this.loadVariables(this.levelId);
+    this.loadRules(this.level.id);
+    this.loadVariables(this.level.id);
   }
 
   ngOnDestroy(): void {
@@ -111,7 +111,7 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     this.levelCompensationSubscription?.unsubscribe();
     this.indexOfValueByRuleSubscription?.unsubscribe();
     this.valueByRuleFormGroupSubscription?.unsubscribe();
-    this.levelIdSubscription?.unsubscribe();
+    this.levelSubscription?.unsubscribe();
   }
 
   get valuesByRulesFormArray(): FormArray{

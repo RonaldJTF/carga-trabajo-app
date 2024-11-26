@@ -8,7 +8,7 @@ import {
   LevelCompensationService,
   LevelService
 } from "@services";
-import {LevelCompensation} from "@models";
+import {Level, LevelCompensation} from "@models";
 import {IMAGE_SIZE, Methods} from "@utils";
 import {MESSAGE} from "@labels/labels";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -35,11 +35,11 @@ export class ListComponent implements OnInit, OnDestroy {
   loadingLevelCompensationById: any = {};
   isAdmin: boolean;
 
-  levelId: number;
+  level: Level;
   levelCompensations: LevelCompensation[] = [];
 
   levelCompensationsSubscription: Subscription;
-  levelIdSubscription: Subscription;
+  levelSubscription: Subscription;
 
   selectedLevelCompensations: LevelCompensation[] = [];
 
@@ -67,14 +67,15 @@ export class ListComponent implements OnInit, OnDestroy {
     const {isAdministrator} = this.authService.roles();
     this.isAdmin = isAdministrator;
 
-    this.levelIdSubscription = this.store.select(state => state.levelCompensation.levelId).subscribe(e => this.levelId = e);
+    this.levelSubscription = this.store.select(state => state.levelCompensation.level).subscribe(e => this.level = e);
     this.levelCompensationsSubscription = this.store.select(state => state.levelCompensation.items).subscribe(e => this.levelCompensations = e);
     this.initMenuItems();
-    this.getLevelCompensations(this.levelId);
+    this.getLevelCompensations(this.level.id);
   }
 
   ngOnDestroy(): void {
     this.levelCompensationsSubscription?.unsubscribe();
+    this.levelSubscription?.unsubscribe();
   }
 
   initMenuItems(){
@@ -157,7 +158,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   onGoUpdateSalaryScale(id: any, event: Event) {
     const backRoute = `/configurations/level-compensations`;
-    this.router.navigate(['configurations/levels', this.cryptojsService.encryptParam(this.levelId)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
+    this.router.navigate(['configurations/levels', this.cryptojsService.encryptParam(this.level.id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
   onManagementValueInRule(levelCompensation: LevelCompensation, event: Event) {
