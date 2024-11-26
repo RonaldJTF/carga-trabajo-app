@@ -60,7 +60,7 @@ export class ListComponent implements OnInit, OnDestroy{
   orderIsAscending: boolean;
 
   private structureToMoveOrCopy: Structure;
-  private moveOrCopy: 'move' | 'copy';
+  private moveOrCopy: 'move' | 'copy' | 'reasign';
 
   menuBarItems: MenuItem[] = [];
   menuItemsOfDownload: MenuItem[] = [
@@ -191,21 +191,31 @@ export class ListComponent implements OnInit, OnDestroy{
       }
     }
 
-    if(Methods.parseStringToBoolean(structure?.tipologia?.esDependencia) == false){
-      extraMenuItemOfActions.push({label: 'Mover', icon: 'pi pi-arrows-alt', automationId:"move", command: (e) =>  this.setInformationOfMoveOrCopy(e)})
+    if (!Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)) {
+      extraMenuItemOfActions.push(
+        { label: 'Mover', icon: 'pi pi-arrows-alt', automationId: "move", command: (e) => this.setInformationOfMoveOrCopy(e) },
+        { label: 'Reasignar', icon: 'pi pi-arrows-v', automationId: "reasign", command: (e) => this.setInformationOfMoveOrCopy(e) },
+        { label: 'Copiar', icon: 'pi pi-clone', automationId: "copy", command: (e) => this.setInformationOfMoveOrCopy(e) }
+      );
     }
 
-    if(Methods.parseStringToBoolean(structure?.tipologia?.esDependencia) == false){
-      extraMenuItemOfActions.push({label: 'Copiar', icon: 'pi pi-clone', automationId:"copy", command: (e) => this.setInformationOfMoveOrCopy(e)})
-    }
-
-    if (this.structureToMoveOrCopy && structure.tipologia?.idTipologiaSiguiente == this.structureToMoveOrCopy.idTipologia) {
+    
+    if (this.structureToMoveOrCopy && this.moveOrCopy === "reasign") {
       extraMenuItemOfActions.push({
         label: 'Pegar',
         icon: 'pi pi-file-import',
-        command: (e) => this[this.moveOrCopy](e.item['value'])
+        command: (e) => this.reasign(structure)
       });
     }
+    
+    if (this.structureToMoveOrCopy && structure.tipologia?.idTipologiaSiguiente === this.structureToMoveOrCopy.idTipologia && this.moveOrCopy !== "reasign") {
+      extraMenuItemOfActions.push({
+        label: 'Pegar',
+        icon: 'pi pi-file-import',
+        command: (e) => this[this.moveOrCopy](structure)
+      });
+    }
+
     return [
       ...extraMenuItemsOfDependency,
       ...extraMenuItemOfActions,
@@ -443,6 +453,36 @@ export class ListComponent implements OnInit, OnDestroy{
     this.cdr.detectChanges();
   }
 
+  
+  reportFlat(data: any, idStructure?: number){
+    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
+      if (menuItem) {
+        menuItem.icon = icon;
+        menuItem.disabled = disabled;
+        menuItem.label = label;
+      }
+    };
+    const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
+    const initialIcon = menuItem?.icon;
+    const initialState = menuItem?.disabled;
+    const initialLabel = menuItem?.label;
+
+    let automationId = data.item.automationId;
+
+    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
+    const structureIds = idStructure
+      ? [idStructure]
+      : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
+    this.structureService.downloadReportFlat(automationId, structureIds).pipe(
+      finalize(()=>{
+        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
+      })
+    ).subscribe({
+      next: (res) => {
+        this.reportUploaded(menuItem, automationId, res);
+      }
+    });
+  }
 
   move(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
@@ -466,6 +506,26 @@ export class ListComponent implements OnInit, OnDestroy{
 
   }
 
+  reasign(newParent: Structure): void{
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.structureService.pasteReasignatedStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
+          next: (e) => {
+            this.structureToMoveOrCopy = null;
+            this.store.dispatch(StructureActions.moveStructureTo({structure:e, newParentId: newParent.id}));
+          }
+        });
+      },
+      `¿Está seguro de mover la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> a <strong>${newParent.nombre}</strong>?
+      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
+        <span>
+            <strong>Advertencia:</strong> 
+            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
+        </span>
+      </ `
+    )
+  }
+  
   copy(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
@@ -489,7 +549,8 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   private setInformationOfMoveOrCopy(data: any){
-    this.structureToMoveOrCopy = data.item['value'];
+    this.structureToMoveOrCopy = data.item['value']; 
+    console.log(data.item.automationId);
     this.moveOrCopy = data.item.automationId;
     this.store.dispatch(StructureActions.relaodStructuresInStore());
   }

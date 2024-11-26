@@ -138,6 +138,10 @@ export class StructureService {
   pasteMovedStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
     return this.webRequestService.putWithHeaders(`${this.pathStructure}/move/${newParentId}`, null, {copiedStructureId: copiedStructureId});
   }
+  
+  pasteReasignatedStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
+    return this.webRequestService.putWithHeaders(`${this.pathStructure}/reasign/${newParentId}`, null, {copiedStructureId: copiedStructureId});
+  }
 
   pasteStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
     return this.webRequestService.postWithHeaders(`${this.pathStructure}/copy/${newParentId}`, null, {copiedStructureId: copiedStructureId});

@@ -82,7 +82,7 @@
                                                         pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
                                                 </div>
                                                 <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>
-                                                <app-menu-item *ngIf="dependencyMenuItems?.length" [menuItems]="dependencyMenuItems" [id]="dependency.id" [buttonClass]="'p-button-outlined'"></app-menu-item>
+                                                <app-menu-item *ngIf="dependencyMenuItems?.length" [menuItems]="dependencyMenuItems" [id]="dependency.id" [value]="dependency" [buttonClass]="'p-button-outlined'"></app-menu-item>
                                             </div>
                                             <div>
                                                 <span class="p-input-icon-left">
