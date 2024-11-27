@@ -19,8 +19,6 @@ import {DocumentTypeComponent} from './document/document-type.component';
 import {FormDocumentTypeComponent} from './document/form-document/form-document-type.component';
 import { ScopeComponent } from './scope/scope.component';
 import { FormScopeComponent } from './scope/form-scope/form-scope.component';
-import { CategoryComponent } from './category/category.component';
-import { FormCategoryComponent } from './category/form-category/form-category.component';
 import { PeriodicityComponent } from './periodicity/periodicity.component';
 import { FormPeriodicityComponent } from './periodicity/form-periodicity/form-periodicity.component';
 import { NormativityTypeComponent } from './normativity-tipe/normativity-type.component';
@@ -48,8 +46,6 @@ import { FormPrimaryVariableComponent } from './primary-variable/form-primary-va
     FormDocumentTypeComponent,
     ScopeComponent,
     FormScopeComponent,
-    CategoryComponent,
-    FormCategoryComponent,
     PeriodicityComponent,
     FormPeriodicityComponent,
     NormativityTypeComponent,

@@ -6,7 +6,7 @@
       </div>
       <div class="flex flex-column">
         <h5 class="m-0 text-700">Tipologia</h5>
-        <span class="text-500">Administra las diferentes tipologías disponibles para clasificación de las estructuras.</span>
+        <span class="text-500">Administra las diferentes tipologías disponibles para clasificación de las estructuras</span>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@
         <input type="text" id="nombre" pInputText formControlName="nombre">
         <div *ngIf="nombreNoValido">
           <div *ngIf="controls['nombre'].errors?.['required']">
-            <small class="p-error">Ingrese el nombre</small>
+            <small class="p-error">Ingrese un nombre</small>
           </div>
         </div>
       </div>
@@ -126,12 +126,12 @@
 <ng-template #defineIcon>
   <div *ngIf="claseIconoNoValido">
     <div *ngIf="controls['claseIcono'].errors?.['required']">
-      <small class="p-error">Selecciona un icono</small>
+      <small class="p-error">Seleccione un icono</small>
     </div>
   </div>
   <div *ngIf="nombreColorNoValido">
     <div *ngIf="controls['claseEstado'].errors?.['required']">
-      <small class="p-error">Selecciona un color</small>
+      <small class="p-error">Seleccione un color</small>
     </div>
   </div>
 </ng-template>

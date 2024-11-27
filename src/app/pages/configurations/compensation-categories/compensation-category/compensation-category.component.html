@@ -4,7 +4,7 @@
         <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
         <div *ngIf="formCategory.controls['nombre'].errors && (formCategory.controls['nombre'].touched||formCategory.controls['nombre'].dirty)">
             <div *ngIf="formCategory.controls['nombre'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un nombre</small>
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
             </div>  
         </div>
     </div>

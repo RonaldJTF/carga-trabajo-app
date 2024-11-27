@@ -7,7 +7,7 @@
         </div>
         <div class="flex flex-column ">
           <h5 class="m-0 text-700">Periodicidad</h5>
-          <span class="text-500">Configura y administra el tipo de periodicidad.</span>
+          <span class="text-500">Configura y administra el tipo de periodicidad</span>
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
           <input type="text" id="nombre" pInputText formControlName="nombre">
           <div *ngIf="nombreNoValido">
             <div *ngIf="controls['nombre'].errors?.['required']">
-              <small class="p-error">Ingrese el nombre</small>
+              <small class="p-error">Ingrese un nombre</small>
             </div>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <input type="text" id="frecuenciaAnual" pInputText formControlName="frecuenciaAnual">
           <div *ngIf="frecuenciaNoValido">
             <div *ngIf="controls['frecuenciaAnual'].errors?.['required']">
-              <small class="p-error">Ingrese la frecuencia anual.</small>
+              <small class="p-error">Ingrese una frecuencia anual</small>
             </div>
           </div>
         </div>

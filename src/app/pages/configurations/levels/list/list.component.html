@@ -56,12 +56,8 @@
                                 <p-tableCheckbox *ngIf="isAdmin" [value]="level"></p-tableCheckbox>
                             </div>
                         </td>
+                        <td class="font-medium">{{level.descripcion}}</td>
                         <td>
-                            <div class="flex flex-column justify-content-start">
-                                <span class="font-medium">{{level.descripcion}}</span>
-                            </div>
-                        </td>
-                        <td class="text-center">
                             <div class="flex align-items-center justify-content-end">
                                 <button (click)="loadSalaryScalesToOverlayPanel(level, detailOverlayPanel, $event)"  pButton pRipple icon="pi pi-info-circle"
                                         class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
@@ -82,16 +78,40 @@
                             <ng-container *ngIf="!loadingLevelById[level.id]; else sLoadingLevelWithActiveSalaryScales" >
                                 <ng-container *ngIf="getActiveSalaryScales(level.escalasSalariales) as activeSalaryScales; else sNoActiveSalaryScales">
                                     <ng-container *ngIf="activeSalaryScales.length; else sNoActiveSalaryScales">
-                                        <div *ngFor="let activeSalaryScale of activeSalaryScales; let i = index" class="px-3 py-2 flex align-items-center hover:surface-hover">
-                                            <span class="font-medium m-2">{{i+1}}.</span>
-                                            <div class="flex flex-column">
-                                                <span class="font-medium">{{activeSalaryScale.nombre}}</span>
-                                                <span class="text-500 text-sm" >{{activeSalaryScale.normatividad?.nombre}}</span>
+                                        <ng-container *ngFor="let activeSalaryScale of activeSalaryScales; let i = index">
+                                            <div *ngIf="rowGroupMetadataToTable[activeSalaryScale.idNormatividad]?.index === i" class="flex align-items-center w-full p-3">
+                                                <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
+                                                    <img src="assets/content/images/normativity.png" [appImageFallback]="'assets/content/images/image-fallback.png'" style="width: 100%; height: auto"/>
+                                                </div>
+                                                <div class="flex flex-column ml-2 justify-content-start">
+                                                    <span class="font-medium text-500">
+                                                        {{activeSalaryScale.normatividad.nombre | uppercase}}
+                                                        <span class="text-500 font-italic">({{ activeSalaryScale.normatividad.tipoNormatividad?.nombre | lowercase }})</span>
+                                                    </span>
+                                                    <span style="white-space: nowrap;" [class]="'mr-auto validity-badge validity-' + (activeSalaryScale.normatividad.estado | validity).classStyle">{{ (activeSalaryScale.normatividad.estado | validity).value }}</span>
+                                                </div>
+                                                <div class="ml-auto flex align-items-center">
+                                                    <button (click)="showDetailOfNormativity(detailOfNormativityOfActiveSalaryScales, $event)"  pButton pRipple icon="pi pi-eye"
+                                                            class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
+                                                            pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                                                    <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfNormativity" [id]="activeSalaryScale.normatividad.id" [value]="activeSalaryScale.normatividad"></app-menu-item>
+                                                </div>
                                             </div>
-                                            <div class="ml-auto ">
-                                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfSalaryScale" [id]="activeSalaryScale.id" [value]="activeSalaryScale"></app-menu-item>
+                                            <div #detailOfNormativityOfActiveSalaryScales style="display: none;" class="p-3 surface-100 ql-snow w-full">
+                                                <div class="ql-editor" [innerHTML] ="activeSalaryScale.normatividad?.descripcion ?? '' | sanitizeHtml"></div>
                                             </div>
-                                        </div>
+    
+                                            <div class="px-3 py-2 flex align-items-center hover:surface-hover">
+                                                <span class="font-medium m-2">{{i+1}}.</span>
+                                                <div class="flex flex-column">
+                                                    <span class="font-medium">{{activeSalaryScale.nombre}}</span>
+                                                    <span class="text-500">Código: {{activeSalaryScale.codigo}}</span>
+                                                </div>
+                                                <div class="ml-auto ">
+                                                    <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfSalaryScale" [id]="activeSalaryScale.id" [value]="activeSalaryScale"></app-menu-item>
+                                                </div>
+                                            </div>
+                                        </ng-container>
                                         <div class="text-500 text-sm px-3 py-2 mb-2">Escalas salariales vigentes</div>
                                     </ng-container>
                                 </ng-container>
@@ -154,7 +174,7 @@
       <ng-container *ngIf="filteredSalaryScales?.length; else sNoSalaryScales">
         <p-table #tableOfSalaryScales [value]="filteredSalaryScales"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
             <ng-template pTemplate="body" let-salaryScale let-rowIndex="rowIndex">
-                <tr pRowGroupHeader *ngIf="rowGroupMetadata[salaryScale.normatividad.nombre]?.index === rowIndex">
+                <tr pRowGroupHeader *ngIf="rowGroupMetadata[salaryScale.idNormatividad]?.index === rowIndex">
                     <td colspan="4">
                         <div class="flex align-items-center w-full">
                             <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">

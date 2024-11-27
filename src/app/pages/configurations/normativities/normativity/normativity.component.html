@@ -4,7 +4,7 @@
         <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
         <div *ngIf="formNormativity.controls['nombre'].errors && (formNormativity.controls['nombre'].touched||formNormativity.controls['nombre'].dirty)">
             <div *ngIf="formNormativity.controls['nombre'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un nombre</small>
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
             </div>  
         </div>
     </div>
@@ -65,7 +65,7 @@
         <app-quill-editor formControlName="descripcion"></app-quill-editor>
         <div *ngIf="formNormativity.controls['descripcion'].errors && (formNormativity.controls['descripcion'].touched||formNormativity.controls['descripcion'].dirty)">
             <div *ngIf="formNormativity.controls['descripcion'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa una descripción</small>
+                <small id="text-help" class="p-error">Ingrese una descripción</small>
             </div>    
         </div>
     </div> 

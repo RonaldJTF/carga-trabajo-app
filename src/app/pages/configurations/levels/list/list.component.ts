@@ -35,11 +35,13 @@ export class ListComponent implements OnInit, OnDestroy{
 
   filteredSalaryScales: SalaryScale[] = [];
   rowGroupMetadata: any;
+  rowGroupMetadataToTable: any;
 
   menuItemsOfLevel: MenuItem[] = [];
   menuItemsOfNormativity: MenuItem[] = [];
   menuItemsOfSalaryScale: MenuItem[] = [];
   menuBarItems: MenuItem[] = [];
+
 
   viewModeOptions: any[] = [
     {icon: 'pi pi-check-circle', value: 'active', tooltip: 'Activas'},
@@ -133,6 +135,7 @@ export class ListComponent implements OnInit, OnDestroy{
       this.loadingLevelById[idLevel] = true;
       this.levelService.getSalaryScalesByLevelId(idLevel).subscribe({
         next: (e) =>{
+          this.rowGroupMetadataToTable = this.updateRowGroupMetaData(e?.sort(this.order));
           this.store.dispatch(LevelActions.updateSalaryScalesToLevel({levelId: idLevel, salaryScales: e}));
           this.loadingLevelById[idLevel] = false;
         }
@@ -225,7 +228,7 @@ export class ListComponent implements OnInit, OnDestroy{
         this.normativityService.deleteNormativity(normativity.id).subscribe({
           next: () => {
             this.levelService.removeSalaryScalesByNormativity(normativity.id);
-            this.updateRowGroupMetaData();
+            this.rowGroupMetadata = this.updateRowGroupMetaData(this.filteredSalaryScales);
           },
         });
       },
@@ -241,6 +244,13 @@ export class ListComponent implements OnInit, OnDestroy{
       </div>
       `
     )
+  }
+
+  onGoToManagementCompensation(level: Level, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.store.dispatch(LevelCompensationActions.setLevelOnWorking({level: level}));
+    this.router.navigate(["/configurations/level-compensations"], {skipLocationChange: true})
   }
 
   showDetailOfNormativity(elementRef: HTMLDivElement, event: Event) {
@@ -268,51 +278,46 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   setSalaryScalesFiltered(level:Level, optionType: 'active' | 'all'){
-    let order = (a, b) => {
-      if (a.idNormatividad < b.idNormatividad) return -1;
-      if (a.idNormatividad > b.idNormatividad) return 1;
-      return a.nombre.localeCompare(b.nombre);;
-    }
     if (optionType == 'active'){
-      this.filteredSalaryScales = level.escalasSalariales?.filter(o =>  Methods.parseStringToBoolean(o.estado))?.sort(order);
+      this.filteredSalaryScales = level.escalasSalariales?.filter(o =>  Methods.parseStringToBoolean(o.estado))?.sort(this.order);
     }
     else{
-      this.filteredSalaryScales = level.escalasSalariales?.sort(order);
+      this.filteredSalaryScales = level.escalasSalariales?.sort(this.order);
     }
-    this.updateRowGroupMetaData();
+    this.rowGroupMetadata = this.updateRowGroupMetaData(this.filteredSalaryScales);
   }
 
   parseStringToBoolean(str: string): boolean{
     return Methods.parseStringToBoolean(str);
   }
 
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-    if (this.filteredSalaryScales) {
-        for (let i = 0; i < this.filteredSalaryScales.length; i++) {
-            const rowData = this.filteredSalaryScales[i];
-            const normativityName = rowData?.normatividad?.nombre || '';
-            if (i === 0) {
-                this.rowGroupMetadata[normativityName] = { index: 0, size: 1 };
-            }
-            else {
-                const previousRowData = this.filteredSalaryScales[i - 1];
-                const previousRowGroup = previousRowData?.normatividad?.nombre;
-                if (normativityName === previousRowGroup) {
-                    this.rowGroupMetadata[normativityName].size++;
-                }
-                else {
-                    this.rowGroupMetadata[normativityName] = { index: i, size: 1 };
-                }
-            }
-        }
-    }
+  private order(a, b){
+    if (a.idNormatividad < b.idNormatividad) return -1;
+    if (a.idNormatividad > b.idNormatividad) return 1;
+    return a.nombre.localeCompare(b.nombre);;
   }
 
-  onGoToManagementCompensation(level: Level, event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.store.dispatch(LevelCompensationActions.setLevelOnWorking({level: level}));
-    this.router.navigate(["/configurations/level-compensations"], {skipLocationChange: true})
+  private updateRowGroupMetaData(salaryScales: SalaryScale[]): any {
+    let rowGroupMetadata = {};
+    if (salaryScales) {
+      for (let i = 0; i < salaryScales.length; i++) {
+          const rowData = salaryScales[i];
+          const normativityId = rowData?.idNormatividad || '';
+          if (i === 0) {
+              rowGroupMetadata[normativityId] = { index: 0, size: 1 };
+          }
+          else {
+              const previousRowData = salaryScales[i - 1];
+              const previousRowGroup = previousRowData?.idNormatividad || '';
+              if (normativityId === previousRowGroup) {
+                  rowGroupMetadata[normativityId].size++;
+              }
+              else {
+                  rowGroupMetadata[normativityId] = { index: i, size: 1 };
+              }
+          }
+      }
+    }
+    return rowGroupMetadata;
   }
 }

@@ -12,13 +12,7 @@
 
   <div class="field p-fluid">
     <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
-    <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
-              formControlName="descripcion"></textarea>
-    <div *ngIf="descripcionNoValido">
-      <div *ngIf="controls['descripcion'].errors?.['required']">
-        <small class="p-error">Ingrese una descripcion</small>
-      </div>
-    </div>
+    <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
   </div>
 
   <div class="field p-fluid">
@@ -43,12 +37,11 @@
   </div>
 
   <div class="field p-fluid">
-    <label htmlFor="entregable"><span class="font-medium">Entregable</span></label>
-    <textarea id="entregable" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
-              formControlName="entregable"></textarea>
+    <label htmlFor="entregable" class="font-medium">Entregable</label>
+    <textarea id="entregable" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="entregable" autocomplete="off"></textarea>
     <div *ngIf="entregableNoValido">
       <div *ngIf="controls['entregable'].errors?.['required']">
-        <small class="p-error">Ingrese el entregable</small>
+        <small class="p-error">Ingrese un entregable</small>
       </div>
     </div>
   </div>

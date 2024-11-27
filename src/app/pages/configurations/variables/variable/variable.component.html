@@ -4,7 +4,7 @@
         <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
         <div *ngIf="formVariable.controls['nombre'].errors && (formVariable.controls['nombre'].touched||formVariable.controls['nombre'].dirty)">
             <div *ngIf="formVariable.controls['nombre'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un nombre</small>
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
             </div>  
         </div>
     </div>
@@ -12,11 +12,6 @@
     <div class="field p-fluid">
         <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
         <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
-        <div *ngIf="formVariable.controls['descripcion'].errors && (formVariable.controls['descripcion'].touched||formVariable.controls['descripcion'].dirty)">
-            <div *ngIf="formVariable.controls['descripcion'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa una descripción</small>
-            </div>
-        </div>
     </div>
     
 

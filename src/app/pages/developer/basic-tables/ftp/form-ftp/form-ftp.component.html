@@ -6,7 +6,7 @@
       </div>
       <div class="flex flex-column">
         <h5 class="m-0 text-700">Ftp</h5>
-        <span class="text-500">Configure y administre los servidores FTP.</span>
+        <span class="text-500">Configure y administre los servidores FTP</span>
       </div>
     </div>
   </div>
@@ -18,17 +18,17 @@
         <input type="text" id="nombre" pInputText formControlName="nombre">
         <div *ngIf="nombreNoValido">
           <div *ngIf="controls['nombre'].errors?.['required']">
-            <small class="p-error">Ingrese el nombre</small>
+            <small class="p-error">Ingrese un nombre</small>
           </div>
         </div>
       </div>
 
       <div class="field p-fluid col-12 m-0">
         <label htmlFor="descripcion" class="font-medium">Descripción</label>
-        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion"></textarea>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
         <div *ngIf="descripcionNoValido">
           <div *ngIf="controls['descripcion'].errors?.['required']">
-            <small class="p-error">Escribe un descripción</small>
+            <small class="p-error">Ingrese una descripción</small>
           </div>
         </div>
       </div>
@@ -38,14 +38,14 @@
         <input type="text" id="codigo" pInputText formControlName="codigo">
         <div *ngIf="nombreNoValido">
           <div *ngIf="controls['codigo'].errors?.['required']">
-            <small class="p-error">Ingrese el código</small>
+            <small class="p-error">Ingrese un código</small>
           </div>
         </div>
       </div>
 
       <div class="grid col-12 xl:col-4">
         <div class="field p-fluid col-12 m-0 p-0">
-          <label for="activo" class="col-12 font-medium">Activo </label>
+          <label for="activo" class="col-12 font-medium">Activo</label>
           <p-inputSwitch class="p-fluid ml-3" id="activo" formControlName="activo"></p-inputSwitch>
         </div>
       </div>

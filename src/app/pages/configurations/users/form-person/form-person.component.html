@@ -35,7 +35,7 @@
             <div *ngIf="nombrePrimeroNoValido">
               <ng-container *ngIf="controls['primerNombre'].errors as errors">
                 <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer nombre</small>
-                <small *ngIf="errors?.['whitespace']" class="p-error">El nombre no puede ser espacios en blanco</small>
+                <small *ngIf="errors?.['whitespace']" class="p-error">El nombre no puede ser de espacios en blanco</small>
               </ng-container>
             </div>
           </div>
@@ -51,7 +51,7 @@
             <div *ngIf="apellidoPrimeroNoValido">
               <ng-container *ngIf="controls['primerApellido'].errors as errors">
                 <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer apellido</small>
-                <small *ngIf="errors?.['whitespace']" class="p-error">El apellido no puede ser espacios en blanco</small>
+                <small *ngIf="errors?.['whitespace']" class="p-error">El apellido no puede ser de espacios en blanco</small>
               </ng-container>
             </div>
           </div>
@@ -118,9 +118,6 @@
               <p-inputNumber id="telefono" mode="decimal" inputId="withoutgrouping" [useGrouping]="false" formControlName="telefono"></p-inputNumber>
             </span>
             <div *ngIf="telefonoNoValido">
-              <div *ngIf="controls['telefono'].errors?.['required']">
-                <small class="p-error">Ingrese un número de teléfono</small>
-              </div>
               <div *ngIf="controls['telefono'].errors?.['max']">
                 <small class="p-error">Número de teléfono demasiado largo</small>
               </div>

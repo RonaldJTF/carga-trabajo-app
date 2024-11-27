@@ -11,12 +11,7 @@
     </div>
     <div class="field p-fluid">
         <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
-        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion"></textarea>
-        <div *ngIf="formStage.controls['descripcion'].errors && (formStage.controls['descripcion'].touched||formStage.controls['descripcion'].dirty)">
-            <div *ngIf="formStage.controls['descripcion'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa una descripción</small>
-            </div>
-        </div>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
     </div>
     <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitStage($event)"

@@ -94,11 +94,10 @@
         </p-dropdown>
         <div *ngIf="formActivity.controls['nivel'].errors && (formActivity.controls['nivel'].touched||formActivity.controls['nivel'].dirty)">
             <div *ngIf="formActivity.controls['nivel'].errors?.['required']">
-                <small id="text-help" class="p-error">Elija un nivel de ocupación</small>
+                <small id="text-help" class="p-error">Seleccione un nivel de ocupación</small>
             </div>
         </div>
     </div>
-
 
     <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitActivity($event)"

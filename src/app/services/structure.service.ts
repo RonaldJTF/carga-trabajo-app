@@ -135,15 +135,15 @@ export class StructureService {
     return matches != null ? matches[1] : 'archivo_descargado';
   }
 
-  pasteMovedStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
-    return this.webRequestService.putWithHeaders(`${this.pathStructure}/move/${newParentId}`, null, {copiedStructureId: copiedStructureId});
+  moveStructure(movedStructureId: number, newParentId: number): Observable<Structure> {
+    return this.webRequestService.putWithHeaders(`${this.pathStructure}/move/${newParentId}`, null, {movedStructureId: movedStructureId});
   }
   
-  pasteReasignatedStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
-    return this.webRequestService.putWithHeaders(`${this.pathStructure}/reasign/${newParentId}`, null, {copiedStructureId: copiedStructureId});
+  reasignStructures(reassignedStructureId: number, newParentId: number): Observable<Structure> {
+    return this.webRequestService.putWithHeaders(`${this.pathStructure}/reasign/${newParentId}`, null, {reassignedStructureId: reassignedStructureId});
   }
 
-  pasteStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
+  copyStructures(copiedStructureId: number, newParentId: number): Observable<Structure> {
     return this.webRequestService.postWithHeaders(`${this.pathStructure}/copy/${newParentId}`, null, {copiedStructureId: copiedStructureId});
   }
 

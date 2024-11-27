@@ -78,10 +78,10 @@
                                         <span class="font-medium m-2">{{i+1}}.</span>
                                         <div class="flex flex-column">
                                             <span class="font-medium">{{valueInValidity.variable.nombre}}</span>
-                                            <span class="text-500 text-sm" >{{valueInValidity.variable.descripcion}}</span>
+                                            <span class="text-500" >{{valueInValidity.variable.descripcion}}</span>
                                         </div>
                                         <div class="ml-auto flex align-items-center justify-content-end">
-                                            <span class="font-medium text-500 mr-2" pTooltip="Valor" tooltipPosition="bottom">{{valueInValidity.valor}}</span>
+                                            <span class="font-medium text-500 mr-2" pTooltip="Valor" tooltipPosition="bottom">{{valueInValidity.valor | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                                             <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfValueInValidity" [id]="valueInValidity.id"></app-menu-item>
                                         </div>
                                     </div>

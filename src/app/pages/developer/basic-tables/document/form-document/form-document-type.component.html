@@ -7,7 +7,7 @@
         </div>
         <div class="flex flex-column ">
           <h5 class="m-0 text-700">Documento</h5>
-          <span class="text-500">Configura y administra el tipo de documento.</span>
+          <span class="text-500">Configura y administra el tipo de documento</span>
         </div>
       </div>
     </div>
@@ -16,10 +16,10 @@
       <div class="grid">
         <div class="field p-fluid col-12 xl:col-6 m-0">
           <label htmlFor="descripcion" class="font-medium">Descripción</label>
-          <input type="text" id="descripcion" pInputText formControlName="descripcion">
+          <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
           <div *ngIf="descripcionNoValido">
             <div *ngIf="controls['descripcion'].errors?.['required']">
-              <small class="p-error">Ingrese la descripción</small>
+              <small class="p-error">Ingrese una descripción</small>
             </div>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <input type="text" id="abreviatura" pInputText formControlName="abreviatura">
           <div *ngIf="abreviaturaNoValido">
             <div *ngIf="controls['abreviatura'].errors?.['required']">
-              <small class="p-error">Ingrese la abreviatura.</small>
+              <small class="p-error">Ingrese una abreviatura</small>
             </div>
           </div>
         </div>

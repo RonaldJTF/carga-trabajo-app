@@ -5,7 +5,7 @@
         <input pInputText id="descripcion" type="text" aria-describedby="text-help" formControlName="descripcion"/>
         <div *ngIf="formLevel.controls['descripcion'].errors && (formLevel.controls['descripcion'].touched||formLevel.controls['descripcion'].dirty)">
             <div *ngIf="formLevel.controls['descripcion'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un nombre</small>
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
             </div>
         </div>
     </div>

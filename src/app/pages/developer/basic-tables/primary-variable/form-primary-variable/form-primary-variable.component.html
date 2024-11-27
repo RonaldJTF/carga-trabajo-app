@@ -1,11 +1,23 @@
 <div class="card">
+    <div class="flex align-items-center justify-content-between mb-4">
+      <div class="flex align-items-center">
+        <div
+          class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+          <i class="pi pi-arrow-right-arrow-left text-xl text-primary-500"></i>
+        </div>
+        <div class="flex flex-column ">
+          <h5 class="m-0 text-700">Variable primaria</h5>
+          <span class="text-500">Configura y administra las variables primarias</span>
+        </div>
+      </div>
+    </div>
     <form class="p-0" [formGroup]="formPrimaryVariable">
         <div class="field p-fluid">
             <label htmlFor="nombre" class="font-medium">Nombre</label>
             <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
             <div *ngIf="formPrimaryVariable.controls['nombre'].errors && (formPrimaryVariable.controls['nombre'].touched||formPrimaryVariable.controls['nombre'].dirty)">
                 <div *ngIf="formPrimaryVariable.controls['nombre'].errors?.['required']">
-                    <small id="text-help" class="p-error">Ingresa un nombre</small>
+                    <small id="text-help" class="p-error">Ingrese un nombre</small>
                 </div>
             </div>
         </div>
@@ -15,7 +27,7 @@
             <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
             <div *ngIf="formPrimaryVariable.controls['descripcion'].errors && (formPrimaryVariable.controls['descripcion'].touched||formPrimaryVariable.controls['descripcion'].dirty)">
                 <div *ngIf="formPrimaryVariable.controls['descripcion'].errors?.['required']">
-                    <small id="text-help" class="p-error">Ingresa una descripción</small>
+                    <small id="text-help" class="p-error">Ingrese una descripción</small>
                 </div>
             </div>
         </div>

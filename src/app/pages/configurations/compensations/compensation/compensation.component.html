@@ -6,7 +6,7 @@
         <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
         <div *ngIf="formCompensation.controls['nombre'].errors && (formCompensation.controls['nombre'].touched||formCompensation.controls['nombre'].dirty)">
             <div *ngIf="formCompensation.controls['nombre'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un nombre</small>
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
         </p-dropdown>
         <div *ngIf="formCompensation.controls['idPeriodicidad'].errors && (formCompensation.controls['idPeriodicidad'].touched||formCompensation.controls['idPeriodicidad'].dirty)">
             <div *ngIf="formCompensation.controls['idPeriodicidad'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa una periodicidad</small>
+                <small id="text-help" class="p-error">Ingrese una periodicidad</small>
             </div>
         </div>
     </div>

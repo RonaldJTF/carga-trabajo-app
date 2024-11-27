@@ -76,7 +76,7 @@
             <input pInputText id="asignacionBasicaMensual" type="number" aria-describedby="text-help" formControlName="asignacionBasicaMensual"/>
             <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors && (formAppointment.controls['asignacionBasicaMensual'].touched||formAppointment.controls['asignacionBasicaMensual'].dirty)">
                 <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors?.['required']">
-                    <small id="text-help" class="p-error">Ingresa una asignación básica para el cargo</small>
+                    <small id="text-help" class="p-error">Ingrese una asignación básica para el cargo</small>
                 </div>  
             </div>
         </div>
@@ -86,7 +86,7 @@
             <input pInputText id="totalCargos" type="number" aria-describedby="text-help" formControlName="totalCargos"/>
             <div *ngIf="formAppointment.controls['totalCargos'].errors && (formAppointment.controls['totalCargos'].touched||formAppointment.controls['totalCargos'].dirty)">
                 <div *ngIf="formAppointment.controls['totalCargos'].errors?.['required']">
-                    <small id="text-help" class="p-error">Ingresa el total de cargos</small>
+                    <small id="text-help" class="p-error">Ingrese un total de cargos</small>
                 </div>  
             </div>
         </div>

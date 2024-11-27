@@ -5,19 +5,18 @@
         <div
             *ngIf="formRule.controls['nombre'].errors && (formRule.controls['nombre'].touched||formRule.controls['nombre'].dirty)">
             <div *ngIf="formRule.controls['nombre'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un nombre</small>
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
             </div>
         </div>
     </div>
 
     <div class="field p-fluid">
         <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
-        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea
-            formControlName="descripcion" autocomplete="off"></textarea>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
         <div
             *ngIf="formRule.controls['descripcion'].errors && (formRule.controls['descripcion'].touched||formRule.controls['descripcion'].dirty)">
             <div *ngIf="formRule.controls['descripcion'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa una descripción</small>
+                <small id="text-help" class="p-error">Ingrese una descripción</small>
             </div>
         </div>
     </div>

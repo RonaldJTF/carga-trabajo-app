@@ -487,7 +487,7 @@ export class ListComponent implements OnInit, OnDestroy{
   move(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.structureService.pasteMovedStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
+        this.structureService.moveStructure(this.structureToMoveOrCopy.id, newParent.id).subscribe({
           next: (e) => {
             this.structureToMoveOrCopy = null;
             this.store.dispatch(StructureActions.moveStructureTo({structure:e, newParentId: newParent.id}));
@@ -509,14 +509,14 @@ export class ListComponent implements OnInit, OnDestroy{
   reasign(newParent: Structure): void{
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.structureService.pasteReasignatedStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
+        this.structureService.reasignStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
           next: (e) => {
             this.structureToMoveOrCopy = null;
             this.store.dispatch(StructureActions.moveStructureTo({structure:e, newParentId: newParent.id}));
           }
         });
       },
-      `¿Está seguro de mover la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> a <strong>${newParent.nombre}</strong>?
+      `¿Está seguro de reasignar la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> en <strong>${newParent.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong> 
@@ -529,7 +529,7 @@ export class ListComponent implements OnInit, OnDestroy{
   copy(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.structureService.pasteStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
+        this.structureService.copyStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
           next: (e) => {
             this.structureToMoveOrCopy = null;
             this.store.dispatch(StructureActions.copyStructureTo({structure:e, newParentId: newParent.id}));
@@ -550,7 +550,6 @@ export class ListComponent implements OnInit, OnDestroy{
 
   private setInformationOfMoveOrCopy(data: any){
     this.structureToMoveOrCopy = data.item['value']; 
-    console.log(data.item.automationId);
     this.moveOrCopy = data.item.automationId;
     this.store.dispatch(StructureActions.relaodStructuresInStore());
   }

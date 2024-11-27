@@ -6,8 +6,8 @@
         <i class="pi pi-users text-xl text-primary-500"></i>
       </div>
       <div class="flex flex-column ">
-        <h5 class="m-0 text-700">Rol</h5>
-        <span class="text-500">Administra y define los roles de usuario en el sistema.</span>
+        <h5 class="m-0 text-700">Rol de acceso</h5>
+        <span class="text-500">Administra y define los roles de usuario en el sistema</span>
       </div>
     </div>
   </div>
@@ -19,7 +19,7 @@
         <input type="text" id="nombre" pInputText formControlName="nombre">
         <div *ngIf="nombreNoValido">
           <div *ngIf="controls['nombre'].errors?.['required']">
-            <small class="p-error">Ingrese el nombre</small>
+            <small class="p-error">Ingrese un nombre</small>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@
         <input type="text" id="codigo" pInputText formControlName="codigo">
         <div *ngIf="codigoNoValido">
           <div *ngIf="controls['codigo'].errors?.['required']">
-            <small class="p-error">Ingrese el código</small>
+            <small class="p-error">Ingrese un código</small>
           </div>
         </div>
       </div>

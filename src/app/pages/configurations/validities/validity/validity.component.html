@@ -5,7 +5,7 @@
         <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
         <div *ngIf="formValidity.controls['nombre'].errors && (formValidity.controls['nombre'].touched||formValidity.controls['nombre'].dirty)">
             <div *ngIf="formValidity.controls['nombre'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un nombre</small>
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
             </div>
         </div>
     </div>
@@ -15,7 +15,7 @@
         <p-calendar [showClear]="true" [showIcon]="true" inputId="anio" formControlName="anio"  view="year" dateFormat="yy" icon="pi pi-calendar"></p-calendar>
         <div *ngIf="formValidity.controls['anio'].errors && (formValidity.controls['anio'].touched||formValidity.controls['anio'].dirty)">
             <div *ngIf="formValidity.controls['anio'].errors?.['required']">
-                <small id="text-help" class="p-error">Ingresa un año</small>
+                <small id="text-help" class="p-error">Ingrese un año</small>
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@
       <input type="text" id="nombre" pInputText formControlName="nombre">
       <div *ngIf="nombreNoValido">
         <div *ngIf="controls['nombre'].errors?.['required']">
-          <small class="p-error">Ingrese el nombre</small>
+          <small class="p-error">Ingrese un nombre</small>
         </div>
       </div>
     </div>
@@ -14,7 +14,7 @@
       <input type="text" id="path" pInputText formControlName="path">
       <div *ngIf="pathNoValido">
         <div *ngIf="controls['path'].errors?.['required']">
-          <small class="p-error">Ingrese el path</small>
+          <small class="p-error">Ingrese un path</small>
         </div>
       </div>
     </div>
@@ -102,12 +102,12 @@
 <ng-template #defineIcon>
   <div *ngIf="claseIconoNoValido">
     <div *ngIf="controls['claseIcono'].errors?.['required']">
-      <small class="p-error">Selecciona un icono</small>
+      <small class="p-error">Seleccione un icono</small>
     </div>
   </div>
   <div *ngIf="claseEstadoNoValido">
     <div *ngIf="controls['claseEstado'].errors?.['required']">
-      <small class="p-error">Selecciona un color</small>
+      <small class="p-error">Seleccione un color</small>
     </div>
   </div>
 </ng-template>
