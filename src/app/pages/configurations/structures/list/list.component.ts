@@ -5,7 +5,7 @@ import {Store} from '@ngrx/store';
 import {AppState} from 'src/app/app.reducers';
 import {IMAGE_SIZE, Methods} from '@utils';
 import {MESSAGE} from '@labels/labels';
-import {MenuItem, TreeNode} from 'primeng/api';
+import {MenuItem, MessageService, TreeNode} from 'primeng/api';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TreeTable} from 'primeng/treetable';
 import {AuthenticationService, ConfirmationDialogService, CryptojsService, StructureService} from "@services";
@@ -59,8 +59,8 @@ export class ListComponent implements OnInit, OnDestroy{
   expandedNodes: number[];
   orderIsAscending: boolean;
 
-  private structureToMoveOrCopy: Structure;
-  private moveOrCopy: 'move' | 'copy' | 'reasign';
+  private structureToPaste: Structure;
+  private pasteAction: 'move' | 'copy' | 'reasign';
 
   menuBarItems: MenuItem[] = [];
   menuItemsOfDownload: MenuItem[] = [
@@ -80,7 +80,8 @@ export class ListComponent implements OnInit, OnDestroy{
     private router: Router,
     private route: ActivatedRoute,
     private cryptoService: CryptojsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private messageService: MessageService
   ){}
 
   ngOnInit(): void {
@@ -193,14 +194,13 @@ export class ListComponent implements OnInit, OnDestroy{
 
     if (!Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)) {
       extraMenuItemOfActions.push(
+        { label: 'Copiar', icon: 'pi pi-clone', automationId: "copy", command: (e) => this.setInformationOfMoveOrCopy(e) },
         { label: 'Mover', icon: 'pi pi-arrows-alt', automationId: "move", command: (e) => this.setInformationOfMoveOrCopy(e) },
-        { label: 'Reasignar', icon: 'pi pi-arrows-v', automationId: "reasign", command: (e) => this.setInformationOfMoveOrCopy(e) },
-        { label: 'Copiar', icon: 'pi pi-clone', automationId: "copy", command: (e) => this.setInformationOfMoveOrCopy(e) }
+        { label: 'Reasignar', icon: 'pi pi-arrows-v', automationId: "reasign", disabled: true, command: (e) => this.setInformationOfMoveOrCopy(e) },
       );
     }
-
     
-    if (this.structureToMoveOrCopy && this.moveOrCopy === "reasign") {
+    if (this.structureToPaste && this.pasteAction === "reasign") {
       extraMenuItemOfActions.push({
         label: 'Pegar',
         icon: 'pi pi-file-import',
@@ -208,11 +208,11 @@ export class ListComponent implements OnInit, OnDestroy{
       });
     }
     
-    if (this.structureToMoveOrCopy && structure.tipologia?.idTipologiaSiguiente === this.structureToMoveOrCopy.idTipologia && this.moveOrCopy !== "reasign") {
+    if (this.structureToPaste && structure.tipologia?.idTipologiaSiguiente === this.structureToPaste.idTipologia && this.pasteAction !== "reasign") {
       extraMenuItemOfActions.push({
         label: 'Pegar',
         icon: 'pi pi-file-import',
-        command: (e) => this[this.moveOrCopy](structure)
+        command: (e) => this[this.pasteAction](structure)
       });
     }
 
@@ -243,7 +243,6 @@ export class ListComponent implements OnInit, OnDestroy{
       this.updateRowGroupMetaData(e.children ?? [], structure.idTipologia);
     })
   }
-
 
   private verifyIfSelectedDependencyWasDeleted(removedIds){
     this.store.dispatch(StructureActions.removeDependencyIfWasDeleted({removedIds: removedIds}));
@@ -453,7 +452,6 @@ export class ListComponent implements OnInit, OnDestroy{
     this.cdr.detectChanges();
   }
 
-  
   reportFlat(data: any, idStructure?: number){
     const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
       if (menuItem) {
@@ -487,14 +485,14 @@ export class ListComponent implements OnInit, OnDestroy{
   move(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.structureService.moveStructure(this.structureToMoveOrCopy.id, newParent.id).subscribe({
+        this.structureService.moveStructure(this.structureToPaste.id, newParent.id).subscribe({
           next: (e) => {
-            this.structureToMoveOrCopy = null;
+            this.structureToPaste = null;
             this.store.dispatch(StructureActions.moveStructureTo({structure:e, newParentId: newParent.id}));
           }
         });
       },
-      `¿Está seguro de mover la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> a <strong>${newParent.nombre}</strong>?
+      `¿Está seguro de mover la estructura <strong>${this.structureToPaste.nombre}</strong> a <strong>${newParent.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong>
@@ -503,20 +501,26 @@ export class ListComponent implements OnInit, OnDestroy{
       </div>
     `
     )
-
   }
 
+  /**
+   * Reasigna una estructura a una nueva estructura padre. Aquí la tipología es reajustada en función de la tipología 
+   * del nuevo padre, es decir, si una actividad tiene por nuevo padre un proceso, entonces su nueva tipología será procedimiento, 
+   * y si esta actividad tenía subactividades, estas son reasignadas a procedimientos y así sucesivamente.
+   * Nota: Considerando que la jerarquía de tipologías es Dependencia, Proceso, Procedimiento, actividades.
+   * @param newParent 
+   */
   reasign(newParent: Structure): void{
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.structureService.reasignStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
+        this.structureService.reasignStructures(this.structureToPaste.id, newParent.id).subscribe({
           next: (e) => {
-            this.structureToMoveOrCopy = null;
+            this.structureToPaste = null;
             this.store.dispatch(StructureActions.moveStructureTo({structure:e, newParentId: newParent.id}));
           }
         });
       },
-      `¿Está seguro de reasignar la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> en <strong>${newParent.nombre}</strong>?
+      `¿Está seguro de reasignar la estructura <strong>${this.structureToPaste.nombre}</strong> en <strong>${newParent.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong> 
@@ -529,14 +533,14 @@ export class ListComponent implements OnInit, OnDestroy{
   copy(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
-        this.structureService.copyStructures(this.structureToMoveOrCopy.id, newParent.id).subscribe({
+        this.structureService.copyStructures(this.structureToPaste.id, newParent.id).subscribe({
           next: (e) => {
-            this.structureToMoveOrCopy = null;
+            this.structureToPaste = null;
             this.store.dispatch(StructureActions.copyStructureTo({structure:e, newParentId: newParent.id}));
           }
         });
       },
-      `¿Está seguro de copiar la estructura <strong>${this.structureToMoveOrCopy.nombre}</strong> a <strong>${newParent.nombre}</strong>?
+      `¿Está seguro de copiar la estructura <strong>${this.structureToPaste.nombre}</strong> a <strong>${newParent.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong>
@@ -549,8 +553,14 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   private setInformationOfMoveOrCopy(data: any){
-    this.structureToMoveOrCopy = data.item['value']; 
-    this.moveOrCopy = data.item.automationId;
+    this.structureToPaste = data.item['value']; 
+    this.pasteAction = data.item.automationId;
     this.store.dispatch(StructureActions.relaodStructuresInStore());
+    this.selectedNodesOfStructuresNoDependency = [];
+    this.messageService.add({
+      severity: 'info',
+      summary: `${this.structureToPaste.nombre}`,
+      detail: 'Al copiar o mover, solo puede pegar la estructura a una con tipología superior.',
+    });
   }
 }
