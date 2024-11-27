@@ -254,16 +254,6 @@ export class VariableComponent  implements OnInit, OnDestroy {
     }
   }
 
-  private allowedCharacter(childNodes){
-    const allowedCharacters = /^[+\-*/><=()0-9.\s ]*$/;
-    for (let node of childNodes ?? []){
-      if (node.nodeType === Node.TEXT_NODE && !allowedCharacters.test( node.nodeValue)) {
-        node.nodeValue =node.nodeValue.split('').filter(char => allowedCharacters.test(char)).join('');
-        return false;
-      }
-    }
-    return true;
-  }
   
   private updateExpression(editableInput) {
     const obj =  this.getExpression(editableInput.childNodes);
@@ -361,5 +351,16 @@ export class VariableComponent  implements OnInit, OnDestroy {
   private extractExpressions(expression) {
     const regex = /\$\[\d+\]|[\(\)\+\-\*\/]|\d+(\.\d+)?/g;
     return expression.match(regex);
+  }
+
+  private allowedCharacter(childNodes){
+    const allowedCharacters = /^[+\-*/><=()0-9.\s ]*$/;
+    for (let node of childNodes ?? []){
+      if (node.nodeType === Node.TEXT_NODE && !allowedCharacters.test( node.nodeValue)) {
+        node.nodeValue =node.nodeValue.split('').filter(char => allowedCharacters.test(char)).join('');
+        return false;
+      }
+    }
+    return true;
   }
 }

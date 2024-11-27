@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Appointment, Normativity, Scope, Structure, Validity } from '@models';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 
 @Injectable({

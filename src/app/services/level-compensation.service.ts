@@ -218,7 +218,7 @@ export class LevelCompensationService {
 
   updateRuleInLevelCompensation(rule: Rule){
     const formGroup = this._valueByRuleFormGroup.value;
-    const formArray: FormArray = this.levelCompensationFormGroup.get('valoresCompensacionLabNivelVigencia') as FormArray;
+    const formArray: FormArray = this.levelCompensationFormGroup?.get('valoresCompensacionLabNivelVigencia') as FormArray;
 
     for (let i = formArray?.length - 1; i >= 0; i--) {
       const control = formArray.at(i);
@@ -234,7 +234,7 @@ export class LevelCompensationService {
 
   removeRuleInLevelCompensation(ruleId: number){
     const formGroup = this._valueByRuleFormGroup.value;
-    const formArray: FormArray = this.levelCompensationFormGroup.get('valoresCompensacionLabNivelVigencia') as FormArray;
+    const formArray: FormArray = this.levelCompensationFormGroup?.get('valoresCompensacionLabNivelVigencia') as FormArray;
     let totalToMove = 0;
     let actualWasRemoved = false;
     const actualIndex = this._indexOfValueByRule.value;
@@ -278,7 +278,7 @@ export class LevelCompensationService {
 
   updateVariableInLevelCompensation(variable: Variable){
     const formGroup = this._valueByRuleFormGroup.value;
-    const formArray: FormArray = this.levelCompensationFormGroup.get('valoresCompensacionLabNivelVigencia') as FormArray;
+    const formArray: FormArray = this.levelCompensationFormGroup?.get('valoresCompensacionLabNivelVigencia') as FormArray;
 
     for (let i = formArray?.length - 1; i >= 0; i--) {
       const control = formArray.at(i);
@@ -294,7 +294,7 @@ export class LevelCompensationService {
 
   removeVariableInLevelCompensation(variableId: number){
     const formGroup = this._valueByRuleFormGroup.value;
-    const formArray: FormArray = this.levelCompensationFormGroup.get('valoresCompensacionLabNivelVigencia') as FormArray;
+    const formArray: FormArray = this.levelCompensationFormGroup?.get('valoresCompensacionLabNivelVigencia') as FormArray;
     let totalToMove = 0;
     let actualWasRemoved = false;
     const actualIndex = this._indexOfValueByRule.value;

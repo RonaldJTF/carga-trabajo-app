@@ -111,7 +111,6 @@ export class RuleComponent  implements OnInit, OnDestroy {
     if (this.rule?.condiciones){
       const editableInput = document.getElementById('editableInput')!;
       for (let part of this.extractExpressions(this.rule.condiciones)){
-        console.log(part)
         if(/^\$\[\d+\]$/.test(part)){
           const match = part.match(/\$\[(\d+)\]/);
           const id = match ? parseInt(match[1], 10) : null;
@@ -223,17 +222,6 @@ export class RuleComponent  implements OnInit, OnDestroy {
     }
   }
 
-  private allowedCharacter(childNodes){
-    const allowedCharacters = /^[+\-*/><=()0-9.\s ]*$/;
-    for (let node of childNodes ?? []){
-      if (node.nodeType === Node.TEXT_NODE && !allowedCharacters.test( node.nodeValue)) {
-        node.nodeValue =node.nodeValue.split('').filter(char => allowedCharacters.test(char)).join('');
-        return false;
-      }
-    }
-    return true;
-  }
-
   private updateExpression(editableInput) {
     const obj =  this.getExpression(editableInput.childNodes);
     this.setConditionsAndConditionsExpression(obj);
@@ -328,7 +316,19 @@ export class RuleComponent  implements OnInit, OnDestroy {
   }
 
   private extractExpressions(expression) {
-    const regex = /\$\[\d+\]|<=|>=|==|[\(\)\+\-\*\/\<\>\&\|]|\d+(\.\d+)?/g;
+    const regex = /\$\[\d+\]|<=|>=|==|!=|[\(\)\+\-\*\/\<\>\&\|]|\d+(\.\d+)?/g;
     return expression.match(regex);
   }
+
+  private allowedCharacter(childNodes){
+    const allowedCharacters = /^[+\-*/><=!&|()0-9.\s ]*$/;
+    for (let node of childNodes ?? []){
+      if (node.nodeType === Node.TEXT_NODE && !allowedCharacters.test( node.nodeValue)) {
+        node.nodeValue =node.nodeValue.split('').filter(char => allowedCharacters.test(char)).join('');
+        return false;
+      }
+    }
+    return true;
+  }
+
 }
