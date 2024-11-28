@@ -2,7 +2,7 @@
     <div class="card p-0">
         <p-treeTable  #treeTableOfAppointments [value]="tree" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments" 
             (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
-            [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': '600px' }">
+            [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': (comparisonObjects?.length*128 + 500) + 'px' }">
             <ng-template pTemplate="caption">
                 <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
                     <div class="flex align-items-center flex-wrap">
@@ -22,7 +22,7 @@
                             <i class="pi pi-search"></i>
                             <input type="search" pInputText placeholder="Buscar"  (input)="onFilter(treeTableOfAppointments, $event)">
                         </span>
-                        <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Agregar filtro" tooltipPosition="bottom"></button>
+                        <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Opciones" tooltipPosition="bottom"></button>
 
                         <p-overlayPanel #filterOptionsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
                             <ng-template pTemplate>
@@ -43,7 +43,7 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th ttSortableColumn="nombre" >
-                        <div class="text-center flex align-items-center justify-content-center" style="white-space: nowrap" >
+                        <div class="text-center flex align-items-center justify-content-center" style="min-width: 400px; white-space: nowrap" >
                             Nombre<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
                         </div>
                     </th>
@@ -59,7 +59,6 @@
                 <tr>
                     <td style="min-width: 300px;">
                         <div class="flex align-items-center">
-
                             <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                             <p-treeTableCheckbox *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
                             
@@ -115,17 +114,41 @@
 
                     <td *ngFor="let _ of comparisonObjects" class="text-center w-10rem">
                         <ng-container *ngIf="item.isLastGroup">
-                            <ng-container *ngFor="let obj of item.items">
-                                    <div *ngIf="obj[comparisonAtrribute.comparisonKey] == _[comparisonAtrribute.comparisonKey]" class="_appointment-info-container p-1 border-round flex flex-column" 
-                                        (mouseenter)="toggleIcon(true, obj.id)" (mouseleave)="toggleIcon(false, obj.id)" style="position: relative;">
-                                        <p-tag [value]="obj.totalCargos" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos asignados" tooltipPosition="bottom"></p-tag>
-                                        <span class="text-500">{{obj.asignacionTotal | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
-                                        <app-appointment-menu-item  *ngIf="menuItemsOfAppointment?.length" [toggleIcon]="showedIcons[obj.id]" [id]="obj.id" [menuItems]="menuItemsOfAppointment" ></app-appointment-menu-item>                   
-                                    </div>
+                            <ng-container *ngFor="let entry of item.comparisonsPercomparisonKey | keyvalue">
+                                <div *ngIf="entry.key == _[informationGroup.comparisonAtrribute.comparisonKey]" class="p-1 border-round flex flex-column _appointment-info-container" style="position: relative;"
+                                    (mouseenter)="toggleIcon(true, entry.value['ids'].join())" (mouseleave)="toggleIcon(false, entry.value['ids'].join())">
+                                    <p-tag [value]="entry.value['totalCargos']" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos asignados" tooltipPosition="bottom"></p-tag>
+                                    <span class="text-500">{{entry.value['asignacionTotal'] | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                                    <span *ngIf="entry.value['ids']?.length > 1" class="text-xs text-500">Múltiples</span>
+                                    <app-appointment-menu-item  *ngIf="entry.value['ids']?.length == 1 else sMultipleItems" [toggleIcon]="showedIcons[entry.value['ids'].join()]" [id]="entry.value['ids'][0]" [menuItems]="menuItemsOfAppointment" ></app-appointment-menu-item>   
+                                    <ng-template #sMultipleItems>
+                                        <span *ngIf="showedIcons[entry.value['ids'].join()]" (click)="multipleItemsOverlayPanel.toggle($event)" class="_icon-badge">
+                                            <i class="pi pi-eye"></i>
+                                        </span>
+                                        <p-overlayPanel #multipleItemsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+                                            <ng-template pTemplate>
+                                                <div class="flex align-items-center mb-3">
+                                                    <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                                                      <i class="pi pi-info-circle text-xl text-blue-500"></i>
+                                                    </div>
+                                                    <div class="flex flex-column ">
+                                                      <h5 class="m-0 text-700">Información</h5>
+                                                      <span class="text-500">Detalle sobre la información mostrada</span>
+                                                    </div>
+                                                  </div>
+                                                  <div class="p-3 text-justify border-round bg-blue-50">
+                                                    El resultado que se muestra corresponde a múltiples registros, lo que implica que no se pueden realizar acciones como editar o eliminar de forma generalizada. 
+                                                    Esto se debe a que cada registro puede contener información específica que requiere un tratamiento individual para garantizar la precisión y evitar 
+                                                    modificaciones no deseadas.
+                                                  </div>
+                                            </ng-template>
+                                        </p-overlayPanel>
+                                    </ng-template>                
+                                </div>
                             </ng-container>
                         </ng-container>
                         <ng-container *ngIf="!item.isLastGroup">
-                            <span class="font-medium text-500">{{item.comparisonsPercomparisonKey[_[comparisonAtrribute.comparisonKey]] | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                            <span class="font-medium text-500">{{item.comparisonsPercomparisonKey[_[informationGroup.comparisonAtrribute.comparisonKey]]?.asignacionTotal | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                         </ng-container>
                     </td>
 
@@ -162,46 +185,50 @@
             </div>
         </div>
       
-        <div class="flex align-items-center">
-            <div *ngIf="selectedAppointment" class="flex flex-column">
-                <span class="font-medium">{{selectedAppointment.asignacionTotal | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
-                <span class="text-500 text-sm">Valor total por cargo</span>
+        <ng-container *ngIf="selectedAppointment">
+            <div class="flex align-items-center">
+                <div class="flex flex-column">
+                    <span class="font-medium">{{selectedAppointment.asignacionTotal | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                    <span class="text-500 text-sm">Valor total por cargo</span>
+                </div>
+                <span class="ml-auto text-3xl text-500 font-medium"  pTooltip="Cargos asignados" tooltipPosition="bottom">
+                    <i class="pi pi-user text-2xl mr-2"></i>{{selectedAppointment.totalCargos}}
+                </span>
             </div>
-            <span class="ml-auto text-3xl text-500 font-medium"  pTooltip="Cargos asignados" tooltipPosition="bottom">
-                <i class="pi pi-user text-2xl mr-2"></i>{{selectedAppointment.totalCargos}}
-            </span>
-        </div>
+    
+            <div class="p-3 flex border-bottom-1 surface-border font-medium">
+                <span>Asignación básica anual</span>
+                <span class="ml-auto">{{selectedAppointment.asignacionBasicaAnual  | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+            </div>
 
-        <div class="p-3 flex border-bottom-1 surface-border font-medium">
-            <span>Asignación básica anual</span>
-            <span class="ml-auto">{{selectedAppointment.asignacionBasicaAnual  | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
-        </div>
-        <p-table #tableOfSalaryScales [value]="selectedAppointment?.compensacionesLaboralesAplicadas"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
-            <ng-template pTemplate="body" let-levelCompensation let-rowIndex="rowIndex">
-                <tr>
-                    <td >
-                        <div class="flex flex-column">
-                            <span>{{levelCompensation.compensacionLaboral.nombre}}</span>
-                            <span class="text-500 text-sm">{{ levelCompensation.compensacionLaboral.periodicidad.nombre}}</span>
-                        </div>
-                    </td>
-                    <td class="w-10rem font-medium text-500 text-right"> 
-                        <span *ngIf="levelCompensation.valorAplicado else noAplicaValor">{{ levelCompensation.valorAplicado | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
-                        <ng-template #noAplicaValor>
-                            <i class="pi pi-times-circle text-xl text-red-500" pTooltip="No cumple" tooltipPosition="bottom"></i>
-                        </ng-template>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-        <div class="text-500 text-sm mx-2 my-3">
-            Lista de compensaciones laborales aplicadas. La asignación de los cargos se hace bajo la normatividad {{selectedAppointment.normatividad.nombre}}
-        </div>
+            <p-table [value]="selectedAppointment?.compensacionesLaboralesAplicadas"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
+                <ng-template pTemplate="body" let-levelCompensation let-rowIndex="rowIndex">
+                    <tr>
+                        <td >
+                            <div class="flex flex-column">
+                                <span>{{levelCompensation.compensacionLaboral.nombre}}</span>
+                                <span class="text-500 text-sm">{{ levelCompensation.compensacionLaboral.periodicidad.nombre}}</span>
+                            </div>
+                        </td>
+                        <td class="w-10rem font-medium text-500 text-right"> 
+                            <span *ngIf="levelCompensation.valorAplicado else noAplicaValor">{{ levelCompensation.valorAplicado | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                            <ng-template #noAplicaValor>
+                                <i class="pi pi-times-circle text-xl text-red-500" pTooltip="No cumple" tooltipPosition="bottom"></i>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
 
-        <div class="bg-blue-50 border-round-xl flex flex-column align-items-center p-4 my-3">
-            <span class="font-bold text-blue-500 text-3xl">{{ selectedAppointment.asignacionTotal*selectedAppointment.totalCargos | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
-            <span class="text-500">Valor total asignado</span>
-        </div>
+            <div class="text-500 text-sm mx-2 my-3">
+                Lista de compensaciones laborales aplicadas. La asignación de los cargos se hace bajo la normatividad {{selectedAppointment.normatividad.nombre}}
+            </div>
+    
+            <div class="bg-blue-50 border-round-xl flex flex-column align-items-center p-4 my-3">
+                <span class="font-bold text-blue-500 text-3xl">{{ selectedAppointment.asignacionTotal*selectedAppointment.totalCargos | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                <span class="text-500">Valor total asignado</span>
+            </div>
+        </ng-container>
     </ng-template>
 </p-overlayPanel>
 
@@ -211,43 +238,64 @@
           <i  class="pi pi-filter text-xl text-blue-500"></i>
         </div>
         <div class="flex flex-column ">
-          <h5 class="m-0 text-700">Opciones de filtrado</h5>
-          <span class="text-500">Opciones de filtrado en función de parámetros establecidos</span>
+          <h5 class="m-0 text-700">Opciones</h5>
+          <span class="text-500">Opciones de filtrado y de representación de la información</span>
         </div>
     </div>
 
-    <div class="field p-fluid">
-        <label class="font-medium" for="idAlcance">Dependencias</label>
-        <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" [(ngModel)]="filtersBy.dependencies"
-                      [showClear]="false" [filter]="true" display="chip"
-                      containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
-                      [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true" selectionMode="multiple" [metaKeySelection]="false">
-          <ng-template let-node pTemplate="default">
-            <div class="flex align-items-center cursor-pointer" pRipple>
-              <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
-                   style="border-radius: 50%; overflow: hidden;">
-                <img [src]="node.data.srcIcono"
-                     [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                     style="width: 100%; height: auto" alt=""/>
-              </div>
-              <ng-template #sNoItemIcon>
-                <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                  <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
-                </div>
-              </ng-template>
-              <div class="flex flex-column ml-2">
-                <span>{{ node.label }}</span>
-              </div>
+    <div class="grid grid-nogutter">
+        <div class="col-12 lg:col-6 lg:pr-2">
+            <div class="field p-fluid">
+                <label class="font-medium">Dependencias</label>
+                <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" [(ngModel)]="filtersBy.dependencies"
+                              [showClear]="false" [filter]="true" display="chip"
+                              containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                              [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true" selectionMode="multiple" [metaKeySelection]="false">
+                  <ng-template let-node pTemplate="default">
+                    <div class="flex align-items-center cursor-pointer" pRipple>
+                      <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
+                           style="border-radius: 50%; overflow: hidden;">
+                        <img [src]="node.data.srcIcono"
+                             [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
+                             style="width: 100%; height: auto" alt=""/>
+                      </div>
+                      <ng-template #sNoItemIcon>
+                        <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                          <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                        </div>
+                      </ng-template>
+                      <div class="flex flex-column ml-2">
+                        <span>{{ node.label }}</span>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-treeSelect>
             </div>
-          </ng-template>
-        </p-treeSelect>
-    </div>
+            <div class="field p-fluid">
+                <label class="font-medium">Vigencias</label>
+                <p-multiSelect [options]="validityOptions" [(ngModel)]="filtersBy.validities" display="chip" optionLabel="nombre"
+                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+                </p-multiSelect>
+            </div>
 
-    <div class="field p-fluid">
-        <label class="font-medium" for="idAlcance">Vigencias</label>
-        <p-multiSelect [options]="validityOptions" [(ngModel)]="filtersBy.validities" display="chip" optionLabel="nombre"
-            [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
-        </p-multiSelect>
+            <div class="field p-fluid">
+                <label class="font-medium">Alcances</label>
+                <p-multiSelect [options]="scopeOptions" [(ngModel)]="filtersBy.scopes" display="chip" optionLabel="nombre"
+                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+                </p-multiSelect>
+            </div>
+
+            <div class="field p-fluid">
+                <label class="font-medium">Niveles ocupacionales</label>
+                <p-multiSelect [options]="levelOptions" [(ngModel)]="filtersBy.levels" display="chip" optionLabel="nombre"
+                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+                </p-multiSelect>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 lg:pl-2">
+            <label class="font-medium pl-2">Estilos de información</label>
+            <ng-container *ngTemplateOutlet="informationGroupsTemplate;"></ng-container>
+        </div>
     </div>
 
     <div class="flex flex-wrap justify-content-end mt-3">
@@ -257,5 +305,30 @@
         <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined"
             (click)="filterAppointments()" pTooltip="Filtrar" tooltipPosition="bottom">
         </button>
+    </div>
+</ng-template>
+
+
+<ng-template #informationGroupsTemplate>
+    <div class="flex flex-wrap">
+        <div *ngFor="let group of informationGroups; let index = index" class="_adjust-auto p-2">
+            <div (click)="changeInformationGroup(index)" class="_card " [ngClass]="group.code == informationGroup.code ? '_option-selected' : ''">
+                <p-table [value]="group.groupAttributes" class="w-full">
+                    <ng-template pTemplate="header">
+                        <tr>
+                          <th class="p-1 surface-0"> <span class="_circle"> {{index + 1}}</span></th>
+                          <th colspan="2" class="text-center p-1 surface-0 font-medium text-xs" style="white-space: nowrap; vertical-align: bottom;">{{group.comparisonAtrribute.comparisonName}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-groupAttribute let-rowIndex="rowIndex">
+                        <tr>
+                            <td class="p-1 text-xs text-500"><span class="_ml-{{rowIndex}}">{{groupAttribute.groupName}}</span></td>
+                            <td class="p-1 w-2rem"><span class="surface-100 border-round p-1 block"></span></td>
+                            <td class="p-1 w-2rem"><span class="surface-100 border-round p-1 block"></span></td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
     </div>
 </ng-template>

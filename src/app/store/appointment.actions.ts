@@ -11,4 +11,5 @@ export const setItemFromList = createAction('[Configuration of Appointment] set 
 
 export const addToExpandedNodes= createAction('[Configuration of Appointments] Add item to the list of expanded nodes', props<{ key: string }>());
 export const removeFromExpandedNodes = createAction('[Configuration of Appointments] Remove from the list of expanded nodes an element by its key', props<{ key: string }>());
-
+export const reloadAppointmentsInStore = createAction('[Configuration of Appointment] reload list of appointments');
+export const setInformationGroup = createAction('[Configuration of Appointment] set the information group of appointments', props<{ informationGroup: any }>());

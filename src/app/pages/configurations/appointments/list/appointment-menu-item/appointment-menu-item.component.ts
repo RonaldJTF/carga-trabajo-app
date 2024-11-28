@@ -8,7 +8,7 @@ import { MenuItem } from 'primeng/api';
 })
 export class AppointmentMenuItemComponent implements OnInit{
   @Input() menuItems: MenuItem[];
-  @Input() id: number;
+  @Input() id: any;
   @Input() value: any;
   @Input() toggleIcon: boolean;
 

@@ -2,9 +2,9 @@ import { Component, DoCheck, IterableDiffers, KeyValueChangeRecord, KeyValueDiff
 import * as AppointmentActions from "@store/appointment.actions";
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
-import { Appointment, Structure, Validity } from '@models';
+import { Appointment, Level, Scope, Structure, Validity } from '@models';
 import { Store } from '@ngrx/store';
-import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, ScopeService, StructureService, ValidityService } from '@services';
+import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService, ScopeService, StructureService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
@@ -15,11 +15,14 @@ import { AppState } from 'src/app/app.reducers';
 class FiltersBy{
   dependencies: any[];
   validities: any[];
+  scopes: any[];
+  levels: any[];
 }
 
 class GroupAttribute{
   groupKey: 'idEstructura' | 'idVigencia' | 'idNivel' | 'idEscalaSalarial' | 'idAlcance';
   groupValue: string;
+  groupName: string
   type: 'STRUCTURE' | 'VALIDITY' | 'LEVEL' | 'SALARYSCALE' | 'SCOPE';
 }
 
@@ -27,8 +30,14 @@ class ComparisonAtrribute{
   comparisonKey: string;
   comparisonValue: string;
   comparisonLabel: string;
+  comparisonName: string;
 }
 
+class InformationGroup{
+  comparisonAtrribute: ComparisonAtrribute;
+  groupAttributes: GroupAttribute[];
+  code: number;
+}
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -53,26 +62,67 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   selectedAppointment: Appointment;
   appointmentsSubscription: Subscription;
   expandedNodesSubscription: Subscription;
+  informationGroupSubscription: Subscription;
 
   filtersBy: FiltersBy = new FiltersBy();
   filterProps = {
     dependencies: {icon: 'pi pi-sitemap', valueKey: 'data.nombre', internalKeyRelashionship: 'data.id',  externalKeyRelashionship: 'idEstructura'},
-    validities: {icon: 'pi pi-calendar', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idVigencia'}
+    validities: {icon: 'pi pi-calendar', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idVigencia'},
+    scopes: {icon: 'pi pi-flag', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idAlcance'},
+    levels: {icon: 'pi pi-bookmark', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idNivel'}
   }
   filterHasChanged: boolean = false;
   confirmedFilters: FiltersBy;
 
   structureOptions: TreeNode<Structure>[] = [];
   validityOptions: Validity[] = [];
+  scopeOptions: Scope[] = [];
+  levelOptions: Level[] = [];
 
-  comparisonAtrribute: ComparisonAtrribute =  {comparisonKey: 'idAlcance', comparisonValue: 'alcance', comparisonLabel: 'nombre'};
-  groupAttributes : GroupAttribute[] = [
-    {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE'},
-    {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY'},
-    {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL'},
-    {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE'},
-  ];
   comparisonObjects: any[] = [];
+  informationGroup: InformationGroup;
+
+  informationGroups: InformationGroup[] = [
+    {
+      code: 0,
+      comparisonAtrribute: {comparisonKey: 'idAlcance', comparisonValue: 'alcance', comparisonLabel: 'nombre', comparisonName: 'Alcances'},
+      groupAttributes: [
+        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+        {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY', groupName: 'Vigencia'},
+        {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL', groupName: 'Nivel ocupacional'},
+        {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE', groupName: 'Escala salarial'},
+      ]
+    },
+    {
+      code: 1,
+      comparisonAtrribute: {comparisonKey: 'idAlcance', comparisonValue: 'alcance', comparisonLabel: 'nombre', comparisonName: 'Alcances'},
+      groupAttributes: [
+        {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY', groupName: 'Vigencia'},
+        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+        {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL', groupName: 'Nivel ocupacional'},
+        {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE', groupName: 'Escala salarial'},
+      ]
+    },
+    {
+      code: 2,
+      comparisonAtrribute: {comparisonKey: 'idVigencia', comparisonValue: 'vigencia', comparisonLabel: 'anio', comparisonName: 'Vigencias'},
+      groupAttributes: [
+        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+        {groupKey: 'idAlcance', groupValue: 'alcance', type: 'SCOPE', groupName: 'Alcance'},
+        {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL', groupName: 'Nivel ocupacional'},
+        {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE', groupName: 'Escala salarial'},
+      ]
+    },
+    {
+      code: 3,
+      comparisonAtrribute: {comparisonKey: 'idNivel', comparisonValue: 'nivel', comparisonLabel: 'nombre', comparisonName: 'Niveles ocup.'},
+      groupAttributes: [
+        {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY', groupName: 'Vigencia'},
+        {groupKey: 'idAlcance', groupValue: 'alcance', type: 'SCOPE', groupName: 'Alcance'},
+        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+      ]
+    }
+  ]
 
   tree: TreeNode[] = [];
   filtersByDiffer: any;
@@ -89,6 +139,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     private validityService: ValidityService,
     private appointmentService: AppointmentService,
     private scopeService: ScopeService,
+    private levelService: LevelService,
     private confirmationDialogService: ConfirmationDialogService,
     private authService: AuthenticationService,
     private router: Router,
@@ -102,14 +153,14 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
-
+    this.informationGroupSubscription = this.store.select(state => state.appointment.informationGroup).subscribe(e => this.informationGroup = e ?? this.informationGroups[0]);
     this.expandedNodesSubscription = this.store.select(state => state.appointment.expandedNodes).subscribe(e => this.expandedNodes = e);
     this.appointmentsSubscription =  this.store.select(state => state.appointment.items).subscribe(e => {
       this.appointments = e;
       this.buildDataset(e);
     });
-    this.idStructure = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idStructure']);
 
+    this.idStructure = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idStructure']);
     const filters = new FiltersBy();
     if(this.idStructure > 0){
       filters.dependencies = [this.idStructure];
@@ -148,12 +199,12 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   }
 
   /**
-   * Los cargos que sealmente se  encuentran seleccionados son todos aquellos en el último nivel de la jerarquía en el árbol,
-   * Y estos son precisamente los del tipo que se encuentran en la última posición del objeto 'this.groupAttributes'.
+   * Los cargos que realmente se  encuentran seleccionados son todos aquellos en el último nivel de la jerarquía en el árbol,
+   * y estos son precisamente los del tipo que se encuentran en la última posición del objeto 'this.informationGroup.groupAttributes'.
    * Los elementos se encuentran dentro del atrributo data.items, ya que aquí se alojan los agrupados hasta ese nivel.
    */
-  getSelectedRealAppointments(){
-    return (this.selectedNodesOfAppointments as TreeNode[])?.filter(e => e.data.type == this.groupAttributes[this.groupAttributes.length - 1].type);
+  private getSelectedRealAppointments(){
+    return (this.selectedNodesOfAppointments as TreeNode[])?.filter(e => e.data.type == this.informationGroup.groupAttributes[this.informationGroup.groupAttributes.length - 1].type);
   }
 
   openFilterOptions(event: Event){
@@ -163,6 +214,12 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     }
     if(!this.validityOptions?.length){
       this.getValidities();
+    }
+    if(!this.scopeOptions?.length){
+      this.getScopes();
+    }
+    if(!this.levelOptions?.length){
+      this.getLevels();
     }
   }
 
@@ -177,18 +234,18 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     })
   }
 
-  buildDataset(data: any[]){
-    this.tree = this.groupByAttributes(data, this.groupAttributes);
+  buildDataset(data: Appointment[]){
+    this.tree = this.groupByAttributes(data, this.informationGroup.groupAttributes);
     //Cosntruir los objetos que se tienen en cuenta en la comparación
     const list = Array.from(
       data.reduce((map, item) => {
-        if (!map.has(item[this.comparisonAtrribute.comparisonKey])) {
-          map.set(item[this.comparisonAtrribute.comparisonKey], item[this.comparisonAtrribute.comparisonValue]);
+        if (!map.has(item[this.informationGroup.comparisonAtrribute.comparisonKey])) {
+          map.set(item[this.informationGroup.comparisonAtrribute.comparisonKey], item[this.informationGroup.comparisonAtrribute.comparisonValue]);
         }
         return map;
       }, new Map()).values()
     );
-    this.comparisonObjects = list?.map(e => ({[this.comparisonAtrribute.comparisonKey]: e['id'], label: e[this.comparisonAtrribute.comparisonLabel]}));
+    this.comparisonObjects = list?.map(e => ({[this.informationGroup.comparisonAtrribute.comparisonKey]: e['id'], label: e[this.informationGroup.comparisonAtrribute.comparisonLabel]}));
   }
 
   getDependencies() {
@@ -203,6 +260,22 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.validityService.getValidities().subscribe({
       next: (e) => {
         this.validityOptions = e;
+      }
+    })
+  }
+
+  getScopes() {
+    this.scopeService.getScopes().subscribe({
+      next: (e) => {
+        this.scopeOptions = e;
+      }
+    })
+  }
+
+  getLevels() {
+    this.levelService.getLevels().subscribe({
+      next: (e) => {
+        this.levelOptions = e;
       }
     })
   }
@@ -301,6 +374,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       const filters = new FiltersBy();
       filters.dependencies = this.filtersBy.dependencies?.map(e => e.data.id) ?? [];
       filters.validities = this.filtersBy.validities?.map(e => e.id) ?? [];
+      filters.scopes = this.filtersBy.scopes?.map(e => e.id) ?? [];
+      filters.levels = this.filtersBy.levels?.map(e => e.id) ?? [];
       this.getAppointments(filters);
       this.filterHasChanged = false;
       this.confirmedFilters = {...this.filtersBy};
@@ -326,6 +401,15 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   viewDetailOfAppointment(appointmentId: any, event: Event) {
     this.detailOfAppointmentOverlayPanel.toggle(event);
     this.selectedAppointment = this.appointments.find(e => e.id == appointmentId);
+  }
+
+  changeInformationGroup(index: number){
+    this.store.dispatch(AppointmentActions.setInformationGroup({informationGroup:  this.informationGroups[index]}));
+    this.store.dispatch(AppointmentActions.reloadAppointmentsInStore());
+  }
+
+  parseToNumber(input): number{
+    return Number(input) || 0
   }
 
   private isObjectEmpty(obj) {
@@ -355,13 +439,13 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     }
   }
 
-  private groupByAttributes(list, groupAttributes: GroupAttribute[]) {
+  private groupByAttributes(list: Appointment[], groupAttributes: GroupAttribute[]) {
     const groupKeys = groupAttributes.map( e => e.groupKey);
     const groupValues = groupAttributes.map( e => e.groupValue);
     const types = groupAttributes.map( e => e.type);
     const expandedNodes = this.expandedNodes;
 
-    const comparisonAtrribute = this.comparisonAtrribute;
+    const comparisonAtrribute = this.informationGroup.comparisonAtrribute;
     const comparisonKeys = [...new Set(list.map(item => item[comparisonAtrribute.comparisonKey]))];
 
     function groupRecursively(items, level = 0) {
@@ -392,35 +476,41 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
             const comparisonsPercomparisonKey = new Map();
             grouped[key].forEach(obj => {
-              if (comparisonKeys.includes(obj[comparisonAtrribute.comparisonKey])) {
-                if (!comparisonsPercomparisonKey.has(obj[comparisonAtrribute.comparisonKey])) {
-                  comparisonsPercomparisonKey.set(obj[comparisonAtrribute.comparisonKey], 0);
+              const key = obj[comparisonAtrribute.comparisonKey];
+              if (comparisonKeys.includes(key)) {
+                if (!comparisonsPercomparisonKey.has(key)) {
+                  comparisonsPercomparisonKey.set(key, {totalCargos: 0, asignacionTotal: 0, ids: []});
                 }
-                comparisonsPercomparisonKey.set(
-                  obj[comparisonAtrribute.comparisonKey], 
-                  comparisonsPercomparisonKey.get(obj[comparisonAtrribute.comparisonKey]) + obj.asignacionTotal*obj.totalCargos
-                ); 
+                comparisonsPercomparisonKey.get(key).totalCargos +=  obj.totalCargos;
+                comparisonsPercomparisonKey.get(key).asignacionTotal +=  obj.asignacionTotal*obj.totalCargos;
+                comparisonsPercomparisonKey.get(key).ids.push(obj.id);
               }
             });
-
             result.push({
                 data: {
                   [groupKeys[level]]: key,
                   type: types[level],
                   ... (groupValues[level] != null ? grouped[key][0][groupValues[level]] :  grouped[key][0]),
-                  items: grouped[key],
+                  items: grouped[key] as Appointment[],
                   isLastGroup: level == groupKeys.length - 1,
                   total: grouped[key].length,
                   comparisonsPercomparisonKey: Object.fromEntries(comparisonsPercomparisonKey)
                 },
                 children: children,
                 expanded: expandedNodes.includes(types[level] + '|' + key),
+                resume: (grouped[key] as Appointment[]).reduce((acc, e) => {
+                  acc.totalCargos += e.totalCargos;
+                  acc.asignacionTotal += e.asignacionTotal;
+                  return acc;
+                }, { totalCargos: 0, asignacionTotal: 0 })
             });
         }
         return result;
     }
 
     const grouped = groupRecursively(list);
+    
+    console.log(buildTree(grouped))
     return buildTree(grouped);
   }
 }

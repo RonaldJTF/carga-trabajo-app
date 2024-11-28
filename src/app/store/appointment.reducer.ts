@@ -7,6 +7,7 @@ export interface AppointmentState {
   item: Appointment;
   expandedNodes: any[];
   mustRecharge: boolean;
+  informationGroup: any;
 }
 
 export const initialState: AppointmentState = {
@@ -14,6 +15,7 @@ export const initialState: AppointmentState = {
   item: new Appointment(),
   expandedNodes: [],
   mustRecharge: true,
+  informationGroup: null
 };
 
 export const appointmentReducer = createReducer(
@@ -61,8 +63,16 @@ export const appointmentReducer = createReducer(
     return { ...state, expandedNodes:  [...state.expandedNodes, key],};
   }),
 
-
   on(AppointmentActions.removeFromExpandedNodes, (state, { key }) => {
     return { ...state, expandedNodes: state.expandedNodes.filter(item => item != key),};
   }),
+
+  on(AppointmentActions.reloadAppointmentsInStore, (state) => {
+    return { ...state, items: JSON.parse(JSON.stringify(state.items))};
+  }),
+
+  on(AppointmentActions.setInformationGroup, (state, { informationGroup }) => ({
+    ...state,
+    informationGroup: informationGroup,
+  })),
 );
