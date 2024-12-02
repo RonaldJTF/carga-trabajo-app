@@ -151,7 +151,11 @@ export class BasicTablesComponent implements OnInit {
         url: 'primary-variable',
         label: 'Gestión de variables primarias',
         iconStyle: 'primary',
-        state: {}
+        state: {
+          message: 'Realizar modificaciones en las variables puede afectar el valor asociado a ellas. Por favor, revise cuidadosamente los cambios antes de proceder.',
+          severity: 'warn',
+          show: true
+        }
       }
     ]
   }
