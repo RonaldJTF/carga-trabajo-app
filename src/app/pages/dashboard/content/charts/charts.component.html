@@ -9,7 +9,7 @@
             </div>
             <div class="flex flex-column ">
               <h5 class="m-0 text-700">Dependencia</h5>
-              <span class="text-500">Análisis por dependecia</span>
+              <span class="text-500">Análisis por dependencia</span>
             </div>
           </div>
           <div>
@@ -45,7 +45,7 @@
           </ng-template>
         </p-treeSelect>
 
-        <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center my-3">
+        <div *ngIf="dependency?.data as dependency" class="flex flex-column text-center align-items-center my-3">
           <ng-container *ngIf="dependency?.srcIcono else sNoIcon">
             <img [src]="dependency.srcIcono" [alt]="dependency.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
           </ng-container>
@@ -56,7 +56,6 @@
           </ng-template>
           <span class="font-bold">{{ dependency?.nombre }}</span>
           <span class="text-500">{{ dependency?.descripcion }}</span>
-          <span class="text-sm text-500">{{ dependency?.tipologia.nombre }}</span>
         </div>
       </div>
     </div>

@@ -258,17 +258,11 @@
 
         <div *ngIf="!loadingTimeStatistics else sLoadingTimeStatistics" class="grid">
             <div class="col-12 lg:col-6">
-                <div class="flex flex-column ">
-                    <span class="font-medium">Horas requeridas</span>
-                    <span class="text-500 text-sm">Total de horas requeridas por cada nivel de ocupación</span>
-                </div>
+                <div class="text-500 text-center font-medium mb-2">Horas requeridas por nivel ocupacional</div>
                 <app-bar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalTimeByLevel"></app-bar-chart>
             </div>
             <div class="col-12 lg:col-6">
-                <div class="flex flex-column ">
-                    <span class="font-medium">Personal requerido</span>
-                    <span class="text-500 text-sm">Personal total requerido por cada nivel de ocupación</span>
-                </div>
+                <div class="text-500 text-center font-medium mb-2">Personal requerido por nivel ocupacional</div>
                 <app-polar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalStaff"></app-polar-chart>
             </div>
         </div>
