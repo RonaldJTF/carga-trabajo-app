@@ -1,6 +1,4 @@
-<div *ngIf="!loading else sLoading" class="grid p-fluid grid-nogutter">
-  <ng-container *ngIf="dependency">
-
+<div *ngIf="!loading else sLoading" class="grid grid-nogutter">
     <div class="col-12 xl:col-4 md:col-12">
       <div class="card m-1 p-3">
         <div class="flex align-items-center justify-content-between mb-4">
@@ -36,10 +34,8 @@
                      style="width: 100%; height: auto" alt=""/>
               </div>
               <ng-template #sNoItemIcon>
-                <div
-                  class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                  <i
-                    class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                  <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
                 </div>
               </ng-template>
               <div class="flex flex-column ml-2">
@@ -49,7 +45,7 @@
           </ng-template>
         </p-treeSelect>
 
-        <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center text-center my-3">
+        <div *ngIf="dependency?.data as dependency" class="flex flex-column align-items-center my-3">
           <ng-container *ngIf="dependency?.srcIcono else sNoIcon">
             <img [src]="dependency.srcIcono" [alt]="dependency.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-5rem"/>
           </ng-container>
@@ -66,17 +62,34 @@
     </div>
 
     <div class="col-12 xl:col-4 md:col-6">
-      <app-bar-chart [title]="'Horas requeridas'" [subtitle]="'Total de horas requeridas por cada nivel de ocupación'"
-                     [iconClass]="'pi-clock'" [colorName]="'blue'" [labels]="levels"
-                     [data]="timesTareas"></app-bar-chart>
+      <div class="card m-1 p-3">
+        <div class="flex align-items-center mb-3">
+          <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+            <i class="pi pi-clock text-xl text-blue-500"></i>
+          </div>
+          <div class="flex flex-column ">
+            <h5 class="m-0 text-700">Horas requeridas</h5>
+            <span class="text-500">Total de horas requeridas por cada nivel de ocupación</span>
+          </div>
+        </div>
+        <app-bar-chart [labels]="levels" [data]="totalTimeByLevel"></app-bar-chart>
+      </div>
     </div>
 
     <div class="col-12 xl:col-4 md:col-6">
-      <app-polar-chart [title]="'Personal requerido'"
-                       [subtitle]="'Personal total requerido por cada nivel de ocupación'"
-                       [labels]="levels" [data]="personasRequeridas"></app-polar-chart>
+      <div class="card m-1 p-3">
+        <div class="flex align-items-center mb-3">
+          <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+            <i class="pi pi-users text-xl text-blue-500"></i>
+          </div>
+          <div class="flex flex-column ">
+            <h5 class="m-0 text-700">Personal requerido</h5>
+            <span class="text-500">Personal total requerido por cada nivel de ocupación</span>
+          </div>
+        </div>
+        <app-polar-chart [labels]="levels" [data]="totalStaff"></app-polar-chart>
+      </div>
     </div>
-  </ng-container>
 </div>
 
 <ng-template #sLoading>

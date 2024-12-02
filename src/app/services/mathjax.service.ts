@@ -25,7 +25,6 @@ export class MathjaxService {
   renderMath() {
     if (window.MathJax) {
       window.MathJax.typesetPromise()
-        .then(() => console.log("MathJax renderizado"))
         .catch((err: any) => console.error("Error en MathJax", err));
     } else {
       console.warn("MathJax no está disponible en window");

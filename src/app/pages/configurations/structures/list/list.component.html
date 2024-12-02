@@ -135,7 +135,7 @@
                                                                 </div>
                                                                 <div class="flex flex-column ">
                                                                     <h5 class="m-0 text-700">Detalle</h5>
-                                                                    <span class="text-500">Detalle de la estructura</span>
+                                                                    <span class="text-500">Detalle de los tiempos laborados</span>
                                                                 </div>
                                                             </div>
                                                             <ng-container *ngTemplateOutlet="TemplateStructureInformation; context:{structure: structure}"></ng-container>
@@ -164,7 +164,7 @@
                                                                         </ng-template>
                                                                     </app-label-value-chart>
                                                                 </div>
-                                                                <div class="col-12 flex flex-column border-round-xl text-center surface-100 py-2  mt-2">
+                                                                <div class="col-12 flex flex-column border-round-xl text-center surface-100 py-2 mt-2">
                                                                     <span class="text-xl text-700 font-medium"> {{activity.nivel.descripcion}}</span>
                                                                     <span class="text-500 text-sm">Nivel de ocupación</span>
                                                                 </div>
@@ -233,3 +233,49 @@
 <ng-template #sLoading>
     <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
+
+<p-overlayPanel #timeStatisticsOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
+    <ng-template pTemplate>
+        <div class="flex align-items-center mb-3">
+            <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                <i  class="pi pi-info-circle text-xl text-blue-500"></i>
+            </div>
+            <div class="flex flex-column ">
+                <h5 class="m-0 text-700">Estadística de tiempos laborados</h5>
+                <span class="text-500">Detalle del tiempo y personal requerido por nivel ocupacional</span>
+            </div>
+        </div>
+
+        <div class="flex align-items-center w-full mb-3">
+            <div *ngIf="timeStatisticsStructure.srcIcono;" style="overflow: hidden; min-width: 3rem;" class="mr-2 w-3rem h-3rem ">
+                <img [src]="timeStatisticsStructure.srcIcono" style="width: 100%; height: auto"/>
+            </div>
+            <div class="flex flex-column">
+                <span class="font-medium">{{timeStatisticsStructure.nombre | uppercase}}</span>
+                <span class="text-500 text-justify">{{timeStatisticsStructure.descripcion}}</span>
+            </div>
+        </div>
+
+        <div *ngIf="!loadingTimeStatistics else sLoadingTimeStatistics" class="grid">
+            <div class="col-12 lg:col-6">
+                <div class="flex flex-column ">
+                    <span class="font-medium">Horas requeridas</span>
+                    <span class="text-500 text-sm">Total de horas requeridas por cada nivel de ocupación</span>
+                </div>
+                <app-bar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalTimeByLevel"></app-bar-chart>
+            </div>
+            <div class="col-12 lg:col-6">
+                <div class="flex flex-column ">
+                    <span class="font-medium">Personal requerido</span>
+                    <span class="text-500 text-sm">Personal total requerido por cada nivel de ocupación</span>
+                </div>
+                <app-polar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalStaff"></app-polar-chart>
+            </div>
+        </div>
+        <ng-template #sLoadingTimeStatistics>
+            <app-loading></app-loading>
+        </ng-template>
+
+        
+    </ng-template>
+</p-overlayPanel>

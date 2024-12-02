@@ -68,7 +68,7 @@ function getAllRelatedVariables(variables: Variable[], relatedIds: number[], all
   }
   for (const currentId of relatedIds){
     allRelatedIds.push(currentId);
-    const related = variables.filter(v => v.valor.includes(`$[${currentId}]`));
+    const related = variables.filter(v => v.valor?.includes(`$[${currentId}]`));
     getAllRelatedVariables(variables, related.map(e=>e.id), allRelatedIds);
   }
 }

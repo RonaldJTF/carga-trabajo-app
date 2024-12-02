@@ -8,13 +8,8 @@ import {LayoutService} from "../../../layout/service/app.layout.service";
   styleUrls: ['./bar-chart.component.scss']
 })
 export class BarChartComponent implements OnChanges, OnDestroy {
-
   @Input() labels: string[];
   @Input() data: string[];
-  @Input() title: string;
-  @Input() subtitle: string;
-  @Input() iconClass: string;
-  @Input() colorName: string = "primary";
 
   barData: any;
   barOptions: any;

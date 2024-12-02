@@ -225,7 +225,6 @@ export class FormPersonComponent implements OnInit {
       this.formPerson.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      console.log(this.formPerson.value)
       this.updateMode ? this.updatePerson(this.personId, this.formData) : this.createPerson(this.formData);
     }
   }

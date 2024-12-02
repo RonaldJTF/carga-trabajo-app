@@ -35,13 +35,12 @@ export class ListComponent implements OnInit, OnDestroy{
 
   filteredSalaryScales: SalaryScale[] = [];
   rowGroupMetadata: any;
-  rowGroupMetadataToTable: any;
+  rowGroupMetadataToTable: any = {};
 
   menuItemsOfLevel: MenuItem[] = [];
   menuItemsOfNormativity: MenuItem[] = [];
   menuItemsOfSalaryScale: MenuItem[] = [];
   menuBarItems: MenuItem[] = [];
-
 
   viewModeOptions: any[] = [
     {icon: 'pi pi-check-circle', value: 'active', tooltip: 'Activas'},
@@ -135,7 +134,7 @@ export class ListComponent implements OnInit, OnDestroy{
       this.loadingLevelById[idLevel] = true;
       this.levelService.getSalaryScalesByLevelId(idLevel).subscribe({
         next: (e) =>{
-          this.rowGroupMetadataToTable = this.updateRowGroupMetaData(e?.sort(this.order));
+          this.rowGroupMetadataToTable[idLevel] = this.updateRowGroupMetaData(e?.sort(this.order));
           this.store.dispatch(LevelActions.updateSalaryScalesToLevel({levelId: idLevel, salaryScales: e}));
           this.loadingLevelById[idLevel] = false;
         }

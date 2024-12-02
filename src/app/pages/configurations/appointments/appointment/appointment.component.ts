@@ -204,7 +204,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   createAppointment(payload: Appointment): void {
     this.appointmentService.createAppointment(payload).subscribe({
       next: (e) => {
-        this.store.dispatch(AppointmentActions.updateFromList({appointment: e}));
+        this.store.dispatch(AppointmentActions.addToList({appointment: e}));
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
         this.appointmentService.resetFormInformation();
@@ -218,6 +218,9 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   onSubmitAppointment(event : Event): void {
     event.preventDefault();
     let payload = {...this.appointment, ...this.formAppointment.value};
+    delete payload.dependencyInTree;
+    
+    console.log(payload)
     if (this.formAppointment.invalid) {
       this.formAppointment.markAllAsTouched();
     } else {

@@ -50,9 +50,7 @@
                     <tr>
                         <td>
                             <div class="flex flex-row align-items-center">
-                                <div class="h-3rem flex align-items-center mr-2">
-                                    <button (click)="loadSalaryScalesToTable(level.id, level.loaded, expanded)" type="button" pButton pRipple [pRowToggler]="level" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-                                </div>
+                                <button (click)="loadSalaryScalesToTable(level.id, level.loaded, expanded)" type="button" pButton pRipple [pRowToggler]="level" class="_buttom-more-info p-button-text p-button-rounded p-button-plain mr-2" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                                 <p-tableCheckbox *ngIf="isAdmin" [value]="level"></p-tableCheckbox>
                             </div>
                         </td>
@@ -79,7 +77,7 @@
                                 <ng-container *ngIf="getActiveSalaryScales(level.escalasSalariales) as activeSalaryScales; else sNoActiveSalaryScales">
                                     <ng-container *ngIf="activeSalaryScales.length; else sNoActiveSalaryScales">
                                         <ng-container *ngFor="let activeSalaryScale of activeSalaryScales; let i = index">
-                                            <div *ngIf="rowGroupMetadataToTable[activeSalaryScale.idNormatividad]?.index === i" class="flex align-items-center w-full p-3">
+                                            <div *ngIf="rowGroupMetadataToTable[level.id][activeSalaryScale.idNormatividad]?.index === i" class="flex align-items-center w-full p-3">
                                                 <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden;">
                                                     <img src="assets/content/images/normativity.png" [appImageFallback]="'assets/content/images/image-fallback.png'" style="width: 100%; height: auto"/>
                                                 </div>

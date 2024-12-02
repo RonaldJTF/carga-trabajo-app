@@ -1,4 +1,4 @@
-import { Appointment } from "@models";
+import { Appointment, Structure } from "@models";
 import * as AppointmentActions from "./appointment.actions";
 import {createReducer, on} from "@ngrx/store";
 
@@ -7,7 +7,9 @@ export interface AppointmentState {
   item: Appointment;
   expandedNodes: any[];
   mustRecharge: boolean;
+  structure: Structure;
   informationGroup: any;
+  confirmedFilters: any;
 }
 
 export const initialState: AppointmentState = {
@@ -15,7 +17,9 @@ export const initialState: AppointmentState = {
   item: new Appointment(),
   expandedNodes: [],
   mustRecharge: true,
-  informationGroup: null
+  structure: null,
+  informationGroup: null,
+  confirmedFilters: null,
 };
 
 export const appointmentReducer = createReducer(
@@ -75,4 +79,21 @@ export const appointmentReducer = createReducer(
     ...state,
     informationGroup: informationGroup,
   })),
+
+  on(AppointmentActions.setStructureOnWorking, (state, {structure}) => ({
+    ...state,
+    structure: structure
+  })),
+
+  on(AppointmentActions.setConfirmedFilters, (state, {confirmedFilters}) => ({
+    ...state,
+    confirmedFilters: confirmedFilters
+  })),
+
+  on(AppointmentActions.removeConfirmedFilter, (state, { key, index }) => {
+    const confirmedFilters = JSON.parse(JSON.stringify(state.confirmedFilters)) 
+    confirmedFilters[key].splice(index, 1);
+    return { ...state, confirmedFilters: confirmedFilters};
+  }),
+
 );

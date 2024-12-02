@@ -1,5 +1,6 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as StructureActions from "@store/structure.actions";
+import * as AppointmentActions from "@store/appointment.actions";
 import {finalize, map, Observable, Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AppState} from 'src/app/app.reducers';
@@ -8,9 +9,9 @@ import {MESSAGE} from '@labels/labels';
 import {MenuItem, MessageService, TreeNode} from 'primeng/api';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TreeTable} from 'primeng/treetable';
-import {AuthenticationService, ConfirmationDialogService, CryptojsService, StructureService} from "@services";
+import {AuthenticationService, ConfirmationDialogService, CryptojsService, StatisticsService, StructureService} from "@services";
 import {Structure} from "@models";
-import {Menu} from "primeng/menu";
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-list',
@@ -29,6 +30,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
+  @ViewChild('timeStatisticsOverlayPanel') timeStatisticsOverlayPanel: OverlayPanel;
 
   isAdmin: boolean;
   isOperator: boolean;
@@ -49,9 +51,9 @@ export class ListComponent implements OnInit, OnDestroy{
   expandedNodesSubscription: Subscription;
   orderIsAscendingSubscription: Subscription;
 
-
   loading: boolean = false;
-  loadingDependency = false;
+  loadingDependency: boolean = false;
+  loadingTimeStatistics: boolean = false;
   rowGroupMetadata: number[] = [];
   numberOfElementsByStructure: any = {};
 
@@ -68,14 +70,18 @@ export class ListComponent implements OnInit, OnDestroy{
     {separator: true},
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
     {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"flat-excel", command: (e) => { this.download(e) }},
-  ]
+  ];
 
-  @ViewChild('menu') menu!: Menu;
+  timeStatisticsLevels: string[];
+  timeStatisticsTotalTimeByLevel: string[];
+  timeStatisticsTotalStaff: number[];
+  timeStatisticsStructure: Structure;
 
   constructor(
     private store: Store<AppState>,
     private confirmationDialogService: ConfirmationDialogService,
     private structureService: StructureService,
+    private statisticsService: StatisticsService,
     private authService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
@@ -107,12 +113,11 @@ export class ListComponent implements OnInit, OnDestroy{
     this.dependencySubscription = this.dependency$.subscribe( e => this.dependencyMenuItems = this.getMenuItemsOfStructure(e));
     this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
 
-    const backRoute = '/configurations/structures';
     this.menuBarItems = [
       {label: 'Reportes', icon: 'pi pi-fw pi-file', visible: this.isSuperAdmin, items: this.menuItemsOfDownload},
       {label: 'Más', icon: 'pi pi-cog',
         items: [
-          {label: 'Designación de cargos', icon: 'pi pi-users', visible: this.isAdmin, command: ()=>{this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}}
+          {label: 'Asignación de cargos', icon: 'pi pi-users', visible: this.isAdmin, command: (e)=> this.onGoToManagementAppointments()}
         ]
       }
     ];
@@ -167,9 +172,16 @@ export class ListComponent implements OnInit, OnDestroy{
                   (structure.actividad != null && this.PATH_NO_MANAGED_IF_HAS_ACTIVITY.includes(obj.path))
       })) ?? [];
 
-      generalMenuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, Methods.parseStringToBoolean(structure?.tipologia?.esDependencia), e.originalEvent)})
-      generalMenuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data:structure, command: (e) => this.onDeleteStructure(e)})
-
+      generalMenuItem.push({label: 'Estadística de tiempos', icon: 'pi pi-chart-bar', data:structure, command: (e) => this.viewTimeStatistics(e.item['value'], e.originalEvent)});
+      if (!Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)) {
+        generalMenuItem.push(
+          { label: 'Copiar', icon: 'pi pi-clone', automationId: "copy", command: (e) => this.setInformationOfMoveOrCopy(e) },
+          { label: 'Mover', icon: 'pi pi-arrows-alt', automationId: "move", command: (e) => this.setInformationOfMoveOrCopy(e) },
+          { label: 'Reasignar', icon: 'pi pi-arrows-v', automationId: "reasign", disabled: true, command: (e) => this.setInformationOfMoveOrCopy(e) },
+        );
+      }
+      generalMenuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, Methods.parseStringToBoolean(structure?.tipologia?.esDependencia), e.originalEvent)});
+      generalMenuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data:structure, command: (e) => this.onDeleteStructure(e)});
 
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
@@ -181,6 +193,7 @@ export class ListComponent implements OnInit, OnDestroy{
         }
       }
     }else if(this.isOperator || this.isSuperAdmin){
+      generalMenuItem.push({label: 'Estadística de tiempos', icon: 'pi-chart-bar', data:structure, command: (e) => this.viewTimeStatistics(e.item.id, e.originalEvent)});
       if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
         extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
         if(this.isSuperAdmin){
@@ -191,17 +204,9 @@ export class ListComponent implements OnInit, OnDestroy{
         }
       }
     }
-
-    if (!Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)) {
-      extraMenuItemOfActions.push(
-        { label: 'Copiar', icon: 'pi pi-clone', automationId: "copy", command: (e) => this.setInformationOfMoveOrCopy(e) },
-        { label: 'Mover', icon: 'pi pi-arrows-alt', automationId: "move", command: (e) => this.setInformationOfMoveOrCopy(e) },
-        { label: 'Reasignar', icon: 'pi pi-arrows-v', automationId: "reasign", disabled: true, command: (e) => this.setInformationOfMoveOrCopy(e) },
-      );
-    }
     
     if (this.structureToPaste && this.pasteAction === "reasign") {
-      extraMenuItemOfActions.push({
+      generalMenuItem.push({
         label: 'Pegar',
         icon: 'pi pi-file-import',
         command: (e) => this.reasign(structure)
@@ -209,7 +214,7 @@ export class ListComponent implements OnInit, OnDestroy{
     }
     
     if (this.structureToPaste && structure.tipologia?.idTipologiaSiguiente === this.structureToPaste.idTipologia && this.pasteAction !== "reasign") {
-      extraMenuItemOfActions.push({
+      generalMenuItem.push({
         label: 'Pegar',
         icon: 'pi pi-file-import',
         command: (e) => this[this.pasteAction](structure)
@@ -275,6 +280,7 @@ export class ListComponent implements OnInit, OnDestroy{
   viewDependency(structure: Structure){
     if(!this.hasNoDependency(structure)){
       this.loadingDependency = true;
+      this.store.dispatch(StructureActions.setDependency({structure: structure, hasLoadedInformation: false}));
       this.structureService.getDependencyInformationById(structure.id).subscribe({
         next: (e) =>{
           this.store.dispatch(StructureActions.setDependency({structure: e, hasLoadedInformation: false}));
@@ -287,6 +293,7 @@ export class ListComponent implements OnInit, OnDestroy{
     }else{
       this.store.dispatch(StructureActions.setDependency({structure: structure, hasLoadedInformation: true}));
     }
+    this.selectedNodesOfStructuresNoDependency = [];/*Para desmarcar las NO dependecias que están seleccionadas*/
   }
 
   private hasNoDependency(structure: Structure){
@@ -345,6 +352,11 @@ export class ListComponent implements OnInit, OnDestroy{
     const path = event.item.data.path;
     const idStructure = event.item.id;
     let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
+
+    /*Si la acción es de ir a gestionar los cargos, se carga la estructura al store en AppointmentActions*/
+    this.store.dispatch(AppointmentActions.setStructureOnWorking({structure: structure}));
+    this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: true}));
+    
     this.router.navigate([path], {
       skipLocationChange: true,
       queryParams: {
@@ -353,7 +365,8 @@ export class ListComponent implements OnInit, OnDestroy{
         idActivity: this.cryptoService.encryptParam(structure.actividad?.id),
         idTipology: this.cryptoService.encryptParam(path == 'configurations/structures/action/no-dependency' ? structure.tipologia.idTipologiaSiguiente : structure.idTipologia),
         defaultOrder: this.cryptoService.encryptParam(childrenNoDependency?.length ? (this.getLastOrder(childrenNoDependency) ?? childrenNoDependency.length) + 1 :  1)
-      }});
+      }}
+    );
   }
 
   deleteSelectedStructures(nodes: any, isDependency: boolean) {
@@ -406,6 +419,11 @@ export class ListComponent implements OnInit, OnDestroy{
     this.store.dispatch(StructureActions.removeFromExpandedNodes({id: event.node.data.id}));
   }
 
+  changeOrder(event: Event){
+    this.store.dispatch(StructureActions.setOrderIsAscending({orderIsAscending: !this.orderIsAscending}));
+    this.store.dispatch(StructureActions.order());
+  }
+
   download(data: any, idStructure?: number) {
     const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
         if (menuItem) {
@@ -428,18 +446,13 @@ export class ListComponent implements OnInit, OnDestroy{
         updateMenuItem(menuItem, initialIcon, initialState);
       })
     ).subscribe({
-      next: (res) => {
-        //this.reportUploaded(menuItem, automationId, res);
+      next: (advance) => {
+        //this.reportUploaded(menuItem, automationId, advance);
       }
     });
   }
 
-  changeOrder(event: Event){
-    this.store.dispatch(StructureActions.setOrderIsAscending({orderIsAscending: !this.orderIsAscending}));
-    this.store.dispatch(StructureActions.order());
-  }
-
-  reportUploaded(menuItem: MenuItem, automationId: string, downloadProgress: number) {
+  private reportUploaded(menuItem: MenuItem, automationId: string, downloadProgress: number) {
     let format = automationId === 'excel' ? Methods.capitalizeFirstLetter(automationId) : automationId.toUpperCase();
     menuItem.label = `
       <span>Reporte de tiempos en ${format}</span>
@@ -450,36 +463,6 @@ export class ListComponent implements OnInit, OnDestroy{
       element.value = downloadProgress;
     }
     this.cdr.detectChanges();
-  }
-
-  reportFlat(data: any, idStructure?: number){
-    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
-      if (menuItem) {
-        menuItem.icon = icon;
-        menuItem.disabled = disabled;
-        menuItem.label = label;
-      }
-    };
-    const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
-    const initialIcon = menuItem?.icon;
-    const initialState = menuItem?.disabled;
-    const initialLabel = menuItem?.label;
-
-    let automationId = data.item.automationId;
-
-    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    const structureIds = idStructure
-      ? [idStructure]
-      : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
-    this.structureService.downloadReportFlat(automationId, structureIds).pipe(
-      finalize(()=>{
-        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
-      })
-    ).subscribe({
-      next: (res) => {
-        this.reportUploaded(menuItem, automationId, res);
-      }
-    });
   }
 
   move(newParent: Structure): void {
@@ -560,7 +543,29 @@ export class ListComponent implements OnInit, OnDestroy{
     this.messageService.add({
       severity: 'info',
       summary: `${this.structureToPaste.nombre}`,
-      detail: 'Al copiar o mover, solo puede pegar la estructura a una con tipología superior.',
+      detail: 'Al copiar o mover, solo puede pegar la estructura a una con tipología superior inmediata.',
     });
+  }
+
+  onGoToManagementAppointments() {
+    const backRoute = '/configurations/structures';
+    this.store.dispatch(AppointmentActions.setStructureOnWorking({structure: null}));
+    this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: true}));
+    this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})
+  }
+
+  viewTimeStatistics(structure: Structure, event: Event) {
+    this.timeStatisticsStructure = structure;
+    this.loadingTimeStatistics = true;
+    this.statisticsService.getTimeStatistics(structure.id).subscribe({
+      next: (data) => {
+        this.timeStatisticsLevels = data?.map((item: any) => item.nivel);
+        this.timeStatisticsTotalTimeByLevel = data.map(item => item.tiempoTotal);
+        this.timeStatisticsTotalStaff = data.map(item => item.personalTotal);
+        this.loadingTimeStatistics = false;
+      },
+      error: ()=>{this.loadingTimeStatistics = false;}
+    });
+    this.timeStatisticsOverlayPanel.toggle(event)
   }
 }

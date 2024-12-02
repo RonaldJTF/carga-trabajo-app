@@ -9,9 +9,9 @@ import { MenuService } from '@services';
 })
 export class AppointmentsComponent{
   functionality: Functionality = {
-    label: 'Designación de cargos',
+    label: 'Asignación de cargos',
     icon: 'pi pi-users',
     color: 'primary',
-    description: 'Gestión de la designación de cargos por dependencias, vigencias y niveles ocupacionales'
+    description: 'Gestión de la asignación de cargos por dependencias, vigencias y niveles ocupacionales'
   };
 }

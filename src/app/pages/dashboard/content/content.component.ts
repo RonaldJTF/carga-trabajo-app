@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {TypologyInventory, Workplan} from '@models';
-import {AuthenticationService, DashboardService, WorkplanService} from '@services';
+import {AuthenticationService, StatisticsService, WorkplanService} from '@services';
 import {IMAGE_SIZE} from '@utils';
 import {MESSAGE} from '@labels/labels';
 
@@ -30,7 +30,7 @@ export class ContentComponent implements OnInit {
   ];
   viewMode: 'day' | 'week' | 'month' = 'day';
 
-  constructor(private workplanService: WorkplanService, private dashboardService: DashboardService, private authService: AuthenticationService) {
+  constructor(private workplanService: WorkplanService, private statisticsService: StatisticsService, private authService: AuthenticationService) {
   }
 
   ngOnInit() {
@@ -52,7 +52,7 @@ export class ContentComponent implements OnInit {
 
   getInventarioTipologia() {
     this.loading = true;
-    this.dashboardService.getInventory().subscribe({
+    this.statisticsService.getInventory().subscribe({
       next: (data) => {
         this.inventory = data;
         this.loading = false;
@@ -66,7 +66,7 @@ export class ContentComponent implements OnInit {
       overlayPanel.show(event);
     }
     this.loadingAdvanceCosolidated = true;
-    this.dashboardService.getAdvanceConsolidated(idWorkplan, timeType).subscribe({
+    this.statisticsService.getAdvanceConsolidated(idWorkplan, timeType).subscribe({
       next: (data) => {
         let dataset = [
           {label: 'Avance', values: data.dateAdvances.map(e => e.advance)},

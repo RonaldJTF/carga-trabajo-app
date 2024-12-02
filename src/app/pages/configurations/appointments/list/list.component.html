@@ -1,35 +1,36 @@
 <ng-container *ngIf="!loading else sLoading">
     <div class="card p-0">
-        <p-treeTable  #treeTableOfAppointments [value]="tree" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments" 
+        <p-treeTable  #treeTableOfAppointments [value]="treeDataset" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments" 
             (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
-            [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': (comparisonObjects?.length*128 + 500) + 'px' }">
+            [globalFilterFields]="['nombre', 'descripcion', 'anio']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': (comparisonObjects?.length*128 + 500) + 'px' }">
             <ng-template pTemplate="caption">
-                <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
-                    <div class="flex align-items-center flex-wrap">
-                        <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
-                            <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-                        </button>
-                        <div *ngIf="isAdmin" class="_badge-container m-1">
-                            <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedAppointments()" pTooltip="Eliminar" tooltipPosition="bottom"
-                                class="p-button-danger " [disabled]="!totalSelectedAppointments">
-                                <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                <div class="border-round-top-xl surface-100 p-3">
+                    <p-menubar [model]="menuBarItems">
+                        <ng-template pTemplate="start">
+                            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
                             </button>
-                            <span *ngIf="totalSelectedAppointments"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{totalSelectedAppointments}}</span>
-                        </div>
-                    </div>
-                    <div class="flex align-items-center flex-wrap">
-                        <span class="p-input-icon-left m-1">
-                            <i class="pi pi-search"></i>
-                            <input type="search" pInputText placeholder="Buscar"  (input)="onFilter(treeTableOfAppointments, $event)">
-                        </span>
-                        <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Opciones" tooltipPosition="bottom"></button>
-
-                        <p-overlayPanel #filterOptionsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
-                            <ng-template pTemplate>
-                                <ng-container *ngTemplateOutlet="filterOptionsTemplate"></ng-container>
-                            </ng-template>
-                        </p-overlayPanel>
-                    </div>
+                            <div *ngIf="isAdmin" class="_badge-container m-1 mr-2">
+                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedAppointments()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                    class="p-button-danger " [disabled]="!totalSelectedAppointments">
+                                    <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                </button>
+                                <span *ngIf="totalSelectedAppointments"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{totalSelectedAppointments}}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="end">
+                            <span class="p-input-icon-left m-1">
+                                <i class="pi pi-search"></i>
+                                <input type="search" pInputText placeholder="Buscar"  (input)="onFilter(treeTableOfAppointments, $event)">
+                            </span>
+                            <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Opciones" tooltipPosition="bottom"></button>
+                            <p-overlayPanel #filterOptionsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+                                <ng-template pTemplate>
+                                    <ng-container *ngTemplateOutlet="filterOptionsTemplate"></ng-container>
+                                </ng-template>
+                            </p-overlayPanel>
+                        </ng-template>
+                    </p-menubar>
                 </div>
 
                 <div class="surface-100 px-3 pb-1">
@@ -67,8 +68,8 @@
                                     <img [src]="item.srcIcono" style="width: 100%; height: auto"/>
                                 </div>
                                 <ng-template #sNoIcon>
-                                    <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-gray-100 border-circle flex-shrink-0">
-                                        <i class="pi pi-book text-xl text-gray-500"></i>
+                                    <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle flex-shrink-0">
+                                        <i class="pi pi-sitemap text-xl text-primary-500"></i>
                                     </div>
                                 </ng-template>
                                 <div class="ml-2 flex flex-column">
@@ -177,7 +178,7 @@
     <ng-template pTemplate>
         <div class="flex align-items-center mb-3">
             <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                <i  class="pi pi-bookmark text-xl text-blue-500"></i>
+                <i  class="pi pi-users text-xl text-blue-500"></i>
             </div>
             <div class="flex flex-column ">
                 <h5 class="m-0 text-700">Información de la asignación de cargos</h5>
@@ -221,7 +222,7 @@
             </p-table>
 
             <div class="text-500 text-sm mx-2 my-3">
-                Lista de compensaciones laborales aplicadas. La asignación de los cargos se hace bajo la normatividad {{selectedAppointment.normatividad.nombre}}
+                Lista de compensaciones laborales aplicadas. La asignación de los cargos se hace bajo la normatividad "{{selectedAppointment.normatividad.nombre}}"
             </div>
     
             <div class="bg-blue-50 border-round-xl flex flex-column align-items-center p-4 my-3">
@@ -248,25 +249,20 @@
             <div class="field p-fluid">
                 <label class="font-medium">Dependencias</label>
                 <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" [(ngModel)]="filtersBy.dependencies"
-                              [showClear]="false" [filter]="true" display="chip"
+                              [showClear]="false" [filter]="true" display="chip" 
                               containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
                               [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true" selectionMode="multiple" [metaKeySelection]="false">
                   <ng-template let-node pTemplate="default">
                     <div class="flex align-items-center cursor-pointer" pRipple>
-                      <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
-                           style="border-radius: 50%; overflow: hidden;">
-                        <img [src]="node.data.srcIcono"
-                             [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                             style="width: 100%; height: auto" alt=""/>
+                      <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                        <img [src]="node.data.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
                       </div>
                       <ng-template #sNoItemIcon>
                         <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
                           <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
                         </div>
                       </ng-template>
-                      <div class="flex flex-column ml-2">
-                        <span>{{ node.label }}</span>
-                      </div>
+                      <span class="ml-2">{{ node.label }}</span>
                     </div>
                   </ng-template>
                 </p-treeSelect>

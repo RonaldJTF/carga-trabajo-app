@@ -102,7 +102,6 @@ export class CryptojsService {
   }
 
   decryptParamAsNumber(encrypted: string): number {
-    console.log(encrypted)
     if (encrypted == undefined || encrypted == null || encrypted == '') {
       return null;
     }

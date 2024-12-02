@@ -47,9 +47,7 @@
                     <tr>
                         <td>
                             <div class="flex flex-row align-items-center">
-                                <div class="h-3rem flex align-items-center mr-2">
-                                    <button  (click)="loadValuesInValidityToTable(validity.id, validity.loaded, expanded)" type="button" pButton pRipple [pRowToggler]="validity" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-                                </div>
+                                <button  (click)="loadValuesInValidityToTable(validity.id, validity.loaded, expanded)" type="button" pButton pRipple [pRowToggler]="validity" class="_buttom-more-info p-button-text p-button-rounded p-button-plain mr-2" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                                 <p-tableCheckbox *ngIf="isAdmin" [value]="validity"></p-tableCheckbox>
                             </div>
                         </td>

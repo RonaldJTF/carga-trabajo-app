@@ -42,7 +42,6 @@ export class DependencyComponent implements OnInit {
     this.idTipologia = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idTipology']);
     this.buildForm();
     this.loadStructure(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
-    this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
   }
 
   buildForm(){
@@ -90,7 +89,6 @@ export class DependencyComponent implements OnInit {
     this.structureService.updateStructure(id, this.formData).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.updateItemIntoList({structure: e as Structure}));
-        this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
         this.urlService.goBack();
         this.creatingOrUpdating = false;
       },

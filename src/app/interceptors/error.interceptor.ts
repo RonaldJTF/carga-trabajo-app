@@ -37,6 +37,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             errorMsg = `Error: ${error.error.message}`;
           } else {
             console.log('This is server side error');
+            console.log(error)
             errorMsg = `Error Code: ${error.status},  Message: ${error.message}`;
             if (error.status === 401) {
               this.authenticationService.logout();

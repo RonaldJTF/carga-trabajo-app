@@ -14,7 +14,7 @@ import {
   AuthenticationService,
   ChangePasswordService,
   CryptojsService,
-  DashboardService,
+  StatisticsService,
   DocumentTypeService,
   GenderService,
   LevelService,
@@ -93,7 +93,7 @@ import { levelCompensationReducer } from '@store/levelCompensation.reducer';
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
-    StructureService, LevelService, DashboardService, DocumentTypeService, ScopeService, PeriodicityService, CompensationCategoryService, NormativityTypeService, PrimaryVariableService, GenderService, PersonService,
+    StructureService, LevelService, StatisticsService, DocumentTypeService, ScopeService, PeriodicityService, CompensationCategoryService, NormativityTypeService, PrimaryVariableService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService, LevelCompensationService, CompensationService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

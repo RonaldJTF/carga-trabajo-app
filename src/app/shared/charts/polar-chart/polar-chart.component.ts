@@ -6,15 +6,11 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
   styleUrls: ['./polar-chart.component.scss']
 })
 export class PolarChartComponent implements OnChanges {
-
   @Input() labels: string[];
   @Input() data: number[];
-  @Input() title: string;
-  @Input() subtitle: string;
 
   polarData: any;
   polarOptions: any;
-
 
   ngOnChanges(changes: SimpleChanges): void {
     this.initChart();
@@ -35,6 +31,7 @@ export class PolarChartComponent implements OnChanges {
           documentStyle.getPropertyValue('--teal-500'),
           documentStyle.getPropertyValue('--orange-500'),
           documentStyle.getPropertyValue('--pink-500'),
+          documentStyle.getPropertyValue('--cyan-500'),
         ],
         label: 'Personas'
       }],

@@ -53,8 +53,6 @@ export class StructureService {
 
   downloadReport(type: string, structureIds: number[]): Observable<number>{
     const options = {
-      //responseType: 'blob' as 'json',
-      //observe: 'response' as 'body'
       responseType: 'blob',
       observe: 'events',
       reportProgress: true
@@ -64,16 +62,12 @@ export class StructureService {
         switch (e.type) {
           case HttpEventType.DownloadProgress:
             return Math.round((100 * e.loaded) / (e.total || 1));
-
           case HttpEventType.Response:
             this.handleFileDownload(e);
             return 100;
-
           default:
             return 0;
         }
-        //this.handleFileDownload(e);
-        //return e;
       })
     )
   }
@@ -116,7 +110,6 @@ export class StructureService {
   deleteActivity(id: number) : Observable<HttpResponse<any>> {
     return this.webRequestService.deleteWithHeaders(`${this.pathStructure}/activity/${id}`)
   }
-
 
   private handleFileDownload(response: HttpResponse<Blob>) {
     const filename = this.getFilenameFromHttpResponse(response);

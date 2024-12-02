@@ -379,7 +379,6 @@ export class LevelCompensationComponent implements OnInit, OnDestroy {
     this.loadingValueInValidityOfValueByRule[variableId] = true;
     this.validityService.getValueInValidityByVariableIdAndValidityId(variableId, validityId).subscribe({
       next: (data) => {
-        console.log(data)
         this.levelCompensationService.setValueInValidityOfValueByRule(variableId, data);
         this.loadingValueInValidityOfValueByRule[variableId] = false;
       },

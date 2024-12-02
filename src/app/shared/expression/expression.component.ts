@@ -43,7 +43,7 @@ export class ExpressionComponent implements AfterViewInit{
         this.outExpression = "No se encontró expresión"
       }
     }catch{
-      console.log('Error of expression')
+      console.error('Error of expression')
     }
   }
 }

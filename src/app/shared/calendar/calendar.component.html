@@ -24,6 +24,6 @@
 
 <ng-template #eventContentTemplateDefault let-event>
    <div class="px-2 py-1">
-        <span style="color:{{event.backgroundColor | darkenColor}};">{{event.title }}</span>
+    <span [ngStyle]="{'color': event.backgroundColor | darkenColor}">{{ event.title }}</span>
    </div>
 </ng-template>

@@ -42,7 +42,6 @@ export class NoDependencyComponent implements OnInit {
     this.defaultOrder = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['defaultOrder']);
     this.buildForm();
     this.loadStructure(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
-    this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
   }
 
   buildForm(){
@@ -80,7 +79,6 @@ export class NoDependencyComponent implements OnInit {
     this.structureService.updateStructure(id, this.formData).subscribe({
       next: (e) => {
         this.store.dispatch(StructureActions.updateItemIntoList({structure: e as Structure}));
-        this.store.dispatch(StructureActions.setMustRecharge({mustRecharge: false}));
         this.urlService.goBack();
         this.creatingOrUpdating = false;
       },

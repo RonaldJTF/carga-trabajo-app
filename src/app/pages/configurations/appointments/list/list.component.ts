@@ -1,4 +1,4 @@
-import { Component, DoCheck, IterableDiffers, KeyValueChangeRecord, KeyValueDiffers, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, DoCheck, KeyValueDiffers, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as AppointmentActions from "@store/appointment.actions";
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
@@ -9,7 +9,7 @@ import { IMAGE_SIZE, Methods } from '@utils';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { TreeTable } from 'primeng/treetable';
-import { filter, Subscription } from 'rxjs';
+import { finalize, Observable, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
 
 class FiltersBy{
@@ -54,7 +54,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   isAdmin: boolean;
   loading: boolean;
   filtering: boolean;
-  idStructure: number;
+  structure: Structure;
 
   selectedNodesOfAppointments: TreeNode | TreeNode[] | null;
 
@@ -63,6 +63,9 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   appointmentsSubscription: Subscription;
   expandedNodesSubscription: Subscription;
   informationGroupSubscription: Subscription;
+  structureSubscription: Subscription;
+  mustRechargeSubscription: Subscription;
+  confirmedFiltersSubscription: Subscription;
 
   filtersBy: FiltersBy = new FiltersBy();
   filterProps = {
@@ -72,7 +75,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     levels: {icon: 'pi pi-bookmark', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idNivel'}
   }
   filterHasChanged: boolean = false;
-  confirmedFilters: FiltersBy;
+  filtersByDiffer: any;
+  confirmedFilters:FiltersBy;
 
   structureOptions: TreeNode<Structure>[] = [];
   validityOptions: Validity[] = [];
@@ -81,7 +85,6 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   comparisonObjects: any[] = [];
   informationGroup: InformationGroup;
-
   informationGroups: InformationGroup[] = [
     {
       code: 0,
@@ -124,14 +127,18 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     }
   ]
 
-  tree: TreeNode[] = [];
-  filtersByDiffer: any;
+  treeDataset: TreeNode[] = [];
 
   menuItemsOfAppointment: MenuItem[] = [];
   menuItemsOfAppointmentGroup: MenuItem[] = [];
 
   showedIcons: any = {};
   expandedNodes: any[];
+
+  menuBarItems: MenuItem[] = [];
+  menuItemsOfDownload: MenuItem[] = [
+    {label: 'Reporte de asignación de cargos en Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
+  ]
 
   constructor(
     private store: Store<AppState>,
@@ -153,26 +160,38 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
+    this.structureSubscription = this.store.select(state => state.appointment.structure).subscribe(e => this.structure = e);
     this.informationGroupSubscription = this.store.select(state => state.appointment.informationGroup).subscribe(e => this.informationGroup = e ?? this.informationGroups[0]);
     this.expandedNodesSubscription = this.store.select(state => state.appointment.expandedNodes).subscribe(e => this.expandedNodes = e);
     this.appointmentsSubscription =  this.store.select(state => state.appointment.items).subscribe(e => {
       this.appointments = e;
       this.buildDataset(e);
     });
-
-    this.idStructure = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idStructure']);
-    const filters = new FiltersBy();
-    if(this.idStructure > 0){
-      filters.dependencies = [this.idStructure];
-    }
-    this.loading = true;
+    this.confirmedFiltersSubscription = this.store.select(state => state.appointment.confirmedFilters).subscribe(e => this.confirmedFilters = e);
+    this.mustRechargeSubscription = this.store.select(state => state.appointment.mustRecharge).subscribe(e => {
+      if (e){
+        const filters = new FiltersBy();
+        if(this.structure){
+          filters.dependencies = [this.structure.id];
+        }
+        this.loading = true;
+        this.getAppointments(filters)
+      }
+    });
     this.initMenuItems();
-    this.getAppointments(filters);
+
+    this.menuBarItems = [
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload},
+    ];
   }
 
   ngOnDestroy(): void {
     this.appointmentsSubscription?.unsubscribe();
     this.expandedNodesSubscription?.unsubscribe();
+    this.informationGroupSubscription?.unsubscribe();
+    this.structureSubscription?.unsubscribe();
+    this.mustRechargeSubscription?.unsubscribe();
+    this.confirmedFiltersSubscription?.unsubscribe();
   }
 
   ngDoCheck() {
@@ -203,7 +222,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
    * y estos son precisamente los del tipo que se encuentran en la última posición del objeto 'this.informationGroup.groupAttributes'.
    * Los elementos se encuentran dentro del atrributo data.items, ya que aquí se alojan los agrupados hasta ese nivel.
    */
-  private getSelectedRealAppointments(){
+  getSelectedRealAppointments(){
     return (this.selectedNodesOfAppointments as TreeNode[])?.filter(e => e.data.type == this.informationGroup.groupAttributes[this.informationGroup.groupAttributes.length - 1].type);
   }
 
@@ -227,6 +246,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.appointmentService.getAppointments(filterIds).subscribe({
       next: (data) => {
         this.store.dispatch(AppointmentActions.setList({appointments: data as Appointment[]}));
+        this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: false}));
         this.loading = false;
         this.filtering = false;
       },
@@ -235,7 +255,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   }
 
   buildDataset(data: Appointment[]){
-    this.tree = this.groupByAttributes(data, this.informationGroup.groupAttributes);
+    this.treeDataset = this.groupByAttributes(data, this.informationGroup.groupAttributes);
     //Cosntruir los objetos que se tienen en cuenta en la comparación
     const list = Array.from(
       data.reduce((map, item) => {
@@ -252,6 +272,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.structureService.getDependencies().subscribe({
       next: (data) => {
         this.builtNodes(data, this.structureOptions);
+        this.filtersBy.dependencies = this.structureOptions.filter(s => this.confirmedFilters?.dependencies?.map(o => o.data.id).includes(s.data.id));
       }
     })
   }
@@ -260,6 +281,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.validityService.getValidities().subscribe({
       next: (e) => {
         this.validityOptions = e;
+        this.filtersBy.validities = this.validityOptions?.filter(v => this.confirmedFilters?.validities?.map(o => o.id).includes(v.id));
       }
     })
   }
@@ -268,6 +290,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.scopeService.getScopes().subscribe({
       next: (e) => {
         this.scopeOptions = e;
+        this.filtersBy.scopes = this.scopeOptions?.filter(s => this.confirmedFilters?.scopes?.map(o => o.id).includes(s.id));
       }
     })
   }
@@ -276,6 +299,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.levelService.getLevels().subscribe({
       next: (e) => {
         this.levelOptions = e;
+        this.filtersBy.levels = this.levelOptions?.filter(l => this.confirmedFilters?.levels?.map(o => o.id).includes(l.id));
       }
     })
   }
@@ -355,13 +379,15 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   }
 
   onRemoveFilter(key, index){
-    const deleted = this.filtersBy[key]?.splice(index, 1);
-    if (this.filtersBy[key]?.length){
+    const deleted  = this.confirmedFilters[key][index];
+    this.store.dispatch(AppointmentActions.removeConfirmedFilter({key: key, index: index}));
+    this.filtersBy[key]?.splice(index, 1);
+    if (this.confirmedFilters[key]?.length){
       const list = this.appointments.filter(
-        e => this.getNestedProperty(e, this.filterProps[key].externalKeyRelashionship) != this.getNestedProperty(deleted[0], this.filterProps[key].internalKeyRelashionship)
+        e => this.getNestedProperty(e, this.filterProps[key].externalKeyRelashionship) != this.getNestedProperty(deleted, this.filterProps[key].internalKeyRelashionship) 
       );
       this.store.dispatch(AppointmentActions.setList({appointments: list}));
-    }else if(this.isObjectEmpty(this.filtersBy)){
+    }else if(this.isObjectEmpty(this.confirmedFilters)){
       this.store.dispatch(AppointmentActions.setList({appointments: []}));
       this.filterHasChanged = true;
     }
@@ -378,7 +404,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       filters.levels = this.filtersBy.levels?.map(e => e.id) ?? [];
       this.getAppointments(filters);
       this.filterHasChanged = false;
-      this.confirmedFilters = {...this.filtersBy};
+      this.store.dispatch(AppointmentActions.setConfirmedFilters({confirmedFilters: {...this.filtersBy}}));
     }
   }
 
@@ -452,7 +478,6 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
         if (level >= groupKeys.length) {
             return items;
         }
-
         const attr = groupKeys[level];
         return items.reduce((acc, item) => {
             const key = item[attr];
@@ -507,10 +532,36 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
         }
         return result;
     }
-
     const grouped = groupRecursively(list);
-    
-    console.log(buildTree(grouped))
     return buildTree(grouped);
+  }
+
+  private download(data: any) {
+    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean) => {
+        if (menuItem) {
+            menuItem.icon = icon;
+            menuItem.disabled = disabled;
+        }
+    };
+    const menuItem = this.menuItemsOfDownload.find(e => e.automationId == data.item.automationId);
+    const initialIcon = menuItem?.icon;
+    const initialState = menuItem?.disabled;
+
+    let automationId = data.item.automationId;
+    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
+
+    const filters = new FiltersBy();
+    filters.dependencies = this.confirmedFilters?.dependencies?.map(e => e.data.id) ?? [];
+    filters.validities = this.confirmedFilters?.validities?.map(e => e.id) ?? [];
+    filters.scopes = this.confirmedFilters?.scopes?.map(e => e.id) ?? [];
+    filters.levels = this.confirmedFilters?.levels?.map(e => e.id) ?? [];
+
+    this.appointmentService.downloadReport(automationId, filters).pipe(
+      finalize(()=>{
+        updateMenuItem(menuItem, initialIcon, initialState);
+      })
+    ).subscribe({
+      next: (downloadProgress) => {}
+    });
   }
 }

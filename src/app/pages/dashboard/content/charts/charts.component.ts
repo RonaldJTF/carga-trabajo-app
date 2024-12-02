@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DashboardService, StructureService} from "@services";
+import {StatisticsService, StructureService} from "@services";
 import {Structure} from "@models";
 import {MESSAGE} from "@labels/labels";
 import {TypologyInventory} from "@models";
@@ -17,8 +17,8 @@ export class ChartsComponent implements OnInit {
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
   levels: string[];
-  timesTareas: string[];
-  personasRequeridas: number[];
+  totalTimeByLevel: string[];
+  totalStaff: number[];
   dependency: TreeNode<Structure> = {};
   inventory: TypologyInventory[];
   structureOptions: TreeNode<Structure>[] = [];
@@ -26,7 +26,7 @@ export class ChartsComponent implements OnInit {
   downloadingReport: boolean = false;
 
   constructor(
-    private dashboardService: DashboardService,
+    private dashboardService: StatisticsService,
     private structureService: StructureService
   ) {
   }
@@ -44,16 +44,12 @@ export class ChartsComponent implements OnInit {
     });
   }
 
-  public getLevels(data: any[]) {
-    this.levels = data?.map((item: any) => item.nivel);
-    this.timesTareas = data.map(item => this.minutesToHours(item.tiempoTotalTarea));
-    this.personasRequeridas = data.map(item => parseFloat(this.minutesToHours(item.tiempoTotalTarea)) / 151.3);
-  }
-
-  getStatistics(idDependence: number) {
-    this.dashboardService.getStatistics(idDependence).subscribe({
+  getTimeStatistics(structureId: number) {
+    this.dashboardService.getTimeStatistics(structureId).subscribe({
       next: (data) => {
-        this.getLevels(data);
+        this.levels = data?.map((item: any) => item.nivel);
+        this.totalTimeByLevel = data.map(item => item.tiempoTotal);
+        this.totalStaff = data.map(item => item.personalTotal);
       },
     });
   }
@@ -65,7 +61,7 @@ export class ChartsComponent implements OnInit {
         this.builtNodes(data, this.structureOptions);
         this.dependency = this.structureOptions?.length ? this.structureOptions[0] : null;
         if (this.dependency) {
-          this.getStatistics(this.dependency.data.id);
+          this.getTimeStatistics(this.dependency.data.id);
         }
         this.loading = false;
       }
@@ -91,15 +87,8 @@ export class ChartsComponent implements OnInit {
     }
   }
 
-  minutesToHours(minutes: number): string {
-    if (isNaN(minutes) || minutes < 0) {
-      return '';
-    }
-    return (minutes / 60).toFixed(2);
-  }
-
   onChangeDependency() {
-    this.getStatistics(this.dependency.data.id);
+    this.getTimeStatistics(this.dependency.data.id);
   }
 
   downloadReport() {

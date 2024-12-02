@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Appointment, Normativity, Scope, Structure, Validity } from '@models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,44 @@ export class AppointmentService {
 
   deleteSelectedLevel(payload: number[]): Observable<Appointment[]> {
     return this.webRequestService.deleteWithHeaders(this.pathAppointment, undefined, payload);
+  }
+
+  downloadReport(type: string, filterIds: any): Observable<number>{
+    const options = {
+      responseType: 'blob',
+      observe: 'events',
+      reportProgress: true
+    };
+    return this.webRequestService.getWithHeaders(`${this.pathAppointment}/report`, {type: type, ...filterIds}, null, options).pipe(
+      map(e => {
+        switch (e.type) {
+          case HttpEventType.DownloadProgress:
+            return Math.round((100 * e.loaded) / (e.total || 1));
+          case HttpEventType.Response:
+            this.handleFileDownload(e);
+            return 100;
+          default:
+            return 0;
+        }
+      })
+    )
+  }
+
+  private handleFileDownload(response: HttpResponse<Blob>) {
+    const filename = this.getFilenameFromHttpResponse(response);
+    const blob = new Blob([response.body], { type: response.headers.get('content-type') });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  private getFilenameFromHttpResponse(response: HttpResponse<Blob>): string {
+    const contentDisposition = response.headers.get('content-disposition');
+    const matches = /filename="?([^"]+)"?/.exec(contentDisposition);
+    return matches != null ? matches[1] : 'archivo_descargado';
   }
 
   /*********************************************************************************************************************/

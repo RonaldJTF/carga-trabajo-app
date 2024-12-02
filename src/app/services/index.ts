@@ -2,7 +2,7 @@ export * from './auth.service';
 export * from './basic-tables.service';
 export * from './confirmation-dialog.service';
 export * from './cryptojs.service';
-export * from './dashboard.service';
+export * from './statistics.service';
 export * from './data.service';
 export * from './documenttype.service';
 export * from './gender.service';

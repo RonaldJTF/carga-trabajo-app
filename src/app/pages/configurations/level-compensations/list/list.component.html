@@ -6,7 +6,7 @@
       <div class="card p-0 pb-2">
         <p-table #dt [value]="levelCompensations" rowGroupMode="subheader" sortMode="single" (onSort)="onSort($event)" (onFilter)="onFilter()" sortField="order"
                  [paginator]="true" [rows]="numberOfRows" [(selection)]="selectedLevelCompensations" selectionMode="multiple"  [exportHeader]="'customExportHeader'"
-                 [globalFilterFields]="['nombre', 'descripcion', 'vigencia.nombre']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true" (rowsChange)="onRowsChange($event)"
+                 [globalFilterFields]="['compensacionLaboral.nombre', 'compensacionLaboral.descripcion', 'vigencia.nombre', 'vigencia.anio']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true" (rowsChange)="onRowsChange($event)"
                  currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
           <ng-template pTemplate="caption">
             <div class="border-round-top-xl surface-100 p-3">
