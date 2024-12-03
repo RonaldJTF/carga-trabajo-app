@@ -29,26 +29,22 @@ export class FormDocumentTypeComponent implements OnInit {
     private cryptoService: CryptojsService,
     private urlService: UrlService,
     private confirmationDialogService: ConfirmationDialogService,
-  ) {
-  }
-
+  ) {}
 
   ngOnInit() {
     this.buildForm();
     this.getInitialValue();
   }
 
-
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.idDocumentType = params['id'];
+        this.idDocumentType = this.cryptoService.decryptParamAsNumber(params['id']);
         this.updateMode = true;
         this.getDocumentType(this.idDocumentType);
       }
     });
   }
-
 
   getDocumentType(idDocumentType: number) {
     this.basicTablesService.getDocumentType(idDocumentType).subscribe({
@@ -115,9 +111,6 @@ export class FormDocumentTypeComponent implements OnInit {
           }
         })
       },
-      () => {
-        this.creatingOrUpdating = false;
-      }
     )
   }
 

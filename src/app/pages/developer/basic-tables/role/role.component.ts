@@ -31,7 +31,7 @@ export class RoleComponent implements OnInit {
     private basicTableService: BasicTablesService,
     private confirmationDialogService: ConfirmationDialogService,
     private router: Router,
-    private cryptoService: CryptojsService
+    private cryptoService: CryptojsService,
   ) {
   }
 
@@ -61,7 +61,7 @@ export class RoleComponent implements OnInit {
   }
 
   deleteSelectedRole() {
-    let roleIds: string[] = this.selectedRole.map(item => this.cryptoService.encryptParam(item.id));
+    let roleIds: number[] = this.selectedRole.map(item => item.id);
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
         this.basicTableService.deleteSelectedRole(roleIds)
@@ -69,7 +69,7 @@ export class RoleComponent implements OnInit {
             next: () => {
               this.desmarkAll();
               for (let id of roleIds) {
-                this.filterRole(this.cryptoService.decryptParamAsNumber(id));
+                this.filterRole(id);
               }
             }
           });
@@ -103,20 +103,10 @@ export class RoleComponent implements OnInit {
 
   onDelete(idRol: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.basicTableService.deleteRole(this.cryptoService.encryptParam(idRol)).subscribe(() => {
+      this.basicTableService.deleteRole(idRol).subscribe(() => {
         this.filterRole(idRol);
         this.desmarkAll();
       });
     });
   }
-
-  decryptList<T>(param: string[]): T[] {
-    let list: T[] = [];
-    param.forEach(item => {
-      let element: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
-      list.push(element);
-    })
-    return list;
-  }
-
 }

@@ -11,4 +11,5 @@ export class LabelValueChartComponent {
   @Input() colorName: string = "primary";
   @Input() iconClass: string;
   @ContentChild(TemplateRef) valueContentTemplate: TemplateRef<any>;
+  @ContentChild(TemplateRef) labelContentTemplate: TemplateRef<any>;
 }

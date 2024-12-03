@@ -75,6 +75,7 @@ export class ListComponent implements OnInit, OnDestroy{
   timeStatisticsLevels: string[];
   timeStatisticsTotalTimeByLevel: string[];
   timeStatisticsTotalStaff: number[];
+  timeStatisticsSummarize: any = {};
   timeStatisticsStructure: Structure;
 
   constructor(
@@ -563,6 +564,22 @@ export class ListComponent implements OnInit, OnDestroy{
         this.timeStatisticsTotalTimeByLevel = data.map(item => item.tiempoTotal);
         this.timeStatisticsTotalStaff = data.map(item => item.personalTotal);
         this.loadingTimeStatistics = false;
+
+        let factor;
+        const totalTime = (data.reduce((acc, e) => acc + e.tiempoTotal, 0));
+        const totalWorkers = data.reduce((acc, e) => acc + e.personalTotal, 0);
+
+        if(totalTime >= 10000){
+          factor = 1;
+        }else if(totalTime >= 1000 && totalTime < 10000){
+          factor = 10;
+        }else{
+          factor = 100;
+        }
+
+        this.timeStatisticsSummarize['tiempoTotal'] = Math.round(totalTime*factor)/factor;
+        this.timeStatisticsSummarize['personalTotal'] = Math.round(totalWorkers*factor)/factor; 
+        this.timeStatisticsSummarize['porcentaje'] = Math.round((data.reduce((acc, e) => acc + e.tiempoTotal/e.tiempoTotalGlobal, 0)*100)*100)/100;;
       },
       error: ()=>{this.loadingTimeStatistics = false;}
     });

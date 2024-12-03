@@ -103,20 +103,10 @@ export class GenderComponent implements OnInit {
 
   onDelete(id: number) {
     this.confirmationDialogService.showDeleteConfirmationDialog(() => {
-      this.basicTableService.deleteGender(this.cryptoService.encryptParam(id)).subscribe(() => {
+      this.basicTableService.deleteGender(id).subscribe(() => {
         this.filterRole(id);
         this.desmarkAll();
       });
     });
   }
-
-  decryptList<T>(param: string[]): T[] {
-    let list: T[] = [];
-    param.forEach(item => {
-      let element: T = JSON.parse(this.cryptoService.decryptParamAsString(item));
-      list.push(element);
-    })
-    return list;
-  }
-
 }

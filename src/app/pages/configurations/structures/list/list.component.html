@@ -238,7 +238,7 @@
     <ng-template pTemplate>
         <div class="flex align-items-center mb-3">
             <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                <i  class="pi pi-info-circle text-xl text-blue-500"></i>
+                <i class="pi pi-info-circle text-xl text-blue-500"></i>
             </div>
             <div class="flex flex-column ">
                 <h5 class="m-0 text-700">Estadística de tiempos laborados</h5>
@@ -247,7 +247,7 @@
         </div>
 
         <div class="flex align-items-center w-full mb-3">
-            <div *ngIf="timeStatisticsStructure.srcIcono;" style="overflow: hidden; min-width: 3rem;" class="mr-2 w-3rem h-3rem ">
+            <div *ngIf="timeStatisticsStructure.srcIcono;" style="overflow: hidden; min-width: 3rem;" class="mr-2 w-5rem h-5rem ">
                 <img [src]="timeStatisticsStructure.srcIcono" style="width: 100%; height: auto"/>
             </div>
             <div class="flex flex-column">
@@ -257,19 +257,40 @@
         </div>
 
         <div *ngIf="!loadingTimeStatistics else sLoadingTimeStatistics" class="grid">
+            <div class="col-12 flex align-items-center3">
+                <ng-container *ngTemplateOutlet="statisticsSummarizeTemplate; context:{value: timeStatisticsSummarize.tiempoTotal, label: 'Horas requeridas', advance: timeStatisticsSummarize.porcentaje, icon: 'pi-clock'}"></ng-container>
+                <ng-container *ngTemplateOutlet="statisticsSummarizeTemplate; context:{value: timeStatisticsSummarize.personalTotal, label: 'Personas requeridas', advance: timeStatisticsSummarize.porcentaje, icon: 'pi-users'}"></ng-container>
+            </div>
+
             <div class="col-12 lg:col-6">
-                <div class="text-500 text-center font-medium mb-2">Horas requeridas por nivel ocupacional</div>
+                <div class="text-500 text-center text-500 mb-2">Horas requeridas por nivel ocupacional</div>
                 <app-bar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalTimeByLevel"></app-bar-chart>
             </div>
             <div class="col-12 lg:col-6">
-                <div class="text-500 text-center font-medium mb-2">Personal requerido por nivel ocupacional</div>
+                <div class="text-500 text-center text-500 mb-2">Personal requerido por nivel ocupacional</div>
                 <app-polar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalStaff"></app-polar-chart>
             </div>
         </div>
         <ng-template #sLoadingTimeStatistics>
             <app-loading></app-loading>
         </ng-template>
-
-        
     </ng-template>
 </p-overlayPanel>
+
+<ng-template #statisticsSummarizeTemplate let-label="label" let-value="value" let-icon="icon" let-advance="advance">
+    <div class="card p-0 m-1 w-full h-full flex flex-column">
+        <div class="p-3 pb-2 flex justify-content-between">
+            <div class="mr-2 flex flex-column">
+                <span class="text-4xl font-bold text-primary-500">{{value}}</span>
+                <span class="text-500 -mt-2">{{label}}</span>
+            </div>
+            <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
+                <i class="pi {{icon}} text-primary-500 text-3xl"></i>
+            </div>
+        </div>
+        <div class="mt-auto">
+            <p-progressBar [showValue]="false"  [value]="advance" [pTooltip]="advance + '%'" tooltipPosition="bottom" 
+                [style]="{ height: '6px', 'border-top-left-radius': '0px', 'border-top-right-radius': '0px' }"></p-progressBar>
+        </div>
+    </div>
+</ng-template>

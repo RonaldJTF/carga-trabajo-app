@@ -44,7 +44,7 @@ export class BasicTablesService {
     return this.webRequestService.getWithHeaders(this.pathRole);
   }
 
-  getRole(idRol: string): Observable<any> {
+  getRole(idRol: number): Observable<any> {
     return this.webRequestService.getWithHeaders(`${this.pathRole}/${idRol}`);
   }
 
@@ -52,15 +52,15 @@ export class BasicTablesService {
     return this.webRequestService.postWithHeaders(this.pathRole, rol);
   }
 
-  updateRole(id: string, rol: any): Observable<any> {
+  updateRole(id: number, rol: any): Observable<any> {
     return this.webRequestService.putWithHeaders(`${this.pathRole}/${id}`, rol);
   }
 
-  deleteRole(idRol: string): Observable<any> {
+  deleteRole(idRol: number): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathRole}/${idRol}`);
   }
 
-  deleteSelectedRole(payload: string[]): Observable<any[]> {
+  deleteSelectedRole(payload: number[]): Observable<any[]> {
     return this.webRequestService.deleteWithHeaders(this.pathRole, undefined, payload);
   }
 
@@ -69,7 +69,7 @@ export class BasicTablesService {
     return this.webRequestService.getWithHeaders(this.pathGender);
   }
 
-  getGender(idGender: string): Observable<Gender> {
+  getGender(idGender: number): Observable<Gender> {
     return this.webRequestService.getWithHeaders(`${this.pathGender}/${idGender}`);
   }
 
@@ -77,11 +77,11 @@ export class BasicTablesService {
     return this.webRequestService.postWithHeaders(this.pathGender, gender);
   }
 
-  updateGender(id: string, gender: Gender): Observable<any> {
+  updateGender(id: number, gender: Gender): Observable<any> {
     return this.webRequestService.putWithHeaders(`${this.pathGender}/${id}`, gender);
   }
 
-  deleteGender(idGender: string): Observable<any> {
+  deleteGender(idGender: number): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathGender}/${idGender}`);
   }
 

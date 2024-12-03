@@ -4,31 +4,29 @@
         <h5 class="m-0 text-700">Planes de trabajos</h5>
         <span class="text-500">Resumen de información de interés de los planes de trabajos</span>
       </div>
-      <div *ngFor="let workplan of workplans" class="col-12 md:col-6 lg:col-{{12/workplans.length}} p-1">
-        <div class="card p-3 h-full">
-          <div class="flex justify-content-between">
-            <div class="mr-2">
-              <div (mouseenter)="toggleIcon(true, iconInfo)" (mouseleave)="toggleIcon(false, iconInfo)" style="position: relative;">
-                <span  #iconInfo (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" class="_badge" style="display: none;">
-                  <i class="pi pi-info"></i>
-                </span>
-                <span (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" class="text-500 cursor-pointer">{{ workplan.nombre }}</span>
-              </div>
-              <div class="flex flex-row align-items-baseline">
-                <span class="text-500 text-2xl font-medium mr-1">{{ workplan.totalEtapas | number:'1.0-2' }}</span>
-                <span class="text-sm text-500 mr-2">{{ 'Etapa' | pluralize: workplan.totalEtapas }}</span>
-                <span class="text-500 text-2xl font-medium mr-1">{{ workplan.totalTareas | number:'1.0-2' }}</span>
-                <span class="text-sm text-500">{{ 'Tarea' | pluralize: workplan.totalTareas }}</span>
-              </div>
-              <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
-                <ng-template pTemplate>
-                  <ng-container *ngTemplateOutlet="advanceCosolidatedTemplate"></ng-container>
-                </ng-template>
-              </p-overlayPanel>
+      <div *ngFor="let workplan of workplans" class="col-12 lg:col-{{12/workplans.length}} p-1">
+        <div class="card p-3 h-full flex justify-content-between">
+          <div class="mr-2">
+            <div (mouseenter)="toggleIcon(true, iconInfo)" (mouseleave)="toggleIcon(false, iconInfo)" style="position: relative;">
+              <span  #iconInfo (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" class="_badge" style="display: none;">
+                <i class="pi pi-info"></i>
+              </span>
+              <span (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" class="text-500 cursor-pointer">{{ workplan.nombre }}</span>
             </div>
-            <div class="ml-auto pl-2">
-              <app-percent [value]="Math.round((workplan.avance ?? 0)*10)/10" shape="circle" labelPosition="center" [size]="55" [fontSize]="9"></app-percent>
+            <div class="flex flex-row align-items-baseline">
+              <span class="text-500 text-2xl font-medium mr-1">{{ workplan.totalEtapas | number:'1.0-2' }}</span>
+              <span class="text-sm text-500 mr-2">{{ 'Etapa' | pluralize: workplan.totalEtapas }}</span>
+              <span class="text-500 text-2xl font-medium mr-1">{{ workplan.totalTareas | number:'1.0-2' }}</span>
+              <span class="text-sm text-500">{{ 'Tarea' | pluralize: workplan.totalTareas }}</span>
             </div>
+            <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+              <ng-template pTemplate>
+                <ng-container *ngTemplateOutlet="advanceCosolidatedTemplate"></ng-container>
+              </ng-template>
+            </p-overlayPanel>
+          </div>
+          <div class="ml-auto">
+            <app-percent [value]="Math.round((workplan.avance ?? 0)*10)/10" shape="circle" labelPosition="center" [size]="55" [fontSize]="9"></app-percent>
           </div>
         </div>
       </div>
@@ -41,7 +39,7 @@
         </div>
         <div *ngFor="let item of inventory" class="col-12 sm:col-6 xl:col-{{12/inventory.length}} p-1">
             <app-label-value-chart label="{{item.nombre | pluralize}}" [value]="item.cantidad" colorName="{{item.nombreColor}}" iconClass="{{item.claseIcono}}">
-                <ng-template pTemplate="value-content" let-data>
+                <ng-template pTemplate="labelContentTemplate" let-data>
                     <ng-container *ngTemplateOutlet="workplanResumeTemplate; context:{$implicit: data}"></ng-container>
                 </ng-template>
             </app-label-value-chart>

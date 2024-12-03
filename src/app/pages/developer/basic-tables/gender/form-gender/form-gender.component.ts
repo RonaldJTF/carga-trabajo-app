@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {BasicTablesService, ConfirmationDialogService, CryptojsService, UrlService} from "@services";
 import {Gender} from "@models";
 import {finalize} from "rxjs";
@@ -20,7 +20,7 @@ export class FormGenderComponent implements OnInit {
 
   deleting: boolean = false;
 
-  idGender: string;
+  idGender: number;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -46,14 +46,14 @@ export class FormGenderComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.idGender = params['id'];
+        this.idGender = this.cryptoService.decryptParamAsNumber(params['id']);
         this.updateMode = true;
         this.getGender(this.idGender);
       }
     });
   }
 
-  getGender(idGender: string) {
+  getGender(idGender: number) {
     this.basicTablesService.getGender(idGender).subscribe({
       next: (result) => {
         this.assignValuesToForm(result);
@@ -91,7 +91,7 @@ export class FormGenderComponent implements OnInit {
     }
   }
 
-  updateGender(idGender: string, gender: Gender): void {
+  updateGender(idGender: number, gender: Gender): void {
     let message = '¿Está seguro de actualizar el registro?';
     this.confirmationDialogService.showEventConfirmationDialog(
       message,

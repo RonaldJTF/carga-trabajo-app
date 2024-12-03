@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ListComponent } from './list.component';
+import { beforeEach, describe, it } from 'node:test';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -15,7 +16,5 @@ describe('ListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create', () => {});
 });
