@@ -256,7 +256,7 @@
   <div class="flex">
     <div class="flex flex-column">
       <span class="font-medium">{{ task.nombre | uppercase }}</span>
-      <span class="text-500 mb-1">{{ task.descripcion }}</span>
+      <span class="text-500 text-justify mb-1">{{ task.descripcion }}</span>
       <span style="font-size: 0.75rem; white-space: nowrap" [class]="'mr-auto activity-expiration-badge activity-expiration-' +
         ([task.fechaInicio, task.fechaFin, obtenerSeguimientoMasReciente(task.seguimientos)?.fecha] | activityExpiration : task.avance).classStyle">{{([task.fechaInicio, task.fechaFin, obtenerSeguimientoMasReciente(task.seguimientos)?.fecha] | activityExpiration : task.avance).value}}
       </span>
@@ -420,7 +420,7 @@
         <div class="flex justify-content-between">
           <div class="flex flex-column p-3">
             <h5 class="m-0 text-700">{{ workplan.nombre }}</h5>
-            <span class="text-500">{{ workplan.descripcion }}</span>
+            <span class="text-500 text-justify">{{ workplan.descripcion }}</span>
           </div>
 
           <div class="m-2">
