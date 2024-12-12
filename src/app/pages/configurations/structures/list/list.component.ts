@@ -62,13 +62,12 @@ export class ListComponent implements OnInit, OnDestroy{
   expandedNodes: number[];
   orderIsAscending: boolean;
 
-  private structureToPaste: Structure;
+  private structureToPaste: Structure = null;
   private pasteAction: 'move' | 'copy' | 'reasign';
 
   menuBarItems: MenuItem[] = [];
   menuItemsOfDownload: MenuItem[] = [
     {label: 'Reporte de tiempos en PDF', escape: false, icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
-    {separator: true},
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
     {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"flat-excel", command: (e) => { this.download(e) }},
   ];
@@ -164,65 +163,43 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   private getMenuItemsOfStructure(structure: Structure): MenuItem []{
+    if(!structure){
+      return [];
+    }
     const extraMenuItemsOfDependency = [];
     let extraMenuItemOfActions = [];
     let generalMenuItem = [];
+    const isDependency = Methods.parseStringToBoolean(structure.tipologia?.esDependencia);
 
-    if (this.isAdmin){
-      extraMenuItemOfActions = structure?.tipologia?.acciones?.map(obj => ({
-        label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, command: (e) => {this.goToPage(e, structure)},
-        disabled: (this.hasChildrenOfTheSameType(structure) && this.PATH_NO_MANAGED_BY_PARENT.includes(obj.path)) ||
-                  (structure.actividad != null && this.PATH_NO_MANAGED_IF_HAS_ACTIVITY.includes(obj.path))
-      })) ?? [];
+    extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, visible: isDependency, data:structure, command: (e) => this.viewDependency(e.item.data)})
+    extraMenuItemsOfDependency.push(
+      {label: 'Descargar', icon: 'pi pi-cloud-download', visible: this.isSuperAdmin, items: [
+        {label: 'Estadística de tiempos', icon: 'pi pi-file-pdf', automationId:"time-statistics-pdf", command: (e) => { this.download(e, structure.id) }},
+        {separator: true},
+        {label: 'Reporte de tiempos en PDF', icon: 'pi pi-file-pdf', visible:isDependency, automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
+        {label: 'Reporte de tiempos en Excel', icon: 'pi pi-file-excel', visible:isDependency, automationId:"excel", command: (e) => { this.download(e, structure.id) }},
+      ]}
+    )
 
-      generalMenuItem.push({label: 'Estadística de tiempos', icon: 'pi pi-chart-bar', data:structure, command: (e) => this.viewTimeStatistics(e.item['value'], e.originalEvent)});
-      if (!Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)) {
-        generalMenuItem.push(
-          { label: 'Copiar', icon: 'pi pi-clone', automationId: "copy", command: (e) => this.setInformationOfMoveOrCopy(e) },
-          { label: 'Mover', icon: 'pi pi-arrows-alt', automationId: "move", command: (e) => this.setInformationOfMoveOrCopy(e) },
-          { label: 'Reasignar', icon: 'pi pi-arrows-v', automationId: "reasign", disabled: true, command: (e) => this.setInformationOfMoveOrCopy(e) },
-        );
-      }
-      generalMenuItem.push({label: 'Editar', icon: 'pi pi-pencil', command: (e) => this.onGoToUpdate(e.item.id, Methods.parseStringToBoolean(structure?.tipologia?.esDependencia), e.originalEvent)});
-      generalMenuItem.push({label: 'Eliminar', icon: 'pi pi-trash', data:structure, command: (e) => this.onDeleteStructure(e)});
+    extraMenuItemOfActions = structure.tipologia?.acciones?.map(obj => ({
+      visible: this.isAdmin,
+      label: obj.nombre, icon: `pi ${obj.claseIcono}`, data:obj, command: (e) => {this.goToPage(e, structure)},
+      disabled: (this.hasChildrenOfTheSameType(structure) && this.PATH_NO_MANAGED_BY_PARENT.includes(obj.path)) ||
+                (structure.actividad != null && this.PATH_NO_MANAGED_IF_HAS_ACTIVITY.includes(obj.path))
+    })) ?? [];
 
-      if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
-        extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
-        if(this.isSuperAdmin){
-          extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download', items: [
-            {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
-            {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
-          ]})
-        }
-      }
-    }else if(this.isOperator || this.isSuperAdmin){
-      generalMenuItem.push({label: 'Estadística de tiempos', icon: 'pi-chart-bar', data:structure, command: (e) => this.viewTimeStatistics(e.item.id, e.originalEvent)});
-      if (Methods.parseStringToBoolean(structure?.tipologia?.esDependencia)){
-        extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, data:structure, command: (e) => this.viewDependency(e.item.data)})
-        if(this.isSuperAdmin){
-          extraMenuItemsOfDependency.push({label: 'Descargar', icon: 'pi pi-cloud-download',  items: [
-            {label: 'Reporte PDF', icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
-            {label: 'Reporte Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e, structure.id) }},
-          ]})
-        }
-      }
-    }
-
-    if (this.structureToPaste && this.pasteAction === "reasign") {
-      generalMenuItem.push({
-        label: 'Pegar',
-        icon: 'pi pi-file-import',
-        command: (e) => this.reasign(structure)
-      });
-    }
-
-    if (this.structureToPaste && structure.tipologia?.idTipologiaSiguiente === this.structureToPaste.idTipologia && this.pasteAction !== "reasign") {
-      generalMenuItem.push({
-        label: 'Pegar',
-        icon: 'pi pi-file-import',
-        command: (e) => this[this.pasteAction](structure)
-      });
-    }
+    generalMenuItem.push({label: 'Estadística de tiempos', icon: 'pi pi-chart-bar', data:structure, command: (e) => this.viewTimeStatistics(e.item['value'], e.originalEvent)});
+    generalMenuItem.push(
+      {label: 'Copiar', icon: 'pi pi-clone', visible: this.isAdmin, automationId: "copy", command: (e) => this.setInformationToPaste(e) },
+      {label: 'Mover', icon: 'pi pi-arrows-alt', visible: this.isAdmin, automationId: "move", command: (e) => this.setInformationToPaste(e) },
+      {label: 'Reasignar', icon: 'pi pi-arrows-v', visible: this.isAdmin, automationId: "reasign", disabled:true, command: (e) => this.setInformationToPaste(e) },
+      {label: 'Pegar', icon: 'pi pi-file-import', visible:  this.structureToPaste != null && this.pasteAction === "reasign", command: (e) => this[this.pasteAction](structure)},
+      {label: 'Pegar', icon: 'pi pi-file-import', visible: this.structureToPaste != null && this.pasteAction !== "reasign" && structure.tipologia?.idTipologiaSiguiente === this.structureToPaste.idTipologia, command: (e) => this[this.pasteAction](structure)}
+    );
+    generalMenuItem.push(
+      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdate(e.item.id, Methods.parseStringToBoolean(structure.tipologia?.esDependencia), e.originalEvent)},
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, data:structure, command: (e) => this.onDeleteStructure(e)},
+    );
 
     return [
       ...extraMenuItemsOfDependency,
@@ -432,15 +409,16 @@ export class ListComponent implements OnInit, OnDestroy{
       if (menuItem) {
         menuItem.icon = icon;
         menuItem.disabled = disabled;
-        menuItem.label = label;
       }
     };
-    const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
+    
+    const automationId = data.item.automationId;
+    const menuItem = !idStructure 
+                     ? this.menuItemsOfDownload.find(e => e.automationId === automationId) 
+                     : null;
     const initialIcon = menuItem?.icon;
     const initialState = menuItem?.disabled;
     const initialLabel = menuItem?.label;
-
-    let automationId = data.item.automationId;
 
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
     const structureIds = idStructure ? [idStructure] : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
@@ -539,8 +517,8 @@ export class ListComponent implements OnInit, OnDestroy{
     )
   }
 
-  private setInformationOfMoveOrCopy(data: any){
-    this.structureToPaste = data.item['value'];
+  private setInformationToPaste(data: any){
+    this.structureToPaste = data.item['value']; 
     this.pasteAction = data.item.automationId;
     this.store.dispatch(StructureActions.relaodStructuresInStore());
     this.selectedNodesOfStructuresNoDependency = [];
