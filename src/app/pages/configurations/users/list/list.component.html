@@ -1,7 +1,6 @@
 <ng-container *ngIf="!loading else sLoading">
   <div *ngIf="!people else data">
-    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva persona'" (go)="openNew()"
-                            [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva persona'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
   </div>
   <ng-template #data>
     <div class="card p-0 pb-2">
@@ -14,24 +13,20 @@
         <ng-template pTemplate="caption">
           <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
             <div class="flex align-items-center flex-wrap">
-              <button pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()"
-                      pTooltip="Nuevo" tooltipPosition="bottom">
+              <button pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
                 <span class="p-button-label hidden-lg pl-2">Nuevo</span>
               </button>
               <div class="_badge-container m-1">
-                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedPeople()"
-                        pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger "
-                        [disabled]="!selectedPeople?.length">
+                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedPeople()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger " [disabled]="!selectedPeople?.length">
                   <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
                 </button>
-                <span *ngIf="selectedPeople?.length" (click)="desmarkAll()" class="_badge"
-                      pTooltip="Click para desmarcar">{{ selectedPeople.length }}</span>
+                <span *ngIf="selectedPeople?.length" (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{ selectedPeople.length }}</span>
               </div>
             </div>
             <div class="m-1">
               <span class="p-input-icon-left">
                 <i class="pi pi-search"></i>
-                <input type="search" pInputText placeholder="Buscar" (input)="onGlobalFilter(dt, $event)">
+                <input class="w-full" type="search" pInputText placeholder="Buscar" (input)="onGlobalFilter(dt, $event)">
               </span>
             </div>
           </div>
@@ -62,37 +57,29 @@
             <td pRipple class="cursor-pointer" (click)="editPerson(person.id)">
               <div class="flex align-items-center ">
                 <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; overflow: hidden; ">
-                  <img [src]="person.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                       style="width: 100%; height: auto" alt=""/>
+                  <img [src]="person.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
                 </div>
                 <div class="flex flex-column ml-2">
-                  <span
-                    class="font-medium">{{ person.primerNombre | titlecase }} {{ person.segundoNombre | titlecase }} {{ person.primerApellido | titlecase }} {{ person.segundoApellido | titlecase }}</span>
+                  <span class="font-medium">{{ person.primerNombre | titlecase }} {{ person.segundoNombre | titlecase }} {{ person.primerApellido | titlecase }} {{ person.segundoApellido | titlecase }}</span>
                   <span class="text-500">{{ person.tipoDocumento.abreviatura }}: {{ person.documento }}</span>
                   <span *ngIf="person.usuario?.roles.length" class="text-blue-500 text-sm">
-                    <span
-                      *ngFor="let rol of person.usuario.roles; let index = index">{{ rol.nombre }}{{ index < person.usuario.roles.length - 1 ? ', ' : '' }}</span>
+                    <span *ngFor="let rol of person.usuario.roles; let index = index">{{ rol.nombre }}{{ index < person.usuario.roles.length - 1 ? ', ' : '' }}</span>
                   </span>
                 </div>
               </div>
             </td>
             <td>
-              <span *ngIf="person.usuario else noUser" style="white-space: nowrap;"
-                    [class]="'status-badge status-' + (person.usuario?.activo | state).classStyle">{{ (person.usuario?.activo | state).value }}</span>
+              <span *ngIf="person.usuario else noUser" style="white-space: nowrap;" [class]="'status-badge status-' + (person.usuario?.activo | state).classStyle">{{ (person.usuario?.activo | state).value }}</span>
               <ng-template #noUser>
                 <span class="badge badge-blue" style="white-space: nowrap;">Sin usuario</span>
               </ng-template>
             </td>
             <td class="text-center">
               <div class="flex align-items-center justify-content-end">
-                <button (click)="advanceConsolidatedOverlayPanel.toggle($event)" pButton pRipple
-                        icon="pi pi-info-circle"
-                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
-                        pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                <button (click)="advanceConsolidatedOverlayPanel.toggle($event)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
                 <app-menu-item [menuItems]="items" [id]="person.id"></app-menu-item>
               </div>
-              <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false"
-                              [styleClass]="'w-full sm:w-9 md:w-6'">
+              <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
                 <ng-template pTemplate>
                   <ng-container *ngTemplateOutlet="personTemplate; context: {$implicit: person}"></ng-container>
                 </ng-template>
@@ -116,8 +103,7 @@
 
 <ng-template #personTemplate let-person>
   <div class="flex align-items-center mb-3">
-    <div
-      class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+    <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
       <i class="pi pi-user text-xl text-blue-500"></i>
     </div>
     <div class="flex flex-column ">
@@ -128,21 +114,17 @@
 
   <div class="flex flex-column align-items-center text-center">
     <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
-      <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-           style="vertical-align: middle; width: 100%; height: auto;" alt=""/>
+      <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="vertical-align: middle; width: 100%; height: auto;" alt=""/>
     </div>
-    <span
-      class="font-bold">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
+    <span class="font-bold">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
     <span>{{ person.tipoDocumento?.abreviatura }}: {{ person.documento }}</span>
     <span *ngIf="person.correo"><span class="text-500">Correo: </span>{{ person.correo | lowercase }}</span>
     <span *ngIf="person.telefono"><span class="text-500">Teléfono: </span>{{ person.telefono }}</span>
     <span *ngIf="person.genero"><span class="text-500">Género: </span>{{ person.genero.nombre }}</span>
   </div>
-  <div *ngIf="person.usuario?.roles.length"
-       class="w-full flex flex-column border-round-xl text-center surface-100 py-2  mt-2">
+  <div *ngIf="person.usuario?.roles.length" class="w-full flex flex-column border-round-xl text-center surface-100 py-2  mt-2">
     <span class="text-700 font-medium">
-      <span
-        *ngFor="let rol of person.usuario.roles; let index = index">{{ rol.nombre }}{{ index < person.usuario.roles.length - 1 ? ', ' : '' }}</span>
+      <span *ngFor="let rol of person.usuario.roles; let index = index">{{ rol.nombre }}{{ index < person.usuario.roles.length - 1 ? ', ' : '' }}</span>
     </span>
     <span class="text-500 text-sm">Roles de acceso</span>
   </div>

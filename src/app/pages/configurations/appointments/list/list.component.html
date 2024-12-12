@@ -1,6 +1,6 @@
 <ng-container *ngIf="!loading else sLoading">
     <div class="card p-0">
-        <p-treeTable  #treeTableOfAppointments [value]="treeDataset" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments" 
+        <p-treeTable  #treeTableOfAppointments [value]="treeDataset" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments"
             (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
             [globalFilterFields]="['nombre', 'descripcion', 'anio']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': (comparisonObjects?.length*128 + 500) + 'px' }">
             <ng-template pTemplate="caption">
@@ -21,7 +21,7 @@
                         <ng-template pTemplate="end">
                             <span class="p-input-icon-left m-1">
                                 <i class="pi pi-search"></i>
-                                <input type="search" pInputText placeholder="Buscar"  (input)="onFilter(treeTableOfAppointments, $event)">
+                                <input class="w-full" type="search" pInputText placeholder="Buscar"  (input)="onFilter(treeTableOfAppointments, $event)">
                             </span>
                             <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Opciones" tooltipPosition="bottom"></button>
                             <p-overlayPanel #filterOptionsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
@@ -62,7 +62,7 @@
                         <div class="flex align-items-center">
                             <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                             <p-treeTableCheckbox *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
-                            
+
                             <div *ngIf="item.type == 'STRUCTURE' "  class="flex align-items-center w-full">
                                 <div *ngIf="item.srcIcono; else sNoIcon" style="border-radius: 50%; overflow: hidden; min-width: 3rem;" class="w-3rem h-3rem ">
                                     <img [src]="item.srcIcono" style="width: 100%; height: auto"/>
@@ -121,7 +121,7 @@
                                     <p-tag [value]="entry.value['totalCargos']" icon="pi pi-user" [rounded]="true" [style]="{ 'background': '#B3E5FC', 'color': '#23547B'}" pTooltip="Cargos asignados" tooltipPosition="bottom"></p-tag>
                                     <span class="text-500">{{entry.value['asignacionTotal'] | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                                     <span *ngIf="entry.value['ids']?.length > 1" class="text-xs text-500">Múltiples</span>
-                                    <app-appointment-menu-item  *ngIf="entry.value['ids']?.length == 1 else sMultipleItems" [toggleIcon]="showedIcons[entry.value['ids'].join()]" [id]="entry.value['ids'][0]" [menuItems]="menuItemsOfAppointment" ></app-appointment-menu-item>   
+                                    <app-appointment-menu-item  *ngIf="entry.value['ids']?.length == 1 else sMultipleItems" [toggleIcon]="showedIcons[entry.value['ids'].join()]" [id]="entry.value['ids'][0]" [menuItems]="menuItemsOfAppointment" ></app-appointment-menu-item>
                                     <ng-template #sMultipleItems>
                                         <span *ngIf="showedIcons[entry.value['ids'].join()]" (click)="multipleItemsOverlayPanel.toggle($event)" class="_icon-badge">
                                             <i class="pi pi-eye"></i>
@@ -138,13 +138,13 @@
                                                     </div>
                                                   </div>
                                                   <div class="p-3 text-justify border-round bg-blue-50">
-                                                    El resultado que se muestra corresponde a múltiples registros, lo que implica que no se pueden realizar acciones como editar o eliminar de forma generalizada. 
-                                                    Esto se debe a que cada registro puede contener información específica que requiere un tratamiento individual para garantizar la precisión y evitar 
+                                                    El resultado que se muestra corresponde a múltiples registros, lo que implica que no se pueden realizar acciones como editar o eliminar de forma generalizada.
+                                                    Esto se debe a que cada registro puede contener información específica que requiere un tratamiento individual para garantizar la precisión y evitar
                                                     modificaciones no deseadas.
                                                   </div>
                                             </ng-template>
                                         </p-overlayPanel>
-                                    </ng-template>                
+                                    </ng-template>
                                 </div>
                             </ng-container>
                         </ng-container>
@@ -185,7 +185,7 @@
                 <span class="text-500">Detalle de la asignación de cargos junto a los valores de las compensaciones laborales que se aplican <strong>anualmente</strong></span>
             </div>
         </div>
-      
+
         <ng-container *ngIf="selectedAppointment">
             <div class="flex align-items-center">
                 <div class="flex flex-column">
@@ -196,7 +196,7 @@
                     <i class="pi pi-user text-2xl mr-2"></i>{{selectedAppointment.totalCargos}}
                 </span>
             </div>
-    
+
             <div class="p-3 flex border-bottom-1 surface-border font-medium">
                 <span>Asignación básica anual</span>
                 <span class="ml-auto">{{selectedAppointment.asignacionBasicaAnual  | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
@@ -211,7 +211,7 @@
                                 <span class="text-500 text-sm">{{ levelCompensation.compensacionLaboral.periodicidad.nombre}}</span>
                             </div>
                         </td>
-                        <td class="w-10rem font-medium text-500 text-right"> 
+                        <td class="w-10rem font-medium text-500 text-right">
                             <span *ngIf="levelCompensation.valorAplicado else noAplicaValor">{{ levelCompensation.valorAplicado | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                             <ng-template #noAplicaValor>
                                 <i class="pi pi-times-circle text-xl text-red-500" pTooltip="No cumple" tooltipPosition="bottom"></i>
@@ -224,7 +224,7 @@
             <div class="text-500 text-sm mx-2 my-3">
                 Lista de compensaciones laborales aplicadas. La asignación de los cargos se hace bajo la normatividad "{{selectedAppointment.normatividad.nombre}}"
             </div>
-    
+
             <div class="bg-blue-50 border-round-xl flex flex-column align-items-center p-4 my-3">
                 <span class="font-bold text-blue-500 text-3xl">{{ selectedAppointment.asignacionTotal*selectedAppointment.totalCargos | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                 <span class="text-500">Valor total asignado</span>
@@ -249,7 +249,7 @@
             <div class="field p-fluid">
                 <label class="font-medium">Dependencias</label>
                 <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" [(ngModel)]="filtersBy.dependencies"
-                              [showClear]="false" [filter]="true" display="chip" 
+                              [showClear]="false" [filter]="true" display="chip"
                               containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
                               [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true" selectionMode="multiple" [metaKeySelection]="false">
                   <ng-template let-node pTemplate="default">
@@ -295,7 +295,7 @@
     </div>
 
     <div class="flex flex-wrap justify-content-end mt-3">
-        <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2" 
+        <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2"
             (click)="cancelFilterOptions()" pTooltip="Cancelar" tooltipPosition="bottom">
         </button>
         <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined"

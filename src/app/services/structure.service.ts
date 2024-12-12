@@ -131,7 +131,7 @@ export class StructureService {
   moveStructure(movedStructureId: number, newParentId: number): Observable<Structure> {
     return this.webRequestService.putWithHeaders(`${this.pathStructure}/move/${newParentId}`, null, {movedStructureId: movedStructureId});
   }
-  
+
   reasignStructures(reassignedStructureId: number, newParentId: number): Observable<Structure> {
     return this.webRequestService.putWithHeaders(`${this.pathStructure}/reasign/${newParentId}`, null, {reassignedStructureId: reassignedStructureId});
   }

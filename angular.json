@@ -35,9 +35,14 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "quill",
+              "quill-image-resize",,
               "dc",
               "chroma-js",
-              "lodash"
+              "lodash",
+              "typed-function",
+              "seedrandom",
+              "javascript-natural-sort",
+              "escape-latex"
             ],
             "sourceMap": true
           },

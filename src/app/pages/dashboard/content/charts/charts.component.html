@@ -3,8 +3,7 @@
       <div class="card m-1 p-3">
         <div class="flex align-items-center justify-content-between mb-4">
           <div class="flex align-items-center">
-            <div
-              class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+            <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
               <i class="pi pi-sitemap text-xl text-blue-500"></i>
             </div>
             <div class="flex flex-column ">
@@ -13,10 +12,9 @@
             </div>
           </div>
           <div>
-            <button *ngIf="!downloadingReport else sDownloadingReport" pRipple pButton type="button" (click)="downloadReport()"
-                    icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-primary" pTooltip="Descargar reporte"></button>
+            <button *ngIf="!downloadingReport else sDownloadingReport" pRipple pButton type="button" (click)="downloadReport()" icon="pi pi-cloud-download" class="p-button-rounded p-button-text p-button-primary" pTooltip="Descargar reporte"></button>
             <ng-template #sDownloadingReport>
-              <i #sDownloadingGlobalReport class="pi pi-spin pi-spinner text-blue-500 p-3"></i>
+              <i class="pi pi-spin pi-spinner text-blue-500 p-3"></i>
             </ng-template>
           </div>
         </div>
@@ -27,11 +25,8 @@
                       [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
           <ng-template let-node pTemplate="default">
             <div class="flex align-items-center cursor-pointer" pRipple>
-              <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
-                   style="border-radius: 50%; overflow: hidden;">
-                <img [src]="node.data.srcIcono"
-                     [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                     style="width: 100%; height: auto" alt=""/>
+              <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                <img [src]="node.data.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
               </div>
               <ng-template #sNoItemIcon>
                 <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">

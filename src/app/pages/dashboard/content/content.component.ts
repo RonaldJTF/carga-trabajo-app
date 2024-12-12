@@ -4,6 +4,7 @@ import {TypologyInventory, Workplan} from '@models';
 import {AuthenticationService, StatisticsService, WorkplanService} from '@services';
 import {IMAGE_SIZE} from '@utils';
 import {MESSAGE} from '@labels/labels';
+import {FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'app-layout',
@@ -30,7 +31,16 @@ export class ContentComponent implements OnInit {
   ];
   viewMode: 'day' | 'week' | 'month' = 'day';
 
-  constructor(private workplanService: WorkplanService, private statisticsService: StatisticsService, private authService: AuthenticationService) {
+
+
+  formVerificarcion: FormGroup;
+
+
+
+  constructor(
+    private workplanService: WorkplanService,
+    private statisticsService: StatisticsService,
+    private authService: AuthenticationService) {
   }
 
   ngOnInit() {

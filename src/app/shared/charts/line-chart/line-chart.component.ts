@@ -1,6 +1,6 @@
 import {Component, ContentChild, Input, OnChanges, OnDestroy, TemplateRef} from '@angular/core';
 import {Subscription} from "rxjs";
-import {LayoutService} from "../../../layout/service/app.layout.service";
+import {LayoutService} from "@services";
 
 export class Dataset{
   label: string;
@@ -32,7 +32,7 @@ export class LineChartComponent implements OnChanges, OnDestroy {
   constructor(private layoutService: LayoutService) {
     this.subscription = this.layoutService.configUpdate$.subscribe(() => {
       this.initCustomChart();
-      
+
     });
   }
 

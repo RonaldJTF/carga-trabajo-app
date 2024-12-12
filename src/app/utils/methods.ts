@@ -227,7 +227,7 @@ export class Methods {
   }
 
   /**
-   * Transforma, de una cadena de texto, la primera letra en mayuscula y el restos en miniscula.
+   * Transforma, de una cadena de texto, la primera letra en mayúscula y el resto en minúscula.
    * @param text cadena de texto a modificar.
    */
   static capitalizeFirstLetter(text: string){

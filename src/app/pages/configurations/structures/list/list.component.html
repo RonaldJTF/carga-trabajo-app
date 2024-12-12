@@ -1,11 +1,11 @@
 <ng-container *ngIf="!loading else sLoading">
     <div *ngIf="!((structures$ | async).length) else data">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva dependencia'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nueva dependencia'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
     </div>
     <ng-template #data>
         <div class="grid grid-nogutter">
             <div *ngIf="dependencies$ | async as dependencies"  class="col-12" [ngClass]="{ 'md:col-6 md:pr-2': (dependency$ | async)?.id }">
-                <div class="card p-0 ">
+                <div class="card p-0">
                     <p-treeTable  #treeTableDependency [value]="dependencies" selectionMode="checkbox" [(selection)]="selectedNodesOfDependency" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                      [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
                         <ng-template pTemplate="caption">
@@ -26,7 +26,7 @@
                                     <ng-template pTemplate="end">
                                         <span class="m-1 p-input-icon-left">
                                             <i class="pi pi-search"></i>
-                                            <input type="search" pInputText placeholder="Buscar"  (input)="onFilter($event, true)">
+                                            <input class="w-full" type="search" pInputText placeholder="Buscar"  (input)="onFilter($event, true)">
                                         </span>
                                     </ng-template>
                                 </p-menubar>
@@ -76,7 +76,7 @@
                                             <div  class="flex align-items-center mb-2">
                                                 <div *ngIf="isAdmin" class="_badge-container mr-2">
                                                     <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfStructuresNoDependency, false)" pTooltip="Eliminar" tooltipPosition="bottom"
-                                                        class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency"> 
+                                                        class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency">
                                                     </button>
                                                     <span *ngIf="totalSelectedStructuresNoDependency"  (click)="desmarkAll(false)" class="_badge"
                                                         pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
@@ -289,7 +289,7 @@
             </div>
         </div>
         <div class="mt-auto">
-            <p-progressBar [showValue]="false"  [value]="advance" [pTooltip]="advance + '%'" tooltipPosition="bottom" 
+            <p-progressBar [showValue]="false"  [value]="advance" [pTooltip]="advance + '%'" tooltipPosition="bottom"
                 [style]="{ height: '6px', 'border-top-left-radius': '0px', 'border-top-right-radius': '0px' }"></p-progressBar>
         </div>
     </div>

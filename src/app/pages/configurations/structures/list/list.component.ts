@@ -12,6 +12,7 @@ import {TreeTable} from 'primeng/treetable';
 import {AuthenticationService, ConfirmationDialogService, CryptojsService, StatisticsService, StructureService} from "@services";
 import {Structure} from "@models";
 import { OverlayPanel } from 'primeng/overlaypanel';
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-list',
@@ -88,7 +89,8 @@ export class ListComponent implements OnInit, OnDestroy{
     private route: ActivatedRoute,
     private cryptoService: CryptojsService,
     private cdr: ChangeDetectorRef,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private sanitizer: DomSanitizer,
   ){}
 
   ngOnInit(): void {
@@ -205,7 +207,7 @@ export class ListComponent implements OnInit, OnDestroy{
         }
       }
     }
-    
+
     if (this.structureToPaste && this.pasteAction === "reasign") {
       generalMenuItem.push({
         label: 'Pegar',
@@ -213,7 +215,7 @@ export class ListComponent implements OnInit, OnDestroy{
         command: (e) => this.reasign(structure)
       });
     }
-    
+
     if (this.structureToPaste && structure.tipologia?.idTipologiaSiguiente === this.structureToPaste.idTipologia && this.pasteAction !== "reasign") {
       generalMenuItem.push({
         label: 'Pegar',
@@ -357,7 +359,7 @@ export class ListComponent implements OnInit, OnDestroy{
     /*Si la acción es de ir a gestionar los cargos, se carga la estructura al store en AppointmentActions*/
     this.store.dispatch(AppointmentActions.setStructureOnWorking({structure: structure}));
     this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: true}));
-    
+
     this.router.navigate([path], {
       skipLocationChange: true,
       queryParams: {
@@ -427,41 +429,42 @@ export class ListComponent implements OnInit, OnDestroy{
 
   download(data: any, idStructure?: number) {
     const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
-        if (menuItem) {
-            menuItem.icon = icon;
-            menuItem.disabled = disabled;
-        }
+      if (menuItem) {
+        menuItem.icon = icon;
+        menuItem.disabled = disabled;
+        menuItem.label = label;
+      }
     };
     const menuItem = !idStructure ? this.menuItemsOfDownload.find(e => e.automationId === data.item.automationId) : null;
     const initialIcon = menuItem?.icon;
     const initialState = menuItem?.disabled;
+    const initialLabel = menuItem?.label;
 
     let automationId = data.item.automationId;
 
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    const structureIds = idStructure
-        ? [idStructure]
-        : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
+    const structureIds = idStructure ? [idStructure] : (this.selectedNodesOfDependency as TreeNode[])?.map(e => e.data.id) || [];
     this.structureService.downloadReport(automationId, structureIds).pipe(
-      finalize(()=>{
-        updateMenuItem(menuItem, initialIcon, initialState);
+      finalize(() => {
+        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
       })
     ).subscribe({
-      next: (advance) => {
-        //this.reportUploaded(menuItem, automationId, advance);
+      next: (res) => {
+        this.reportUploaded(menuItem, initialLabel, automationId, res);
       }
     });
   }
 
-  private reportUploaded(menuItem: MenuItem, automationId: string, downloadProgress: number) {
-    let format = automationId === 'excel' ? Methods.capitalizeFirstLetter(automationId) : automationId.toUpperCase();
-    menuItem.label = `
-      <span>Reporte de tiempos en ${format}</span>
-      <progress id="progressBar-${automationId}" max="100" style="width: 100%"></progress>
-    `;
-    if (downloadProgress > 0) {
-      let element = document.getElementById(`progressBar-${automationId}`) as HTMLProgressElement;
-      element.value = downloadProgress;
+  private reportUploaded(menuItem: MenuItem, label: string, automationId: string, downloadProgress: number) {
+    let element = document.getElementById(`${automationId}`) as HTMLProgressElement;
+    if (element == null) {
+      menuItem.label = `
+            <span>${label}</span>
+            <progress id="${automationId}" max="100" style="width: 100%"></progress>
+        `;
+      menuItem.label = this.sanitizer.bypassSecurityTrustHtml(menuItem.label as string) as unknown as string;
+    } else if (downloadProgress > 0) {
+      element.setAttribute('value', `${downloadProgress}`);
     }
     this.cdr.detectChanges();
   }
@@ -488,11 +491,11 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   /**
-   * Reasigna una estructura a una nueva estructura padre. Aquí la tipología es reajustada en función de la tipología 
-   * del nuevo padre, es decir, si una actividad tiene por nuevo padre un proceso, entonces su nueva tipología será procedimiento, 
+   * Reasigna una estructura a una nueva estructura padre. Aquí la tipología es reajustada en función de la tipología
+   * del nuevo padre, es decir, si una actividad tiene por nuevo padre un proceso, entonces su nueva tipología será procedimiento,
    * y si esta actividad tenía subactividades, estas son reasignadas a procedimientos y así sucesivamente.
    * Nota: Considerando que la jerarquía de tipologías es Dependencia, Proceso, Procedimiento, actividades.
-   * @param newParent 
+   * @param newParent
    */
   reasign(newParent: Structure): void{
     this.confirmationDialogService.showDeleteConfirmationDialog(
@@ -507,13 +510,13 @@ export class ListComponent implements OnInit, OnDestroy{
       `¿Está seguro de reasignar la estructura <strong>${this.structureToPaste.nombre}</strong> en <strong>${newParent.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
+            <strong>Advertencia:</strong>
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </ `
     )
   }
-  
+
   copy(newParent: Structure): void {
     this.confirmationDialogService.showDeleteConfirmationDialog(
       () => {
@@ -537,7 +540,7 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   private setInformationOfMoveOrCopy(data: any){
-    this.structureToPaste = data.item['value']; 
+    this.structureToPaste = data.item['value'];
     this.pasteAction = data.item.automationId;
     this.store.dispatch(StructureActions.relaodStructuresInStore());
     this.selectedNodesOfStructuresNoDependency = [];
@@ -578,7 +581,7 @@ export class ListComponent implements OnInit, OnDestroy{
         }
 
         this.timeStatisticsSummarize['tiempoTotal'] = Math.round(totalTime*factor)/factor;
-        this.timeStatisticsSummarize['personalTotal'] = Math.round(totalWorkers*factor)/factor; 
+        this.timeStatisticsSummarize['personalTotal'] = Math.round(totalWorkers*factor)/factor;
         this.timeStatisticsSummarize['porcentaje'] = Math.round((data.reduce((acc, e) => acc + e.tiempoTotal/e.tiempoTotalGlobal, 0)*100)*100)/100;;
       },
       error: ()=>{this.loadingTimeStatistics = false;}

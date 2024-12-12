@@ -5,6 +5,7 @@ import {MESSAGE} from "@labels/labels";
 import {TypologyInventory} from "@models";
 import {TreeNode} from 'primeng/api';
 import {IMAGE_SIZE, Methods} from '@utils';
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-charts',
@@ -59,7 +60,7 @@ export class ChartsComponent implements OnInit {
     this.structureService.getDependencies().subscribe({
       next: (data) => {
         this.builtNodes(data, this.structureOptions);
-        this.dependency = this.structureOptions?.length ? this.structureOptions[0] : null;
+        this.dependency = this.getRandomDependency();//this.structureOptions?.length ? this.structureOptions[0] : null;
         if (this.dependency) {
           this.getTimeStatistics(this.dependency.data.id);
         }
@@ -87,20 +88,33 @@ export class ChartsComponent implements OnInit {
     }
   }
 
+  getRandomDependency(): TreeNode<Structure> | null {
+    if (this.structureOptions.length === 0) {
+      return null;
+    }
+    const randomIndex = Math.floor(Math.random() * this.structureOptions.length);
+    return this.structureOptions[randomIndex];
+  }
+
+
+  minutesToHours(minutes: number): string {
+    if (isNaN(minutes) || minutes < 0) {
+      return '';
+    }
+    return (minutes / 60).toFixed(2);
+  }
+
   onChangeDependency() {
     this.getTimeStatistics(this.dependency.data.id);
   }
 
   downloadReport() {
     this.downloadingReport = true;
-    this.structureService.downloadReport('pdf', this.dependency.data.id).subscribe({
-      next: () => {
+    this.structureService.downloadReport('pdf', this.dependency.data.id).pipe(
+      finalize(()=>{
         this.downloadingReport = false;
-      },
-      error: () => {
-        this.downloadingReport = false;
-      }
-    });
+      })
+    ).subscribe();
   }
 }
 

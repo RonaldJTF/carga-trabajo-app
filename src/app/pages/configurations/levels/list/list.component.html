@@ -26,7 +26,7 @@
                             <ng-template pTemplate="end">
                               <span class="p-input-icon-left m-1">
                                 <i class="pi pi-search"></i>
-                                <input type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
+                                <input class="w-full" type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
                             </span>
                             </ng-template>
                         </p-menubar>
@@ -98,7 +98,7 @@
                                             <div #detailOfNormativityOfActiveSalaryScales style="display: none;" class="p-3 surface-100 ql-snow w-full">
                                                 <div class="ql-editor" [innerHTML] ="activeSalaryScale.normatividad?.descripcion ?? '' | sanitizeHtml"></div>
                                             </div>
-    
+
                                             <div class="px-3 py-2 flex align-items-center hover:surface-hover">
                                                 <span class="font-medium m-2">{{i+1}}.</span>
                                                 <div class="flex flex-column">
