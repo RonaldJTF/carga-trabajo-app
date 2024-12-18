@@ -1,137 +1,134 @@
 <ng-container *ngIf="!loading else sLoading">
-    <div *ngIf="!workplans.length else data">
-        <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo plan de trabajo'"(go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+  <div *ngIf="!workplans.length else data">
+    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo plan de trabajo'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+  </div>
+  <ng-template #data>
+    <div class="card p-0 pb-2">
+      <p-table #dt [value]="workplans" rowGroupMode="subheader" sortMode="single"
+               [paginator]="true" [rows]="10" [(selection)]="selectedWorkplans" selectionMode="multiple"
+               [globalFilterFields]="['nombre', 'descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+               currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
+            <div class="flex align-items-center flex-wrap">
+              <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+              </button>
+              <div *ngIf="isAdmin" class="_badge-container m-1">
+                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedWorkplans()" pTooltip="Eliminar" tooltipPosition="bottom" class="p-button-danger " [disabled]="!selectedWorkplans?.length">
+                  <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                </button>
+                <span *ngIf="selectedWorkplans?.length" (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{ selectedWorkplans.length }}</span>
+              </div>
+            </div>
+            <div class="m-1">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input class="w-full" type="search" pInputText placeholder="Buscar" (input)="onGlobalFilter(dt, $event)">
+              </span>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngIf="isAdmin" style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th class="text-center" style="min-width: 300px; white-space: nowrap" pSortableColumn="nombre">
+              Plan de trabajo
+              <p-sortIcon field="nombre"></p-sortIcon>
+            </th>
+            <th class="text-center w-5rem" style="white-space: nowrap" pSortableColumn="avance">
+              Avance
+              <p-sortIcon field="avance"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-workplan let-rowIndex="rowIndex">
+          <tr>
+            <td *ngIf="isAdmin">
+              <p-tableCheckbox [value]="workplan"></p-tableCheckbox>
+            </td>
+            <td pRipple class="cursor-pointer" (click)="onManagementStage(workplan.id, $event)">
+              <div class="flex flex-column justify-content-start">
+                <span class="font-medium">{{ workplan.nombre }}</span>
+                <span class="text-500">{{ workplan.descripcion }}</span>
+                <span class="text-sm text-blue-500">
+                  {{ workplan.totalEtapas | number:'1.0-2' }} {{ 'etapa' | pluralize: workplan.totalEtapas }} con {{ workplan.totalTareas | number:'1.0-2' }} {{ 'tarea' | pluralize: workplan.totalTareas }}
+                </span>
+              </div>
+            </td>
+            <td style="white-space: nowrap;">
+              <app-percent [shape]="'linear'" [labelPosition]="'right'" [size]="80" [value]="workplan.avance ?? 0" styleClass="justify-content-start"></app-percent>
+            </td>
+            <td class="text-center">
+              <div class="flex align-items-center justify-content-end">
+                <button (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Consolidado de avance" tooltipPosition="bottom"></button>
+                <app-menu-item [menuItems]="workplan.menuItems" [id]="workplan.id"></app-menu-item>
+              </div>
+              <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
+                <ng-template pTemplate>
+                  <ng-container *ngTemplateOutlet="advanceCosolidatedTemplate"></ng-container>
+                </ng-template>
+              </p-overlayPanel>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center">{{ MESSAGE.NO_REGISTROS }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
-    <ng-template #data>
-        <div class="card p-0 pb-2">
-            <p-table #dt [value]="workplans" rowGroupMode="subheader" sortMode="single"
-                [paginator]="true" [rows]="10" [(selection)]="selectedWorkplans" selectionMode="multiple"
-                [globalFilterFields]="['nombre', 'descripcion']" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
-                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros" dataKey="id" [tableStyle]="{'border-circle': '50px'}">
-                <ng-template pTemplate="caption">
-                    <div class="flex flex-wrap justify-content-between border-round-top-xl surface-100 p-3">
-                        <div class="flex align-items-center flex-wrap">
-                            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
-                                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-                            </button>
-                            <div *ngIf="isAdmin" class="_badge-container m-1">
-                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedWorkplans()" pTooltip="Eliminar" tooltipPosition="bottom"
-                                    class="p-button-danger " [disabled]="!selectedWorkplans?.length">
-                                    <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
-                                </button>
-                                <span *ngIf="selectedWorkplans?.length"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{selectedWorkplans.length}}</span>
-                            </div>
-                        </div>
-                        <div class="m-1">
-                            <span class="p-input-icon-left">
-                                <i class="pi pi-search"></i>
-                                <input class="w-full" type="search" pInputText placeholder="Buscar"  (input)="onGlobalFilter(dt, $event)">
-                            </span>
-                        </div>
-                    </div>
-                </ng-template>
-
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th *ngIf="isAdmin" style="width: 3rem">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                        </th>
-                        <th class="text-center" style="min-width: 300px; white-space: nowrap" pSortableColumn="nombre">
-                            Plan de trabajo
-                            <p-sortIcon field="nombre"></p-sortIcon>
-                        </th>
-                        <th class="text-center w-5rem" style="white-space: nowrap" pSortableColumn="avance">
-                            Avance
-                            <p-sortIcon field="avance"></p-sortIcon>
-                        </th>
-                        <th></th>
-                    </tr>
-                </ng-template>
-
-                <ng-template pTemplate="body" let-workplan let-rowIndex="rowIndex">
-                    <tr>
-                        <td *ngIf="isAdmin">
-                            <p-tableCheckbox [value]="workplan"></p-tableCheckbox>
-                        </td>
-                        <td pRipple class="cursor-pointer" (click)="onManagementStage(workplan.id, $event)">
-                            <div class="flex flex-column justify-content-start">
-                                <span class="font-medium">{{ workplan.nombre }}</span>
-                                <span class="text-500">{{workplan.descripcion}}</span>
-                                <span class="text-sm text-blue-500">
-                                    {{ workplan.totalEtapas | number:'1.0-2' }} {{ 'etapa' | pluralize: workplan.totalEtapas }} con {{ workplan.totalTareas | number:'1.0-2' }} {{ 'tarea' | pluralize: workplan.totalTareas }}
-                                </span>
-                            </div>
-                        </td>
-                        <td style="white-space: nowrap;">
-                            <app-percent [shape]="'linear'" [labelPosition]="'right'" [size]="80" [value]="workplan.avance ?? 0" styleClass="justify-content-start"></app-percent>
-                        </td>
-                        <td class="text-center">
-                            <div class="flex align-items-center justify-content-end">
-                                <button (click)="loadAdvanceConsolidated(workplan.id, viewMode, $event, advanceConsolidatedOverlayPanel)" pButton pRipple icon="pi pi-info-circle"
-                                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
-                                        pTooltip="Consolidado de avance" tooltipPosition="bottom"></button>
-                                <app-menu-item [menuItems]="workplan.menuItems" [id]="workplan.id"></app-menu-item>
-                            </div>
-                            <p-overlayPanel #advanceConsolidatedOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
-                                <ng-template pTemplate>
-                                    <ng-container *ngTemplateOutlet="advanceCosolidatedTemplate"></ng-container>
-                                </ng-template>
-                            </p-overlayPanel>
-                        </td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
-                    <tr>
-                        <td colspan="4" class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-    </ng-template>
+  </ng-template>
 </ng-container>
 
 <ng-template #sLoading>
-    <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
+  <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
 
 <ng-template #advanceCosolidatedTemplate>
-    <div class="flex align-items-center mb-3">
-      <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-        <i  class="pi pi-chart-line text-xl text-blue-500"></i>
-      </div>
-      <div class="flex flex-column ">
-        <h5 class="m-0 text-700">Consolidado de avance</h5>
-        <span class="text-500">Detalle del avance en función del tiempo</span>
-      </div>
+  <div class="flex align-items-center mb-3">
+    <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+      <i class="pi pi-chart-line text-xl text-blue-500"></i>
     </div>
-
-    <div class="flex align-items-center">
-      <div class="flex flex-column mr-4">
-        <span class="font-medium">{{datasetOfAdvanceConsolidated?.planTrabajo?.nombre | uppercase}}</span>
-        <span class="text-500 text-justify">{{datasetOfAdvanceConsolidated?.planTrabajo?.descripcion}}</span>
-      </div>
-      <div class="ml-auto">
-        <p-selectButton styleClass="flex flex-nowrap" [options]="timeTypeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeTimeType($event)">
-          <ng-template let-item pTemplate>
-            <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
-          </ng-template>
-        </p-selectButton>
-      </div>
+    <div class="flex flex-column ">
+      <h5 class="m-0 text-700">Consolidado de avance</h5>
+      <span class="text-500">Detalle del avance en función del tiempo</span>
     </div>
+  </div>
 
-    <ng-container *ngIf="!loadingAdvanceCosolidated else sLoadingAdvanceCosolidated">
-      <app-line-chart *ngIf="datasetOfAdvanceConsolidated.labels?.length else sNoAdvanceConsolidated"
-        label="Avance"
-        yAxisTitle="Porcentaje de avance (%)"
-        xAxisTitle="Fecha"
-        [labels]="datasetOfAdvanceConsolidated.labels"
-        [dataset]="datasetOfAdvanceConsolidated.dataset">
-      </app-line-chart>
-      <ng-template #sNoAdvanceConsolidated>
-        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_AVANCE_TAREAS"></app-no-result>
-      </ng-template>
-    </ng-container>
-    <ng-template #sLoadingAdvanceCosolidated>
-      <app-loading></app-loading>
+  <div class="flex align-items-center">
+    <div class="flex flex-column mr-4">
+      <span class="font-medium">{{ datasetOfAdvanceConsolidated?.planTrabajo?.nombre | uppercase }}</span>
+      <span class="text-500 text-justify">{{ datasetOfAdvanceConsolidated?.planTrabajo?.descripcion }}</span>
+    </div>
+    <div class="ml-auto">
+      <p-selectButton styleClass="flex flex-nowrap" [options]="timeTypeOptions" [(ngModel)]="viewMode" (ngModelChange)="onChangeTimeType($event)">
+        <ng-template let-item pTemplate>
+          <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
+        </ng-template>
+      </p-selectButton>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!loadingAdvanceCosolidated else sLoadingAdvanceCosolidated">
+    <app-line-chart *ngIf="datasetOfAdvanceConsolidated.labels?.length else sNoAdvanceConsolidated"
+                    label="Avance"
+                    yAxisTitle="Porcentaje de avance (%)"
+                    xAxisTitle="Fecha"
+                    [labels]="datasetOfAdvanceConsolidated.labels"
+                    [dataset]="datasetOfAdvanceConsolidated.dataset">
+    </app-line-chart>
+    <ng-template #sNoAdvanceConsolidated>
+      <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_AVANCE_TAREAS"></app-no-result>
     </ng-template>
+  </ng-container>
+  <ng-template #sLoadingAdvanceCosolidated>
+    <app-loading></app-loading>
+  </ng-template>
 </ng-template>

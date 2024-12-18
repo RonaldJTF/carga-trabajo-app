@@ -119,7 +119,7 @@ export class ListComponent implements OnInit, OnDestroy{
       {label: 'Reportes', icon: 'pi pi-fw pi-file', visible: this.isSuperAdmin, items: this.menuItemsOfDownload},
       {label: 'Más', icon: 'pi pi-cog',
         items: [
-          {label: 'Asignación de cargos', icon: 'pi pi-users', visible: this.isAdmin, command: (e)=> this.onGoToManagementAppointments()}
+          {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments()}
         ]
       }
     ];
@@ -409,12 +409,13 @@ export class ListComponent implements OnInit, OnDestroy{
       if (menuItem) {
         menuItem.icon = icon;
         menuItem.disabled = disabled;
+        menuItem.label = label;
       }
     };
-    
+
     const automationId = data.item.automationId;
-    const menuItem = !idStructure 
-                     ? this.menuItemsOfDownload.find(e => e.automationId === automationId) 
+    const menuItem = !idStructure
+                     ? this.menuItemsOfDownload.find(e => e.automationId === automationId)
                      : null;
     const initialIcon = menuItem?.icon;
     const initialState = menuItem?.disabled;
@@ -435,7 +436,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
   private reportUploaded(menuItem: MenuItem, label: string, automationId: string, downloadProgress: number) {
     let element = document.getElementById(`${automationId}`) as HTMLProgressElement;
-    if (element == null) {
+    if (element === null) {
       menuItem.label = `
             <span>${label}</span>
             <progress id="${automationId}" max="100" style="width: 100%"></progress>
@@ -518,7 +519,7 @@ export class ListComponent implements OnInit, OnDestroy{
   }
 
   private setInformationToPaste(data: any){
-    this.structureToPaste = data.item['value']; 
+    this.structureToPaste = data.item['value'];
     this.pasteAction = data.item.automationId;
     this.store.dispatch(StructureActions.relaodStructuresInStore());
     this.selectedNodesOfStructuresNoDependency = [];

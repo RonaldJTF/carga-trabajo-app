@@ -8,6 +8,13 @@ import {MESSAGE} from "@labels/labels";
 import {CryptojsService, PersonService, UrlService, UserService} from "@services";
 import {Person, Role, User} from "@models";
 
+const roleIconMap: { [key: string]: string } = {
+  ROLE_OPERADOR: 'pi pi-search',
+  ROLE_ADMINISTRADOR: 'pi pi-cog',
+  ROLE_SUPERADMINISTRADOR: 'pi pi-shield',
+  ROLE_DESARROLLADOR: 'pi pi-code'
+};
+
 @Component({
   selector: 'app-form-user-person',
   templateUrl: './form-user-person.component.html',
@@ -34,6 +41,11 @@ export class FormUserPersonComponent implements OnInit {
   updateMode: boolean = false;
 
   deleting: boolean = false;
+
+  stateOptions: any[] = [
+    {label: 'Inactivo', value: false},
+    {label: 'Activo', value: true}
+  ];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -247,5 +259,9 @@ export class FormUserPersonComponent implements OnInit {
         }
       })
     }
+  }
+
+  getRoleIcon(role: string): string {
+    return roleIconMap[role] || 'pi pi-user';
   }
 }

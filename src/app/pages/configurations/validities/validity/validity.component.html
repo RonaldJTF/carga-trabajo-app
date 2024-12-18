@@ -24,7 +24,7 @@
         <label htmlFor="estado" class="font-medium mr-2">Estado</label>
         <p-inputSwitch id="estado" formControlName="estado"></p-inputSwitch>
     </div>
-  
+
     <p-divider layout="horizontal" align="center" class="w-full">
         <span class="text-500">Variables parametrizadas</span>
     </p-divider>
@@ -34,7 +34,7 @@
     </ng-container>
 
     <ng-container *ngIf="valuesInValidityFormArray.controls?.length else sNoValueInValidity" formArrayName="valoresVigencia">
-        <div  *ngIf="!valueInValidityFormGroup"  class="flex align-items-center justify-content-end mb-2"> 
+        <div  *ngIf="!valueInValidityFormGroup"  class="flex align-items-center justify-content-end mb-2">
             <button pButton pRipple type="button"  class="p-button-text" (click)="openNewValueInValidity()" >
                 <i class="pi pr-2 pi-plus"></i>
                 <span>Parametrizar variable en la vigencia</span>
@@ -63,7 +63,7 @@
                 </ng-container>
             </ng-template>
         </p-table>
-        
+
         <div class="text-500 text-sm mx-2 mb-2 my-3">Parametrización de variables en la vigencia</div>
     </ng-container>
 
@@ -97,7 +97,7 @@
 </ng-template>
 
 <ng-template #formValueInValidityTemplate let-valueInValidityFormGroup>
-    <div [formGroup]="valueInValidityFormGroup" class="surface-100 border-round surface-border mb-3 p-3 _border-left-5 " 
+    <div [formGroup]="valueInValidityFormGroup" class="surface-100 border-round surface-border mb-3 p-3 _border-left-5 "
         [ngClass]="{'_border-left-primary': indexOfValueInValidity >= 0, '_border-left-transparent': indexOfValueInValidity < 0 }">
         <div class="flex align-items-center mb-3">
             <div class="w-2rem h-2rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-2 flex-shrink-0">
@@ -109,21 +109,21 @@
             </div>
         </div>
 
-        <ng-container *ngTemplateOutlet="variableTemplate; context: {variable: valueInValidityFormGroup.get('variable').value}"></ng-container> 
+        <ng-container *ngTemplateOutlet="variableTemplate; context: {variable: valueInValidityFormGroup.get('variable').value}"></ng-container>
 
         <div *ngIf="valueInValidityFormGroup.get('variable')?.value" class="flex align-items-center mt-3">
             <span class="text-right font-medium " style="white-space: nowrap;" >{{valueInValidityFormGroup.get('variable').value.nombre}} </span>
             <span class="font-medium mx-2"> = </span>
             <input pInputText id="valor" type="number" formControlName="valor" class="w-full pb-1 pl-1 border-none border-bottom-1 shadow-none _input-value"
-            [ngClass]="{'ng-dirty ng-invalid': hasErrors(valueInValidityFormGroup.get('valor'))}" /> 
+            [ngClass]="{'ng-dirty ng-invalid': hasErrors(valueInValidityFormGroup.get('valor'))}" />
 
         </div>
-                    
+
         <div class="flex flex-wrap justify-content-end mt-3">
-            <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2" 
+            <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2"
                 (click)="cancelValueInValidity($event)" pTooltip="Cancelar" tooltipPosition="bottom">
             </button>
-            <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined" type="submit" 
+            <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined" type="submit"
                 (click)="submitValueInValidty($event)" [disabled]="valueInValidityFormGroup.invalid" pTooltip="Agregar" tooltipPosition="bottom">
             </button>
         </div>
@@ -149,7 +149,7 @@
                         <ng-template let-item pTemplate="item">
                             <div class="flex align-items-center gap-2 w-full">
                                 <div>{{item.label }}</div>
-                                <button *ngIf="!parseStringToBoolean(item.value.primaria) else sNoDeleteButton"  (click)="onDeleteVariable(item.value, $event)" pButton pRipple 
+                                <button *ngIf="!parseStringToBoolean(item.value.primaria) else sNoDeleteButton"  (click)="onDeleteVariable(item.value, $event)" pButton pRipple
                                     type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
                                 <ng-template #sNoDeleteButton>
                                     <i class="pi pi-trash text-500 ml-auto p-3" pTooltip="Deshabilitado" tooltipPosition="bottom"></i>
@@ -160,7 +160,7 @@
                 </ng-template>
             </p-overlayPanel>
         </div>
-    </div> 
+    </div>
 
     <div *ngIf="valueInValidityFormGroup?.value.variable as variable; else sNoVariable"  class="flex flex-column">
         <span class="text-500">{{variable.nombre | uppercase}}</span>
@@ -174,6 +174,6 @@
     <div *ngIf="valueInValidityFormGroup.controls['idVariable'] && valueInValidityFormGroup.controls['idVariable'].errors && (valueInValidityFormGroup.controls['idVariable'].touched || valueInValidityFormGroup.controls['idVariable'].dirty)">
         <div *ngIf="valueInValidityFormGroup.controls['idVariable'].errors?.['required']">
             <small id="text-help" class="p-error">Seleccione una variable a parametrizar en la vigencia</small>
-        </div>  
+        </div>
     </div>
 </ng-template>

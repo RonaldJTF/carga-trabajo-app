@@ -35,7 +35,7 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "quill",
-              "quill-image-resize",,
+              "quill-image-resize",
               "dc",
               "chroma-js",
               "lodash",

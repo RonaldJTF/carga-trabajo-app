@@ -43,6 +43,14 @@ export class ErrorInterceptor implements HttpInterceptor {
               this.authenticationService.logout();
               this.messageService.add({severity: 'error', summary: 'Error', detail: 'Acceso denegado', life: 3000,});
             }
+            if (error.status === 403) {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Acceso Denegado',
+                detail: 'Parece que has intentado realizar una acción no permitida en esta aplicación. Si crees que esto es un error, por favor, contacta al administrador',
+                life: 3000,
+              });
+            }
             if (error.status === 500) {
               this.messageService.add({
                 severity: 'error',

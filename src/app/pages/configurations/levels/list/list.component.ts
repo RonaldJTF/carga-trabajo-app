@@ -78,7 +78,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
   initMenus() {
     this.menuItemsOfLevel = [
-      {label: 'Gestión de escalas salariales', icon: 'pi pi-cog',command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
+      {label: 'Gestión de escalas salariales', icon: 'pi pi-cog', command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
       {label: 'Gestión de compensaciones laborales', icon: 'pi pi-money-bill',command: (e) => this.onGoToManagementCompensation(e.item['value'], e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateLevel(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteLevel(e)},

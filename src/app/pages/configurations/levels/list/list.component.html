@@ -60,7 +60,7 @@
                                 <button (click)="loadSalaryScalesToOverlayPanel(level, detailOverlayPanel, $event)"  pButton pRipple icon="pi pi-info-circle"
                                         class="p-button-rounded p-button-text p-button p-component p-button-icon-only"
                                         pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                                <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id"  [value]="level"></app-menu-item>
+                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfLevel" [id]="level.id"  [value]="level"></app-menu-item>
                             </div>
                             <p-overlayPanel #detailOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
                                 <ng-template pTemplate>

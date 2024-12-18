@@ -3,13 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { LevelsComponent } from './levels.component';
 import { ListComponent } from './list/list.component';
 import { LevelComponent } from './level/level.component';
+import {adminGuard} from "@guards";
 
 
 const routes: Routes = [{
   path: '', component: LevelsComponent, children: [
     {path: '', component: ListComponent},
-    {path: 'create', component: LevelComponent},
-    {path: ':id', component: LevelComponent},
+    {path: 'create', component: LevelComponent, canActivate: [adminGuard]},
+    {path: ':id', component: LevelComponent, canActivate: [adminGuard]},
   ]
 }];
 

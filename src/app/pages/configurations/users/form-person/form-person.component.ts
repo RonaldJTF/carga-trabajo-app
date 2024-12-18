@@ -262,11 +262,11 @@ export class FormPersonComponent implements OnInit {
 
     const file = input.files[0];
 
-    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const validImageTypes = ['image/jpeg', 'image/png'];
     if (!validImageTypes.includes(file.type)) {
       this.loadFile = true;
       this.severity = 'error'
-      this.fileInfo = 'Solo se permiten archivos de imagen (JPEG, PNG, GIF).';
+      this.fileInfo = 'Solo se permiten archivos de imagen (JPEG, PNG).';
       input.value = '';
       return;
     }

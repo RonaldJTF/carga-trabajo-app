@@ -27,7 +27,17 @@
   <div class="col-12 md:col-8">
     <div class="card">
       <form class="p-0" [formGroup]="formPerson">
-        <h5 class="text-700">Información personal </h5>
+        <div class="flex align-items-center justify-content-between mb-4">
+          <div class="flex align-items-center">
+            <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+              <i class="pi pi-pencil text-xl text-primary-500"></i>
+            </div>
+            <div class="flex flex-column">
+              <h5 class="m-0 text-700">Información personal</h5>
+              <span class="text-500">Administre y mantenga actualizada su información personal</span>
+            </div>
+          </div>
+        </div>
         <div class="grid">
           <div class="field p-fluid col-12 sm:col-6 m-0">
             <label htmlFor="primerNombre" class="font-medium">Primer nombre</label>

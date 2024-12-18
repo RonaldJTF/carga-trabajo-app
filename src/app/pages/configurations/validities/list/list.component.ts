@@ -59,7 +59,7 @@ export class ListComponent implements OnInit, OnDestroy{
 
   initMenus() {
     this.menuItemsOfValidity = [
-      {label: 'Gestión de variables', icon: 'pi pi-cog',command: (e) => this.onGoToUpdateValidity(e.item.id, e.originalEvent)},
+      {label: 'Gestión de variables', icon: 'pi pi-cog', visible: this.isAdmin, command: (e) => this.onGoToUpdateValidity(e.item.id, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateValidity(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteValidity(e)},
     ];

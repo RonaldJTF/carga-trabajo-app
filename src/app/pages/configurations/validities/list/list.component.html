@@ -62,7 +62,7 @@
                                 <div *ngIf="validity.valoresVigencia?.length" class="mr-2">
                                     <p-badge [value]="validity.valoresVigencia?.length" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
                                 </div>
-                                <app-menu-item [menuItems]="menuItemsOfValidity" [id]="validity.id" [value]="validity"></app-menu-item>
+                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfValidity" [id]="validity.id" [value]="validity"></app-menu-item>
                             </div>
                         </td>
                     </tr>
