@@ -12,7 +12,7 @@ import {ChangePasswordService, ToastService, UserService} from "@services";
         <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-blue-100 border-circle">
           <i class="pi pi-key text-4xl text-blue-500"></i>
         </div>
-        <span class="font-bold">Ingresa tu contraseña actual.</span>
+        <span class="font-bold">Ingresa tu contraseña actual</span>
         <span class="text-500">Debes  confirmar con tu contraseña actual para proceder con el cambio</span>
       </div>
     </div>
@@ -27,16 +27,16 @@ import {ChangePasswordService, ToastService, UserService} from "@services";
           </p-password>
           <div *ngIf="passwordNoValido">
             <div *ngIf="controls['password'].errors?.['required']">
-              <small class="p-error">Ingrese un contraseña</small>
+              <small class="p-error">Ingrese una contraseña</small>
             </div>
           </div>
         </div>
       </div>
       <div class=" flex flex-wrap justify-content-end m-0 p-0">
-        <button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onCancelChangePassword($event)"
+        <!--<button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onCancelChangePassword($event)"
                 [disabled]="creatingOrUpdating">
           <span class="hidden-xs p-button-label pl-2">Cancelar</span>
-        </button>
+        </button> -->
         <button pButton pRipple [icon]="creatingOrUpdating ? 'pi pi-spin pi-spinner m-0' : 'pi pi-send'"
                 class="p-button-success ml-2"
                 type="submit" (click)="nextPage()"

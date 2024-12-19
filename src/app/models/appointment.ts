@@ -1,5 +1,6 @@
 import { LevelCompensation } from "./compensation";
-import { Normativity } from "./normativity";
+import { Level } from "./level";
+import { Normativity, Scope } from "./normativity";
 import { Structure } from "./structure";
 import { Validity } from "./validity";
 
@@ -16,6 +17,8 @@ export class Appointment{
     vigencia: Validity;
     estructura: Structure;
     normatividad: Normativity;
+    alcance: Scope;
+    nivel: Level;
     asignacionTotal: number;
     compensacionesLaboralesAplicadas: LevelCompensation[];
     asignacionBasicaAnual: number;

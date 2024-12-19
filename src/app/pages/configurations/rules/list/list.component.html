@@ -69,7 +69,7 @@
                                 <div class="mr-2">
                                     <p-badge *ngIf="parseStringToBoolean(rule.global)" value="G" severity="warning" pTooltip="Global" tooltipPosition="bottom" styleClass="m-1"></p-badge>
                                 </div>
-                                <app-menu-item [menuItems]="menuItemsOfRule" [id]="rule.id" [value]="rule"></app-menu-item>
+                                <app-menu-item  *ngIf="isAdmin" [menuItems]="menuItemsOfRule" [id]="rule.id" [value]="rule"></app-menu-item>
                             </div>
                         </td>
                     </tr>

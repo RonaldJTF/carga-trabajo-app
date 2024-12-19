@@ -485,7 +485,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.store.dispatch(StageActions.setShowMoreDetailOfTasks({showMoreDetailOfTasks: event.checked}));
   }
 
-  onTemplateChange(event: "diary" | "calendar") {
+  onViewChange(event: "diary" | "calendar") {
     this.store.dispatch(StageActions.setViewMode({viewMode: event}));
   }
 

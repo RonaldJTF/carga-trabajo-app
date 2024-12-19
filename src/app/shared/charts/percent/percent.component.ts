@@ -93,7 +93,7 @@ export class PercentComponent {
       g.append("text")
         .attr('class', 'label-circle')
         .attr('transform', 'translate('+ labelXPosition +',' + labelYPosition +')')
-        .text(this.value + "%")
+        .text(Math.round(this.value*10)/10 + "%")
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .style("font-size", `${this.fontSize ?? '12'}pt`)

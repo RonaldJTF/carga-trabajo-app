@@ -1,9 +1,9 @@
 <div class="flex {{styleClass}}">
-    <div  *ngIf="labelPosition=='left'" class="mx-1 my-auto">
+    <div  *ngIf="labelPosition=='left'" class="mr-1 my-auto">
         <ng-container *ngTemplateOutlet="TemplateOfValue"></ng-container>
     </div>
     <div #svgContainer class="flex align-items-center"></div>
-    <div  *ngIf="labelPosition=='right'" class="mx-1 my-auto">
+    <div  *ngIf="labelPosition=='right'" class="ml-1 my-auto">
         <ng-container *ngTemplateOutlet="TemplateOfValue"></ng-container>
     </div>
 </div>

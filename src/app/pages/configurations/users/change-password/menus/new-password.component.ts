@@ -13,7 +13,7 @@ import {AuthenticationService, ChangePasswordService, CryptojsService, UserServi
           <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-blue-100 border-circle">
             <i class="pi pi-lock text-4xl text-blue-500"></i>
           </div>
-          <span class="font-bold">Ingresa tu nueva contraseña.</span>
+          <span class="font-bold">Ingresa tu nueva contraseña</span>
           <span class="text-500">Elige una nueva contraseña para tu cuenta y asegúrate de que sea única y segura</span>
         </ng-container>
         <ng-template #sNoIcon>
@@ -32,10 +32,10 @@ import {AuthenticationService, ChangePasswordService, CryptojsService, UserServi
           <p-password id="newPassword" [feedback]="true" placeholder="Contraseña" [toggleMask]="true"
                       styleClass="mb-2 w-full" inputStyleClass="w-full p-3"
                       formControlName="newPassword" weakLabel="Débil" mediumLabel="Moderada"
-                      strongLabel="Fuerte" promptLabel="Ingresa una contraseña"></p-password>
+                      strongLabel="Fuerte" promptLabel="Ingrese una contraseña"></p-password>
           <div *ngIf="newPasswordNoValido">
             <div *ngIf="controls['newPassword'].errors?.['required']">
-              <small class="p-error">Ingrese un contraseña</small>
+              <small class="p-error">Ingrese una contraseña</small>
             </div>
           </div>
 
@@ -43,10 +43,10 @@ import {AuthenticationService, ChangePasswordService, CryptojsService, UserServi
           <p-password id="confirmPassword" [feedback]="true" placeholder="Contraseña" [toggleMask]="true"
                       styleClass="mb-2 w-full" inputStyleClass="w-full p-3"
                       formControlName="confirmPassword" weakLabel="Débil" mediumLabel="Moderada"
-                      strongLabel="Fuerte" promptLabel="Ingresa una contraseña"></p-password>
+                      strongLabel="Fuerte" promptLabel="Ingrese una contraseña"></p-password>
           <div *ngIf="confirmPasswordNoValido">
             <div *ngIf="controls['confirmPassword'].errors?.['required']">
-              <small class="p-error">Ingrese un contraseña</small>
+              <small class="p-error">Ingrese una contraseña</small>
             </div>
           </div>
           <div *ngIf="passwordsMismatch">

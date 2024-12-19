@@ -10,6 +10,7 @@ export interface AppointmentState {
   structure: Structure;
   informationGroup: any;
   confirmedFilters: any;
+  viewMode: 'list' | 'chart';
 }
 
 export const initialState: AppointmentState = {
@@ -20,6 +21,7 @@ export const initialState: AppointmentState = {
   structure: null,
   informationGroup: null,
   confirmedFilters: null,
+  viewMode: 'list'
 };
 
 export const appointmentReducer = createReducer(
@@ -96,4 +98,8 @@ export const appointmentReducer = createReducer(
     return { ...state, confirmedFilters: confirmedFilters};
   }),
 
+  on(AppointmentActions.setViewMode, (state, { viewMode }) => ({
+    ...state,
+    viewMode: viewMode,
+  })),
 );

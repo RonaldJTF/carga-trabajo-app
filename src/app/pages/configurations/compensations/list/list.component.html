@@ -53,7 +53,7 @@
 
         <ng-template pTemplate="body" let-compensation let-rowIndex="rowIndex">
           <tr pRowGroupHeader *ngIf="rowGroupMetadata[compensation.idCategoria]?.index === rowIndex || rowIndex%numberOfRows==0">
-            <td colspan="4">
+            <td [attr.colspan]="isAdmin ? 4 : 3">
                 <div  class="flex flex-column">
                   <span class="font-medium">{{compensation.categoria.nombre | uppercase}}
                     <span class="text-500 font-normal" *ngIf="rowGroupMetadata[compensation.idCategoria]?.index !== rowIndex && rowIndex%numberOfRows==0">(continuación)</span>
@@ -66,7 +66,7 @@
                 <div class="mr-2">
                   <p-badge [value]="rowGroupMetadata[compensation.idCategoria]?.size ?? 0" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
                 </div>
-                <app-menu-item [menuItems]="menuItemsOfCategory" [id]="compensation.idCategoria"></app-menu-item>
+                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfCategory" [id]="compensation.idCategoria"></app-menu-item>
               </div>
             </td>
           </tr>
@@ -88,7 +88,7 @@
             </td>
             <td>
               <div class="flex align-items-center justify-content-end">
-                <app-menu-item [menuItems]="menuItemsOfCompesantion" [id]="compensation.id"></app-menu-item>
+                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfCompesantion" [id]="compensation.id"></app-menu-item>
               </div>
             </td>
           </tr>

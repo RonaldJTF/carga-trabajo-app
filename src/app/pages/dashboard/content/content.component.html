@@ -26,7 +26,7 @@
             </p-overlayPanel>
           </div>
           <div class="ml-auto">
-            <app-percent [value]="Math.round((workplan.avance ?? 0)*10)/10" shape="circle" labelPosition="center" [size]="55" [fontSize]="9"></app-percent>
+            <app-percent [value]="workplan.avance" shape="circle" labelPosition="center" [size]="55" [fontSize]="9"></app-percent>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@
     </div>
 </ng-container>
 
-<app-charts *ngIf="isSuperAdmin"></app-charts>
+<app-charts></app-charts>
 
 <ng-template #sLoading>
   <app-head-skeleton></app-head-skeleton>

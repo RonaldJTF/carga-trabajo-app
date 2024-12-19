@@ -6,7 +6,7 @@ import {PasswordModule} from 'primeng/password';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {
-  ActivityExpirationPipe, DarkenColorPipe, DateRangePipe, FileIconPipe, FileSizePipe,
+  ActivityExpirationPipe, ConditionalUppercasePipe, DarkenColorPipe, DateRangePipe, FileIconPipe, FileSizePipe,
   FirstNamePipe, LightenColorPipe, PluralizePipe, PrettyDatePipe, SanitizeHtmlPipe, StatePipe, TimeAgoPipe, TimeNamePipe,
   ValidityPipe
 } from '@pipes';
@@ -121,6 +121,7 @@ import { MenubarModule } from 'primeng/menubar';
         ActivityExpirationPipe,
         DateRangePipe,
         ValidityPipe,
+        ConditionalUppercasePipe,
 
         ImageFallbackDirective,
         SvgColorDirective,
@@ -225,6 +226,7 @@ import { MenubarModule } from 'primeng/menubar';
         ActivityExpirationPipe,
         DateRangePipe,
         ValidityPipe,
+        ConditionalUppercasePipe,
 
         CommonModule,
         ReactiveFormsModule,

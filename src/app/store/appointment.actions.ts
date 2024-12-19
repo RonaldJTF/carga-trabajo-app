@@ -16,3 +16,4 @@ export const setInformationGroup = createAction('[Configuration of Appointment] 
 export const setStructureOnWorking = createAction('[Configuration of Appointment] set the structure we are working on', props<{ structure: Structure }>());
 export const setConfirmedFilters = createAction('[Configuration of Appointment] set the confirmed filter we are working on', props<{ confirmedFilters: any }>());
 export const removeConfirmedFilter = createAction('[Configuration of Appointment] remove a confirmed filter', props<{ key: string, index: number }>());
+export const setViewMode = createAction('[Configuration of Appointment] set if appointmets must be showed as list or chart', props<{ viewMode: 'list' | 'chart'}>());

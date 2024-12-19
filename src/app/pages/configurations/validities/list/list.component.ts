@@ -9,7 +9,6 @@ import { IMAGE_SIZE } from '@utils';
 import { MenuItem } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
-import { VariableService } from 'src/app/services/variable.service';
 import { Table } from 'primeng/table';
 
 @Component({

@@ -34,7 +34,7 @@
     </ng-container>
 
     <ng-container *ngIf="valuesInValidityFormArray.controls?.length else sNoValueInValidity" formArrayName="valoresVigencia">
-        <div  *ngIf="!valueInValidityFormGroup"  class="flex align-items-center justify-content-end mb-2">
+        <div *ngIf="!valueInValidityFormGroup"  class="flex align-items-center justify-content-end mb-2">
             <button pButton pRipple type="button"  class="p-button-text" (click)="openNewValueInValidity()" >
                 <i class="pi pr-2 pi-plus"></i>
                 <span>Parametrizar variable en la vigencia</span>
@@ -52,7 +52,7 @@
                             </div>
                         </td>
                         <td class="w-10rem  text-right">
-                            <span class="text-500" pTooltip="Valor" tooltipPosition="bottom">{{valueInValidity.valor}}</span>
+                            <span class="text-500" pTooltip="Valor" tooltipPosition="bottom">{{valueInValidity.valor | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                         </td>
                         <td class="w-5rem">
                             <div class="flex align-items-center justify-content-end">

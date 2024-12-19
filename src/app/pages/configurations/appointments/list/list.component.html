@@ -1,8 +1,8 @@
 <ng-container *ngIf="!loading else sLoading">
     <div class="card p-0">
-        <p-treeTable  #treeTableOfAppointments [value]="treeDataset" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments"
+        <p-treeTable #treeTableOfAppointments [value]="treeDataset" selectionMode="checkbox" [loading]="filtering" [(selection)]="selectedNodesOfAppointments"
             (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
-            [globalFilterFields]="['nombre', 'descripcion', 'anio']" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': (comparisonObjects?.length*128 + 500) + 'px' }">
+            [globalFilterFields]="['nombre', 'descripcion', 'anio']" responsiveLayout="scroll" [scrollable]="true" [scrollHeight]="viewMode=='list' ? '500px' : null" [tableStyle]="{ 'min-width': (comparisonObjects?.length*(viewMode=='list' ? 128 : 0) + 600) + 'px' }">
             <ng-template pTemplate="caption">
                 <div class="border-round-top-xl surface-100 p-3">
                     <p-menubar [model]="menuBarItems">
@@ -19,11 +19,18 @@
                             </div>
                         </ng-template>
                         <ng-template pTemplate="end">
-                            <span class="p-input-icon-left m-1">
-                                <i class="pi pi-search"></i>
-                                <input class="w-full" type="search" pInputText placeholder="Buscar"  (input)="onFilter(treeTableOfAppointments, $event)">
-                            </span>
-                            <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Opciones" tooltipPosition="bottom"></button>
+                            <div class="flex align-items-center flex-wrap">
+                                <span class="p-input-icon-left m-1">
+                                    <i class="pi pi-search"></i>
+                                    <input class="w-full" type="search" pInputText placeholder="Buscar" (input)="onFilter(treeTableOfAppointments, $event)">
+                                </span>
+                                <button (click)="openFilterOptions($event)" pButton pRipple icon="pi pi-filter" class="p-button-primary p-button-outlined m-1" pTooltip="Opciones" tooltipPosition="bottom"></button>
+                                <p-selectButton styleClass="m-1" [options]="viewOptions" [(ngModel)]="viewMode" (ngModelChange)="onViewChange($event)">
+                                    <ng-template let-item pTemplate>
+                                      <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
+                                    </ng-template>
+                                </p-selectButton>
+                            </div>
                             <p-overlayPanel #filterOptionsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 md:w-6'">
                                 <ng-template pTemplate>
                                     <ng-container *ngTemplateOutlet="filterOptionsTemplate"></ng-container>
@@ -42,9 +49,9 @@
                 </div>
             </ng-template>
             <ng-template pTemplate="header">
-                <tr>
+                <tr *ngIf="viewMode == 'list'">
                     <th ttSortableColumn="nombre" >
-                        <div class="text-center flex align-items-center justify-content-center" style="min-width: 400px; white-space: nowrap" >
+                        <div class="text-center flex align-items-center justify-content-center" style="min-width: 500px; white-space: nowrap" >
                             Nombre<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
                         </div>
                     </th>
@@ -55,10 +62,65 @@
                     </ng-container>
                     <th class="w-5rem"></th>
                 </tr>
+                <tr *ngIf="viewMode == 'chart'">
+                    <th class="text-center">Representación gráfica de las asignaciones de cargos</th>
+                </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-rowNode let-item="rowData">
-                <tr>
-                    <td style="min-width: 300px;">
+            <ng-template pTemplate="body" let-rowNode let-item="rowData" let-index="rowIndex">
+                <ng-container *ngIf="viewMode == 'chart' && item.index == 0 && !rowNode.parent">
+                    <tr>
+                        <td class="border-0 py-0">
+                            <div class="_chart-container w-full">
+                                <div style="position: relative;" >
+                                    <app-bar-chart 
+                                        [labels]="chartInformation.labels" 
+                                        [datasets]="chartInformation.datasets" 
+                                        (onClickOnBar)="onClickOnScopeAndValidityBar($event)" 
+                                        (onClickOnLegend)="onClickOnScopeAndValidityLegend($event)"
+                                        title="Asignación total por vigencias y alcances"
+                                        yAxisTitle="Asignación total ($)">
+                                    </app-bar-chart>
+                                </div>
+                                <div class="_chart-summary">
+                                    <span class="text-500 text-sm">Asignación</span>
+                                    <span class="font-bold text-xl _text-shadow">{{ partialAmmount | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                                    <span *ngIf="partialAmmount < globalAmount" class="text-orange-300 font-medium text-xl">{{(partialAmmount/globalAmount)*100 | number:'1.0-1'}}%</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="chartInformation.chartDetail?.datasets?.length">
+                        <td class="border-0 py-0">
+                           <div class="grid">
+                                <div class="col-12 " [ngClass]="{'md:col-8': chartInformation.chartDetail.chartDetail?.data?.length}">
+                                    <app-bar-chart 
+                                        [labels]="chartInformation.chartDetail.labels" 
+                                        [datasets]="chartInformation.chartDetail.datasets" 
+                                        [stacked]="true" 
+                                        indexAxis = "y"
+                                        title="Asignación total por dependencias y niveles ocupacionales"
+                                        [subtitle]="chartFilters.scope + ' & ' + chartFilters.validity"
+                                        xAxisTitle="Asignación total ($)" 
+                                        (onClickOnLegend)="onClickOnStructureAndLevelLegend($event)"
+                                        (onClickOnBar)="onClickOnStructureAndLevelBar($event)" >
+                                    </app-bar-chart>
+                                </div>
+                                <div class="col-12 md:col-4" *ngIf="chartInformation.chartDetail.chartDetail?.data?.length">
+                                    <app-polar-chart 
+                                        [labels]="chartInformation.chartDetail.chartDetail.labels" 
+                                        [data]="chartInformation.chartDetail.chartDetail.data"
+                                        datasetLabel="Asignación"
+                                        title="Asignación en el nivel ocupacional por escala salarial"
+                                        [subtitle]="chartFilters.level + ' & ' + chartFilters.structure"
+                                        (onClickOnLegend)="onClickOnSalaryScaleLegend($event)">
+                                    </app-polar-chart>
+                                </div>
+                           </div>
+                        </td>
+                    </tr>
+                </ng-container>
+                <tr *ngIf="viewMode == 'list'">
+                    <td style="min-width: 500px;">
                         <div class="flex align-items-center">
                             <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                             <p-treeTableCheckbox *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
@@ -73,36 +135,39 @@
                                     </div>
                                 </ng-template>
                                 <div class="ml-2 flex flex-column">
-                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="font-medium">{{item.nombre | conditionalUppercase : item.isFirstGroup}}</span>
                                     <span class="text-sm text-500">Dependencia</span>
+                                </div>
+                                <div *ngIf="globalAmount > 0" class="ml-auto pl-2 " pTooltip="Representación global" tooltipPosition="bottom">
+                                    <app-percent [shape]="'circle'" [labelPosition]="'right'" [size]="30" [value]="(item.asignacionTotal /globalAmount)*100"></app-percent>
                                 </div>
                             </div>
 
                             <div *ngIf="item.type == 'VALIDITY' " class="flex align-items-center w-full">
                                 <div class="flex  flex-column">
-                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="font-medium">{{item.nombre | conditionalUppercase : item.isFirstGroup}}</span>
                                     <span class="text-sm text-500">Vigencia</span>
                                 </div>
-                                <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto validity-badge validity-' + (item.estado | validity ).classStyle">{{item.anio}}</span>
+                                <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto pl-2 validity-badge validity-' + (item.estado | validity ).classStyle">{{item.anio}}</span>
                             </div>
 
                             <div *ngIf="item.type == 'LEVEL' " class="flex align-items-center w-full">
                                 <div class="flex  flex-column">
-                                    <span class="font-medium">{{item.descripcion | uppercase}}</span>
+                                    <span class="font-medium">{{item.descripcion | conditionalUppercase : item.isFirstGroup}}</span>
                                     <span class="text-sm text-500">Nivel de ocupación</span>
                                 </div>
                             </div>
 
                             <div *ngIf="item.type == 'SALARYSCALE' " class="flex align-items-center w-full">
                                 <div *ngIf="item.id else sGeneralInfo" class="flex  flex-column">
-                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="font-medium">{{item.nombre | conditionalUppercase : item.isFirstGroup}}</span>
                                     <span class="text-sm text-500">Escala salarial</span>
                                 </div>
                             </div>
 
                             <div *ngIf="item.type == 'SCOPE' " class="flex align-items-center w-full">
                                 <div class="flex  flex-column">
-                                    <span class="font-medium">{{item.nombre | uppercase}}</span>
+                                    <span class="font-medium">{{item.nombre | conditionalUppercase : item.isFirstGroup}}</span>
                                     <span class="text-sm text-500">Alcance</span>
                                 </div>
                             </div>
@@ -155,7 +220,7 @@
 
                     <td class="w-5rem">
                         <div class="flex justify-content-end">
-                            <app-menu-item [menuItems]="menuItemsOfAppointmentGroup" [value]="item"></app-menu-item>
+                            <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfAppointmentGroup" [value]="item"></app-menu-item>
                         </div>
                     </td>
                 </tr>
@@ -303,7 +368,6 @@
         </button>
     </div>
 </ng-template>
-
 
 <ng-template #informationGroupsTemplate>
     <div class="flex flex-wrap">

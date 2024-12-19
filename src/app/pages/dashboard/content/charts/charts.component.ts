@@ -18,7 +18,7 @@ export class ChartsComponent implements OnInit {
   protected readonly IMAGE_SIZE = IMAGE_SIZE;
 
   levels: string[];
-  totalTimeByLevel: string[];
+  totalTimeByLevelDatasets: any[] = [];
   totalStaff: number[];
   dependency: TreeNode<Structure> = {};
   inventory: TypologyInventory[];
@@ -35,6 +35,16 @@ export class ChartsComponent implements OnInit {
   ngOnInit() {
     this.getInventarioTipologia();
     this.getDependencies();
+    const documentStyle = getComputedStyle(document.documentElement);
+    this.totalTimeByLevelDatasets = [
+      {
+        label: 'Total de horas',
+        backgroundColor: documentStyle.getPropertyValue('--primary-500'),
+        borderColor: documentStyle.getPropertyValue('--primary-500'),
+        tension: 0,
+        data: null
+      }
+    ];
   }
 
   getInventarioTipologia() {
@@ -49,7 +59,7 @@ export class ChartsComponent implements OnInit {
     this.dashboardService.getTimeStatistics(structureId).subscribe({
       next: (data) => {
         this.levels = data?.map((item: any) => item.nivel);
-        this.totalTimeByLevel = data.map(item => item.tiempoTotal);
+        this.totalTimeByLevelDatasets[0]['data'] = data.map(item => item.tiempoTotal);//Sólo hay un dataset
         this.totalStaff = data.map(item => item.personalTotal);
       },
     });
@@ -60,7 +70,7 @@ export class ChartsComponent implements OnInit {
     this.structureService.getDependencies().subscribe({
       next: (data) => {
         this.builtNodes(data, this.structureOptions);
-        this.dependency = this.getRandomDependency();//this.structureOptions?.length ? this.structureOptions[0] : null;
+        this.dependency = this.getRandomDependency();
         if (this.dependency) {
           this.getTimeStatistics(this.dependency.data.id);
         }

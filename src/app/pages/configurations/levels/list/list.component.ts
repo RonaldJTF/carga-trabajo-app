@@ -95,8 +95,8 @@ export class ListComponent implements OnInit, OnDestroy{
 
     const backRoute = '/configurations/levels';
     this.menuBarItems = [
-      {label: 'Compensaciones laborales', icon: 'pi pi-money-bill', visible: this.isAdmin, command: ()=>{this.router.navigate(['configurations/compensations'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}},
-      {label: 'Parametrizaciones', icon: 'pi pi-cog', visible: this.isAdmin, items: [
+      {label: 'Compensaciones laborales', icon: 'pi pi-money-bill', command: ()=>{this.router.navigate(['configurations/compensations'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}},
+      {label: 'Parametrizaciones', icon: 'pi pi-cog', items: [
         {label: 'Variables', icon: 'pi pi-arrow-right-arrow-left', command: ()=>{this.router.navigate(['configurations/variables'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}},
         {label: 'Reglas', icon: 'pi pi-check-square', command: ()=>{this.router.navigate(['configurations/rules'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})}},
       ]},
@@ -129,16 +129,18 @@ export class ListComponent implements OnInit, OnDestroy{
     }
   }
 
-  loadSalaryScalesToTable(idLevel: number, isLoaded: boolean, expanded: boolean){
-    if(!expanded && !isLoaded){
-      this.loadingLevelById[idLevel] = true;
-      this.levelService.getSalaryScalesByLevelId(idLevel).subscribe({
+  loadSalaryScalesToTable(level: Level, expanded: boolean){
+    if(!expanded && !level.loaded){
+      this.loadingLevelById[level.id] = true;
+      this.levelService.getSalaryScalesByLevelId(level.id).subscribe({
         next: (e) =>{
-          this.rowGroupMetadataToTable[idLevel] = this.updateRowGroupMetaData(e?.sort(this.order));
-          this.store.dispatch(LevelActions.updateSalaryScalesToLevel({levelId: idLevel, salaryScales: e}));
-          this.loadingLevelById[idLevel] = false;
+          this.rowGroupMetadataToTable[level.id] = this.updateRowGroupMetaData(e?.sort(this.order));
+          this.store.dispatch(LevelActions.updateSalaryScalesToLevel({levelId: level.id, salaryScales: e}));
+          this.loadingLevelById[level.id] = false;
         }
       })
+    }else{
+      this.rowGroupMetadataToTable[level.id] = this.updateRowGroupMetaData(level.escalasSalariales?.sort(this.order));
     }
   }
 

@@ -38,6 +38,13 @@ class InformationGroup{
   groupAttributes: GroupAttribute[];
   code: number;
 }
+
+class ChartInformation{
+  labels: string[];
+  datasets?: any[];
+  data?: any[];
+  chartDetail?: ChartInformation;
+}
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -66,6 +73,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   structureSubscription: Subscription;
   mustRechargeSubscription: Subscription;
   confirmedFiltersSubscription: Subscription;
+  viewModeSubscription: Subscription;
 
   filtersBy: FiltersBy = new FiltersBy();
   filterProps = {
@@ -138,7 +146,19 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   menuBarItems: MenuItem[] = [];
   menuItemsOfDownload: MenuItem[] = [
     {label: 'Reporte de asignación de cargos en Excel', icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
-  ]
+  ];
+
+  globalAmount: number = 0;
+  partialAmmount: number = 0;
+  viewOptions: any[] = [
+    {icon: 'pi pi-list', value: 'list', tooltip: 'Lista'}, 
+    {icon: 'pi pi-chart-bar', value: 'chart', tooltip: 'Gráfica'
+  }];
+  viewMode: 'list' | 'chart';
+  chartInformation: ChartInformation = new ChartInformation();
+  colors: string[];
+  chartFilters: any = {};
+  chartGroupFilters: {scopes: any[], levels: any[], salaryScales};
 
   constructor(
     private store: Store<AppState>,
@@ -160,6 +180,24 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
+
+    this.initChartGroupFilters();
+    const documentStyle = getComputedStyle(document.documentElement);
+    this.colors = [
+      documentStyle.getPropertyValue('--indigo-500'),
+      documentStyle.getPropertyValue('--purple-500'),
+      documentStyle.getPropertyValue('--teal-500'),
+      documentStyle.getPropertyValue('--orange-500'),
+      documentStyle.getPropertyValue('--pink-500'),
+      documentStyle.getPropertyValue('--cyan-500'),
+      documentStyle.getPropertyValue('--red-500'),
+      documentStyle.getPropertyValue('--green-500'),
+      documentStyle.getPropertyValue('--blue-500'),
+      documentStyle.getPropertyValue('--yellow-500'),
+      documentStyle.getPropertyValue('--gray-500'),
+      documentStyle.getPropertyValue('--bluegray-500'),
+    ];
+
     this.structureSubscription = this.store.select(state => state.appointment.structure).subscribe(e => this.structure = e);
     this.informationGroupSubscription = this.store.select(state => state.appointment.informationGroup).subscribe(e => this.informationGroup = e ?? this.informationGroups[0]);
     this.expandedNodesSubscription = this.store.select(state => state.appointment.expandedNodes).subscribe(e => this.expandedNodes = e);
@@ -178,6 +216,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
         this.getAppointments(filters)
       }
     });
+    this.viewModeSubscription = this.store.select(state => state.appointment.viewMode).subscribe(e => this.viewMode = e);
     this.initMenuItems();
 
     this.menuBarItems = [
@@ -192,6 +231,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.structureSubscription?.unsubscribe();
     this.mustRechargeSubscription?.unsubscribe();
     this.confirmedFiltersSubscription?.unsubscribe();
+    this.viewModeSubscription?.unsubscribe();
   }
 
   ngDoCheck() {
@@ -256,7 +296,9 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   buildDataset(data: Appointment[]){
     this.treeDataset = this.groupByAttributes(data, this.informationGroup.groupAttributes);
-    //Cosntruir los objetos que se tienen en cuenta en la comparación
+    this.initChartGroupFilters();
+    this.chartInformation = this.buildBarChartInformation(data, 'vigencia.nombre', 'alcance.nombre');
+    //Construir los objetos que se tienen en cuenta en la comparación
     const list = Array.from(
       data.reduce((map, item) => {
         if (!map.has(item[this.informationGroup.comparisonAtrribute.comparisonKey])) {
@@ -438,6 +480,94 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     return Number(input) || 0
   }
 
+  onViewChange(event: "list" | "chart") {
+    this.store.dispatch(AppointmentActions.setViewMode({viewMode: event}));
+    this.partialAmmount = this.globalAmount;
+    this.initChartGroupFilters();
+  }
+  
+  private initChartGroupFilters(){
+    this.chartGroupFilters = {scopes: [], levels: [], salaryScales: []};
+  }
+
+  private updatePartialAmmount(){
+    let sumOfRemovedScopes = this.chartInformation.datasets
+      .filter(e => this.chartGroupFilters.scopes.includes(e.label))
+      .reduce((sum, e) => sum + e.data.reduce((acc, o) => acc + o), 0);
+
+    let sumOfRemovedLevels = this.chartInformation.chartDetail?.datasets
+      .filter(e => this.chartGroupFilters.levels.includes(e.label))
+      .reduce((sum, e) => sum + e.data.reduce((acc, o) => acc + o), 0) || 0;
+
+    let sumOfRemovedSalaryScales = this.chartInformation.chartDetail?.chartDetail?.labels
+      .map((e, index) => ({label: e, index: index}))
+      .filter(e => this.chartGroupFilters.salaryScales.includes(e.label))
+      .reduce((sum, e) => sum + this.chartInformation.chartDetail?.chartDetail.data[e.index], 0) || 0;
+
+    this.partialAmmount = this.globalAmount - (sumOfRemovedScopes + sumOfRemovedLevels + sumOfRemovedSalaryScales);
+  }
+
+  onClickOnScopeAndValidityLegend(data: { originalEvent: Event; datasetIndex: number; hidden: boolean }): void {
+    const dataset = this.chartInformation.datasets[data.datasetIndex];
+    this.chartGroupFilters.scopes = data.hidden 
+                                    ? [...this.chartGroupFilters.scopes, dataset.label]
+                                    : this.chartGroupFilters.scopes.filter(item => item !== dataset.label);
+  
+    if(this.chartFilters.scope == dataset.label){
+      this.chartInformation.chartDetail = null;
+      this.chartGroupFilters.levels = [];
+    }
+    this.updatePartialAmmount();
+  } 
+
+  onClickOnStructureAndLevelLegend(data: { originalEvent: Event; datasetIndex: number; hidden: boolean }): void {
+    const { chartDetail } = this.chartInformation;
+    const dataset = chartDetail.datasets[data.datasetIndex];
+    this.chartGroupFilters.levels = data.hidden 
+                                    ? [...this.chartGroupFilters.levels, dataset.label]
+                                    : this.chartGroupFilters.levels.filter(item => item !== dataset.label);
+  
+    if(this.chartFilters.level == dataset.label){
+      chartDetail.chartDetail = null;
+      this.chartGroupFilters.salaryScales = [];
+    }
+    this.updatePartialAmmount();
+  }
+
+  onClickOnSalaryScaleLegend(data: { originalEvent: Event; index: number; hidden: boolean }): void {
+    const { chartDetail } = this.chartInformation.chartDetail;
+    const label = chartDetail.labels[data.index];
+    this.chartGroupFilters.salaryScales = data.hidden 
+                                    ? [...this.chartGroupFilters.salaryScales, label]
+                                    : this.chartGroupFilters.salaryScales.filter(item => item !== label);
+    this.updatePartialAmmount();
+  }
+
+  onClickOnScopeAndValidityBar(data: {originalEvent: Event, datasetIndex: number, dataIndex: number}){    
+    const dataset = this.chartInformation.datasets[data.datasetIndex];
+    const label = this.chartInformation.labels[data.dataIndex];
+    this.chartFilters = {scope: dataset.label,  validity: label}
+    const filtered = this.appointments.filter(e => e.alcance.nombre == this.chartFilters.scope && e.vigencia.nombre == this.chartFilters.validity);
+    let chartDetail = this.buildBarChartInformation(filtered, 'estructura.nombre', 'nivel.nombre');
+    this.chartInformation.chartDetail = chartDetail;
+  }
+
+  onClickOnStructureAndLevelBar(data: { originalEvent: any; datasetIndex: number; dataIndex: number }): void {
+    const { chartDetail } = this.chartInformation;
+    const dataset = chartDetail.datasets[data.datasetIndex];
+    const label = chartDetail.labels[data.dataIndex];
+    this.chartFilters = {...this.chartFilters, level: dataset.label, structure: label };
+    const { scope, validity, structure, level } = this.chartFilters;
+    const filtered = this.appointments.filter(e => 
+        e.alcance.nombre === scope &&
+        e.vigencia.nombre === validity &&
+        e.estructura.nombre === structure &&
+        e.nivel.nombre === level
+    );
+    chartDetail.chartDetail = this.buildPolarChartInformation(filtered, 'escalaSalarial.nombre', 'nivel.nombre');
+  }
+  
+
   private isObjectEmpty(obj) {
     return Object.values(obj).every(value =>
         value === null ||
@@ -493,12 +623,12 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
         if (level >= groupKeys.length) return [];
 
         const result = [];
+        let index = 0;
         for (const key in grouped) {
             const children = buildTree(
                 groupRecursively(grouped[key], level + 1),
                 level + 1
             );
-
             const comparisonsPercomparisonKey = new Map();
             grouped[key].forEach(obj => {
               const key = obj[comparisonAtrribute.comparisonKey];
@@ -518,22 +648,70 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
                   ... (groupValues[level] != null ? grouped[key][0][groupValues[level]] :  grouped[key][0]),
                   items: grouped[key] as Appointment[],
                   isLastGroup: level == groupKeys.length - 1,
+                  isFirstGroup: level == 0,
                   total: grouped[key].length,
-                  comparisonsPercomparisonKey: Object.fromEntries(comparisonsPercomparisonKey)
+                  index: index,
+                  comparisonsPercomparisonKey: Object.fromEntries(comparisonsPercomparisonKey),
+                  asignacionTotal:  Array.from(comparisonsPercomparisonKey.values()).reduce((sum, value) => sum + value.asignacionTotal, 0)
                 },
                 children: children,
-                expanded: expandedNodes.includes(types[level] + '|' + key),
-                resume: (grouped[key] as Appointment[]).reduce((acc, e) => {
-                  acc.totalCargos += e.totalCargos;
-                  acc.asignacionTotal += e.asignacionTotal;
-                  return acc;
-                }, { totalCargos: 0, asignacionTotal: 0 })
+                expanded: expandedNodes.includes(types[level] + '|' + key)
             });
+            index++;
         }
         return result;
     }
     const grouped = groupRecursively(list);
-    return buildTree(grouped);
+    const tree = buildTree(grouped);
+    this.globalAmount = tree.reduce((sum, value) => sum + value.data.asignacionTotal, 0);
+    this.partialAmmount = this.globalAmount;
+    return tree;
+  }
+
+  private buildBarChartInformation(list: Appointment[], att1: string, att2: string): ChartInformation {
+    const grouped = list.reduce((acc, item) => {
+      const {asignacionTotal, totalCargos } = item;
+      const prop1: string = this.getNestedProperty(item, att1); 
+      const prop2: string = this.getNestedProperty(item, att2); 
+      if (!acc[prop1]) {
+        acc[prop1] = {};
+      }
+      acc[prop1][prop2] = (acc[prop1][prop2] || 0 ) + asignacionTotal * totalCargos;
+      return acc;
+    }, {});
+  
+    const labels = Object.keys(grouped);
+    const keys = new Set(list.map((item) => this.getNestedProperty(item, att2)));
+    const datasets = Array.from(keys).map((group2, index) => ({
+      label: group2,
+      data: labels.map((group1) => grouped[group1]?.[group2] || 0),
+      backgroundColor: this.colors[index],
+      borderColor: this.colors[index],
+      borderSkipped: false,
+      tension: 0
+    }));
+    return { labels, datasets };
+  }
+
+  /**
+   * Construye el dataset requerido para pintar el detalle más profundo de las gráficas.
+   * @param list: Lista de asignaciones de cargos.
+   * @param att1: Atributo por el que se agrupa la data en la gráfica.
+   * @param optionalAtt: Se utiliza cuando no hay información para el attr1, 
+   *                     por ejemplo, si no tiene escala salarial, use en su lugar el nivel ocupacional.
+   * @returns: Información reuqrida para pintar la gráfica.
+   */
+  private buildPolarChartInformation(list: Appointment[], att1: string, optionalAtt: string): ChartInformation {
+    const grouped = list.reduce((acc, item) => {
+      const {asignacionTotal, totalCargos } = item;
+      const prop1: string = this.getNestedProperty(item, att1) || this.getNestedProperty(item, optionalAtt); 
+      acc[prop1] = (acc[prop1] || 0 ) + asignacionTotal * totalCargos;
+      return acc;
+    }, {});
+  
+    const labels = Object.keys(grouped);
+    const data = labels.map((group1) => grouped[group1] || 0)
+    return { labels, data };
   }
 
   private download(data: any) {

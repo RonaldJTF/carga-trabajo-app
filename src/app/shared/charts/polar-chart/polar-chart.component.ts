@@ -1,4 +1,5 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import { ChartEvent } from 'chart.js/dist/core/core.interaction';
 
 @Component({
   selector: 'app-polar-chart',
@@ -8,6 +9,10 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 export class PolarChartComponent implements OnChanges {
   @Input() labels: string[];
   @Input() data: number[];
+  @Input() title: string;
+  @Input() subtitle: string;
+  @Input() datasetLabel: string = 'Total';
+  @Output() onClickOnLegend: EventEmitter<{originalEvent: Event, index: number, hidden: boolean}> = new EventEmitter<{originalEvent: Event, index: number, hidden: boolean}>();
 
   polarData: any;
   polarOptions: any;
@@ -18,6 +23,7 @@ export class PolarChartComponent implements OnChanges {
 
   initChart() {
     const documentStyle = getComputedStyle(document.documentElement);
+    const surfaceColor = documentStyle.getPropertyValue('--surface-500');
     const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
@@ -41,7 +47,7 @@ export class PolarChartComponent implements OnChanges {
             documentStyle.getPropertyValue('--bluegray-500'),
           ]
         ,
-        label: 'Personas'
+        label: this.datasetLabel
       }],
       labels: this.labels
     };
@@ -57,6 +63,16 @@ export class PolarChartComponent implements OnChanges {
           },
           onHover: this.handleHover,
           onLeave: this.handleLeave,
+          onClick: (event, item, legend) => this.handleClickOnLegend(event, item, legend),
+        },
+        title: {
+          display: this.title != null && this.title != undefined && this.title.trim(),
+          text: this.title
+        },
+        subtitle: {
+          display: this.subtitle != null && this.subtitle != undefined && this.subtitle.trim(),
+          text: this.subtitle,
+          color: surfaceColor,
         }
       },
       scales: {
@@ -81,5 +97,13 @@ export class PolarChartComponent implements OnChanges {
       colors[index] = color.length === 9 ? color.slice(0, -2) : color;
     });
     legend.chart.update();
+  }
+
+  handleClickOnLegend(event: ChartEvent, legendItem: any, legend: any){
+    const chart = legend.chart;
+    const index = legendItem.index;
+    chart.toggleDataVisibility(index);
+    chart.update();
+    this.onClickOnLegend.emit({originalEvent: event.native, index: index, hidden: !legendItem.hidden});
   }
 }

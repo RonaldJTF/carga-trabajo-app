@@ -73,7 +73,7 @@ export class ListComponent implements OnInit, OnDestroy{
   ];
 
   timeStatisticsLevels: string[];
-  timeStatisticsTotalTimeByLevel: string[];
+  timeStatisticsTotalTimeByLevelDatasets: any[] = [];
   timeStatisticsTotalStaff: number[];
   timeStatisticsSummarize: any = {};
   timeStatisticsStructure: Structure;
@@ -116,11 +116,22 @@ export class ListComponent implements OnInit, OnDestroy{
     this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
 
     this.menuBarItems = [
-      {label: 'Reportes', icon: 'pi pi-fw pi-file', visible: this.isSuperAdmin, items: this.menuItemsOfDownload},
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload},
       {label: 'Más', icon: 'pi pi-cog',
         items: [
           {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments()}
         ]
+      }
+    ];
+
+    const documentStyle = getComputedStyle(document.documentElement);
+    this.timeStatisticsTotalTimeByLevelDatasets = [
+      {
+        label: 'Total de horas',
+        backgroundColor: documentStyle.getPropertyValue('--primary-500'),
+        borderColor: documentStyle.getPropertyValue('--primary-500'),
+        tension: 0,
+        data: null
       }
     ];
   }
@@ -166,16 +177,15 @@ export class ListComponent implements OnInit, OnDestroy{
     if(!structure){
       return [];
     }
-    const extraMenuItemsOfDependency = [];
+    let extraMenuItemsOfDependency = [];
     let extraMenuItemOfActions = [];
     let generalMenuItem = [];
     const isDependency = Methods.parseStringToBoolean(structure.tipologia?.esDependencia);
 
     extraMenuItemsOfDependency.push({label: 'Ver', icon: `pi pi-eye`, visible: isDependency, data:structure, command: (e) => this.viewDependency(e.item.data)})
     extraMenuItemsOfDependency.push(
-      {label: 'Descargar', icon: 'pi pi-cloud-download', visible: this.isSuperAdmin, items: [
+      {label: 'Descargar', icon: 'pi pi-cloud-download', items: [
         {label: 'Estadística de tiempos', icon: 'pi pi-file-pdf', automationId:"time-statistics-pdf", command: (e) => { this.download(e, structure.id) }},
-        {separator: true},
         {label: 'Reporte de tiempos en PDF', icon: 'pi pi-file-pdf', visible:isDependency, automationId:"pdf", command: (e) => { this.download(e, structure.id) }},
         {label: 'Reporte de tiempos en Excel', icon: 'pi pi-file-excel', visible:isDependency, automationId:"excel", command: (e) => { this.download(e, structure.id) }},
       ]}
@@ -407,6 +417,7 @@ export class ListComponent implements OnInit, OnDestroy{
   download(data: any, idStructure?: number) {
     const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
       if (menuItem) {
+        menuItem.label = label;
         menuItem.icon = icon;
         menuItem.disabled = disabled;
         menuItem.label = label;
@@ -543,7 +554,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.statisticsService.getTimeStatistics(structure.id).subscribe({
       next: (data) => {
         this.timeStatisticsLevels = data?.map((item: any) => item.nivel);
-        this.timeStatisticsTotalTimeByLevel = data.map(item => item.tiempoTotal);
+        this.timeStatisticsTotalTimeByLevelDatasets[0]['data'] = data.map(item => item.tiempoTotal);
         this.timeStatisticsTotalStaff = data.map(item => item.personalTotal);
         this.loadingTimeStatistics = false;
 

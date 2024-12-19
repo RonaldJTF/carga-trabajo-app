@@ -75,7 +75,7 @@
                                     <p-badge *ngIf="parseStringToBoolean(variable.primaria)" value="P" severity="success" pTooltip="Primaria" tooltipPosition="bottom" styleClass="m-1"></p-badge>
                                     <p-badge *ngIf="parseStringToBoolean(variable.global)" value="G" severity="warning" pTooltip="Global" tooltipPosition="bottom" styleClass="m-1"></p-badge>
                                 </div>
-                                <app-menu-item [menuItems]="parseStringToBoolean(variable.primaria) ? menuItemsOfPrimaryVariable : menuItemsOfVariable" [id]="variable.id" [value]="variable"></app-menu-item>
+                                <app-menu-item *ngIf="isAdmin" [menuItems]="parseStringToBoolean(variable.primaria) ? menuItemsOfPrimaryVariable : menuItemsOfVariable" [id]="variable.id" [value]="variable"></app-menu-item>
                             </div>
                         </td>
                     </tr>

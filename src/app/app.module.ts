@@ -63,7 +63,7 @@ import { levelCompensationReducer } from '@store/levelCompensation.reducer';
 @NgModule({
   declarations: [
     AppComponent,
-    NotFoundComponent
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,

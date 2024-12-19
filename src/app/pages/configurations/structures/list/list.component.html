@@ -264,11 +264,11 @@
 
             <div class="col-12 lg:col-6">
                 <div class="text-500 text-center text-500 mb-2">Horas requeridas por nivel ocupacional</div>
-                <app-bar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalTimeByLevel"></app-bar-chart>
+                <app-bar-chart [labels]="timeStatisticsLevels" [datasets]="timeStatisticsTotalTimeByLevelDatasets" yAxisTitle="Horas"></app-bar-chart>
             </div>
             <div class="col-12 lg:col-6">
                 <div class="text-500 text-center text-500 mb-2">Personal requerido por nivel ocupacional</div>
-                <app-polar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalStaff"></app-polar-chart>
+                <app-polar-chart [labels]="timeStatisticsLevels" [data]="timeStatisticsTotalStaff" datasetLabel="Personas"></app-polar-chart>
             </div>
         </div>
         <ng-template #sLoadingTimeStatistics>

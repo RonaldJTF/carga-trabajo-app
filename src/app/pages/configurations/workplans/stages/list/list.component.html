@@ -119,7 +119,7 @@
                     <i class="pi pi-search"></i>
                     <input type="search" pInputText placeholder="Buscar" (input)="onFilterTask($event)"/>
                   </span>
-                  <p-selectButton styleClass="mb-2" [options]="viewOptions" [(ngModel)]="viewMode" (ngModelChange)="onTemplateChange($event)">
+                  <p-selectButton styleClass="mb-2" [options]="viewOptions" [(ngModel)]="viewMode" (ngModelChange)="onViewChange($event)">
                     <ng-template let-item pTemplate>
                       <i [class]="item.icon" [pTooltip]="item.tooltip" tooltipPosition="bottom"></i>
                     </ng-template>
