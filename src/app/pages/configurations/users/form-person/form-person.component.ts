@@ -11,6 +11,7 @@ import {
   PersonService,
   UrlService
 } from '@services';
+import {IMAGE_SIZE, ROLE_ICON} from "@utils";
 
 @Component({
   selector: 'app-form-person',
@@ -20,6 +21,8 @@ import {
 export class FormPersonComponent implements OnInit {
 
   protected readonly MESSAGE = MESSAGE;
+  protected readonly IMAGE_SIZE = IMAGE_SIZE;
+  protected  readonly ROLE_ICON = ROLE_ICON;
 
   @Input() submitted: boolean;
 
@@ -303,5 +306,9 @@ export class FormPersonComponent implements OnInit {
       return { 'whitespace': true };
     }
     return null;
+  }
+
+  getRoleIcon(role: string): string {
+    return ROLE_ICON[role] || 'pi pi-user';
   }
 }

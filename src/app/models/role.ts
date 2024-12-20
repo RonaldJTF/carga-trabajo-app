@@ -1,5 +1,5 @@
 export class Role {
   id!: number;
   nombre!: string;
-  codigo!: number;
+  codigo!: string;
 }

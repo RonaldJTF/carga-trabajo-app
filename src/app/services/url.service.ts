@@ -33,7 +33,7 @@ export class UrlService {
   }
 
   goBack() {
-    this.router.navigate([this.previousUrl], {
+    this.router.navigate([decodeURIComponent(this.previousUrl)], {
       skipLocationChange: true
     }).then();
   }

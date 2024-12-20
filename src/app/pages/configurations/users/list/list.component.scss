@@ -1,13 +1,13 @@
 ._badge-container {
     position: relative;
-    display: inline-block; 
+    display: inline-block;
 }
 
 ._badge {
     cursor: pointer;
     position: absolute;
     top: -8px;
-    right: -8px; 
+    right: -8px;
     background-color: var(--primary-color);;
     color: white;
     border-radius: 50%;
@@ -25,4 +25,39 @@
 :host ::ng-deep .p-paginator{
     border: none;
     padding-bottom: 0px;
+}
+
+._image-container {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    vertical-align: middle;
+    width: 100%;
+    object-fit: contain;
+  }
+}
+._card-background {
+  height: 150px;
+  background: linear-gradient(to bottom, var(--primary-300), #ffffff00);
+  border-top-left-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+._profile-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-bottom-left-radius: 0.75rem;
+  border-top-width: 0;
+  width: 100%;
+  padding: 1.5rem;
+  text-align: center;
 }

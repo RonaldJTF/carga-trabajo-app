@@ -126,8 +126,7 @@ export class NewPasswordComponent implements OnInit, OnDestroy {
   }
 
   get passwordsMismatch() {
-    return this.formNewPasswordUser.hasError('passwordsMismatch') &&
-      this.formNewPasswordUser.get('confirmPassword')?.touched;
+    return this.formNewPasswordUser.hasError('passwordsMismatch') && this.formNewPasswordUser.get('confirmPassword')?.touched;
   }
 
   getPerson() {

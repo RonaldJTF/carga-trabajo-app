@@ -12,15 +12,11 @@ export const CHART_SIZE = {
   EXTRA_LARGE: 200,
 }
 
-export const TYPE_OF_QUESTION = {
-  RESPUESTA_CORTA: 'RESPUESTA_CORTA',
-  PARRAFO: 'PARRAFO',
-  MULTIPLE_SELECCION: 'MULTIPLE_SELECCION',
-  UNICA_SELECCION: 'UNICA_SELECCION',
-  ARCHIVO: 'ARCHIVO',
-  FECHA: 'FECHA',
-  HORA: 'HORA',
-  ESCALA: 'ESCALA'
+export const ROLE_ICON: { [key: string]: string } = {
+  ROLE_OPERADOR: 'pi pi-search',
+  ROLE_ADMINISTRADOR: 'pi pi-cog',
+  ROLE_SUPERADMINISTRADOR: 'pi pi-shield',
+  ROLE_DESARROLLADOR: 'pi pi-code'
 }
 
 export const ICON_GENERAL_FILE: string = 'general_file.png';
@@ -110,7 +106,7 @@ export const MIMETYPE_TO_EXTENSION: any = {
   'text/xml': 'xml',
   'application/xml': 'xml',
   'text/markdown': 'md',
-  
+
   // Imágenes
   'image/jpeg': 'jpg',
   'image/png': 'png',
@@ -131,7 +127,7 @@ export const MIMETYPE_TO_EXTENSION: any = {
   'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
   'application/vnd.oasis.opendocument.text': 'odt',
   'application/vnd.oasis.opendocument.spreadsheet': 'ods',
-  
+
   // Archivos comprimidos
   'application/zip': 'zip',
   'application/x-zip-compressed': 'zip',
@@ -140,7 +136,7 @@ export const MIMETYPE_TO_EXTENSION: any = {
   'application/x-compressed': 'rar',
   'application/x-tar': 'tar',
   'application/x-7z-compressed': '7z',
-  
+
   // Multimedia
   'audio/mpeg': 'mp3',
   'audio/wav': 'wav',
@@ -153,15 +149,15 @@ export const MIMETYPE_TO_EXTENSION: any = {
   'video/webm': 'webm',
 
   // Otros
-  'application/octet-stream': 'bin', 
-  'application/x-www-form-urlencoded': null, 
+  'application/octet-stream': 'bin',
+  'application/x-www-form-urlencoded': null,
   'application/x-shockwave-flash': 'swf',
   'application/x-font-ttf': 'ttf',
   'application/x-font-opentype': 'otf',
   'application/x-font-woff': 'woff',
   'application/x-font-woff2': 'woff2',
   'application/x-javascript': 'js',
-  
+
   // Archivos de configuración
   'application/config': 'config',
   'application/x-env': 'env',

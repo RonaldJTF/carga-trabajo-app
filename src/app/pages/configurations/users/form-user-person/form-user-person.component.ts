@@ -3,17 +3,11 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {SelectItem} from 'primeng/api';
 import {OverlayPanel} from 'primeng/overlaypanel';
-import {IMAGE_SIZE, Methods} from "@utils";
+import {IMAGE_SIZE, Methods, ROLE_ICON} from "@utils";
 import {MESSAGE} from "@labels/labels";
 import {CryptojsService, PersonService, UrlService, UserService} from "@services";
 import {Person, Role, User} from "@models";
-
-const roleIconMap: { [key: string]: string } = {
-  ROLE_OPERADOR: 'pi pi-search',
-  ROLE_ADMINISTRADOR: 'pi pi-cog',
-  ROLE_SUPERADMINISTRADOR: 'pi pi-shield',
-  ROLE_DESARROLLADOR: 'pi pi-code'
-};
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-form-user-person',
@@ -23,6 +17,7 @@ const roleIconMap: { [key: string]: string } = {
 export class FormUserPersonComponent implements OnInit {
   MESSAGE = MESSAGE;
   IMAGE_SIZE = IMAGE_SIZE;
+  ROLE_ICON = ROLE_ICON;
 
   @ViewChild('rolOptionsOverlayPanel') rolOptionsOverlayPanel: OverlayPanel;
 
@@ -41,11 +36,6 @@ export class FormUserPersonComponent implements OnInit {
   updateMode: boolean = false;
 
   deleting: boolean = false;
-
-  stateOptions: any[] = [
-    {label: 'Inactivo', value: false},
-    {label: 'Activo', value: true}
-  ];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -176,41 +166,41 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   updateUser(id: number, payload: any): void {
-    this.userService.update(id, payload).subscribe({
+    this.userService.update(id, payload).pipe(
+      finalize(() => {
+        this.creatingOrUpdating = false;
+      })
+    ).subscribe({
       next: () => {
         this.urlService.goBack();
-        this.creatingOrUpdating = false;
-      },
-      error: () => {
-        this.creatingOrUpdating = false;
-      },
+      }
     });
   }
 
   createUser(payload: any): void {
-    this.userService.create(payload).subscribe({
+    this.userService.create(payload).pipe(
+      finalize(() => {
+        this.creatingOrUpdating = false;
+      })
+    ).subscribe({
       next: () => {
         this.formUser.reset();
         this.urlService.goBack();
-        this.creatingOrUpdating = false;
-      },
-      error: () => {
-        this.creatingOrUpdating = false;
-      },
+      }
     });
   }
 
   onDeleteUserPerson(event: Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.userService.delete(this.person.usuario.id).subscribe({
+    this.userService.delete(this.person.usuario.id).pipe(
+      finalize(() => {
+        this.deleting = false;
+      })
+    ).subscribe({
       next: () => {
         this.urlService.goBack();
-        this.deleting = false;
-      },
-      error: () => {
-        this.deleting = false;
-      },
+      }
     });
   }
 
@@ -221,11 +211,7 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   onValidacionCredenciales(person: Person): void {
-    if (person.usuario) {
-      this.removeValidateRequiredUser();
-    } else {
-      this.addValidateRequiredUser();
-    }
+    person.usuario ? this.removeValidateRequiredUser() : this.addValidateRequiredUser()
   }
 
   addValidateRequiredUser(): void {
@@ -262,6 +248,6 @@ export class FormUserPersonComponent implements OnInit {
   }
 
   getRoleIcon(role: string): string {
-    return roleIconMap[role] || 'pi pi-user';
+    return ROLE_ICON[role] || 'pi pi-user';
   }
 }

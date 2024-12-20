@@ -112,20 +112,63 @@
     </div>
   </div>
 
-  <div class="flex flex-column align-items-center text-center">
-    <div class="mb-3" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; ">
-      <img [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="vertical-align: middle; width: 100%; height: auto;" alt=""/>
+  <div class="grid grid-nogutter">
+    <div class="border-round-left-xl border-1 surface-border col-5">
+      <div class="_card-background"></div>
+      <div class="_profile-card">
+        <div class="mb-3 _image-container" style="margin-top: -100px">
+          <img id="avatarPerson" [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"/>
+        </div>
+        <span *ngIf="person.primerNombre" class="font-bold text-primary-500">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
+        <span *ngIf="person.documento" class="text-500"><span>{{ person.tipoDocumento?.abreviatura }}:</span> {{ person.documento }}</span>
+      </div>
     </div>
-    <span class="font-bold">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
-    <span>{{ person.tipoDocumento?.abreviatura }}: {{ person.documento }}</span>
-    <span *ngIf="person.correo"><span class="text-500">Correo: </span>{{ person.correo | lowercase }}</span>
-    <span *ngIf="person.telefono"><span class="text-500">Teléfono: </span>{{ person.telefono }}</span>
-    <span *ngIf="person.genero"><span class="text-500">Género: </span>{{ person.genero.nombre }}</span>
-  </div>
-  <div *ngIf="person.usuario?.roles.length" class="w-full flex flex-column border-round-xl text-center surface-100 py-2  mt-2">
-    <span class="text-700 font-medium">
-      <span *ngFor="let rol of person.usuario.roles; let index = index">{{ rol.nombre }}{{ index < person.usuario.roles.length - 1 ? ', ' : '' }}</span>
-    </span>
-    <span class="text-500 text-sm">Roles de acceso</span>
+    <div class="border-round-right-xl border-left-none border-1 surface-border col-7 p-4">
+      <div *ngIf="person.id" class="flex mr-auto mt-4 mb-3">
+        <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
+          <i class="pi pi-info-circle text-primary-500 text-xl"></i>
+        </div>
+        <div class="flex flex-column ml-2 text-left">
+          <span>Información</span>
+          <span class="text-500 text-sm">Detalles personales y de contacto</span>
+        </div>
+      </div>
+      <div *ngIf="person.correo" class="mr-auto ml-4 mb-2 flex align-items-center">
+        <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
+          <i class="pi pi-envelope text-500"></i>
+        </div>
+        <span class="ml-2 text-500">{{ person.correo | lowercase }}</span>
+      </div>
+      <div *ngIf="person.telefono" class="mr-auto ml-4 mb-2 flex align-items-center">
+        <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
+          <i class="pi pi-phone text-500"></i>
+        </div>
+        <span class="ml-2 text-500">{{ person.telefono }}</span>
+      </div>
+      <div *ngIf="person.genero" class="mr-auto ml-4 flex align-items-center">
+        <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
+          <i class="pi pi-circle text-500"></i>
+        </div>
+        <span class="ml-2 text-500">{{ person.genero.nombre }}</span>
+      </div>
+      <div *ngIf="person.id" class="flex mr-auto mt-4 mb-3">
+        <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
+          <i class="pi pi-key text-primary-500 text-xl"></i>
+        </div>
+        <div class="flex flex-column ml-2 text-left">
+          <span>Roles de acceso</span>
+          <span class="text-500 text-sm">Roles de acceso en el aplicativo</span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="person.id">
+        <div *ngIf="person.usuario?.roles?.length else sNoRoles" class="flex flex-wrap align-items-center justify-content-center">
+          <p-chip *ngFor="let rol of person.usuario.roles" label="{{rol.nombre}}" icon="{{getRoleIcon(rol.codigo)}}" styleClass="m-1 text-500 surface-100"></p-chip>
+        </div>
+        <ng-template #sNoRoles>
+          <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM" [message]="MESSAGE.NO_REGISTROS"></app-no-result>
+        </ng-template>
+      </ng-container>
+    </div>
   </div>
 </ng-template>

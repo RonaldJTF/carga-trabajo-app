@@ -1,16 +1,57 @@
 ._button-container {
-    position: relative;
-    display: inline-block; 
+  position: relative;
+  display: inline-block;
 }
 
 ._button-icon {
-    position: absolute;
-    top: -5px;
-    right: -20px; 
-    padding: 3px 8px;
-    z-index: 1;
+  position: absolute;
+  top: -5px;
+  right: -20px;
+  padding: 3px 8px;
+  z-index: 1;
 }
 
-::ng-deep  .p-listbox-empty-message{
-    text-align: center;
+::ng-deep .p-listbox-empty-message {
+  text-align: center;
+}
+
+._card-background {
+  height: 75px;
+  background: linear-gradient(to bottom, var(--primary-300), #ffffff00);
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  border: 1px solid var(--surface-border);
+  border-bottom-width: 0;
+  padding: 1.5rem;
+}
+
+._profile-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid var(--surface-border);
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  border-top-width: 0;
+  width: 100%;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+._image-container {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    vertical-align: middle;
+    width: 100%;
+    object-fit: contain;
+  }
 }

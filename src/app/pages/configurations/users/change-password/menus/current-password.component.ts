@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {finalize, Subscription} from "rxjs";
 import {User} from "@models";
-import {ChangePasswordService, ToastService, UserService} from "@services";
+import {ChangePasswordService, ToastService, UrlService, UserService} from "@services";
 
 @Component({
   template: `
@@ -64,7 +64,7 @@ export class CurrentPasswordComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private changePasswordService: ChangePasswordService,
-    private toastService: ToastService,
+    private toastService: ToastService
   ) {
   }
 
@@ -108,7 +108,7 @@ export class CurrentPasswordComponent implements OnInit, OnDestroy {
     event.preventDefault();
     this.formConfirmPasswordUser.reset();
     this.updateMode = false;
-    this.router.navigate([this.changePasswordService.getPreviousUrl()], {
+    this.router.navigate([decodeURIComponent(this.changePasswordService.getPreviousUrl())], {
       skipLocationChange: true,
     }).then();
   }
