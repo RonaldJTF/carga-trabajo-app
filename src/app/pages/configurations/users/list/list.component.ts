@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Table} from 'primeng/table';
 import {MenuItem} from 'primeng/api';
 import {Router} from '@angular/router';
-import {IMAGE_SIZE, ROLE_ICON} from "@utils";
+import {IMAGE_SIZE, Methods, ROLE_ICON} from "@utils";
 import {MESSAGE} from "@labels/labels";
 import {Person} from "@models";
 import {ConfirmationDialogService, CryptojsService, PersonService} from '@services';
@@ -118,5 +118,9 @@ export class ListComponent implements OnInit{
 
   getRoleIcon(role: string): string {
     return ROLE_ICON[role] || 'pi pi-user';
+  }
+
+  parseStringToBoolean(input: string): boolean{
+    return Methods.parseStringToBoolean(input);
   }
 }

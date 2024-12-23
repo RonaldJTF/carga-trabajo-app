@@ -348,6 +348,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   onFilter(treeTable: TreeTable, event: Event) {
     treeTable.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    this.initChartGroupFilters();
   }
 
   openNew() {

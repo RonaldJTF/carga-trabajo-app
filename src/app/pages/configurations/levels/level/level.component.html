@@ -1,6 +1,6 @@
 
 <form *ngIf="!loadingLevel else sLoadingLevel" class="p-0" [formGroup]="formLevel">
-    <div class="field p-fluid mb-5">
+    <div class="field p-fluid">
         <label htmlFor="descripcion" class="font-medium">Nombre</label>
         <input pInputText id="descripcion" type="text" aria-describedby="text-help" formControlName="descripcion"/>
         <div *ngIf="formLevel.controls['descripcion'].errors && (formLevel.controls['descripcion'].touched||formLevel.controls['descripcion'].dirty)">
@@ -10,7 +10,7 @@
         </div>
     </div>
   
-    <p-divider layout="horizontal" align="center" class="w-full">
+    <p-divider layout="horizontal" align="center" styleClass="mt-5">
         <span class="text-500">Escalas salariales</span>
     </p-divider>
 

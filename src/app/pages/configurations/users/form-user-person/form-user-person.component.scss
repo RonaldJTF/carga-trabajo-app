@@ -11,34 +11,6 @@
   z-index: 1;
 }
 
-::ng-deep .p-listbox-empty-message {
-  text-align: center;
-}
-
-._card-background {
-  height: 75px;
-  background: linear-gradient(to bottom, var(--primary-300), #ffffff00);
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
-  border: 1px solid var(--surface-border);
-  border-bottom-width: 0;
-  padding: 1.5rem;
-}
-
-._profile-card {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  border: 1px solid var(--surface-border);
-  border-bottom-left-radius: 0.75rem;
-  border-bottom-right-radius: 0.75rem;
-  border-top-width: 0;
-  width: 100%;
-  padding: 1.5rem;
-  text-align: center;
-}
-
 ._image-container {
   width: 100px;
   height: 100px;
@@ -54,4 +26,21 @@
     width: 100%;
     object-fit: contain;
   }
+}
+
+._profile-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid var(--surface-border);
+  border-radius: 0.75rem;
+  width: 100%;
+  padding: 1.5rem;
+  text-align: center;
+  background: linear-gradient(to bottom, var(--primary-300), #ffffff00 85px);
+}
+
+::ng-deep .p-listbox-empty-message {
+  text-align: center;
 }

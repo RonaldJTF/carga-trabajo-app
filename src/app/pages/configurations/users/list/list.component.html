@@ -113,18 +113,15 @@
   </div>
 
   <div class="grid grid-nogutter">
-    <div class="border-round-left-xl border-1 surface-border col-5">
-      <div class="_card-background"></div>
-      <div class="_profile-card">
-        <div class="mb-3 _image-container" style="margin-top: -100px">
+    <div class="_profile-card col-5">
+        <div class="mb-3 _image-container">
           <img id="avatarPerson" [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"/>
         </div>
         <span *ngIf="person.primerNombre" class="font-bold text-primary-500">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
         <span *ngIf="person.documento" class="text-500"><span>{{ person.tipoDocumento?.abreviatura }}:</span> {{ person.documento }}</span>
-      </div>
     </div>
     <div class="border-round-right-xl border-left-none border-1 surface-border col-7 p-4">
-      <div *ngIf="person.id" class="flex mr-auto mt-4 mb-3">
+      <div *ngIf="person.id" class="flex mr-auto my-3">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
           <i class="pi pi-info-circle text-primary-500 text-xl"></i>
         </div>
@@ -133,34 +130,35 @@
           <span class="text-500 text-sm">Detalles personales y de contacto</span>
         </div>
       </div>
-      <div *ngIf="person.correo" class="mr-auto ml-4 mb-2 flex align-items-center">
+      <div *ngIf="person.correo" class="mr-auto ml-4 my-2 flex align-items-center">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
           <i class="pi pi-envelope text-500"></i>
         </div>
         <span class="ml-2 text-500">{{ person.correo | lowercase }}</span>
       </div>
-      <div *ngIf="person.telefono" class="mr-auto ml-4 mb-2 flex align-items-center">
+      <div *ngIf="person.telefono" class="mr-auto ml-4 my-2 flex align-items-center">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
           <i class="pi pi-phone text-500"></i>
         </div>
         <span class="ml-2 text-500">{{ person.telefono }}</span>
       </div>
-      <div *ngIf="person.genero" class="mr-auto ml-4 flex align-items-center">
+      <div *ngIf="person.genero" class="mr-auto ml-4 my-2 flex align-items-center">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
           <i class="pi pi-circle text-500"></i>
         </div>
         <span class="ml-2 text-500">{{ person.genero.nombre }}</span>
       </div>
-      <div *ngIf="person.id" class="flex mr-auto mt-4 mb-3">
+      <div *ngIf="person.id" class="flex mr-auto my-3">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
           <i class="pi pi-key text-primary-500 text-xl"></i>
         </div>
-        <div class="flex flex-column ml-2 text-left">
+        <div class="flex flex-column mx-2 text-left">
           <span>Roles de acceso</span>
           <span class="text-500 text-sm">Roles de acceso en el aplicativo</span>
         </div>
+        <i *ngIf="person.usuario" class="pi font-medium text-xl ml-auto my-auto" pTooltip="Estado" tooltipPosition="bottom"
+          [ngClass]="{'pi-lock text-red-500': !parseStringToBoolean(person.usuario.activo), 'pi-lock-open text-green-500': parseStringToBoolean(person.usuario.activo)}"></i>
       </div>
-
       <ng-container *ngIf="person.id">
         <div *ngIf="person.usuario?.roles?.length else sNoRoles" class="flex flex-wrap align-items-center justify-content-center">
           <p-chip *ngFor="let rol of person.usuario.roles" label="{{rol.nombre}}" icon="{{getRoleIcon(rol.codigo)}}" styleClass="m-1 text-500 surface-100"></p-chip>

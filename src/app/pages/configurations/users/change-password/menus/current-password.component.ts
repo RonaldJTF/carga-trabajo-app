@@ -33,10 +33,10 @@ import {ChangePasswordService, ToastService, UrlService, UserService} from "@ser
         </div>
       </div>
       <div class=" flex flex-wrap justify-content-end m-0 p-0">
-        <!--<button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onCancelChangePassword($event)"
+        <button pButton pRipple icon="pi pi-times" class="p-button-secondary ml-2" (click)="onCancelChangePassword($event)"
                 [disabled]="creatingOrUpdating">
           <span class="hidden-xs p-button-label pl-2">Cancelar</span>
-        </button> -->
+        </button>
         <button pButton pRipple [icon]="creatingOrUpdating ? 'pi pi-spin pi-spinner m-0' : 'pi pi-send'"
                 class="p-button-success ml-2"
                 type="submit" (click)="nextPage()"

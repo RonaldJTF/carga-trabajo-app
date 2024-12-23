@@ -11,7 +11,7 @@ import {
   PersonService,
   UrlService
 } from '@services';
-import {IMAGE_SIZE, ROLE_ICON} from "@utils";
+import {IMAGE_SIZE, Methods, ROLE_ICON} from "@utils";
 
 @Component({
   selector: 'app-form-person',
@@ -29,10 +29,6 @@ export class FormPersonComponent implements OnInit {
   @Input() personDialog: boolean;
 
   person: Person = new Person();
-
-  personCopy: Person = new Person();
-
-  personId: number = null;
 
   param: string;
 
@@ -81,9 +77,8 @@ export class FormPersonComponent implements OnInit {
   getInitialValue() {
     this.route.params.subscribe((params) => {
       if (params['id'] != null) {
-        this.personId = this.cryptoService.decryptParamAsNumber(params['id']);
         this.updateMode = true;
-        this.getPerson(this.personId);
+        this.getPerson(this.cryptoService.decryptParamAsNumber(params['id']));
       }
     });
   }
@@ -176,7 +171,6 @@ export class FormPersonComponent implements OnInit {
       next: (data) => {
         this.person = data;
         if (this.person) {
-          this.personCopy = this.person;
           this.assignValuesToForm(this.person);
         }
       }
@@ -228,14 +222,14 @@ export class FormPersonComponent implements OnInit {
       this.formPerson.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      this.updateMode ? this.updatePerson(this.personId, this.formData) : this.createPerson(this.formData);
+      this.updateMode ? this.updatePerson(this.person.id, this.formData) : this.createPerson(this.formData);
     }
   }
 
   onDeletePerson(event: Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.personService.delete(this.personId).subscribe({
+    this.personService.delete(this.person.id).subscribe({
       next: () => {
         this.urlService.goBack();
         this.deleting = false;
@@ -310,5 +304,9 @@ export class FormPersonComponent implements OnInit {
 
   getRoleIcon(role: string): string {
     return ROLE_ICON[role] || 'pi pi-user';
+  }
+
+  parseStringToBoolean(input: string): boolean{
+    return Methods.parseStringToBoolean(input);
   }
 }

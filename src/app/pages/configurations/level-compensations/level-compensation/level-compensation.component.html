@@ -13,7 +13,7 @@
         <ng-container *ngTemplateOutlet="compensationOptionTemplate; context: {compensation: formLevelCompensation.get('compensacionLaboral').value}"></ng-container>
     </div>
 
-    <div class="field p-fluid mb-5">
+    <div class="field p-fluid">
         <label htmlFor="idEscalaSalarial"><span class="font-medium">Escala salarial</span><span> (opcional)</span></label>
         <p-dropdown *ngIf="!loadingSalaryScales else sLoadingSalaryScales"  id="idEscalaSalarial" inputId="idEscalaSalarial" [autoDisplayFirst]="false"
                     [options]="salaryScales" optionValue="id" optionLabel="nombre" [filter]="true"
@@ -29,7 +29,7 @@
         </ng-template>
     </div>
 
-    <p-divider layout="horizontal" align="center" class="w-full">
+    <p-divider layout="horizontal" align="center" styleClass="mt-5">
         <span class="text-500">Lista de valores aplicados por regla</span>
     </p-divider>
 

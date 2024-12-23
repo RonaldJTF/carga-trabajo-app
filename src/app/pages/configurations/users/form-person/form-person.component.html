@@ -1,12 +1,11 @@
 <div class="grid">
   <div class="col-12 xl:col-5">
-    <div class="_card-background"></div>
     <div class="_profile-card">
       <div class="_button-container">
-        <div class="mb-3 _image-container -mt-8">
-          <img id="avatarPerson" [src]="personCopy?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"/>
+        <div class="mb-3 _image-container">
+          <img id="avatarPerson" [src]="person?.srcFoto" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"/>
         </div>
-        <button pButton pRipple type="button" icon="pi pi-camera" class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Seleccionar foto" tooltipPosition="bottom">
+        <button pButton pRipple type="button" icon="pi pi-camera" class="p-button-rounded p-button-text p-button-info _button-icon" pTooltip="Subir foto" tooltipPosition="bottom">
           <input class="cursor-pointer" id="foto" type="file" #fileInput (change)="onFileSelect(fileInput)" style="z-index: 1000"/>
         </button>
       </div>
@@ -15,10 +14,10 @@
         <span (click)="previewFoto(null)" class="_badge" pTooltip="Click para cancelar"><i
           class="pi pi-times"></i></span>
       </div>
-      <span *ngIf="personCopy.primerNombre" class="font-bold text-primary-500">{{ (personCopy.primerNombre + ' ' + personCopy.segundoNombre + ' ' + personCopy.primerApellido + ' ' + personCopy.segundoApellido) | uppercase }}</span>
-      <span *ngIf="personCopy.documento" class="text-500"><span>{{ personCopy.tipoDocumento?.abreviatura }}:</span> {{ personCopy.documento }}</span>
+      <span *ngIf="person.primerNombre" class="font-bold text-primary-500">{{ (person.primerNombre + ' ' + person.segundoNombre + ' ' + person.primerApellido + ' ' + person.segundoApellido) | uppercase }}</span>
+      <span *ngIf="person.documento" class="text-500"><span>{{ person.tipoDocumento?.abreviatura }}:</span> {{ person.documento }}</span>
 
-      <div *ngIf="personCopy.id" class="flex mr-auto mt-4 mb-3">
+      <div *ngIf="person.id" class="flex mr-auto my-3">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
           <i class="pi pi-info-circle text-primary-500 text-xl"></i>
         </div>
@@ -27,165 +26,159 @@
           <span class="text-500 text-sm">Detalles personales y de contacto</span>
         </div>
       </div>
-
-      <div *ngIf="personCopy.correo" class="mr-auto ml-4 mb-2 flex align-items-center">
+      <div *ngIf="person.correo" class="mr-auto ml-4 my-2 flex align-items-center">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
           <i class="pi pi-envelope text-500"></i>
         </div>
-        <span class="ml-2 text-500">{{ personCopy.correo | lowercase }}</span>
+        <span class="ml-2 text-500">{{ person.correo | lowercase }}</span>
       </div>
-      <div *ngIf="personCopy.telefono" class="mr-auto ml-4 mb-2 flex align-items-center">
+      <div *ngIf="person.telefono" class="mr-auto ml-4 my-2 flex align-items-center">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
           <i class="pi pi-phone text-500"></i>
         </div>
-        <span class="ml-2 text-500">{{ personCopy.telefono }}</span>
+        <span class="ml-2 text-500">{{ person.telefono }}</span>
       </div>
-      <div *ngIf="personCopy.genero" class="mr-auto ml-4 flex align-items-center">
+      <div *ngIf="person.genero" class="mr-auto ml-4 my-2 flex align-items-center">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-gray-200 border-circle w-2rem h-2rem">
           <i class="pi pi-circle text-500"></i>
         </div>
-        <span class="ml-2 text-500">{{ personCopy.genero.nombre }}</span>
+        <span class="ml-2 text-500">{{ person.genero.nombre }}</span>
       </div>
 
-      <div *ngIf="personCopy.id" class="flex mr-auto mt-4 mb-3">
+      <div *ngIf="person.id" class="flex w-full my-3">
         <div class="flex flex-shrink-0 align-items-center justify-content-center bg-primary-100 border-round w-3rem h-3rem">
           <i class="pi pi-key text-primary-500 text-xl"></i>
         </div>
-        <div class="flex flex-column ml-2 text-left">
+        <div class="flex flex-column mx-2 text-left">
           <span>Roles de acceso</span>
           <span class="text-500 text-sm">Roles de acceso en el aplicativo</span>
         </div>
+        <i *ngIf="person.usuario" class="pi font-medium text-xl ml-auto my-auto" pTooltip="Estado" tooltipPosition="bottom"
+          [ngClass]="{'pi-lock text-red-500': !parseStringToBoolean(person.usuario.activo), 'pi-lock-open text-green-500': parseStringToBoolean(person.usuario.activo)}"></i>
       </div>
-
-      <ng-container *ngIf="personCopy.id">
-        <div *ngIf="personCopy.usuario?.roles?.length else sNoRoles" class="flex flex-wrap align-items-center justify-content-center">
-          <p-chip *ngFor="let rol of personCopy.usuario.roles" label="{{rol.nombre}}" icon="{{getRoleIcon(rol.codigo)}}" styleClass="m-1 text-500 surface-100"></p-chip>
+      <ng-container *ngIf="person.id">
+        <div *ngIf="person.usuario?.roles?.length else sNoRoles" class="flex flex-wrap align-items-center justify-content-center">
+          <p-chip *ngFor="let rol of person.usuario.roles" label="{{rol.nombre}}" icon="{{getRoleIcon(rol.codigo)}}" styleClass="m-1 text-500 surface-100"></p-chip>
         </div>
         <ng-template #sNoRoles>
           <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM" [message]="MESSAGE.NO_REGISTROS"></app-no-result>
         </ng-template>
       </ng-container>
-
     </div>
   </div>
 
-  <div class="col-12 xl:col-7">
+  <div class="col-12 xl:col-7" [formGroup]="formPerson">
     <div class="card">
-      <form class="p-0" [formGroup]="formPerson">
-        <div class="flex align-items-center justify-content-between mb-4">
-          <div class="flex align-items-center">
-            <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
-              <i class="pi pi-pencil text-xl text-primary-500"></i>
-            </div>
-            <div class="flex flex-column">
-              <h5 class="m-0 text-700">Información personal</h5>
-              <span class="text-500">Administre y mantenga actualizada su información personal</span>
-            </div>
+      <div class="flex align-items-center mb-4">
+        <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+          <i class="pi pi-pencil text-xl text-primary-500"></i>
+        </div>
+        <div class="flex flex-column">
+          <h5 class="m-0 text-700">Información personal</h5>
+          <span class="text-500">Administre y mantenga actualizada su información personal</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field p-fluid col-12 sm:col-6 m-0">
+          <label htmlFor="primerNombre" class="font-medium">Primer nombre</label>
+          <input type="text" id="primerNombre" pInputText formControlName="primerNombre">
+          <div *ngIf="nombrePrimeroNoValido">
+            <ng-container *ngIf="controls['primerNombre'].errors as errors">
+              <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer nombre</small>
+              <small *ngIf="errors?.['whitespace']" class="p-error">El nombre no puede ser de espacios en blanco</small>
+            </ng-container>
           </div>
         </div>
-        <div class="grid">
-          <div class="field p-fluid col-12 sm:col-6 m-0">
-            <label htmlFor="primerNombre" class="font-medium">Primer nombre</label>
-            <input type="text" id="primerNombre" pInputText formControlName="primerNombre">
-            <div *ngIf="nombrePrimeroNoValido">
-              <ng-container *ngIf="controls['primerNombre'].errors as errors">
-                <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer nombre</small>
-                <small *ngIf="errors?.['whitespace']" class="p-error">El nombre no puede ser de espacios en blanco</small>
-              </ng-container>
-            </div>
-          </div>
-          <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-            <label htmlFor="segundoNombre"><span class="font-medium">Segundo nombre </span><span>(opcional)</span></label>
-            <input type="text" id="segundoNombre" pInputText formControlName="segundoNombre">
+        <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
+          <label htmlFor="segundoNombre"><span class="font-medium">Segundo nombre </span><span>(opcional)</span></label>
+          <input type="text" id="segundoNombre" pInputText formControlName="segundoNombre">
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field p-fluid col-12 sm:col-6 m-0">
+          <label class="font-medium" for="primerApellido">Primer apellido</label>
+          <input type="text" id="primerApellido" pInputText formControlName="primerApellido">
+          <div *ngIf="apellidoPrimeroNoValido">
+            <ng-container *ngIf="controls['primerApellido'].errors as errors">
+              <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer apellido</small>
+              <small *ngIf="errors?.['whitespace']" class="p-error">El apellido no puede ser de espacios en blanco</small>
+            </ng-container>
           </div>
         </div>
-        <div class="grid">
-          <div class="field p-fluid col-12 sm:col-6 m-0">
-            <label class="font-medium" for="primerApellido">Primer apellido</label>
-            <input type="text" id="primerApellido" pInputText formControlName="primerApellido">
-            <div *ngIf="apellidoPrimeroNoValido">
-              <ng-container *ngIf="controls['primerApellido'].errors as errors">
-                <small *ngIf="errors?.['required']" class="p-error">Ingrese un primer apellido</small>
-                <small *ngIf="errors?.['whitespace']" class="p-error">El apellido no puede ser de espacios en blanco</small>
-              </ng-container>
-            </div>
-          </div>
-          <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-            <label for="segundoApellido"><span class="font-medium">Segundo apellido </span><span>(opcional)</span></label>
-            <input type="text" id="segundoApellido" pInputText formControlName="segundoApellido">
-          </div>
+        <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
+          <label for="segundoApellido"><span class="font-medium">Segundo apellido </span><span>(opcional)</span></label>
+          <input type="text" id="segundoApellido" pInputText formControlName="segundoApellido">
         </div>
-        <div class="grid">
-          <div class="field p-fluid col-12 m-0">
-            <label class="font-medium" for="idTipoDocumento">Tipo de documento</label>
-            <p-dropdown id="idTipoDocumento" inputId="idTipoDocumento" [autoDisplayFirst]="false"
-                        [options]="documentTypes" optionValue="id" optionLabel="descripcion" [filter]="true"
-                        [showClear]="true"
-                        formControlName="idTipoDocumento" [placeholder]="MESSAGE.SELECCIONA_OPCION"
-                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
-            <div *ngIf="tipoDocumentoNoValido">
-              <div *ngIf="controls['idTipoDocumento'].errors?.['required']">
-                <small class="p-error">Seleccione un tipo de documento</small>
-              </div>
-            </div>
-          </div>
-          <div class="field p-fluid col-12 m-0 pt-0">
-            <label class="font-medium" for="documento">Número de documento</label>
-            <p-inputNumber id="documento" inputId="documento" formControlName="documento"></p-inputNumber>
-            <div *ngIf="numeroDocumentoNoValido">
-              <div *ngIf="controls['documento'].errors?.['required']">
-                <small class="p-error">Ingrese un número de documento</small>
-              </div>
-            </div>
-          </div>
-          <div class="field p-fluid col-12 m-0 pt-0">
-            <label class="font-medium" for="idGenero">Género</label>
-            <p-dropdown id="idGenero" inputId="idGenero" [autoDisplayFirst]="false" [options]="genders" optionValue="id"
-                        optionLabel="nombre" [filter]="true" [showClear]="true" formControlName="idGenero"
-                        [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
-                        [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
-            <div *ngIf="generoNoValido">
-              <div *ngIf="controls['idGenero'].errors?.['required']">
-                <small class="p-error">Seleccione un género</small>
-              </div>
-            </div>
-          </div>
+      </div>
 
-        </div>
-        <div class="grid">
-          <div class="field p-fluid col-12 sm:col-6 m-0">
-            <label class="font-medium" for="correo">Correo electrónico</label>
-            <span class="p-input-icon-right">
-                <i class="pi pi-at"></i>
-                <input type="email" id="correo" pInputText formControlName="correo">
-            </span>
-            <div *ngIf="correoNoValido">
-              <div *ngIf="controls['correo'].errors?.['required']">
-                <small class="p-error">Ingrese un correo electrónico</small>
-              </div>
-            </div>
+      <div class="field p-fluid">
+        <label class="font-medium" for="idTipoDocumento">Tipo de documento</label>
+        <p-dropdown id="idTipoDocumento" inputId="idTipoDocumento" [autoDisplayFirst]="false"
+                    [options]="documentTypes" optionValue="id" optionLabel="descripcion" [filter]="true"
+                    [showClear]="true"
+                    formControlName="idTipoDocumento" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                    [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+        <div *ngIf="tipoDocumentoNoValido">
+          <div *ngIf="controls['idTipoDocumento'].errors?.['required']">
+            <small class="p-error">Seleccione un tipo de documento</small>
           </div>
+        </div>
+      </div>
+      <div class="field p-fluid">
+        <label class="font-medium" for="documento">Número de documento</label>
+        <p-inputNumber id="documento" inputId="documento" formControlName="documento"></p-inputNumber>
+        <div *ngIf="numeroDocumentoNoValido">
+          <div *ngIf="controls['documento'].errors?.['required']">
+            <small class="p-error">Ingrese un número de documento</small>
+          </div>
+        </div>
+      </div>
+      <div class="field p-fluid">
+        <label class="font-medium" for="idGenero">Género</label>
+        <p-dropdown id="idGenero" inputId="idGenero" [autoDisplayFirst]="false" [options]="genders" optionValue="id"
+                    optionLabel="nombre" [filter]="true" [showClear]="true" formControlName="idGenero"
+                    [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS"
+                    [emptyFilterMessage]="MESSAGE.NO_REGISTROS"></p-dropdown>
+        <div *ngIf="generoNoValido">
+          <div *ngIf="controls['idGenero'].errors?.['required']">
+            <small class="p-error">Seleccione un género</small>
+          </div>
+        </div>
+      </div>
 
-          <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
-            <label for="telefono"><span class="font-medium">Teléfono </span><span>(opcional)</span></label>
-            <span class="p-input-icon-right">
-              <i class="pi pi-phone"></i>
-              <p-inputNumber id="telefono" mode="decimal" inputId="withoutgrouping" [useGrouping]="false" formControlName="telefono"></p-inputNumber>
-            </span>
-            <div *ngIf="telefonoNoValido">
-              <div *ngIf="controls['telefono'].errors?.['max']">
-                <small class="p-error">Número de teléfono demasiado largo</small>
-              </div>
+      <div class="grid">
+        <div class="field p-fluid col-12 sm:col-6 m-0">
+          <label class="font-medium" for="correo">Correo electrónico</label>
+          <span class="p-input-icon-right">
+              <i class="pi pi-at"></i>
+              <input type="email" id="correo" pInputText formControlName="correo">
+          </span>
+          <div *ngIf="correoNoValido">
+            <div *ngIf="controls['correo'].errors?.['required']">
+              <small class="p-error">Ingrese un correo electrónico</small>
             </div>
           </div>
         </div>
-        <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
-                                (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)"
-                                [showDeleteButton]="updateMode && isSuperAdmin"
-                                [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
-                                [disabledCreateOrUpdateButton]="formPerson.invalid">
-        </app-form-action-button>
-      </form>
+
+        <div class="field p-fluid col-12 sm:col-6 m-0 sm:pt-3 pt-0">
+          <label for="telefono"><span class="font-medium">Teléfono </span><span>(opcional)</span></label>
+          <span class="p-input-icon-right">
+            <i class="pi pi-phone"></i>
+            <p-inputNumber id="telefono" mode="decimal" inputId="withoutgrouping" [useGrouping]="false" formControlName="telefono"></p-inputNumber>
+          </span>
+          <div *ngIf="telefonoNoValido">
+            <div *ngIf="controls['telefono'].errors?.['max']">
+              <small class="p-error">Número de teléfono demasiado largo</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-form-action-button [updateMode]="updateMode" (createOrUpdate)="onSubmitPerson($event)"
+                              (cancel)="onCancelPerson($event)" (delete)="onDeletePerson($event)"
+                              [showDeleteButton]="updateMode && isSuperAdmin"
+                              [creatingOrUpdating]="creatingOrUpdating" [deleting]="deleting"
+                              [disabledCreateOrUpdateButton]="formPerson.invalid">
+      </app-form-action-button>
     </div>
   </div>
 </div>
