@@ -22,3 +22,4 @@ export * from './appointment'
 export * from './validity'
 export * from './rule'
 export * from './variable';
+export * from './operationalmanagement';

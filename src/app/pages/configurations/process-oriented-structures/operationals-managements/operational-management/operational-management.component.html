@@ -1,0 +1,41 @@
+
+<form class="p-0" [formGroup]="formOperationalManagement">
+    <div class="field p-fluid">
+        <label htmlFor="nombre" class="font-medium">Nombre</label>
+        <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+        <div *ngIf="formOperationalManagement.controls['nombre'].errors && (formOperationalManagement.controls['nombre'].touched||formOperationalManagement.controls['nombre'].dirty)">
+            <div *ngIf="formOperationalManagement.controls['nombre'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
+    </div>
+
+    <div class="field p-fluid">
+        <label htmlFor="orden"><span class="font-medium">Orden</span><span> (opcional)</span></label>
+        <input pInputText id="orden" type="number" aria-describedby="text-help" formControlName="orden"/>
+        <div *ngIf="formOperationalManagement.controls['orden'].errors && (formOperationalManagement.controls['orden'].touched||formOperationalManagement.controls['orden'].dirty)">
+            <div *ngIf="formOperationalManagement.controls['orden'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese un orden</small>
+            </div>
+            <div *ngIf="formOperationalManagement.controls['orden'].errors?.['min']">
+                <small id="text-help" class="p-error">Ingrese un orden mayor a 1</small>
+            </div>
+        </div>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitOperationalManagement($event)"
+        (cancel)="onCancelOperationalManagement($event)"
+        (delete)="onDeleteOperationalManagement($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formOperationalManagement.invalid">
+    </app-form-action-button>
+
+</form>

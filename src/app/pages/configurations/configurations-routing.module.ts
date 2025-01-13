@@ -15,6 +15,7 @@ const routes: Routes = [
   {path: 'variables', loadChildren: ()=>import('./variables/variables.module').then(m=>m.VariablesModule)},
   {path: 'rules', loadChildren: ()=>import('./rules/rules.module').then(m=>m.RulesModule)},
   {path: 'level-compensations', loadChildren: ()=>import('./level-compensations/level-compensations.module').then(m=>m.LevelCompensationsModule)},
+  {path: 'process-oriented-structures', loadChildren: ()=> import('./process-oriented-structures/process-oriented-structures.module').then(m => m.ProcessOrientedStructuresModule)},
 ];
 
 @NgModule({

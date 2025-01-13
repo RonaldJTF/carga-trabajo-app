@@ -1,0 +1,5 @@
+<div *ngIf="menuService.functionality$ | async as functionality" class="card">
+    <app-functionality [functionality]="functionality"></app-functionality>
+    <p-tabMenu [model]="items" [activeItem]="activeItem" (activeItemChange)="onActiveItemChange($event)" styleClass="mb-3"></p-tabMenu>
+    <router-outlet></router-outlet>
+</div>

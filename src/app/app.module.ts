@@ -36,7 +36,8 @@ import {
   NormativityTypeService,
   PrimaryVariableService,
   LevelCompensationService,
-  CompensationService
+  CompensationService,
+  OperationalManagementService
 } from '@services';
 import {AppLayoutModule} from './layout/app.layout.module';
 import {NotFoundComponent} from './pages/not-found/not-found.component';
@@ -59,6 +60,8 @@ import { MathjaxService } from './services/mathjax.service';
 import { ruleReducer } from '@store/rule.reducer';
 import {compensationReducer} from "@store/compensation.reducer";
 import { levelCompensationReducer } from '@store/levelCompensation.reducer';
+import { operationalManagementReducer } from '@store/operationalManagement.reducer';
+import { ProcessOrientedStructureService } from './services/process-oriented-structure.service';
 
 @NgModule({
   declarations: [
@@ -83,7 +86,8 @@ import { levelCompensationReducer } from '@store/levelCompensation.reducer';
       variable: variableReducer,
       rule: ruleReducer,
       compensation: compensationReducer,
-      levelCompensation: levelCompensationReducer
+      levelCompensation: levelCompensationReducer,
+      operationalManagement: operationalManagementReducer,
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -96,6 +100,7 @@ import { levelCompensationReducer } from '@store/levelCompensation.reducer';
     StructureService, LevelService, StatisticsService, DocumentTypeService, ScopeService, PeriodicityService, CompensationCategoryService, NormativityTypeService, PrimaryVariableService, GenderService, PersonService,
     UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService, LevelCompensationService, CompensationService,
+    ProcessOrientedStructureService, OperationalManagementService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},

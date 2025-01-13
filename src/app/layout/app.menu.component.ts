@@ -87,6 +87,13 @@ export class AppMenuComponent implements OnInit {
             routerLink: ['/configurations/structures']
           },
           {
+            label: 'Estructuras orientadas por procesos',
+            icon: 'pi pi-arrow-right-arrow-left',
+            color: 'primary',
+            description: 'Gestión de estructuras orientadas por procesos',
+            routerLink: ['/configurations/process-oriented-structures']
+          },
+          {
             label: 'Planes de trabajo',
             icon: 'pi pi-calendar',
             color: 'primary',

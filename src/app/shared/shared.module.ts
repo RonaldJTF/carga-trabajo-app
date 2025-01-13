@@ -80,6 +80,7 @@ import { AppConfigModule } from '../layout/config/config.module';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ExpressionComponent } from './expression/expression.component';
 import { MenubarModule } from 'primeng/menubar';
+import { TabMenuModule } from 'primeng/tabmenu';
 @NgModule({
     declarations: [
         FunctionalityComponent,
@@ -183,6 +184,7 @@ import { MenubarModule } from 'primeng/menubar';
         AppConfigModule,
         ToggleButtonModule,
         MenubarModule,
+        TabMenuModule,
     ],
     exports: [
         FunctionalityComponent,
@@ -282,7 +284,8 @@ import { MenubarModule } from 'primeng/menubar';
         RadioButtonModule,
         AppConfigModule,
         ToggleButtonModule,
-        MenubarModule
+        MenubarModule,
+        TabMenuModule,
     ],
   providers: []
 })

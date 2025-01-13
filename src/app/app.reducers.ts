@@ -8,6 +8,7 @@ import { VariableState } from "@store/variable.reducer";
 import {WorkplanState} from "@store/workplan.reducer";
 import {CompensationState} from "@store/compensation.reducer";
 import { LevelCompensationState } from "@store/levelCompensation.reducer";
+import { OperationalManagementState } from "@store/operationalManagement.reducer";
 
 export interface AppState {
   structure: StructureState,
@@ -20,4 +21,5 @@ export interface AppState {
   rule: RuleState,
   compensation: CompensationState,
   levelCompensation: LevelCompensationState,
+  operationalManagement: OperationalManagementState
 }
