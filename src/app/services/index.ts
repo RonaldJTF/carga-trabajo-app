@@ -35,9 +35,5 @@ export * from './compensation.service';
 export * from './primary-variable.service';
 export * from './level-compensation.service';
 export * from './compensation-category.service';
-<<<<<<< Updated upstream
 export * from './operational-management.service';
-=======
-export * from './convention.service'
-
->>>>>>> Stashed changes
+export * from './convention.service';
