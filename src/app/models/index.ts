@@ -22,4 +22,8 @@ export * from './appointment'
 export * from './validity'
 export * from './rule'
 export * from './variable';
+<<<<<<< Updated upstream
 export * from './operationalmanagement';
+=======
+export * from './convention';
+>>>>>>> Stashed changes

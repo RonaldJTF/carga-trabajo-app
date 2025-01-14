@@ -25,6 +25,8 @@ import { NormativityTypeComponent } from './normativity-tipe/normativity-type.co
 import { FormNormativityTypeComponent } from './normativity-tipe/form-normativity-type/form-normativity-type.component';
 import { PrimaryVariableComponent } from './primary-variable/primary-variable.component';
 import { FormPrimaryVariableComponent } from './primary-variable/form-primary-variable/form-primary-variable.component';
+import { ConventionComponent } from './convention/convention.component';
+import { FormConventionComponent } from './convention/form-convention/form-convention.component';
 
 const routes: Routes = [{
   path: '', component: BasicTablesComponent, children: [
@@ -65,6 +67,10 @@ const routes: Routes = [{
     {path: 'primary-variable', component: PrimaryVariableComponent},
     {path: 'create-primary-variable', component: FormPrimaryVariableComponent},
     {path: 'create-primary-variable/:id', component: FormPrimaryVariableComponent},
+    {path: 'convention',component: ConventionComponent},
+    {path: 'create-convention', component: FormConventionComponent},
+    {path: "create-convention/:id", component: FormConventionComponent},
+    
   ]
 }];
 

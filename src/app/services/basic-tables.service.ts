@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity, Normativity, NormativityType, Variable} from "@models";
+import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity, Normativity, NormativityType, Variable, Convention} from "@models";
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +33,8 @@ export class BasicTablesService {
   private pathNormativityType = 'normativity-type';
   
   private pathPrimaryVariable = 'primary-variable';
+
+  private pathConvention = 'convention';
 
   constructor(
     private webRequestService: WebRequestService
@@ -367,5 +369,31 @@ export class BasicTablesService {
 
   deleteSelectedPrimaryVariable(payload: number[]): Observable<Variable[]> {
     return this.webRequestService.deleteWithHeaders(this.pathPrimaryVariable, undefined, payload);
+  }
+
+  // Servicios Convention
+
+  getConvention(idConvention: number){
+    return this.webRequestService.getWithHeaders(`${this.pathConvention}/${idConvention}`);
+  }
+
+  getConventions(): Observable<Convention[]> {
+    return this.webRequestService.getWithHeaders(`${this.pathConvention}`);
+  }
+
+  createConvention(convention: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathConvention, convention);
+  }
+
+  updateConvention(id: number, convention: Convention): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathConvention}/${id}`, convention);
+  }
+
+  deleteConvention(idConvention: number): Observable<Convention> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathConvention}/${idConvention}`);
+  }
+
+  deleteSelectedConventions(payload: number[]): Observable<Convention[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathConvention, undefined, payload);
   }
 }

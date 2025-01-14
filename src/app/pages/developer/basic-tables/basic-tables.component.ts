@@ -156,7 +156,15 @@ export class BasicTablesComponent implements OnInit {
           severity: 'warn',
           show: true
         }
-      }
+      },
+      {
+        title: 'Convenciones',
+        icon: 'pi pi-bars',
+        url: 'convention',
+        label: 'Gestión de tipos de convenciones',
+        iconStyle: 'primary',
+        state: {}
+      },
     ]
   }
 

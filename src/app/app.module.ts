@@ -17,6 +17,7 @@ import {
   StatisticsService,
   DocumentTypeService,
   GenderService,
+  ConventionService,
   LevelService,
   MatrizlevantamientoService,
   MediaService,
@@ -97,8 +98,8 @@ import { ProcessOrientedStructureService } from './services/process-oriented-str
   ],
   providers: [
     MessageService, ConfirmationService, StorageService, AuthenticationService, CryptojsService, MediaService,
-    StructureService, LevelService, StatisticsService, DocumentTypeService, ScopeService, PeriodicityService, CompensationCategoryService, NormativityTypeService, PrimaryVariableService, GenderService, PersonService,
-    UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
+    StructureService, LevelService, StatisticsService, DocumentTypeService, ScopeService, PeriodicityService, CompensationCategoryService, NormativityTypeService, PrimaryVariableService, 
+    ConventionService, GenderService, PersonService, UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService, LevelCompensationService, CompensationService,
     ProcessOrientedStructureService, OperationalManagementService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
