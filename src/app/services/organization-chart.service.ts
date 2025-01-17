@@ -38,8 +38,11 @@ export class OrganizationChartService {
   }
 
   //Servicios JERARQUÍA
-  getHierarchyByIdOrganizationChart(id: number): Observable<Hierarchy> {
-    return this.webRequestService.getWithHeaders(`${this.pathHierarchy}/${id}`);
+  getHierarchiesByOrganizationChartId(organizationChartId: number): Observable<Hierarchy[]> {
+    return this.webRequestService.getWithHeaders(`${this.pathHierarchy}`, {idOrganigrama: organizationChartId});
+  }
+  createHierarchy(payload: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathHierarchy, payload);
   }
   deleteHierarchy(id: number): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathHierarchy}/${id}`);
@@ -65,7 +68,6 @@ export class OrganizationChartService {
   setFormData(data: any) {
     this.formData = data;
   }
-
   getFormData() {
     return this.formData;
   }

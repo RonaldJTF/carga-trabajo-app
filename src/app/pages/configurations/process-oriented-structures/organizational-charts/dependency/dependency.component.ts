@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ConventionService, CryptojsService, OrganizationChartService, UrlService} from "@services";
 import {ActivatedRoute} from "@angular/router";
-import {Convention, Dependency} from "@models";
+import {Convention, Dependency, Hierarchy, OrganizationChart} from "@models";
 import {finalize} from "rxjs";
 import * as StructureActions from "@store/structure.actions";
 import {MESSAGE} from "@labels/labels";
@@ -25,6 +25,7 @@ export class DependencyComponent implements OnInit {
   deleting: boolean = false;
 
   conventions: Convention[];
+  organizationChart: OrganizationChart;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -37,7 +38,7 @@ export class DependencyComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idPadre = this.cryptoService.decryptParamAsNumber(this.route.snapshot.queryParams['idParent']);
+    this.organizationChart = JSON.parse(this.route.snapshot.queryParams['organizationChart']) as OrganizationChart;
     this.getConvention();
     this.buildForm();
     this.loadDependency(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
@@ -63,7 +64,7 @@ export class DependencyComponent implements OnInit {
     return this.isValido(field);
   }
 
-  getConvention(){
+  getConvention() {
     this.conventionService.getConvention().subscribe({
       next: (resp) => {
         this.conventions = resp;
@@ -88,7 +89,7 @@ export class DependencyComponent implements OnInit {
   assignValuesToForm() {
     this.formDependency.get('nombre').setValue(this.dependency.nombre);
     this.formDependency.get('descripcion').setValue(this.dependency.descripcion);
-    this.formDependency.get('idConvention').setValue(this.dependency.idConvencion);
+    this.formDependency.get('idConvencion').setValue(this.dependency.idConvencion);
   }
 
   onSelectFile(event: any) {
@@ -116,7 +117,6 @@ export class DependencyComponent implements OnInit {
   }
 
   createDependency(): void {
-    console.log("Creating dependency component");
     this.organizationChartService.createDependency(this.formData).pipe(
       finalize(() => {
         this.creatingOrUpdating = true;
@@ -125,8 +125,32 @@ export class DependencyComponent implements OnInit {
       next: (e) => {
         //this.store.dispatch(StructureActions.addToList({structure: e as Structure}));
         this.urlService.goBack();
+        //this.buildHierarchy(e);
+        console.log("Dependencia: ", e)
       }
     });
+  }
+
+  buildHierarchy(dependency: Dependency): void {
+    const hierarchyData: Hierarchy = {
+      id: null,
+      idOrganigrama: this.organizationChart.id,
+      idDependencia: dependency.id,
+      dependencia: dependency,
+      idJerarquiaPadre: null,
+      orden: null,
+      organigrama: null,
+      subJerarquias: null
+    }
+  }
+
+  createHierarchy(): void {
+    this.organizationChartService.createHierarchy(this.formData).pipe().subscribe({
+      next: (e) => {
+        console.log("Jerarquía: ", e)
+        this.urlService.goBack();
+      }
+    })
   }
 
   onSubmitDependency(event: Event): void {

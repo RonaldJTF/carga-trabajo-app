@@ -6,9 +6,9 @@ import {AppState} from "../../../../../app.reducers";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthenticationService, CryptojsService, OrganizationChartService} from "@services";
 import {Observable} from "rxjs";
-import {OrganizationChart} from "@models";
+import {Hierarchy, OrganizationChart, Structure} from "@models";
 import {MenuItem, MenuItemCommandEvent, TreeNode} from "primeng/api";
-import {an} from "@fullcalendar/core/internal-common";
+import {an, ee} from "@fullcalendar/core/internal-common";
 
 @Component({
   selector: 'app-list',
@@ -29,10 +29,12 @@ export class ListComponent implements OnInit {
   organizationChart$: Observable<OrganizationChart>;
 
   organizationalCharts: OrganizationChart[];
+  organizationChart: OrganizationChart;
 
   dataset: TreeNode[];
 
-  menuItems: MenuItem[] = [];
+  menuItemsOrganizationChart: MenuItem[] = [];
+  menuItemsDependency: MenuItem[] = [];
 
   constructor(
     private store: Store<AppState>,
@@ -48,10 +50,30 @@ export class ListComponent implements OnInit {
     this.getRol();
     this.getOrganizationChart();
 
-    this.menuItems = [
-      {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoUpdate(e.item.id, e.originalEvent)},
-      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDelete(e)},
-      {label: 'Agregar dependencia', icon: 'pi pi-sitemap', visible: this.isAdmin, command: (e) => this.onGoCreateDependency(e)},
+    this.menuItemsOrganizationChart = [
+      {
+        label: 'Editar',
+        icon: 'pi pi-pencil',
+        visible: this.isAdmin,
+        command: (e) => this.onGoUpdateOrganizationChart(e.item.id, e.originalEvent)
+      },
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteOrganizationChart(e)}
+    ];
+
+    this.menuItemsDependency = [
+      {
+        label: 'Editar',
+        icon: 'pi pi-pencil',
+        visible: this.isAdmin,
+        command: (e) => this.onGoUpdateDependency(e.item, e.originalEvent)
+      },
+      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteDependency(e)},
+      {
+        label: 'Agregar subdependencia',
+        icon: 'pi pi-sitemap',
+        visible: this.isAdmin,
+        command: (e) => this.onGoCreateDependency(e.item, false)
+      },
     ]
   }
 
@@ -68,29 +90,27 @@ export class ListComponent implements OnInit {
     });
   }
 
-  buildNodes(organizationCharts: OrganizationChart[]): TreeNode<OrganizationChart>[] {
-    if (!organizationCharts) {
-      return [];
-    }
-    return organizationCharts.map(structure => ({
-      expanded: true,
-      data: structure,
-      type: 'person',
-      styleClass: 'border-round bg-blue-100',
-      children: []
-    }));
-  }
-
   toggleIcon(show: boolean, element: HTMLSpanElement) {
     element.style.display = show ? 'block' : 'none';
   }
 
-  onDelete(event: any) {
-    console.log("Eliminado")
+  onDeleteOrganizationChart(event: any) {
+    console.log("Eliminado ORGANIGRAMA")
   }
 
-  onGoUpdate(id: any, event: Event) {
+  onGoUpdateOrganizationChart(id: any, event: Event) {
     this.router.navigate(['create/', this.cryptoService.encryptParam(id)], {
+      relativeTo: this.route,
+      skipLocationChange: true,
+    }).then();
+  }
+
+  onDeleteDependency(event: any) {
+    console.log("Eliminado DEPENDENCIA")
+  }
+
+  onGoUpdateDependency(dependency: any, event: Event) {
+    this.router.navigate(['dependency/', this.cryptoService.encryptParam(dependency.value.idDependencia)], {
       relativeTo: this.route,
       skipLocationChange: true,
     }).then();
@@ -103,25 +123,46 @@ export class ListComponent implements OnInit {
     }).then();
   }
 
-  onGoCreateDependency(event: MenuItemCommandEvent) {
+  onGoCreateDependency(payload: any, first: boolean) {
     this.router.navigate(['dependency'], {
       relativeTo: this.route,
       skipLocationChange: true,
+      queryParams: first ? {organizationChart: JSON.stringify(payload)} : {parentDependency: JSON.stringify(payload.item.value)}
     }).then();
   }
 
 
   viewOrganizationChart(organizationChart: OrganizationChart) {
-    this.dataset = null;
-    this.organizationChartService.getHierarchyByIdOrganizationChart(organizationChart.id).subscribe({
+    this.organizationChart = organizationChart;
+    this.organizationChartService.getHierarchiesByOrganizationChartId(organizationChart.id).subscribe({
       next: (resp) => {
-        console.log(resp)
-        //this.dataset = this.buildNodes(resp);
+        this.dataset = this.buildNodes(resp);
+        console.log(resp);
       }
     })
   }
 
-  listOrganizationChart(){
+  buildNodes(hierarchies: Hierarchy[]): TreeNode<Hierarchy>[] {
+    if (!hierarchies) {
+      return [];
+    }
+    const nodes: TreeNode<OrganizationChart>[] = [];
+    for (const jerarquia of hierarchies) {
+      const node: TreeNode<OrganizationChart> = {
+        expanded: true,
+        data: jerarquia,
+        type: 'person',
+        styleClass: `bg-${jerarquia.dependencia.convencion.nombreColor}-50 border-round border-${jerarquia.dependencia.convencion.nombreColor}-300`,
+        children: this.buildNodes(jerarquia.subJerarquias)
+      };
+      nodes.push(node);
+    }
+    return nodes;
+  }
+
+
+  listOrganizationChart() {
     this.dataset = null;
+    this.organizationChart = null;
   }
 }

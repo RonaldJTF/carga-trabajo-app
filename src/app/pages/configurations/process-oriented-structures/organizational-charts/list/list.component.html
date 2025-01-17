@@ -4,19 +4,18 @@
   </div>
   <ng-template #data>
     <div *ngIf="organizationalCharts" class="flex justify-content-center overflow-x-auto">
-
       <div class="mb-0 w-full">
         <div class="flex justify-content-between mb-3">
-          <div>
-            <span></span>
-          </div>
+          <div></div>
           <div class="flex align-items-center justify-content-center">
-            <button *ngIf="isAdmin && !dataset" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
-              <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-            </button>
-            <button *ngIf="isAdmin && dataset" pButton pRipple icon="pi pi-replay" class="p-button-secondary m-1" (click)="listOrganizationChart()" pTooltip="Nuevo" tooltipPosition="bottom">
-              <span class="p-button-label hidden-lg pl-2">Volver</span>
-            </button>
+            <ng-container *ngIf="isAdmin">
+              <button *ngIf="!dataset" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                <span class="p-button-label hidden-lg pl-2">Nuevo</span>
+              </button>
+              <button *ngIf="dataset" pButton pRipple icon="pi pi-replay" class="p-button-secondary m-1" (click)="listOrganizationChart()" pTooltip="Volver" tooltipPosition="bottom">
+                <span class="p-button-label hidden-lg pl-2">Volver</span>
+              </button>
+            </ng-container>
           </div>
         </div>
         <div *ngIf="!dataset" class="flex flex-wrap justify-content-center gap-4">
@@ -26,27 +25,32 @@
               <div>{{ organigrama.descripcion }}</div>
             </div>
             <span #iconInfo class="_badge" style="display: none;">
-              <app-menu-item *ngIf="isAdmin" [menuItems]="menuItems" [id]="organigrama.id" [value]="organigrama" [buttonClass]="'p-button-rounded'"></app-menu-item>
+              <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOrganizationChart" [id]="organigrama.id" [value]="organigrama" [buttonClass]="'p-button-rounded'"></app-menu-item>
             </span>
           </div>
         </div>
-        <div *ngIf="dataset" class="w-full">
+        <div *ngIf="dataset && organizationChart" class="w-full">
+          <div class="bg-primary-50 border-round-xl flex flex-column align-items-center p-4 my-3 w-full">
+            <span class="font-bold text-primary-500 text-3xl">{{ organizationChart.nombre }}</span>
+            <span class="text-500">{{ organizationChart.descripcion }}</span>
+          </div>
+          <div *ngIf="!dataset.length">
+            <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Agregar dependencia'" (go)="onGoCreateDependency(organizationChart, true)" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+          </div>
           <p-organizationChart [value]="dataset">
             <ng-template let-node pTemplate="person">
               <div class="text-center" (mouseenter)="toggleIcon(true, iconInfo)" (mouseleave)="toggleIcon(false, iconInfo)">
-                <div class="font-bold">{{ node.data.nombre }}</div>
-                <div>{{ node.data.descripcion }}</div>
+                <i class="pi {{node.data.dependencia.convencion.claseIcono}} text-xl text-{{node.data.dependencia.convencion.nombreColor}}-500"></i>
+                <div class="font-bold">{{ node.data.dependencia.nombre }}</div>
+                <div>{{ node.data.dependencia.descripcion }}</div>
                 <span #iconInfo class="_badgeChart" style="display: none;">
-                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItems" [id]="node.data.id" [value]="node.data" [buttonClass]="'p-button-rounded'"></app-menu-item>
+                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsDependency" [id]="node.data.id" [value]="node.data" [buttonClass]="'p-button-rounded'"></app-menu-item>
               </span>
               </div>
             </ng-template>
           </p-organizationChart>
         </div>
       </div>
-
-
-
     </div>
   </ng-template>
 </ng-container>

@@ -1,46 +1,69 @@
 <form class="p-0" [formGroup]="formDependency">
 
-  <div class="field p-fluid">
-    <label for="nombre" class="font-medium">Convención</label>
-    <p-dropdown id="idConvencion" inputId="idConvencion" [autoDisplayFirst]="false" optionValue="id" formControlName="idConvencion" [options]="conventions" optionLabel="nombre" placeholder="Selecciona una opción"></p-dropdown>
-  </div>
-
-  <div class="field p-fluid">
-    <label for="nombre" class="font-medium">Nombre</label>
-    <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
-    <div *ngIf="fieldNoValid('nombre')">
-      <div *ngIf="controls('nombre')">
-        <small id="text-help" class="p-error">Ingrese un nombre</small>
-      </div>
+    <div class="field p-fluid">
+        <label for="nombre" class="font-medium">Convención</label>
+        <p-dropdown id="idConvencion" inputId="idConvencion" [autoDisplayFirst]="false" optionValue="id" formControlName="idConvencion" [options]="conventions" optionLabel="nombre" placeholder="Selecciona una opción">
+            <ng-template let-selected pTemplate="selectedItem">
+                <div class="flex align-items-center cursor-pointer" pRipple>
+                    <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{selected.nombreColor}}-100 border-circle">
+                        <i class="pi {{selected.claseIcono}} text-xl text-{{selected.nombreColor}}-500"></i>
+                    </div>
+                    <div class="flex flex-column ml-2">
+                        <span>{{ selected.nombre }}</span>
+                        <span>{{ selected.descripcion }}</span>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template let-option pTemplate="item">
+                <div class="flex align-items-center cursor-pointer" pRipple>
+                    <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{option.nombreColor}}-100 border-circle">
+                        <i class="pi {{option.claseIcono}} text-xl text-{{option.nombreColor}}-500"></i>
+                    </div>
+                    <div class="flex flex-column ml-2">
+                        <span>{{ option.nombre }}</span>
+                        <span>{{ option.descripcion }}</span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dropdown>
     </div>
-  </div>
 
-  <div class="field p-fluid">
-    <label for="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
-    <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
-  </div>
-
-  <div class="field p-fluid">
-    <label for="archivo"><span class="font-medium">Imagen representativa</span><span> (opcional)</span></label>
-    <p-fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="false" accept="image/*" [maxFileSize]="5000000" (onSelect)="onSelectFile($event)" (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
-      <ng-template pTemplate="content">
-        <div class="flex justify-content-between align-items-center text-center p-3" *ngIf="dependency?.srcIcono && uploadedFiles.length < 1">
-          <img [src]="dependency.srcIcono" [alt]="dependency.nombre" appImageFallback height="50px"/>
-          <span class="flex-grow-1">Imagen representativa</span>
-          <span class="flex-grow-1">--</span>
-          <i class="pi pi-check text-green-500 text-2xl font-bold"></i>
+    <div class="field p-fluid">
+        <label for="nombre" class="font-medium">Nombre</label>
+        <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+        <div *ngIf="fieldNoValid('nombre')">
+            <div *ngIf="controls('nombre')">
+                <small id="text-help" class="p-error">Ingrese un nombre</small>
+            </div>
         </div>
-      </ng-template>
-    </p-fileUpload>
-  </div>
+    </div>
 
-  <app-form-action-button [updateMode]="updateMode"
-                          (createOrUpdate)="onSubmitDependency($event)"
-                          (cancel)="onCancelDependency($event)"
-                          (delete)="onDeleteDependency($event)"
-                          [showDeleteButton]="updateMode"
-                          [creatingOrUpdating]="creatingOrUpdating"
-                          [deleting]="deleting"
-                          [disabledCreateOrUpdateButton]="formDependency.invalid">
-  </app-form-action-button>
+    <div class="field p-fluid">
+        <label for="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+        <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
+    </div>
+
+    <div class="field p-fluid">
+        <label for="archivo"><span class="font-medium">Imagen representativa</span><span> (opcional)</span></label>
+        <p-fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="false" accept="image/*" [maxFileSize]="5000000" (onSelect)="onSelectFile($event)" (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
+            <ng-template pTemplate="content">
+                <div class="flex justify-content-between align-items-center text-center p-3" *ngIf="dependency?.srcIcono && uploadedFiles.length < 1">
+                    <img [src]="dependency.srcIcono" [alt]="dependency.nombre" appImageFallback height="50px"/>
+                    <span class="flex-grow-1">Imagen representativa</span>
+                    <span class="flex-grow-1">--</span>
+                    <i class="pi pi-check text-green-500 text-2xl font-bold"></i>
+                </div>
+            </ng-template>
+        </p-fileUpload>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+                            (createOrUpdate)="onSubmitDependency($event)"
+                            (cancel)="onCancelDependency($event)"
+                            (delete)="onDeleteDependency($event)"
+                            [showDeleteButton]="updateMode"
+                            [creatingOrUpdating]="creatingOrUpdating"
+                            [deleting]="deleting"
+                            [disabledCreateOrUpdateButton]="formDependency.invalid">
+    </app-form-action-button>
 </form>
