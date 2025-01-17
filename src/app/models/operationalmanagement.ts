@@ -1,3 +1,4 @@
+import { Activity } from "./activity";
 import { Typology } from "./typology";
 
 export class OperationalManagement{
@@ -9,5 +10,6 @@ export class OperationalManagement{
     subGestionesOperativas?: OperationalManagement[];
     tipologia?: Typology;
     orden?: number;
+    actividad?: Activity;
     loaded?: boolean;
 }

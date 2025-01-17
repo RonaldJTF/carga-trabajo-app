@@ -7,7 +7,7 @@ import { adminGuard } from '@guards';
 const routes: Routes = [
   {path: '', component: ListComponent},
   {path: 'create', component: OperationalManagementComponent, canActivate: [adminGuard]},
-  {path: 'create/:id', component: OperationalManagementComponent, canActivate: [adminGuard]},
+  {path: ':id', component: OperationalManagementComponent, canActivate: [adminGuard]},
 ];
 
 @NgModule({

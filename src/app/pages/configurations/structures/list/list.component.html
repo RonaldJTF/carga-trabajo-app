@@ -181,14 +181,14 @@
                                         </tr>
                                     </ng-template>
                                 </p-treeTable>
-                                <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de {{dependency.tipologia?.tipologiaSiguiente.nombre | lowercase | pluralize}}</div>
+                                <div class="text-500 text-sm mx-2 mb-2 my-3">Lista de operaciones administrativas</div>
                             </ng-container>
                         </div>
                         <ng-template #sNoStructuresNoDependency>
                             <div class="mb-3">
                                 <app-go-to-if-not-found
                                 (go)="goToAddSubstructure(dependency)"
-                                buttonLabel="Agregar {{dependency.tipologia?.tipologiaSiguiente.nombre | lowercase}}"
+                                buttonLabel="Agregar operación administrativa"
                                 [imageSize]="IMAGE_SIZE.MEDIUM"
                                 [showButton]="isAdmin"
                                 [message]="MESSAGE.NADA_CONFIGURADO">

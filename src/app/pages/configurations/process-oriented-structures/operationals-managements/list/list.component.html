@@ -3,49 +3,52 @@
         <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo proceso'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
     </div>
     <ng-template #data>
-        <div class="card p-0">
-            <p-treeTable #treeTableOperationalManagement [value]="operationalsManagements$ | async" selectionMode="checkbox" [(selection)]="selectedNodesOfOperationalManagement" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
+        <div *ngIf="operationalsManagements$ | async as operationalsManagements"  class="card p-0">
+            <p-treeTable #treeTableOperationalManagement [value]="operationalsManagements" selectionMode="checkbox" [(selection)]="selectedNodesOfOperationalManagement" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"
                 [globalFilterFields]="['nombre', 'descripcion']" responsiveLayout="scroll" [scrollable]="true" [tableStyle]="{ 'min-width': '400px' }">
-                <ng-template pTemplate="caption" let-structure="rowData">
-                    <!-- <div class="flex flex-wrap justify-content-between p-3">
-                        <div  class="flex align-items-center mb-2">
-                            <div *ngIf="isAdmin" class="_badge-container mr-2">
-                                <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedStructures(selectedNodesOfStructuresNoDependency, false)" pTooltip="Eliminar" tooltipPosition="bottom"
-                                    class="p-button-danger" [disabled]="!totalSelectedStructuresNoDependency">
+                <ng-template pTemplate="caption">
+                    <div class="border-round-top-xl surface-100 p-3">
+                        <p-menubar [model]="menuBarItems">
+                            <ng-template pTemplate="start">
+                                <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+                                    <span class="p-button-label hidden-lg pl-2">Nuevo</span>
                                 </button>
-                                <span *ngIf="totalSelectedStructuresNoDependency"  (click)="desmarkAll(false)" class="_badge"
-                                    pTooltip="Click para desmarcar">{{totalSelectedStructuresNoDependency}}</span>
-                            </div>
-                            <i *ngIf="isAdmin" class="pi pi-bars p-toolbar-separator mr-2"></i>
-                            <app-menu-item *ngIf="dependencyMenuItems?.length" [menuItems]="dependencyMenuItems" [id]="dependency.id" [value]="dependency" [buttonClass]="'p-button-outlined'"></app-menu-item>
-                        </div>
-                        <div>
-                            <span class="p-input-icon-left">
-                                <i class="pi pi-search"></i>
-                                <input type="search" pInputText placeholder="Buscar"  (input)="onFilter($event, false)">
-                            </span>
-                        </div>
-                    </div> -->
+                                <div *ngIf="isAdmin" class="_badge-container m-1 mr-2">
+                                    <button pButton pRipple icon="pi pi-trash" style="position: relative;" (click)="deleteSelectedOperationalManagement()" pTooltip="Eliminar" tooltipPosition="bottom"
+                                        class="p-button-danger " [disabled]="!totalSelected">
+                                        <span class=" p-button-label pl-2 hidden-lg">Eliminar</span>
+                                    </button>
+                                    <span *ngIf="totalSelected"  (click)="desmarkAll()" class="_badge" pTooltip="Click para desmarcar">{{totalSelected}}</span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="end">
+                                <span class="m-1 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input class="w-full" type="search" pInputText placeholder="Buscar"  (input)="onFilter($event)">
+                                </span>
+                            </ng-template>
+                        </p-menubar>
+                    </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <!-- <th class="flex flex-row align-items-center">
+                        <th class="flex flex-row align-items-center">
                             <i class="pi {{orderIsAscending ? 'pi-sort-numeric-up-alt' : 'pi-sort-numeric-down-alt' }} text-lg cursor-pointer" (click)="changeOrder($event)" pTooltip="Orden" tooltipPosition="bottom"></i>
-                            <span class="text-center w-full">Estructura</span>
-                        </th> -->
+                            <span class="text-center w-full">Gestión operativa</span>
+                        </th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-rowNode let-structure="rowData">
-                    <!-- <tr *ngIf="rowGroupMetadata.includes(structure.id)">
+                <ng-template pTemplate="body" let-rowNode let-operationalManagement="rowData">
+                    <tr *ngIf="rowGroupMetadata.includes(operationalManagement.id)">
                         <td class="flex flex-row align-items-center">
                             <div class="flex flex-row align-items-center justify-content-center w-full">
-                                <div class="w-2rem h-2rem mr-2 flex align-items-center justify-content-center bg-{{structure.tipologia.nombreColor}}-100 border-circle">
-                                    <i class="pi {{structure.tipologia.claseIcono}} text-md text-{{structure.tipologia.nombreColor}}-500"></i>
+                                <div class="w-2rem h-2rem mr-2 flex align-items-center justify-content-center bg-{{operationalManagement.tipologia.nombreColor}}-100 border-circle">
+                                    <i class="pi {{operationalManagement.tipologia.claseIcono}} text-md text-{{operationalManagement.tipologia.nombreColor}}-500"></i>
                                 </div>
-                                <span class="text-500">{{structure.tipologia.nombre | pluralize : numberOfElementsByStructure[structure.idPadre]}}</span>
+                                <span class="text-500">{{operationalManagement.tipologia.nombre | pluralize : numberOfElementsByOperationalManagement[operationalManagement.idPadre ?? '']}}</span>
                             </div>
                             <div style="margin-left: auto; ">
-                                <p-badge [value]="numberOfElementsByStructure[structure.idPadre]" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                                <p-badge [value]="numberOfElementsByOperationalManagement[operationalManagement.idPadre ?? '']" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
                             </div>
                         </td>
                     </tr>
@@ -54,13 +57,14 @@
                             <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                             <p-treeTableCheckbox  *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
                             <div class="flex flex-column">
-                                <div class="font-medium">{{structure.orden != null ? structure.orden + '. ' : ''}} {{structure.nombre}}</div>
-                                <div class="text-500">{{structure.descripcion}}</div>
+                                <div class="font-medium">{{operationalManagement.orden != null ? operationalManagement.orden + '. ' : ''}} {{operationalManagement.nombre}}</div>
+                                <div class="text-500">{{operationalManagement.descripcion}}</div>
                             </div>
                             <div style="margin-left: auto; ">
                                 <div class="flex align-items-center ml-3">
-                                    <button *ngIf="hasDetailToShow(structure)" (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
-                                    <app-menu-item *ngIf="structure.menuItems?.length" [menuItems]="structure.menuItems" [id]="structure.id" [value]="structure"></app-menu-item>
+                                    <button *ngIf="hasDetailToShow(operationalManagement)" (click)="detailMessage.toggle($event)" pButton pRipple icon="pi pi-info-circle" 
+                                        class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+                                    <app-menu-item *ngIf="operationalManagement.menuItems?.length" [menuItems]="operationalManagement.menuItems" [id]="operationalManagement.id" [value]="operationalManagement"></app-menu-item>
                                 </div>
                                 <p-overlayPanel #detailMessage [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 xl:w-7'">
                                     <ng-template pTemplate>
@@ -73,8 +77,8 @@
                                                 <span class="text-500">Detalle de los tiempos laborados</span>
                                             </div>
                                         </div>
-                                        <ng-container *ngTemplateOutlet="TemplateStructureInformation; context:{structure: structure}"></ng-container>
-                                        <div *ngIf="structure.actividad as activity" class="grid grid-nogutter">
+                                        <ng-container *ngTemplateOutlet="TemplateOperationalManagementInformation; context:{operationalManagement: operationalManagement}"></ng-container>
+                                        <div *ngIf="operationalManagement.actividad as activity" class="grid grid-nogutter">
                                             <div class="col-12 md:col-6 lg:col-3 p-1">
                                                 <app-label-value-chart label="Frecuencia" [value]="activity.frecuencia" colorName="cyan" iconClass="pi-history"></app-label-value-chart>
                                             </div>
@@ -108,7 +112,7 @@
                                 </p-overlayPanel>
                             </div>
                         </td>
-                    </tr> -->
+                    </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
@@ -124,3 +128,101 @@
 <ng-template #sLoading>
     <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
+
+<ng-template #TemplateOperationalManagementInformation let-operationalManagement="operationalManagement">
+    <div class="flex flex-column align-items-center text-center p-3">
+        <div class="w-5rem h-5rem flex align-items-center justify-content-center bg-{{operationalManagement.tipologia.nombreColor}}-100 border-circle">
+            <i class="pi {{operationalManagement.tipologia.claseIcono}} text-4xl text-{{operationalManagement.tipologia.nombreColor}}-500"></i>
+        </div>
+        <span class="font-bold">{{operationalManagement.nombre}}</span>
+        <span class="text-500">{{operationalManagement.descripcion}}</span>
+        <span class="text-sm text-500">{{operationalManagement.tipologia?.nombre}}</span>
+    </div>
+</ng-template>
+
+<ng-template #TemplateTime let-time>
+    <div class="flex flex-row align-items-baseline">
+        <span class="text-500 text-2xl font-medium">{{time | number:'1.0-2'}}</span>
+        <span class="text-sm text-500 mr-2">min</span>
+        <span class="text-500 text-2xl font-medium">{{(time / 60) | number:'1.0-2'}}</span>
+        <span class="text-sm text-500">h</span>
+    </div>
+</ng-template>
+
+<p-overlayPanel #structuresOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
+    <ng-template pTemplate>
+        <div class="flex align-items-center mb-3">
+            <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                <i class="pi pi-info-circle text-xl text-blue-500"></i>
+            </div>
+            <div class="flex flex-column ">
+                <h5 class="m-0 text-700">Estructuras</h5>
+                <span class="text-500">Operaciones administrativas que pueden ser migradas</span>
+            </div>
+        </div>
+
+        <div class="flex flex-column mb-3">
+            <span class="font-medium">{{operationalManagementToMigrateStructures.nombre | uppercase}}</span>
+            <span class="text-500 text-justify">{{operationalManagementToMigrateStructures.descripcion}}</span>
+        </div>
+
+        <ng-container *ngIf="!loadingDependencies else sLoadingDependencies">
+            <p-treeTable  #treeTableStructure [value]="structureTree" selectionMode="checkbox" (onNodeExpand)="onStructureNodeExpand($event)" (onNodeCollapse)="onStructureNodeCollapse($event)"
+                [globalFilterFields]="['nombre', 'descripcion']"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center">
+                        <button *ngIf="isAdmin && selectedStructures?.length" [disabled]="isMigrating" pButton pRipple [icon]="isMigrating ? 'pi pi-spin pi-spinner' : 'pi pi-window-minimize'"
+                            class="p-button-primary m-1" (click)="migrateStructures()" pTooltip="Migrar" tooltipPosition="bottom">
+                            <span class="p-button-label hidden-lg pl-2">Migrar</span>
+                        </button>
+                        <span class="ml-auto m-1 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input class="w-full" type="search" pInputText placeholder="Buscar"  (input)="onFilterStructure($event)">
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center flex align-items-center justify-content-center " style="white-space: nowrap" ttSortableColumn="nombre" >
+                            {{structureTree[0].data.tipologia.nombre}}<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowNode let-structure="rowData">
+                    <tr *ngIf="structureRowGroupMetadata.includes(structure.id)">
+                        <td class="flex flex-row align-items-center justify-content-center">
+                            <div class="w-2rem h-2rem mr-2 flex align-items-center justify-content-center bg-{{structure.tipologia.nombreColor}}-100 border-circle">
+                                <i class="pi {{structure.tipologia.claseIcono}} text-md text-{{structure.tipologia.nombreColor}}-500"></i>
+                            </div>
+                            <span class="text-500">{{structure.tipologia.nombre | pluralize}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="flex flex-row align-items-center">
+                            <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
+                            <p-checkbox *ngIf="orderOfTypologies[structure.tipologia.id] > orderOfTypologies[operationalManagementToMigrateStructures.tipologia.id]" [(ngModel)]="structure.selected" [binary]="true" styleClass="mr-2" (onChange)="onChangeSelectedStructure(structure, $event)"></p-checkbox>
+                            
+                            <div pRipple (click)="viewDependency(structure)" class="flex flex-column cursor-pointer" 
+                                [ngClass]="{'font-medium': parseToBoolean(structure.tipologia.esDependencia)}">{{structure.nombre}}
+                            </div>
+                            
+                            <div class="ml-auto">
+                                <p-badge *ngIf="selectedStructuresMap[structure.id]?.length" [value]="selectedStructuresMap[structure.id]?.length" severity="info" pTooltip="Total" tooltipPosition="bottom"></p-badge>
+                                <button *ngIf="parseToBoolean(structure.tipologia.esDependencia)" (click)="viewDependency(structure)" [icon]="loadingStructureById[structure.id] ? 'pi pi-spin pi-spinner' : 'pi pi-plus'" 
+                                    [disabled]="loadingStructureById[structure.id]" pButton pRipple class="p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ampliar" tooltipPosition="bottom"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td class="text-center">{{MESSAGE.NO_REGISTROS}}</td>
+                    </tr>
+                </ng-template>
+            </p-treeTable>
+        </ng-container>
+        <ng-template #sLoadingDependencies>
+            <app-loading></app-loading>
+        </ng-template>
+    </ng-template>
+</p-overlayPanel>

@@ -4,7 +4,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
-import { Appointment, Level, Normativity, SalaryScale, Structure, Validity } from '@models';
+import { Appointment, Hierarchy, Level, Normativity, OrganizationChart, SalaryScale} from '@models';
 import { Store } from '@ngrx/store';
 import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService, NormativityService, StructureService, UrlService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
@@ -25,6 +25,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
 
   @ViewChild('validityOptionsOverlayPanel') validityOptionsOverlayPanel: OverlayPanel;
   @ViewChild('normativityOptionsOverlayPanel') normativityOptionsOverlayPanel: OverlayPanel;
+  @ViewChild('organizationChartOptionsOverlayPanel') organizationChartOptionsOverlayPanel: OverlayPanel;
 
   isAdmin: boolean;
   formAppointment !: FormGroup;
@@ -39,21 +40,21 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   mustRechargeAppointmentFormGroupSubscription: Subscription;
   appointmentSubscription: Subscription;
   levelSubscription: Subscription;
-  dependencySubscription: Subscription;
+  hierarchySubscription: Subscription;
 
   levels: Level[] = [];
   salaryScales: SalaryScale[] = [];
   normativities: Normativity[] = [];
-  structures: Structure[] = [];
-
-  selectedDependency: TreeNode<Structure> = {};
 
   backRoute: string;
 
+  organizationChartOptions: SelectItem[] = [];
   validityOptions: SelectItem[] = [];
   normativityOptions: SelectItem[] = [];
-  structureOptions: TreeNode<Structure>[] = [];
+  hierarchyOptions: TreeNode<Hierarchy>[] = [];
   menuItemsOfValidity: MenuItem[] = [];
+
+  organizationChart: OrganizationChart;
 
   constructor(
     private store: Store<AppState>,
@@ -62,7 +63,6 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     private levelService: LevelService,
     private validityService: ValidityService,
     private appointmentService: AppointmentService,
-    private structureService: StructureService,
     private authService: AuthenticationService,
     private location: Location,
     private router: Router,
@@ -85,10 +85,10 @@ export class AppointmentComponent implements OnInit, OnDestroy {
       this.appointmentService.createAppointmentFormGroup();
     }
 
-    this.levelSubscription = this.appointmentService.getAppointmentFormGroup().get('dependencyInTree').valueChanges.subscribe((value: TreeNode<Structure>) => {
-      this.appointmentService.setDependencyToAppointment(value);
+    this.hierarchySubscription = this.appointmentService.getAppointmentFormGroup().get('hierarchyTree').valueChanges.subscribe((value: TreeNode<Hierarchy>) => {
+      this.appointmentService.setHierarchyToAppointment(value);
     });
-    this.dependencySubscription = this.appointmentService.getAppointmentFormGroup().get('idNivel').valueChanges.subscribe((value: number) => {
+    this.levelSubscription = this.appointmentService.getAppointmentFormGroup().get('idNivel').valueChanges.subscribe((value: number) => {
       this.loadSalaryScale(value);
     });
 
@@ -96,7 +96,6 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.loadAppointmentInformation(appointmentId);
     this.loadValidities(appointmentId);
     this.initMenus();
-    this.loadStructures();
     this.loadLevels();
     this.loadNormativities();
   }
@@ -105,12 +104,10 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.mustRechargeAppointmentFormGroupSubscription?.unsubscribe();
     this.appointmentSubscription?.unsubscribe();
     this.levelSubscription?.unsubscribe();
-    this.dependencySubscription?.unsubscribe();
+    this.hierarchySubscription?.unsubscribe();
   }
 
-  initMenus(){
-
-  }
+  initMenus(){}
 
   loadAppointmentInformation(id: number){
     if (id == undefined){
@@ -140,12 +137,20 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadStructures(): void {
-    this.structureService.getDependencies().subscribe({
+  loadOrganizacionCharts(): void {
+    /*this.compensationCategoryService.getOrganizacionCharts().subscribe({
       next: (e) => {
-        this.builtNodes(e, this.structureOptions);
+        this.organizationChartOptions = e?.map( o => ({value: o, label: o.nombre}));
       }
-    });
+    });*/
+  }
+
+  loadHierarchies(organizaonChartId: number): void {
+    /*this.structureService.getHierarchies(organizaonChartId).subscribe({
+      next: (e) => {
+        this.builtNodes(e, this.hierarchyOptions);
+      }
+    });*/
   }
 
   loadValidities(appointmentId: number): void {
@@ -218,7 +223,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   onSubmitAppointment(event : Event): void {
     event.preventDefault();
     let payload = {...this.appointment, ...this.formAppointment.value};
-    delete payload.dependencyInTree;
+    delete payload.hierarchyTree;
     
     console.log(payload)
     if (this.formAppointment.invalid) {
@@ -321,24 +326,45 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     return Methods.parseStringToBoolean(str);
   }
 
-  private builtNodes(structures: Structure[], nodes: TreeNode<Structure>[]) {
-    if (!structures) {
-      return;
+  changeOrganizationChart(data: any){
+    this.organizationChart = data.value;
+    this.loadHierarchies(data.value.id);
+    this.organizationChartOptionsOverlayPanel.hide();
+  }
+
+  showDetailOfOrganizationChartNormativity(elementRef: HTMLDivElement, event: Event) {
+    if (elementRef.style.display === 'none' || !elementRef.style.display) {
+      elementRef.style.display = 'block';
+    } else {
+      elementRef.style.display = 'none';
     }
-    for (let structure of structures) {
-      if (Methods.parseStringToBoolean(structure.tipologia.esDependencia)) {
-        let node: TreeNode<Structure> = {
-          data: structure,
-          label: structure.nombre,
-          children: [],
-          key: structure.id.toString(),
-        };
-        if (structure.subEstructuras?.length) {
-          this.builtNodes(structure.subEstructuras, node.children)
-        }
-        nodes.push(node);
+
+    const button = event.currentTarget as HTMLElement;
+    const iconElement = button.querySelector('span');
+    if (iconElement) {
+      if (iconElement.classList.contains('pi-eye')) {
+        iconElement.classList.remove('pi-eye');
+        iconElement.classList.add('pi-eye-slash');
+      } else {
+        iconElement.classList.remove('pi-eye-slash');
+        iconElement.classList.add('pi-eye');
       }
     }
   }
 
+  private builtNodes(hierarchies: Hierarchy[], nodes: TreeNode<Hierarchy>[]) {
+    if (!hierarchies) return;
+    for (let hierarchy of hierarchies) {
+      let node: TreeNode<Hierarchy> = {
+        data: hierarchy,
+        label: hierarchy.dependencia.nombre,
+        children: [],
+        key: hierarchy.id.toString(),
+      };
+      if (hierarchy.subJerarquias?.length) {
+        this.builtNodes(hierarchy.subJerarquias, node.children)
+      }
+      nodes.push(node);
+    }
+  }
 }

@@ -15,8 +15,6 @@ import { Location } from '@angular/common';
 })
 export class OperationalManagementComponent implements OnInit {
   formOperationalManagement !: FormGroup;
-  formData: FormData;
-
   operationalManagement: OperationalManagement;
   idPadre: number;
   idTipologia: number;
@@ -75,8 +73,8 @@ export class OperationalManagementComponent implements OnInit {
     this.formOperationalManagement.get('orden').setValue(this.operationalManagement.orden);
   }
 
-  updateOperationalManagement(id: number): void {
-    this.operationalManagementService.updateOperationalManagement(id, this.formData).subscribe({
+  updateOperationalManagement(payload: OperationalManagement, id: number): void {
+    this.operationalManagementService.updateOperationalManagement(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(OperationalManagementActions.updateItemIntoList({operationalManagement: e as OperationalManagement}));
         this.urlService.goBack();
@@ -88,8 +86,8 @@ export class OperationalManagementComponent implements OnInit {
     });
   }
 
-  createOperationalManagement(): void {
-    this.operationalManagementService.createOperationalManagement(this.formData).subscribe({
+  createOperationalManagement(payload: OperationalManagement): void {
+    this.operationalManagementService.createOperationalManagement(payload).subscribe({
       next: (e) => {
         this.store.dispatch(OperationalManagementActions.addToList({operationalManagement: e as OperationalManagement}));
         this.urlService.goBack();
@@ -103,15 +101,12 @@ export class OperationalManagementComponent implements OnInit {
 
   onSubmitOperationalManagement(event : Event): void {
     event.preventDefault();
-    this.formData = new FormData();
-    this.formData.append('file', null);
-    this.formData.append('structure', JSON.stringify({...this.operationalManagement, ...this.formOperationalManagement.value}));
-
+    let payload = {...this.operationalManagement, ...this.formOperationalManagement.value};
     if (this.formOperationalManagement.invalid) {
       this.formOperationalManagement.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      this.updateMode ? this.updateOperationalManagement(this.operationalManagement.id) : this.createOperationalManagement();
+      this.updateMode ? this.updateOperationalManagement(payload, this.operationalManagement.id) : this.createOperationalManagement(payload);
     }
   }
 
@@ -134,5 +129,4 @@ export class OperationalManagementComponent implements OnInit {
     event.preventDefault();
     this.urlService.goBack();
   }
-
 }

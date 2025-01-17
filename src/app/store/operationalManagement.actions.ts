@@ -11,3 +11,6 @@ export const addToExpandedNodes= createAction('[Configuration of Operationals Ma
 export const removeFromExpandedNodes = createAction('[Configuration of Operationals Managements] Remove from the list of expanded nodes an element by its id', props<{ id: number }>());
 export const setOrderIsAscending = createAction('[Configuration of Operationals Managements] Set the order of structures', props<{ orderIsAscending: boolean }>());
 export const order = createAction('[Configuration of Operationals Managements] Order to operationals managements');
+
+export const setOrderOfTypologies = createAction('[Configuration of Operationals Managements] Set the order of typologies', props<{ orderOfTypologies: any }>());
+export const setMigratedOperationalsManagements = createAction('[Configuration of Operationals Managements] Set the new migrated operationals managements', props<{ operationalsManagements: any }>());

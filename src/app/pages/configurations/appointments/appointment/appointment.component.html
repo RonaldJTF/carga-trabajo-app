@@ -1,32 +1,29 @@
 <form *ngIf="!loadingAppointment else sLoadingAppointment" class="p-0" [formGroup]="formAppointment">
     <ng-container *ngTemplateOutlet="validityOptionTemplate; context: {validity: formAppointment.get('vigencia').value}"></ng-container>
 
+    <ng-container *ngTemplateOutlet="organizacionChartOptionTemplate; context: {organizationChart: organizationChart}"></ng-container>
+
     <div class="field p-fluid mt-3">
         <label htmlFor="idEstructura" class="font-medium">Dependencia</label>
-        <p-treeSelect *ngIf="structureOptions" [options]="structureOptions" formControlName="dependencyInTree" optionLabel="label" optionValue="key"
-                      [showClear]="false" [filter]="true" [showClear]="true"
-                      containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
-                      [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
-          <ng-template let-node pTemplate="default">
+        <p-treeSelect *ngIf="hierarchyOptions" [options]="hierarchyOptions" formControlName="hierarchyTree" optionLabel="label" optionValue="key"
+                    [showClear]="false" [filter]="true" [showClear]="true"
+                    containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                    [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
+        <ng-template let-node pTemplate="default">
             <div class="flex align-items-center cursor-pointer" pRipple>
-              <div *ngIf="node.data.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem"
-                   style="border-radius: 50%; overflow: hidden;">
-                <img [src]="node.data.srcIcono"
-                     [appImageFallback]="'assets/content/images/image-fallback-perfil.png'"
-                     style="width: 100%; height: auto" alt=""/>
-              </div>
-              <ng-template #sNoItemIcon>
-                <div
-                  class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                  <i
-                    class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
-                </div>
-              </ng-template>
-              <div class="flex flex-column ml-2">
-                <span>{{ node.label }}</span>
-              </div>
+            <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
             </div>
-          </ng-template>
+            <ng-template #sNoItemIcon>
+                <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
+                    <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+                </div>
+            </ng-template>
+            <div class="flex flex-column ml-2">
+                <span>{{ node.label }}</span>
+            </div>
+            </div>
+        </ng-template>
         </p-treeSelect>
         <div *ngIf="formAppointment.controls['idEstructura'].errors && (formAppointment.controls['idEstructura'].touched||formAppointment.controls['idEstructura'].dirty)">
             <div *ngIf="formAppointment.controls['idEstructura'].errors?.['required']">
@@ -193,5 +190,45 @@
     </div>
     <ng-template #sNoNormativity>
         <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_NORMATIVIDAD_ASOCIADA"></app-no-result>
+    </ng-template>
+</ng-template>
+
+<ng-template #organizacionChartOptionTemplate let-organizationChart="organizationChart">
+    <div class="flex flex-column md:flex-row align-items-center w-full mt-3">
+        <label class="text-left font-medium w-full md:w-auto">Estructura organizacional</label>
+        <div style="margin-left: auto; ">
+            <p-menu #organizationChartMenu [popup]="true" [model]=""></p-menu>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Organigrama" (click)="organizationChartOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #organizationChartOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="organizationChartOptions" [filter]="true" title="Organigramas"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeOrganizationChart($event)">
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div *ngIf="organizationChart; else sNoOrganizationChart" class="surface-100 border-round p-3 mt-2">
+        <div class="flex align-items-center">
+            <div class="flex flex-column" >
+                <span class="text-500">{{organizationChart.nombre | uppercase}}</span>
+                <span class="text-500 text-sm">{{organizationChart.descripcion | titlecase}}</span>
+            </div>
+            <button (click)="showDetailOfOrganizationChartNormativity(detailOfOrganizationChartNormativity, $event)"  pButton pRipple icon="pi pi-eye"
+                class="ml-auto p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+        </div>
+        <div #detailOfOrganizationChartNormativity style="display: none; max-height: 500px; overflow-y: auto;" class="ql-snow w-full">
+            <div class="ql-editor" [innerHTML] ="organizationChart.normatividad?.descripcion ?? '' | sanitizeHtml"></div>
+        </div>
+    </div>
+
+    <ng-template #sNoOrganizationChart>
+        <div class="surface-100 border-round flex align-items-center justify-content-center p-3 mt-2">
+            <i class="pi pi-exclamation-triangle text-3xl text-500 mr-2"></i>
+            <span class="text-500 text-justify">Seleccione una opción</span>
+        </div>
     </ng-template>
 </ng-template>

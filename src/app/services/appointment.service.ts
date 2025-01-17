@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import { Appointment, Normativity, Scope, Structure, Validity } from '@models';
+import { Appointment, Hierarchy, Normativity, Validity } from '@models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
@@ -111,7 +111,7 @@ export class AppointmentService {
       totalCargos: ['', Validators.compose([Validators.required, Validators.min(0)])],
       asignacionBasicaMensual: ['', Validators.compose([Validators.required, Validators.min(0)])],
       vigencia: null,
-      dependencyInTree: null,
+      hierarchyTree: null,
       normatividad: null,
     })
     return this.appointmentFormGroup;
@@ -120,14 +120,14 @@ export class AppointmentService {
   initializeAppointmentFormGroup(appointment: Appointment): FormGroup {
     this._appointment.next(appointment);
     
-    const node: TreeNode<Structure> = {
-      data: appointment.estructura,
-      label: appointment.estructura.nombre,
-      key: appointment.estructura.id.toString(),
+    const node: TreeNode<Hierarchy> = {
+      data: appointment.jerarquia,
+      label: appointment.jerarquia.dependencia.nombre,
+      key: appointment.idJerarquia.toString(),
       children: []
     };
 
-    this.appointmentFormGroup.get('idEstructura').setValue(appointment.idEstructura);
+    this.appointmentFormGroup.get('idJerarquia').setValue(appointment.idJerarquia);
     this.appointmentFormGroup.get('idVigencia').setValue(appointment.idVigencia);
     this.appointmentFormGroup.get('idNivel').setValue(appointment.idNivel);
     this.appointmentFormGroup.get('idEscalaSalarial').setValue(appointment.idEscalaSalarial);
@@ -137,7 +137,7 @@ export class AppointmentService {
     this.appointmentFormGroup.get('asignacionBasicaMensual').setValue(appointment.asignacionBasicaMensual);
     this.appointmentFormGroup.get('vigencia').setValue(appointment.vigencia);
     this.appointmentFormGroup.get('normatividad').setValue(appointment.normatividad);
-    this.appointmentFormGroup.get('dependencyInTree').setValue(node);
+    this.appointmentFormGroup.get('hierarchyTree').setValue(node);
     
     return this.appointmentFormGroup;
   }
@@ -191,9 +191,9 @@ export class AppointmentService {
     }
   }
 
-  setDependencyToAppointment(node: TreeNode<Structure>){
+  setHierarchyToAppointment(node: TreeNode<Hierarchy>){
     const formGroup = this.appointmentFormGroup;
-    formGroup?.get('idEstructura').markAsTouched();
-    formGroup?.get('idEstructura').setValue(node?.data?.id);
+    formGroup?.get('idJerarquia').markAsTouched();
+    formGroup?.get('idJerarquia').setValue(node?.data?.id);
   }
 }

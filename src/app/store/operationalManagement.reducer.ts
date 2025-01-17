@@ -9,6 +9,7 @@ export interface OperationalManagementState {
   mustRecharge: boolean;
   expandedNodes: any[];
   orderIsAscending: boolean;
+  orderOfTypologies: any;
 }
 
 export const initialState: OperationalManagementState = {
@@ -17,6 +18,7 @@ export const initialState: OperationalManagementState = {
   mustRecharge: true,
   expandedNodes: [],
   orderIsAscending: true,
+  orderOfTypologies: {},
 };
 
 export const operationalManagementReducer = createReducer(
@@ -24,10 +26,11 @@ export const operationalManagementReducer = createReducer(
 
   on(OperationalManagementActions.setList, (state, { operationalsManagements }) => {
     let items =  JSON.parse(JSON.stringify(operationalsManagements ?? []));
-   return{
-    ...state,
-    items: items,
-   }
+    order(items, state.orderIsAscending);
+    return{
+      ...state,
+      items: items,
+    }
   }),
 
   on(OperationalManagementActions.addToList, (state, { operationalManagement }) =>{
@@ -40,8 +43,12 @@ export const operationalManagementReducer = createReducer(
       }
       parentStructure.subGestionesOperativas.push(operationalManagement)
     }else{
+      if (items.find( e => e.orden == operationalManagement.orden)){
+        reasingOrder(items, operationalManagement.orden, 1);
+      }
       items.push(operationalManagement);
     }
+    order(items, state.orderIsAscending);
     return { ...state, items: items};
   }),
 
@@ -51,8 +58,11 @@ export const operationalManagementReducer = createReducer(
     let parentOperationalManagement = findOperationalManagement(operationalManagementToRemove.idPadre, items);
     if (parentOperationalManagement){
       reasingOrder(parentOperationalManagement.subGestionesOperativas, operationalManagementToRemove.orden, -1);
+    }else{
+      reasingOrder(items, operationalManagementToRemove.orden, -1);
     }
     const filteredItems = filtrarNodosArbol (items, [id]);
+    order(filteredItems, state.orderIsAscending);
     return { ...state, items: filteredItems};
   }),
 
@@ -63,9 +73,12 @@ export const operationalManagementReducer = createReducer(
       let parent = findOperationalManagement(operationalManagementToRemove.idPadre, items);
       if (parent){
         reasingOrder(parent.subGestionesOperativas, operationalManagementToRemove.orden, -1);
+      }else{
+        reasingOrder(items, operationalManagementToRemove.orden, -1);
       }
     }
     const filteredItems = filtrarNodosArbol (items, operationalsManagementsIds);
+    order(filteredItems, state.orderIsAscending);
     return { ...state, items: filteredItems};
   }),
 
@@ -73,21 +86,26 @@ export const operationalManagementReducer = createReducer(
     const items = JSON.parse(JSON.stringify(state.items));
     let updated = findOperationalManagement(operationalManagement.id, items);
     let parent = findOperationalManagement(operationalManagement.idPadre, items);
-    if (parent?.subGestionesOperativas.find( e => e.orden == operationalManagement.orden)){
+
+    const list = parent ? parent?.subGestionesOperativas : items;
+
+    if (list.find( e => e.orden == operationalManagement.orden)){
       const previousOrder = updated?.orden;
       if (previousOrder != null){
         if (previousOrder >= operationalManagement.orden){
-          reasingOrder(parent.subGestionesOperativas, operationalManagement.orden, 1, previousOrder);
+          reasingOrder(list, operationalManagement.orden, 1, previousOrder);
         }else{
-          reasingOrder(parent.subGestionesOperativas, previousOrder, -1, operationalManagement.orden);
+          reasingOrder(list, previousOrder, -1, operationalManagement.orden);
         }
       }else{
-        reasingOrder(parent.subGestionesOperativas, operationalManagement.orden, 1);
+        reasingOrder(list, operationalManagement.orden, 1);
       }
     }
+
     if (updated){
       Object.assign(updated, JSON.parse(JSON.stringify(operationalManagement)));
     }
+    order(items, state.orderIsAscending);
     return { ...state, items:items };
   }),
 
@@ -110,6 +128,34 @@ export const operationalManagementReducer = createReducer(
     ...state,
     orderIsAscending: orderIsAscending,
   })),
+
+  on(OperationalManagementActions.order, (state) => {
+    const items = JSON.parse(JSON.stringify(state.items));
+    order(items, state.orderIsAscending);
+    return {...state, items: items}
+  }),
+
+  on(OperationalManagementActions.setOrderOfTypologies, (state, { orderOfTypologies }) => ({
+    ...state,
+    orderOfTypologies: orderOfTypologies,
+  })),
+
+  on(OperationalManagementActions.setMigratedOperationalsManagements, (state, {operationalsManagements}) => {
+    const items = JSON.parse(JSON.stringify(state.items));
+    for (let operationalManagement of operationalsManagements){
+      let parentStructure = findOperationalManagement(operationalManagement.idPadre, items);
+
+      if (parentStructure){
+        if (!parentStructure.subGestionesOperativas){parentStructure.subGestionesOperativas = []}
+        parentStructure.subGestionesOperativas.push(operationalManagement)
+      }else{
+        items.push(operationalManagement);
+      }
+    }
+    order(items, state.orderIsAscending);
+    return { ...state, items: items};
+  }),
+
 );
 
 

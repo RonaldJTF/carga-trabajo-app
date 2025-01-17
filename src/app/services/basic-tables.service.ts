@@ -121,6 +121,10 @@ export class BasicTablesService {
     return this.webRequestService.getWithHeaders(this.pathTypology);
   }
 
+  getOrderOfTypologies(): Observable<any> {
+    return this.webRequestService.getWithHeaders(`${this.pathTypology}/orden`);
+  }
+
   getTypology(idTypology: number): Observable<Typology> {
     return this.webRequestService.getWithHeaders(`${this.pathTypology}/${idTypology}`);
   }

@@ -562,7 +562,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     const filtered = this.appointments.filter(e => 
         e.alcance.nombre === scope &&
         e.vigencia.nombre === validity &&
-        e.estructura.nombre === structure &&
+        //e.estructura.nombre === structure &&
         e.nivel.nombre === level
     );
     chartDetail.chartDetail = this.buildPolarChartInformation(filtered, 'escalaSalarial.nombre', 'nivel.nombre');
