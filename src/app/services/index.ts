@@ -37,3 +37,4 @@ export * from './level-compensation.service';
 export * from './compensation-category.service';
 export * from './operational-management.service';
 export * from './convention.service';
+export * from './organization-chart.service';

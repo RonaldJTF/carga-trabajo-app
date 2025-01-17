@@ -1,0 +1,73 @@
+<form class="p-0" [formGroup]="formOrganizationalChart">
+  <div class="field p-fluid">
+    <label for="nombre" class="font-medium">Nombre</label>
+    <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+    <div *ngIf="fieldNoValid('nombre')">
+      <div *ngIf="controls('nombre')">
+        <small class="p-error">Ingrese un nombre</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="field p-fluid">
+    <label for="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+    <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
+  </div>
+  <div class="field">
+    <ng-container *ngTemplateOutlet="normativityOptionTemplate; context: {normativity: formOrganizationalChart.get('normatividad').value}"></ng-container>
+  </div>
+
+  <app-form-action-button [updateMode]="updateMode"
+                          (createOrUpdate)="onSubmitOrganizationalChart($event)"
+                          (cancel)="onCancelOrganizationalChart($event)"
+                          (delete)="onDeleteOrganizationalChart($event)"
+                          [showDeleteButton]="updateMode"
+                          [creatingOrUpdating]="creatingOrUpdating"
+                          [deleting]="deleting"
+                          [disabledCreateOrUpdateButton]="formOrganizationalChart.invalid">
+  </app-form-action-button>
+
+  <ng-template #normativityOptionTemplate let-normativity="normativity">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+      <label class="text-left font-medium  w-full md:w-auto">Normatividad</label>
+      <div style="margin-left: auto; ">
+        <button *ngIf="formOrganizationalChart?.value.idNormatividad" (click)="removeNormativity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text" pTooltip="Remover" tooltipPosition="bottom"></button>
+        <button *ngIf="formOrganizationalChart?.value.idNormatividad" (click)="onGoToUpdateNormativity(normativity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text" pTooltip="Editar" tooltipPosition="bottom"></button>
+        <button pButton pRipple type="button" (click)="openNewNormativity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text" pTooltip="Crear" tooltipPosition="bottom"></button>
+        <p-menu [popup]="true" [model]=""></p-menu>
+        <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text" label="Normatividades" (click)="normativityOptionsOverlayPanel.toggle($event)"></button>
+        <p-overlayPanel #normativityOptionsOverlayPanel [showCloseIcon]="true">
+          <ng-template pTemplate>
+            <p-listbox [options]="normativityOptions" [filter]="true" title="Normatividades"
+                       [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                       [style]="{'max-height':'250px', 'overflow':'auto'}"
+                       (onClick)="changeNormativity($event)">
+            </p-listbox>
+          </ng-template>
+        </p-overlayPanel>
+      </div>
+    </div>
+
+    <div *ngIf="normativity; else sNoNormativity" class="surface-100 border-round p-3 mt-2">
+      <div class="flex align-items-center">
+        <div class="flex flex-column">
+          <span class="text-500">{{ normativity.nombre | uppercase }}</span>
+          <span class="text-blue-500 text-sm">{{ normativity.alcance?.nombre | titlecase }}</span>
+        </div>
+        <button (click)="showDetailOfNormativity(detailOfNormativity, $event)" pButton pRipple icon="pi pi-eye" class="ml-auto p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+      </div>
+      <div #detailOfNormativity style="display: none; max-height: 500px; overflow-y: auto;" class="ql-snow w-full">
+        <div class="ql-editor" [innerHTML]="normativity?.descripcion ?? '' | sanitizeHtml"></div>
+      </div>
+    </div>
+    <div *ngIf="formOrganizationalChart.controls['idNormatividad'] && formOrganizationalChart.controls['idNormatividad'].errors && (formOrganizationalChart.controls['idNormatividad'].touched || formOrganizationalChart.controls['idNormatividad'].dirty)">
+      <div *ngIf="formOrganizationalChart.controls['idNormatividad'].errors?.['required']">
+        <small id="text-help" class="p-error">Seleccione una normatividad sobre la que se soporta la asignación laboral</small>
+      </div>
+    </div>
+    <ng-template #sNoNormativity>
+      <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_NORMATIVIDAD_ASOCIADA"></app-no-result>
+    </ng-template>
+  </ng-template>
+
+</form>

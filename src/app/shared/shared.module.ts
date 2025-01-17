@@ -81,6 +81,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ExpressionComponent } from './expression/expression.component';
 import { MenubarModule } from 'primeng/menubar';
 import { TabMenuModule } from 'primeng/tabmenu';
+import {OrganizationChartModule} from "primeng/organizationchart";
 @NgModule({
     declarations: [
         FunctionalityComponent,
@@ -185,6 +186,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
         ToggleButtonModule,
         MenubarModule,
         TabMenuModule,
+        OrganizationChartModule,
     ],
     exports: [
         FunctionalityComponent,
@@ -286,6 +288,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
         ToggleButtonModule,
         MenubarModule,
         TabMenuModule,
+        OrganizationChartModule,
     ],
   providers: []
 })

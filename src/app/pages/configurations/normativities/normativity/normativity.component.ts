@@ -21,9 +21,9 @@ export class NormativityComponent implements OnInit {
   DELETE_MESSAGE = `¿Está seguro de eliminar la normatividad?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
-            <strong>Advertencia:</strong> 
-            Eliminar la normatividad implica eliminar todas las escalas salariales configuradas, 
-            incluidas aquellas que están asociadas a otros niveles ocupacionales que dependan de la misma normatividad. 
+            <strong>Advertencia:</strong>
+            Eliminar la normatividad implica eliminar todas las escalas salariales configuradas,
+            incluidas aquellas que están asociadas a otros niveles ocupacionales que dependan de la misma normatividad.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -68,7 +68,7 @@ export class NormativityComponent implements OnInit {
     this.formNormativity = this.formBuilder.group({
       estado: [true, Validators.required],
       nombre: ['', Validators.compose([
-        Validators.required, 
+        Validators.required,
         Validators.maxLength(100)
       ])],
       emisor: '',
@@ -82,7 +82,7 @@ export class NormativityComponent implements OnInit {
       fechaFinVigencia: null
     })
   }
-  
+
 
   loadNormativity(id: number){
     if (id == undefined){
@@ -113,7 +113,7 @@ export class NormativityComponent implements OnInit {
       }
     });
   }
-  
+
   assignValuesToForm(){
     this.formNormativity.get('nombre').setValue(this.normativity.nombre);
     this.formNormativity.get('emisor').setValue(this.normativity.emisor);

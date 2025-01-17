@@ -1,0 +1,19 @@
+._badge {
+  cursor: pointer;
+  position: absolute;
+  background-color: var(--primary-500);
+  color: white;
+  border-radius: 50%;
+  z-index: 9999;
+}
+
+._badgeChart {
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  left: -25px;
+  background-color: var(--primary-500);
+  color: white;
+  border-radius: 50%;
+  z-index: 9999;
+}

@@ -24,3 +24,6 @@ export * from './rule'
 export * from './variable';
 export * from './operationalmanagement';
 export * from './convention';
+export * from './organizationchart';
+export * from './dependency';
+export * from './hierarchy';
