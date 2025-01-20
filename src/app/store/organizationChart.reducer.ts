@@ -43,7 +43,7 @@ export const organizationChartReducer = createReducer(
     if (index !== -1){
       items[index] = organizationChart;
     }
-    return { ...state, items:items};
+    return { ...state, items:items, item: state.item.id == organizationChart.id ? organizationChart : state.item};
   }),
 
   on(OrganizationChartActions.setMustRecharge, (state, { mustRecharge }) => ({

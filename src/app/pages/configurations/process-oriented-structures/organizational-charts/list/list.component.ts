@@ -73,7 +73,12 @@ export class ListComponent implements OnInit, OnDestroy {
         return this.getConventions(associatedDependencies);
       })
     );
-    this.organizationChartSubscribe =  this.store.select(state => state.organizationChart.item).subscribe( e => this.selectedOrganizationChart = e);
+    this.organizationChartSubscribe =  this.store.select(state => state.organizationChart.item).subscribe( e => {
+      this.selectedOrganizationChart = e;
+      if(this.hierarchyTree?.length){
+        this.hierarchyTree[0].data = {root: true, ...this.selectedOrganizationChart};
+      }
+    });
     this.hierarchiesSubscribe =  this.store.select(state => state.hierarchy.items).subscribe( e => {
       this.hierarchies = e;
       const nodes = this.buildNodes(e);
