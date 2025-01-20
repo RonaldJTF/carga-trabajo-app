@@ -61,7 +61,7 @@ export class OrganizationChartService {
   deleteHierarchy(id: number): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathHierarchy}/${id}`);
   }
-  deleteHierarchyAndDependency(hierarchyId: number, dependencyId: number): Observable<any> {
+  deleteHierarchyAndDependency(hierarchyId: number): Observable<any> {
     return this.webRequestService.deleteWithHeaders(`${this.pathHierarchy}/with-dependency/${hierarchyId}`);
   }
 

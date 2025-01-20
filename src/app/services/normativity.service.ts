@@ -26,8 +26,12 @@ export class NormativityService {
     return this.webRequestService.getWithHeaders(this.pathNormativity, filter);
   }
 
-  getGeneralAndActiveNormativities(status: '0'|'1'): Observable<Normativity[]>{
+  getGeneralNormativities(status: '0'|'1'): Observable<Normativity[]>{
     return this.webRequestService.getWithHeaders(`${this.pathNormativity}/general`, {status: status});
+  }
+
+  getAppointmentNormativities(status: '0'|'1'): Observable<Normativity[]>{
+    return this.webRequestService.getWithHeaders(`${this.pathNormativity}/appointment`, {status: status});
   }
 
   createNormativity(normativity: any): Observable<any> {

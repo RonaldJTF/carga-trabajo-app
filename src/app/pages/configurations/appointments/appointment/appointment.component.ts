@@ -193,7 +193,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   }
 
   loadNormativities(): void {
-    this.normativityService.getFilteredNormativities({estado: '1', esEscalaSalarial: '0'}).subscribe({
+    this.normativityService.getAppointmentNormativities('1').subscribe({
       next: (e) => {
         this.normativityOptions = e?.map( o => ({value: o, label: o.nombre}));
       }
@@ -328,6 +328,22 @@ export class AppointmentComponent implements OnInit, OnDestroy {
         iconElement.classList.add('pi-eye');
       }
     }
+  }
+
+  onDeleteNormativity(normativity: Normativity, event: Event): void{
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.normativityService.deleteNormativity(normativity.id).subscribe({
+          next: () => {
+            this.appointmentService.removeNormativityInAppointment(normativity.id);
+            this.normativityOptions = this.normativityOptions.filter(e => e.value?.id != normativity.id)
+          },
+        });
+      },
+      `¿Está seguro de eliminar la normatividad <strong>${normativity?.nombre}</strong>?`
+    )
   }
 
   parseStringToBoolean(str: string): boolean{

@@ -6,7 +6,7 @@
     <div class="border-round-top-xl surface-100 p-3 border-bottom-none mb-0 card border-noround">
       <p-menubar [model]="menuBarItems">
         <ng-template pTemplate="start">
-            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1 mr-2" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
                 <span class="p-button-label hidden-lg pl-2">Nuevo</span>
             </button>
         </ng-template>
@@ -34,7 +34,7 @@
                 <div class="flex flex-column p-3" style="position: relative;" (mouseenter)="toggleIcon(true, node.data.id, 'organizationChart')" (mouseleave)="toggleIcon(false, node.data.id, 'organizationChart')">
                   <span class="font-medium">{{node.data.nombre | uppercase}}</span>
                   <span class="text-500 text-sm">{{node.data.descripcion}}</span>
-                  <app-organization-chart-menu-item [toggleIcon]="showedIcons['organizationChart' + node.data.id]" [id]="node.data.id" [menuItems]="menuItemsOrganizationChart" ></app-organization-chart-menu-item >
+                  <app-organization-chart-menu-item [toggleIcon]="showedIcons['organizationChart' + node.data.id]" [id]="node.data.id" [value]="node.data" [menuItems]="menuItemsOrganizationChart" ></app-organization-chart-menu-item >
                 </div>
               </ng-container>
               <ng-template #sNoRoot>
@@ -49,7 +49,7 @@
                   </ng-template>
                   <span class="font-medium text-sm">{{dependency.nombre}}</span>
                   <span class="text-500 text-xs">{{dependency.descripcion}}</span>
-                  <app-organization-chart-menu-item [toggleIcon]="showedIcons['hierarchy' + node.data.id]" [id]="node.data.id" [menuItems]="menuItemsHierarchy" ></app-organization-chart-menu-item >
+                  <app-organization-chart-menu-item [toggleIcon]="showedIcons['hierarchy' + node.data.id]" [id]="node.data.id" [value]="node.data" [menuItems]="menuItemsHierarchy" ></app-organization-chart-menu-item >
                 </div>
               </ng-template>
             </ng-template>
@@ -62,7 +62,7 @@
         </ng-container>
         <ng-template #sNoTree>
           <div class="p-3">
-            <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM"></app-no-result>
+            <app-no-result [imageSize]="IMAGE_SIZE.LARGE"></app-no-result>
           </div>
         </ng-template>
       </ng-container>
@@ -92,7 +92,15 @@
             <ng-template #sLoadingDependencies>
                 <app-loading></app-loading>
             </ng-template>
-        </ng-template>
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            <div class="flex align-items-center gap-2 w-full">
+              <span>{{item.nombre }}</span>
+              <div class="ml-auto">
+                  <button (click)="onDeleteDependency(item, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+              </div>
+            </div>
+          </ng-template>
       </p-listbox>
   </ng-template> 
 </p-overlayPanel>

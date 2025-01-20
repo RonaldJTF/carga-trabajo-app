@@ -168,6 +168,14 @@
                         [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
                         [style]="{'max-height':'250px', 'overflow':'auto'}"
                         (onClick)="changeNormativity($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <span>{{item.label }}</span>
+                                <div class="ml-auto">
+                                    <button (click)="onDeleteNormativity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+                                </div>
+                            </div>
+                        </ng-template>
                     </p-listbox>
                 </ng-template>
             </p-overlayPanel>

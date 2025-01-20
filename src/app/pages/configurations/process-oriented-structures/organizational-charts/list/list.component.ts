@@ -24,6 +24,7 @@ export class ListComponent implements OnInit, OnDestroy {
   protected readonly MESSAGE = MESSAGE;
 
   @ViewChild('dependencyOptionsOverlayPanel') dependencyOptionsOverlayPanel: OverlayPanel;
+  @ViewChild('organizationChartOptionsOverlayPanel') organizationChartOptionsOverlayPanel: OverlayPanel;
 
   loading: boolean = false;
   loadingHierarchies: boolean = false;
@@ -83,7 +84,7 @@ export class ListComponent implements OnInit, OnDestroy {
       this.hierarchies = e;
       const nodes = this.buildNodes(e);
       this.hierarchyTree = [];
-      if(this.selectedOrganizationChart.id){
+      if(this.selectedOrganizationChart?.id){
         this.hierarchyTree.push(
           {
             expanded: true,
@@ -115,14 +116,15 @@ export class ListComponent implements OnInit, OnDestroy {
       {label: 'Agregar dependencia', icon: 'pi pi-plus', visible: this.isAdmin, command: (e) => this.onGoCreateHierarchy(null, e.item.id)},
       {label: 'Asociar dependencia', icon: 'pi pi-arrow-right-arrow-left', visible: this.isAdmin, command: (e) => this.onGoAssociateHierarchy(null, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoUpdateOrganizationChart(e.item.id, e.originalEvent)},
-      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteOrganizationChart(e)}
+      {label: 'Eliminar organigrama', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteOrganizationChart(e)}
     ];
 
     this.menuItemsHierarchy = [
       {label: 'Agregar subdependencia', icon: 'pi pi-sitemap', visible: this.isAdmin, command: (e) => this.onGoCreateHierarchy(e.item.id, this.selectedOrganizationChart.id)},
       {label: 'Asociar subdependencia', icon: 'pi pi-arrow-right-arrow-left', visible: this.isAdmin, command: (e) => this.onGoAssociateHierarchy(e.item.id, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoUpdateHierarchy(e.item.id, e.originalEvent)},
-      {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteHierarchy(e)},
+      {label: 'Eliminar jerarquía', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteHierarchy(e)},
+      {label: 'Eliminar dependencia', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteHierarchyAndDependency(e)},
     ];
   }
 
@@ -205,6 +207,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   onDeleteHierarchy(event: any): void {
     let id = parseInt(event.item.id);
+    let hierarchy: Hierarchy = event.item['value'];
     event.originalEvent.preventDefault();
     event.originalEvent.stopPropagation();
     this.confirmationDialogService.showDeleteConfirmationDialog(
@@ -215,7 +218,62 @@ export class ListComponent implements OnInit, OnDestroy {
             this.store.dispatch(HierarchyActions.removeFromList({id: id}));
           },
         });
-      }
+      },
+      `
+      ¿Está seguro de eliminar la relación de la dependencia <strong>${hierarchy?.dependencia?.nombre}</strong> 
+      en el organigrama <strong>${hierarchy?.organigrama?.nombre}</strong>?
+      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
+        <span>
+            <strong>Advertencia:</strong>
+            Eliminar la relación implica eliminar las relaciones con las subdependencias. Aquí no se eliminan las dependencias relacionadas. 
+            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
+        </span>
+      </div>
+      `
+    )
+  }
+
+  onDeleteHierarchyAndDependency(event : any): void {
+    let hierarchyId = parseInt(event.item.id);
+    let hierarchy: Hierarchy = event.item['value'];
+    event.originalEvent.preventDefault();
+    event.originalEvent.stopPropagation();
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.organizationChartService.deleteHierarchyAndDependency(hierarchyId).subscribe({
+          next: () => {
+            this.store.dispatch(HierarchyActions.removeFromList({id: hierarchyId}));
+            this.dependencies= this.dependencies?.filter(e => e.id != hierarchy.idDependencia);
+            this.filteredDependencies = this.filterDependencies(this.dependencies);
+          }
+        });
+      },
+      `
+      ¿Está seguro de eliminar la dependencia <strong>${hierarchy?.dependencia?.nombre}</strong>?
+      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
+        <span>
+            <strong>Advertencia:</strong>
+            Eliminar la dependencia implica eliminar su relación en ésta y en otras estructuras organizacionales. 
+            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
+        </span>
+      </div>
+      `
+    )
+  }
+
+  onDeleteDependency(dependency: Dependency, event: Event){
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.organizationChartService.deleteDependency(dependency.id).subscribe({
+          next: () => {
+            this.dependencies= this.dependencies.filter(e => e.id != dependency.id);
+            this.filteredDependencies = this.filterDependencies(this.dependencies);
+          }
+        });
+      },
+      `¿Está seguro de eliminar la dependencia <strong>${dependency.nombre}</strong>?`
     )
   }
 
@@ -235,7 +293,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if (!dependencies) return [];
     let conventions = [];
     for (let d of dependencies){
-      if(!conventions.map(obj => obj.id).includes(d.convencion.id)){
+      if(!conventions.map(obj => obj.id).includes(d.idConvencion) && d.convencion){
         conventions.push(d.convencion)
       }
     }
@@ -296,6 +354,7 @@ export class ListComponent implements OnInit, OnDestroy {
   changeOrganizationChart(data: any){
     this.store.dispatch(OrganizationChartActions.setOrganizationChart({organizationChart: data.value}));
     this.getHierarchies(this.selectedOrganizationChart.id);
+    this.organizationChartOptionsOverlayPanel.hide();
   }
 
   toggleIcon(show: boolean, id, key: 'hierarchy' | 'organizationChart'){

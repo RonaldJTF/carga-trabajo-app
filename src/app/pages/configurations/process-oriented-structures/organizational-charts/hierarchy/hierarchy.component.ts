@@ -148,7 +148,7 @@ export class HierarchyComponent implements OnInit {
   onDeleteHierarchyAndDependency(event : Event): void {
     event.preventDefault();
     this.deleting = true;
-    this.organizationChartService.deleteHierarchyAndDependency(this.hierarchy.id, this.hierarchy.idDependencia).subscribe({
+    this.organizationChartService.deleteHierarchyAndDependency(this.hierarchy.id).subscribe({
       next: () => {
         this.store.dispatch(HierarchyActions.removeFromList({id: this.hierarchy.id}));
         this.urlService.goBack();

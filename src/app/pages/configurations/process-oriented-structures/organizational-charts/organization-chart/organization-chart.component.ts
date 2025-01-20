@@ -107,7 +107,7 @@ export class OrganizationChartComponent implements OnInit, OnDestroy {
   }
 
   loadNormativities(): void {
-    this.normativityService.getGeneralAndActiveNormativities('1').subscribe({
+    this.normativityService.getGeneralNormativities('1').subscribe({
       next: (e) => {
         this.normativityOptions = e?.map( o => ({value: o, label: o.nombre}));
       }

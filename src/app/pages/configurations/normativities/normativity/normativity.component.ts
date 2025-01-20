@@ -18,16 +18,7 @@ export class NormativityComponent implements OnInit {
   IMAGE_SIZE = IMAGE_SIZE;
   MESSAGE = MESSAGE;
 
-  DELETE_MESSAGE = `¿Está seguro de eliminar la normatividad?
-      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
-        <span>
-            <strong>Advertencia:</strong>
-            Eliminar la normatividad implica eliminar todas las escalas salariales configuradas,
-            incluidas aquellas que están asociadas a otros niveles ocupacionales que dependan de la misma normatividad.
-            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
-        </span>
-      </div>
-    `
+  DELETE_MESSAGE;
 
   formNormativity !: FormGroup;
   normativity: Normativity;
@@ -65,6 +56,19 @@ export class NormativityComponent implements OnInit {
     this.buildForm();
     this.loadNormativityTypes();
     this.loadScopes();
+
+    if(this.isSalaryScale){
+      this.DELETE_MESSAGE = `¿Está seguro de eliminar la normatividad?
+      <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
+        <span>
+            <strong>Advertencia:</strong>
+            Eliminar la normatividad implica eliminar todas las escalas salariales configuradas,
+            incluidas aquellas que están asociadas a otros niveles ocupacionales que dependan de la misma normatividad.
+            Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
+        </span>
+      </div>
+    `;
+    }
   }
 
   buildForm(){
@@ -79,7 +83,7 @@ export class NormativityComponent implements OnInit {
         Validators.required
       ])],
       idTipoNormatividad: ['', Validators.required],
-      idAlcance: '',
+      idAlcance:  ['', this.showScopes ? Validators.required : null],
       esEscalaSalarial: this.isSalaryScale,
       fechaInicioVigencia:  null,
       fechaFinVigencia: null
