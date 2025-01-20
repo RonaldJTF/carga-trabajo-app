@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as StructureActions from "@store/structure.actions";
-import * as AppointmentActions from "@store/appointment.actions";
 import {finalize, map, Observable, Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AppState} from 'src/app/app.reducers';
@@ -116,12 +115,7 @@ export class ListComponent implements OnInit, OnDestroy{
     this.expandedNodesSubscription = this.store.select(state => state.structure.expandedNodes).subscribe(e => this.expandedNodes = e);
 
     this.menuBarItems = [
-      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload},
-      {label: 'Más', icon: 'pi pi-cog',
-        items: [
-          {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments()}
-        ]
-      }
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload}
     ];
 
     const documentStyle = getComputedStyle(document.documentElement);
@@ -342,11 +336,6 @@ export class ListComponent implements OnInit, OnDestroy{
     const path = event.item.data.path;
     const idStructure = event.item.id;
     let childrenNoDependency = structure.subEstructuras?.filter( e => !Methods.parseStringToBoolean(e.tipologia.esDependencia));
-
-    /*Si la acción es de ir a gestionar los cargos, se carga la estructura al store en AppointmentActions*/
-    this.store.dispatch(AppointmentActions.setStructureOnWorking({structure: structure}));
-    this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: true}));
-
     this.router.navigate([path], {
       skipLocationChange: true,
       queryParams: {
@@ -539,13 +528,6 @@ export class ListComponent implements OnInit, OnDestroy{
       summary: `${this.structureToPaste.nombre}`,
       detail: 'Al copiar o mover, solo puede pegar la estructura a una con tipología superior inmediata.',
     });
-  }
-
-  onGoToManagementAppointments() {
-    const backRoute = '/configurations/structures';
-    this.store.dispatch(AppointmentActions.setStructureOnWorking({structure: null}));
-    this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: true}));
-    this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
   viewTimeStatistics(structure: Structure, event: Event) {

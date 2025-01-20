@@ -10,7 +10,7 @@
     </div>
 
     <div class="grid grid-nogutter">
-        <div [ngClass]="{'md:col-6 md:pr-2': !isSalaryScale}" class="field p-fluid col-12">
+        <div [ngClass]="{'md:col-6 md:pr-2': showScopes}" class="field p-fluid col-12">
             <label class="font-medium" for="idTipoNormatividad">Tipo de normatividad</label>
             <p-dropdown id="idTipoNormatividad" inputId="idTipoNormatividad" [autoDisplayFirst]="false"
                         [options]="normativityTypes" optionValue="id" optionLabel="nombre" [filter]="true"
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <div *ngIf="!isSalaryScale" class="field p-fluid col-12 md:col-6 md:pl-2">
+        <div *ngIf="showScopes" class="field p-fluid col-12 md:col-6 md:pl-2">
             <label class="font-medium" for="idAlcance">Alcance</label>
             <p-dropdown id="idAlcance" inputId="idAlcance" [autoDisplayFirst]="false"
                         [options]="scopes" optionValue="id" optionLabel="nombre" [filter]="true"

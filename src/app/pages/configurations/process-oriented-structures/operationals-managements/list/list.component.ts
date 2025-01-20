@@ -13,7 +13,6 @@ import { TreeTable } from 'primeng/treetable';
 import { finalize, map, Observable, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
 import { OverlayPanel } from 'primeng/overlaypanel';
-import { HttpResponse } from '@angular/common/http';
 
 class StructureNode{
   id: number;
@@ -122,9 +121,7 @@ export class ListComponent {
     });
     this.expandedNodesSubscription = this.store.select(state => state.operationalManagement.expandedNodes).subscribe(e => this.expandedNodes = e);
 
-    this.menuBarItems = [
-      //{label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload}
-    ];
+    this.menuBarItems = [];
   }
 
   ngOnDestroy(): void {

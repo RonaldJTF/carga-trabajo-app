@@ -4,29 +4,35 @@
     <ng-container *ngTemplateOutlet="organizacionChartOptionTemplate; context: {organizationChart: organizationChart}"></ng-container>
 
     <div class="field p-fluid mt-3">
-        <label htmlFor="idEstructura" class="font-medium">Dependencia</label>
-        <p-treeSelect *ngIf="hierarchyOptions" [options]="hierarchyOptions" formControlName="hierarchyTree" optionLabel="label" optionValue="key"
+        <label htmlFor="idJerarquia" class="font-medium">Dependencia</label>
+        <p-treeSelect *ngIf="!loadingHierarchies else sLoadingHierarchies" [options]="hierarchyOptions" formControlName="hierarchyTree" optionLabel="label" optionValue="key"
                     [showClear]="false" [filter]="true" [showClear]="true"
                     containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
                     [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
-        <ng-template let-node pTemplate="default">
-            <div class="flex align-items-center cursor-pointer" pRipple>
-            <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
-                <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
-            </div>
-            <ng-template #sNoItemIcon>
-                <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-{{node.data.tipologia.nombreColor}}-100 border-circle">
-                    <i class="pi {{node.data.tipologia.claseIcono}} text-xl text-{{node.data.tipologia.nombreColor}}-500"></i>
+            <ng-template let-node pTemplate="default">
+                <div class="flex align-items-center cursor-pointer" pRipple>
+                <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                    <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
+                </div>
+                <ng-template #sNoItemIcon>
+                    <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-primary-100 border-circle">
+                        <i class="pi pi-sitemap text-xl text-primary-500"></i>
+                    </div>
+                </ng-template>
+                <div class="flex flex-column ml-2">
+                    <span>{{ node.label }}</span>
+                </div>
                 </div>
             </ng-template>
-            <div class="flex flex-column ml-2">
-                <span>{{ node.label }}</span>
-            </div>
-            </div>
-        </ng-template>
         </p-treeSelect>
-        <div *ngIf="formAppointment.controls['idEstructura'].errors && (formAppointment.controls['idEstructura'].touched||formAppointment.controls['idEstructura'].dirty)">
-            <div *ngIf="formAppointment.controls['idEstructura'].errors?.['required']">
+        <ng-template #sLoadingHierarchies>
+            <span class="p-input-icon-left">
+                <i class="pi pi-spin pi-spinner text-xl"></i>
+                <input type="text" [disabled]="true" pInputText value="Cargando..."/>
+            </span>
+        </ng-template>
+        <div *ngIf="formAppointment.controls['idJerarquia'].errors && (formAppointment.controls['idJerarquia'].touched||formAppointment.controls['idJerarquia'].dirty)">
+            <div *ngIf="formAppointment.controls['idJerarquia'].errors?.['required']">
                 <small id="text-help" class="p-error">Seleccione una dependencia</small>
             </div>  
         </div>
@@ -111,7 +117,6 @@
             <button *ngIf="formAppointment?.value.idVigencia" (click)="removeValidity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="formAppointment?.value.idVigencia" (click)="onGoToUpdateValidity(validity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewValidity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
-            <p-menu #validityMenu [popup]="true" [model]=""  ></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Vigencias"  (click)="validityOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #validityOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>
@@ -156,7 +161,6 @@
             <button *ngIf="formAppointment?.value.idNormatividad" (click)="removeNormativity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="formAppointment?.value.idNormatividad" (click)="onGoToUpdateNormativity(normativity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewNormativity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
-            <p-menu #normativityMenu [popup]="true" [model]=""  ></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Normatividades"  (click)="normativityOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #normativityOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>
@@ -197,7 +201,6 @@
     <div class="flex flex-column md:flex-row align-items-center w-full mt-3">
         <label class="text-left font-medium w-full md:w-auto">Estructura organizacional</label>
         <div style="margin-left: auto; ">
-            <p-menu #organizationChartMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Organigrama" (click)="organizationChartOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #organizationChartOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>
@@ -215,7 +218,7 @@
         <div class="flex align-items-center">
             <div class="flex flex-column" >
                 <span class="text-500">{{organizationChart.nombre | uppercase}}</span>
-                <span class="text-500 text-sm">{{organizationChart.descripcion | titlecase}}</span>
+                <span class="text-500 text-sm">{{organizationChart.descripcion}}</span>
             </div>
             <button (click)="showDetailOfOrganizationChartNormativity(detailOfOrganizationChartNormativity, $event)"  pButton pRipple icon="pi pi-eye"
                 class="ml-auto p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>

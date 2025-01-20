@@ -1,193 +1,204 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {AppointmentService, CryptojsService, NormativityService, OrganizationChartService, UrlService} from "@services";
-import {OrganizationChart} from "@models";
-import {IMAGE_SIZE} from "@utils";
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import * as OrganizationChartActions from "@store/organizationChart.actions";
+import {FormBuilder, FormGroup} from "@angular/forms";
+import {AuthenticationService, ConfirmationDialogService, CryptojsService, NormativityService, OrganizationChartService, UrlService} from "@services";
+import {Normativity, OrganizationChart} from "@models";
+import {IMAGE_SIZE, Methods} from "@utils";
 import {MESSAGE} from "@labels/labels";
 import {OverlayPanel} from "primeng/overlaypanel";
 import {SelectItem} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
-import {finalize} from "rxjs";
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducers';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-organization-chart',
   templateUrl: './organization-chart.component.html',
   styleUrls: ['./organization-chart.component.scss']
 })
-export class OrganizationChartComponent implements OnInit {
-
-  protected readonly IMAGE_SIZE = IMAGE_SIZE;
-  protected readonly MESSAGE = MESSAGE;
-
-  formOrganizationalChart: FormGroup;
-
-  deleting: boolean = false;
-  updateMode: boolean = false;
-  creatingOrUpdating: boolean = false;
-
-  organizationChart: OrganizationChart;
-  normativityOptions: SelectItem[] = [];
+export class OrganizationChartComponent implements OnInit, OnDestroy {
+  IMAGE_SIZE = IMAGE_SIZE;
+  MESSAGE = MESSAGE;
+  ROUTE_TO_BACK: string = '/configurations/process-oriented-structures/organizational-charts';
 
   @ViewChild('normativityOptionsOverlayPanel') normativityOptionsOverlayPanel: OverlayPanel;
 
+  isAdmin: boolean;
+  formOrganizationChart !: FormGroup;
+  organizationChart: OrganizationChart;
+  updateMode: boolean;
+  creatingOrUpdating: boolean = false;
+  deleting: boolean = false;
+  loadingOrganizationChart: boolean = false;
+
+  mustRechargeOrganizationChartFormGroup: boolean;
+  mustRechargeOrganizationChartFormGroupSubscription: Subscription;
+  organizationChartSubscription: Subscription;
+
+  normativities: Normativity[] = [];
+
+  backRoute: string;
+
+  organizationChartOptions: SelectItem[] = [];
+  normativityOptions: SelectItem[] = [];
+
   constructor(
-    private formBuilder: FormBuilder,
-    private urlService: UrlService,
-    private appointmentService: AppointmentService,
+    private store: Store<AppState>,
+    private confirmationDialogService: ConfirmationDialogService,
     private normativityService: NormativityService,
-    private cryptoService: CryptojsService,
+    private organizationChartService: OrganizationChartService,
+    private authService: AuthenticationService,
+    private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private organizationChartService: OrganizationChartService,
-  ) {
-  }
+    private formBuilder: FormBuilder,
+    private urlService: UrlService,
+    private cryptoService: CryptojsService
+  ){}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    const {isAdministrator, isOperator} = this.authService.roles();
+    this.isAdmin = isAdministrator;
+
+    this.backRoute = this.route.snapshot.queryParams['backRoute'] ?? this.ROUTE_TO_BACK;
+
+    this.mustRechargeOrganizationChartFormGroupSubscription = this.organizationChartService.mustRechargeOrganizationChartFormGroup$.subscribe(e => this.mustRechargeOrganizationChartFormGroup = e);
+    this.organizationChartSubscription = this.organizationChartService.organizationChart$.subscribe(e => this.organizationChart = e)
+
+    if (this.mustRechargeOrganizationChartFormGroup){
+      this.organizationChartService.createOrganizationChartFormGroup();
+    }
+
+    const organizationChartId = this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']);
+    this.loadOrganizationChartInformation(organizationChartId);
+    this.initMenus();
     this.loadNormativities();
-    this.buildForm();
-    this.getInitialValue();
   }
 
-  buildForm() {
-    const savedData = this.organizationChartService.getFormData();
-    this.formOrganizationalChart = this.formBuilder.group({
-      nombre: [savedData.nombre || '', Validators.required],
-      descripcion: [savedData.descripcion || ''],
-      idNormatividad: [savedData.idNormatividad || ''],
-      normatividad: [savedData.normatividad || '']
-    })
+  ngOnDestroy(): void {
+    this.mustRechargeOrganizationChartFormGroupSubscription?.unsubscribe();
+    this.organizationChartSubscription?.unsubscribe();
   }
 
-  private isValido(nombreAtributo: string) {
-    return (this.formOrganizationalChart.get(nombreAtributo)?.invalid && (this.formOrganizationalChart.get(nombreAtributo)?.dirty || this.formOrganizationalChart.get(nombreAtributo)?.touched));
-  }
+  initMenus(){}
 
-  controls(field: string) {
-    return this.formOrganizationalChart.controls[field].errors?.['required'];
-  }
-
-  fieldNoValid(field: string) {
-    return this.isValido(field);
-  }
-
-  getInitialValue() {
-    this.route.params.subscribe((params) => {
-      if (params['id'] != null) {
-        this.updateMode = true;
-        this.getOrganizationChart(this.cryptoService.decryptParamAsNumber(params['id']));
+  loadOrganizationChartInformation(id: number){
+    if (id == undefined){
+      this.updateMode = false;
+      this.formOrganizationChart = this.organizationChartService.getOrganizationChartFormGroup();
+      this.organizationChartService.setMustRechargeOrganizationChartFormGroup(false);
+    }else{
+      this.updateMode = true;
+      if (this.mustRechargeOrganizationChartFormGroup){
+        this.loadingOrganizationChart = true;
+        this.organizationChartService.getOrganizationChart(id).subscribe({
+          next: (e) => {
+            this.formOrganizationChart = this.organizationChartService.initializeOrganizationChartFormGroup(e);
+            this.organizationChartService.setMustRechargeOrganizationChartFormGroup(false);
+            this.loadingOrganizationChart = false;
+          },
+        });
+      }else{
+        this.formOrganizationChart = this.organizationChartService.getOrganizationChartFormGroup();
       }
-    });
-  }
-
-  getOrganizationChart(idOrganizationChart: number) {
-    this.organizationChartService.getOrganizationChartById(idOrganizationChart).subscribe({
-      next: (resp) => {
-        this.organizationChart = resp;
-        this.assignValuesToForm(resp);
-      }
-    })
-  }
-
-  assignValuesToForm(data: OrganizationChart) {
-    this.formOrganizationalChart.get('nombre').setValue(data.nombre);
-    this.formOrganizationalChart.get('descripcion').setValue(data.descripcion);
-    this.formOrganizationalChart.get('idNormatividad').setValue(data.idNormatividad);
-    this.formOrganizationalChart.get('normatividad').setValue(data.normatividad);
-  }
-
-  onSubmitOrganizationalChart(event: Event): void {
-    const payload = {...this.formOrganizationalChart.value};
-    delete payload.normatividad;
-
-    event.preventDefault();
-    if (this.formOrganizationalChart.invalid) {
-      this.formOrganizationalChart.markAllAsTouched();
-    } else {
-      this.creatingOrUpdating = true;
-      this.updateMode ? this.updateOrganizationalChart(this.organizationChart.id, payload) : this.createOrganizationalChart(payload);
     }
   }
 
-  updateOrganizationalChart(id: number, payload: any) {
-    this.organizationChartService.updateOrganizationChart(id, payload).pipe(
-      finalize(() => {
-        this.creatingOrUpdating = false;
-      })
-    ).subscribe({
-      next: () => {
-        this.urlService.goBack();
+  loadNormativities(): void {
+    this.normativityService.getGeneralAndActiveNormativities('1').subscribe({
+      next: (e) => {
+        this.normativityOptions = e?.map( o => ({value: o, label: o.nombre}));
       }
-    })
+    });
   }
 
-  createOrganizationalChart(payload: any) {
-    this.organizationChartService.createOrganizationChart(payload).pipe(
-      finalize(() => {
+  updateOrganizationChart(payload: OrganizationChart, id: number): void {
+    this.organizationChartService.updateOrganizationChart(id, payload).subscribe({
+      next: (e) => {
+        this.store.dispatch(OrganizationChartActions.updateFromList({organizationChart: e}));
+        this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
-      })
-    ).subscribe({
-      next: () => {
-        this.urlService.goBack();
-      }
-    })
+        this.organizationChartService.resetFormInformation();
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
+    });
   }
 
-  onCancelOrganizationalChart(event: Event): void {
+  createOrganizationChart(payload: OrganizationChart): void {
+    this.organizationChartService.createOrganizationChart(payload).subscribe({
+      next: (e) => {
+        this.store.dispatch(OrganizationChartActions.addToList({organizationChart: e}));
+        this.router.navigate([this.backRoute], {skipLocationChange: true});
+        this.creatingOrUpdating = false;
+        this.organizationChartService.resetFormInformation();
+      },
+      error: (error) => {
+        this.creatingOrUpdating = false;
+      },
+    });
+  }
+
+  onSubmitOrganizationChart(event : Event): void {
     event.preventDefault();
-    this.urlService.goBack();
+    let payload = {...this.organizationChart, ...this.formOrganizationChart.value};
+    delete payload.hierarchyTree;
+    if (this.formOrganizationChart.invalid) {
+      this.formOrganizationChart.markAllAsTouched();
+    } else {
+      this.creatingOrUpdating = true;
+      this.updateMode ? this.updateOrganizationChart(payload, this.organizationChart.id) : this.createOrganizationChart(payload);
+    }
   }
 
-  onDeleteOrganizationalChart(event: Event): void {
+  onDeleteOrganizationChart(event : Event): void {
     event.preventDefault();
-    this.organizationChartService.deleteOrganizationChart(this.organizationChart.id).pipe(
-      finalize(() => {
-        this.creatingOrUpdating = false;
-      })
-    ).subscribe({
+    this.deleting = true;
+    this.organizationChartService.deleteOrganizationChart(this.organizationChart.id).subscribe({
       next: () => {
-        this.urlService.goBack();
-      }
-    })
+        this.store.dispatch(OrganizationChartActions.removeFromList({id: this.organizationChart.id}));
+        this.router.navigate([this.backRoute], {skipLocationChange: true});
+        this.deleting = false;
+        this.organizationChartService.resetFormInformation();
+      },
+      error: (error) => {
+        this.deleting = false;
+      },
+    });
   }
 
-  changeNormativity(data: any) {
-    this.formOrganizationalChart.get('idNormatividad').markAsTouched();
-    this.formOrganizationalChart.get('idNormatividad').setValue(data.value.id);
-    this.formOrganizationalChart.get('normatividad').setValue(data.value);
+  onCancelOrganizationChart(event : Event): void {
+    event.preventDefault();
+    this.router.navigate([this.backRoute], {skipLocationChange: true});
+    this.organizationChartService.resetFormInformation();
+  }
+
+  changeNormativity(data: any){
+    this.organizationChartService.setNormativityToOrganizationChart(data.value);
     this.normativityOptionsOverlayPanel.hide();
   }
 
-  removeNormativity() {
-    this.formOrganizationalChart.get('idNormatividad').reset();
-    this.formOrganizationalChart.get('normatividad').reset();
-  }
-
-  loadNormativities(): void {
-    this.normativityService.getFilteredNormativities({estado: '1', esEscalaSalarial: '0'}).subscribe({
-      next: (e) => {
-        this.normativityOptions = e?.map(o => ({value: o, label: o.nombre}));
-      }
-    });
-  }
-
-  onGoToUpdateNormativity(id: any, event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-    this.organizationChartService.setFormData(this.formOrganizationalChart.value);
-    const backRoute = this.updateMode ? `${'/configurations/process-oriented-structures/organizational-charts/create/' + this.cryptoService.encryptParam(this.organizationChart.id)}` : '/configurations/process-oriented-structures/organizational-charts/create';
-    this.router.navigate(["/configurations/normativities", this.cryptoService.encryptParam(id)], {
-      skipLocationChange: true,
-      queryParams: {backRoute: backRoute}
-    })
+  removeNormativity(){
+    this.organizationChartService.setNormativityToOrganizationChart(null);
   }
 
   openNewNormativity() {
-    this.organizationChartService.setFormData(this.formOrganizationalChart.value);
-    const backRoute = this.updateMode ? `${'/configurations/process-oriented-structures/organizational-charts/create/' + this.cryptoService.encryptParam(this.organizationChart.id)}` : '/configurations/process-oriented-structures/organizational-charts/create';
-    this.router.navigate(['/configurations/normativities/create'], {
-      skipLocationChange: true,
-      queryParams: {backRoute: backRoute}
-    });
+    const backRoute = this.organizationChart 
+      ? `${'/configurations/process-oriented-structures/organizational-charts/'+ this.cryptoService.encryptParam(this.organizationChart.id)}` 
+      : '/configurations/process-oriented-structures/organizational-charts/create';
+    this.router.navigate(['/configurations/normativities/create'], { skipLocationChange: true, queryParams: {backRoute: backRoute}});
+  }
+
+  onGoToUpdateNormativity (id : any, event: Event): void{
+    event.preventDefault();
+    event.stopPropagation();
+    const backRoute = this.organizationChart 
+      ? `${'/configurations/process-oriented-structures/organizational-charts/'+ this.cryptoService.encryptParam(this.organizationChart.id)}` 
+      : '/configurations/process-oriented-structures/organizational-charts/create';
+    this.router.navigate(["/configurations/normativities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
   showDetailOfNormativity(elementRef: HTMLDivElement, event: Event) {
@@ -196,6 +207,7 @@ export class OrganizationChartComponent implements OnInit {
     } else {
       elementRef.style.display = 'none';
     }
+
     const button = event.currentTarget as HTMLElement;
     const iconElement = button.querySelector('span');
     if (iconElement) {
@@ -207,5 +219,9 @@ export class OrganizationChartComponent implements OnInit {
         iconElement.classList.add('pi-eye');
       }
     }
+  }
+
+  parseStringToBoolean(str: string): boolean{
+    return Methods.parseStringToBoolean(str);
   }
 }

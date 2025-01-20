@@ -63,6 +63,8 @@ import {compensationReducer} from "@store/compensation.reducer";
 import { levelCompensationReducer } from '@store/levelCompensation.reducer';
 import { operationalManagementReducer } from '@store/operationalManagement.reducer';
 import { ProcessOrientedStructureService } from './services/process-oriented-structure.service';
+import { organizationChartReducer } from '@store/organizationChart.reducer';
+import { hierarchyReducer } from '@store/hierarchy.reducer';
 
 @NgModule({
   declarations: [
@@ -89,6 +91,8 @@ import { ProcessOrientedStructureService } from './services/process-oriented-str
       compensation: compensationReducer,
       levelCompensation: levelCompensationReducer,
       operationalManagement: operationalManagementReducer,
+      organizationChart: organizationChartReducer,
+      hierarchy: hierarchyReducer
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

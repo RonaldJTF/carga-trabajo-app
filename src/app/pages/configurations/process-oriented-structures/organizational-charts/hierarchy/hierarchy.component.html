@@ -1,0 +1,60 @@
+
+<form class="p-0" [formGroup]="formHierarchy">
+    <ng-container [formGroup]="dependenciaFormGroup" >
+        <div class="field p-fluid" >
+            <label htmlFor="nombre" class="font-medium">Nombre</label>
+            <input pInputText id="nombre" type="text" aria-describedby="text-help" formControlName="nombre"/>
+            <div *ngIf="dependenciaFormGroup.controls['nombre'].errors && (dependenciaFormGroup.controls['nombre'].touched||dependenciaFormGroup.controls['nombre'].dirty)">
+                <div *ngIf="dependenciaFormGroup.controls['nombre'].errors?.['required']">
+                    <small id="text-help" class="p-error">Ingrese un nombre</small>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field p-fluid">
+            <label htmlFor="descripcion"><span class="font-medium">Descripción</span><span> (opcional)</span></label>
+            <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
+        </div>
+
+        <div class="field p-fluid">
+            <label htmlFor="idConvencion" class="font-medium">Convención</label>
+            <p-dropdown id="idConvencion" inputId="idConvencion" [autoDisplayFirst]="false"
+                        [options]="conventions" optionValue="id" optionLabel="nombre" [filter]="true"
+                        [showClear]="true"
+                        formControlName="idConvencion" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+            </p-dropdown>
+            <div *ngIf="dependenciaFormGroup.controls['idConvencion'].errors && (dependenciaFormGroup.controls['idConvencion'].touched||dependenciaFormGroup.controls['idConvencion'].dirty)">
+                <div *ngIf="dependenciaFormGroup.controls['idConvencion'].errors?.['required']">
+                    <small id="text-help" class="p-error">Seleccione una convención</small>
+                </div>
+            </div>
+        </div>    
+    </ng-container>
+
+    <div class="field p-fluid">
+        <label htmlFor="archivo"><span class="font-medium">Imagen representativa</span><span> (opcional)</span></label>
+        <p-fileUpload #fileUpload id="archivo" [showUploadButton]="false" [showCancelButton]="false" [multiple]="false"
+            accept="image/*" [maxFileSize]="5000000" (onSelect)="onSelectFile($event)" (onRemove)="onRemoveFile($event)" chooseLabel="Seleccionar">
+            <ng-template pTemplate="content">
+                <div class="flex justify-content-between align-items-center text-center p-3"  *ngIf="hierarchy?.dependencia?.srcIcono && uploadedFiles.length < 1" >
+                    <img [src]="hierarchy.dependencia.srcIcono" [alt]="hierarchy.dependencia.nombre" appImageFallback height="50px"/>
+                    <span class="flex-grow-1">Imagen representativa</span>
+                    <span class="flex-grow-1">--</span>
+                    <i class="pi pi-check text-green-500 text-2xl font-bold"></i>
+                </div>
+            </ng-template>
+        </p-fileUpload>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitHierarchy($event)"
+        (cancel)="onCancelHierarchy($event)"
+        (delete)="onDeleteHierarchyAndDependency($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formHierarchy.invalid">
+    </app-form-action-button>
+
+</form>

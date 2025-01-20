@@ -59,7 +59,6 @@
             <button *ngIf="formCompensation?.value.idCategoria" (click)="removeCategory()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="formCompensation?.value.idCategoria" (click)="onGoToUpdateCategory(category.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewCategory()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
-            <p-menu #categoryMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Categorias"  (click)="categoryOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #categoryOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>

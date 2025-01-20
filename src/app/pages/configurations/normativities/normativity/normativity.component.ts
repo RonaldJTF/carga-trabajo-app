@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
 import { Normativity, NormativityType, Scope } from '@models';
 import { Store } from '@ngrx/store';
-import { CryptojsService, LevelService, NormativityService, ScopeService, UrlService, AppointmentService } from '@services';
+import { CryptojsService, LevelService, NormativityService, ScopeService, UrlService, AppointmentService, OrganizationChartService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { AppState } from 'src/app/app.reducers';
 
@@ -36,6 +36,7 @@ export class NormativityComponent implements OnInit {
   deleting: boolean = false;
 
   isSalaryScale: boolean;
+  showScopes: boolean;
   backRoute: string;
 
   normativityTypes: NormativityType[] = [];
@@ -47,6 +48,7 @@ export class NormativityComponent implements OnInit {
     private levelService: LevelService,
     private appointmentService: AppointmentService,
     private scopeService: ScopeService,
+    private organizationChartService: OrganizationChartService,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
@@ -58,6 +60,7 @@ export class NormativityComponent implements OnInit {
   ngOnInit(): void {
     this.loadNormativity(this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']));
     this.isSalaryScale = Methods.parseStringToBoolean(this.route.snapshot.queryParams['isSalaryScale']);
+    this.showScopes = Methods.parseStringToBoolean(this.route.snapshot.queryParams['showScopes']);
     this.backRoute = this.route.snapshot.queryParams['backRoute'];
     this.buildForm();
     this.loadNormativityTypes();
@@ -135,6 +138,8 @@ export class NormativityComponent implements OnInit {
         this.levelService.updateNormativityInSalaryScales(e);
         //Actualizamos de las asignaciones laborales la nueva información de la normatividad
         this.appointmentService.updateNormativityInAppointment(e);
+        //Actualizamos del organigrama la nueva información de la normatividad
+        this.organizationChartService.updateNormativityInOrganizationChart(e);
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -179,6 +184,8 @@ export class NormativityComponent implements OnInit {
         this.levelService.removeSalaryScalesByNormativity(normativityId);
         //Removemos del formulario de asignación salarial la normatividad eliminada.
         this.appointmentService.removeNormativityInAppointment(normativityId);
+        //Removemos del formulario de organigrama la normatividad eliminada.
+        this.organizationChartService.removeNormativityInOrganizationChart(normativityId);
       },
       error: (error) => {
         this.deleting = false;

@@ -2,17 +2,18 @@ import { Component, DoCheck, KeyValueDiffers, OnDestroy, OnInit, ViewChild } fro
 import * as AppointmentActions from "@store/appointment.actions";
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
-import { Appointment, Level, Scope, Structure, Validity } from '@models';
+import { Appointment, Dependency, Hierarchy, Level, OrganizationChart, Scope, Validity } from '@models';
 import { Store } from '@ngrx/store';
-import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService, ScopeService, StructureService, ValidityService } from '@services';
+import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService, OrganizationChartService, ScopeService, StructureService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
-import { MenuItem, TreeNode } from 'primeng/api';
+import { MenuItem, SelectItem, TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { TreeTable } from 'primeng/treetable';
-import { finalize, Observable, Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
 
 class FiltersBy{
+  organizationCharts: any[];
   dependencies: any[];
   validities: any[];
   scopes: any[];
@@ -20,10 +21,10 @@ class FiltersBy{
 }
 
 class GroupAttribute{
-  groupKey: 'idEstructura' | 'idVigencia' | 'idNivel' | 'idEscalaSalarial' | 'idAlcance';
+  groupKey: 'idVigencia' | 'idNivel' | 'idEscalaSalarial' | 'idAlcance' | 'jerarquia.idDependencia' | 'jerarquia.idOrganigrama';
   groupValue: string;
   groupName: string
-  type: 'STRUCTURE' | 'VALIDITY' | 'LEVEL' | 'SALARYSCALE' | 'SCOPE';
+  type: 'ORGANIZATIONCHART' | 'DEPENDENCY' | 'VALIDITY' | 'LEVEL' | 'SALARYSCALE' | 'SCOPE';
 }
 
 class ComparisonAtrribute{
@@ -57,11 +58,12 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   @ViewChild('filterOptionsOverlayPanel') filterOptionsOverlayPanel: OverlayPanel;
   @ViewChild('treeTableOfAppointments') treeTableOfAppointments: TreeTable;
   @ViewChild('detailOfAppointmentOverlayPanel') detailOfAppointmentOverlayPanel: OverlayPanel;
+  @ViewChild('chartOrganizationChartOptionsOverlayPanel') chartOrganizationChartOptionsOverlayPanel: OverlayPanel;
 
   isAdmin: boolean;
   loading: boolean;
   filtering: boolean;
-  structure: Structure;
+  hierarchy: Hierarchy;
 
   selectedNodesOfAppointments: TreeNode | TreeNode[] | null;
 
@@ -70,14 +72,15 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   appointmentsSubscription: Subscription;
   expandedNodesSubscription: Subscription;
   informationGroupSubscription: Subscription;
-  structureSubscription: Subscription;
+  hierarchySubscription: Subscription;
   mustRechargeSubscription: Subscription;
   confirmedFiltersSubscription: Subscription;
   viewModeSubscription: Subscription;
 
   filtersBy: FiltersBy = new FiltersBy();
   filterProps = {
-    dependencies: {icon: 'pi pi-sitemap', valueKey: 'data.nombre', internalKeyRelashionship: 'data.id',  externalKeyRelashionship: 'idEstructura'},
+    organizationCharts: {icon: 'pi pi-sitemap', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'jerarquia.idOrganigrama'},
+    dependencies: {icon: 'pi pi-ticket', valueKey: 'data.nombre', internalKeyRelashionship: 'data.id',  externalKeyRelashionship: 'jerarquia.idDependencia'},
     validities: {icon: 'pi pi-calendar', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idVigencia'},
     scopes: {icon: 'pi pi-flag', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idAlcance'},
     levels: {icon: 'pi pi-bookmark', valueKey: 'nombre', internalKeyRelashionship: 'id',  externalKeyRelashionship: 'idNivel'}
@@ -86,7 +89,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   filtersByDiffer: any;
   confirmedFilters:FiltersBy;
 
-  structureOptions: TreeNode<Structure>[] = [];
+  organizationChartOptions: OrganizationChart[] = [];
+  dependencyOptions: TreeNode<Dependency>[] = [];
   validityOptions: Validity[] = [];
   scopeOptions: Scope[] = [];
   levelOptions: Level[] = [];
@@ -98,7 +102,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       code: 0,
       comparisonAtrribute: {comparisonKey: 'idAlcance', comparisonValue: 'alcance', comparisonLabel: 'nombre', comparisonName: 'Alcances'},
       groupAttributes: [
-        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+        {groupKey: 'jerarquia.idOrganigrama', groupValue: 'jerarquia.organigrama', type: 'ORGANIZATIONCHART', groupName: 'Organigrama'},
+        {groupKey: 'jerarquia.idDependencia', groupValue: 'jerarquia.dependencia', type: 'DEPENDENCY', groupName: 'Dependencia'},
         {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY', groupName: 'Vigencia'},
         {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL', groupName: 'Nivel ocupacional'},
         {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE', groupName: 'Escala salarial'},
@@ -108,8 +113,9 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       code: 1,
       comparisonAtrribute: {comparisonKey: 'idAlcance', comparisonValue: 'alcance', comparisonLabel: 'nombre', comparisonName: 'Alcances'},
       groupAttributes: [
+        {groupKey: 'jerarquia.idOrganigrama', groupValue: 'jerarquia.organigrama', type: 'ORGANIZATIONCHART', groupName: 'Organigrama'},
         {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY', groupName: 'Vigencia'},
-        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+        {groupKey: 'jerarquia.idDependencia', groupValue: 'jerarquia.dependencia', type: 'DEPENDENCY', groupName: 'Dependencia'},
         {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL', groupName: 'Nivel ocupacional'},
         {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE', groupName: 'Escala salarial'},
       ]
@@ -118,7 +124,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       code: 2,
       comparisonAtrribute: {comparisonKey: 'idVigencia', comparisonValue: 'vigencia', comparisonLabel: 'anio', comparisonName: 'Vigencias'},
       groupAttributes: [
-        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+        {groupKey: 'jerarquia.idOrganigrama', groupValue: 'jerarquia.organigrama', type: 'ORGANIZATIONCHART', groupName: 'Organigrama'},
+        {groupKey: 'jerarquia.idDependencia', groupValue: 'jerarquia.dependencia', type: 'DEPENDENCY', groupName: 'Dependencia'},
         {groupKey: 'idAlcance', groupValue: 'alcance', type: 'SCOPE', groupName: 'Alcance'},
         {groupKey: 'idNivel', groupValue: 'nivel', type: 'LEVEL', groupName: 'Nivel ocupacional'},
         {groupKey: 'idEscalaSalarial', groupValue: 'escalaSalarial', type: 'SALARYSCALE', groupName: 'Escala salarial'},
@@ -128,9 +135,10 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       code: 3,
       comparisonAtrribute: {comparisonKey: 'idNivel', comparisonValue: 'nivel', comparisonLabel: 'nombre', comparisonName: 'Niveles ocup.'},
       groupAttributes: [
+        {groupKey: 'jerarquia.idOrganigrama', groupValue: 'jerarquia.organigrama', type: 'ORGANIZATIONCHART', groupName: 'Organigrama'},
         {groupKey: 'idVigencia', groupValue: 'vigencia', type: 'VALIDITY', groupName: 'Vigencia'},
         {groupKey: 'idAlcance', groupValue: 'alcance', type: 'SCOPE', groupName: 'Alcance'},
-        {groupKey: 'idEstructura', groupValue: 'estructura', type: 'STRUCTURE', groupName: 'Estructura'},
+        {groupKey: 'jerarquia.idDependencia', groupValue: 'jerarquia.dependencia', type: 'DEPENDENCY', groupName: 'Dependencia'},
       ]
     }
   ]
@@ -149,6 +157,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   ];
 
   globalAmount: number = 0;
+  globalAmountByOrganizationChart: number = 0;
+
   partialAmmount: number = 0;
   viewOptions: any[] = [
     {icon: 'pi pi-list', value: 'list', tooltip: 'Lista'}, 
@@ -159,14 +169,16 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   colors: string[];
   chartFilters: any = {};
   chartGroupFilters: {scopes: any[], levels: any[], salaryScales};
+  chartOrganizationChartOptions: SelectItem[] = [];
+  chartSelectedOrganizationChart: OrganizationChart;
 
   constructor(
     private store: Store<AppState>,
-    private structureService: StructureService,
     private validityService: ValidityService,
     private appointmentService: AppointmentService,
     private scopeService: ScopeService,
     private levelService: LevelService,
+    private organizationChartService: OrganizationChartService,
     private confirmationDialogService: ConfirmationDialogService,
     private authService: AuthenticationService,
     private router: Router,
@@ -198,19 +210,20 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       documentStyle.getPropertyValue('--bluegray-500'),
     ];
 
-    this.structureSubscription = this.store.select(state => state.appointment.structure).subscribe(e => this.structure = e);
+    this.hierarchySubscription = this.store.select(state => state.appointment.hierarchy).subscribe(e => this.hierarchy = e);
     this.informationGroupSubscription = this.store.select(state => state.appointment.informationGroup).subscribe(e => this.informationGroup = e ?? this.informationGroups[0]);
     this.expandedNodesSubscription = this.store.select(state => state.appointment.expandedNodes).subscribe(e => this.expandedNodes = e);
     this.appointmentsSubscription =  this.store.select(state => state.appointment.items).subscribe(e => {
       this.appointments = e;
-      this.buildDataset(e);
+      this.buildDataset();
     });
     this.confirmedFiltersSubscription = this.store.select(state => state.appointment.confirmedFilters).subscribe(e => this.confirmedFilters = e);
     this.mustRechargeSubscription = this.store.select(state => state.appointment.mustRecharge).subscribe(e => {
       if (e){
         const filters = new FiltersBy();
-        if(this.structure){
-          filters.dependencies = [this.structure.id];
+        if(this.hierarchy){
+          filters.dependencies = [this.hierarchy.idDependencia];
+          filters.organizationCharts = [this.hierarchy.idOrganigrama];
         }
         this.loading = true;
         this.getAppointments(filters)
@@ -228,7 +241,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.appointmentsSubscription?.unsubscribe();
     this.expandedNodesSubscription?.unsubscribe();
     this.informationGroupSubscription?.unsubscribe();
-    this.structureSubscription?.unsubscribe();
+    this.hierarchySubscription?.unsubscribe();
     this.mustRechargeSubscription?.unsubscribe();
     this.confirmedFiltersSubscription?.unsubscribe();
     this.viewModeSubscription?.unsubscribe();
@@ -268,8 +281,11 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   openFilterOptions(event: Event){
     this.filterOptionsOverlayPanel.show(event);
-    if(!this.structureOptions?.length){
+    if(!this.dependencyOptions?.length){
       this.getDependencies();
+    }
+    if(!this.organizationChartOptions?.length){
+      this.getOrganizacionCharts();
     }
     if(!this.validityOptions?.length){
       this.getValidities();
@@ -294,10 +310,10 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     })
   }
 
-  buildDataset(data: Appointment[]){
+  buildDataset(){
+    let data: Appointment[] = this.appointments;
     this.treeDataset = this.groupByAttributes(data, this.informationGroup.groupAttributes);
-    this.initChartGroupFilters();
-    this.chartInformation = this.buildBarChartInformation(data, 'vigencia.nombre', 'alcance.nombre');
+    this.restartChartInformation();
     //Construir los objetos que se tienen en cuenta en la comparación
     const list = Array.from(
       data.reduce((map, item) => {
@@ -310,13 +326,49 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.comparisonObjects = list?.map(e => ({[this.informationGroup.comparisonAtrribute.comparisonKey]: e['id'], label: e[this.informationGroup.comparisonAtrribute.comparisonLabel]}));
   }
 
-  getDependencies() {
-    this.structureService.getDependencies().subscribe({
-      next: (data) => {
-        this.builtNodes(data, this.structureOptions);
-        this.filtersBy.dependencies = this.structureOptions.filter(s => this.confirmedFilters?.dependencies?.map(o => o.data.id).includes(s.data.id));
+  restartChartInformation(){
+    this.initChartGroupFilters();
+    const data: Appointment[] = this.appointments;
+    const uniqueOrganigrams = Array.from(
+      new Map(
+          data.map(app => [app.jerarquia.organigrama.id, app.jerarquia.organigrama])
+      ).values()
+    );
+
+    this.chartOrganizationChartOptions = uniqueOrganigrams?.map( o => ({value: o, label: o.nombre})) ?? [];
+    if (!this.chartSelectedOrganizationChart){
+      this.chartSelectedOrganizationChart =  this.chartOrganizationChartOptions[0]?.value;
+    }
+    const filtered = data.filter(e => e.jerarquia.idOrganigrama == this.chartSelectedOrganizationChart.id);
+    this.chartInformation = this.buildBarChartInformation(filtered, 'vigencia.nombre', 'alcance.nombre');
+    this.globalAmountByOrganizationChart = filtered.reduce((acc, obj) => {
+      return obj.totalCargos*obj.asignacionTotal + acc;
+    }, 0);
+    this.partialAmmount = this.globalAmountByOrganizationChart;
+  }
+
+  changeOrganizationChart(data: any){
+    this.chartSelectedOrganizationChart = data.value;
+    this.chartOrganizationChartOptionsOverlayPanel.hide();
+    this.restartChartInformation();
+  }
+
+  getOrganizacionCharts(): void {
+    this.organizationChartService.getOrganizationalCharts().subscribe({
+      next: (e) => {
+        this.organizationChartOptions = e;
+        this.filtersBy.organizationCharts = this.organizationChartOptions?.filter(v => this.confirmedFilters?.organizationCharts?.map(o => o.id).includes(v.id));
       }
-    })
+    });
+  }
+
+  getDependencies(): void {
+    this.organizationChartService.getDependencies().subscribe({
+      next: (e) => {
+        this.builtNodes(e, this.dependencyOptions);
+        this.filtersBy.dependencies = this.dependencyOptions.filter(s => this.confirmedFilters?.dependencies?.map(o => o.data.id).includes(s.data.id));
+      }
+    });
   }
 
   getValidities() {
@@ -441,6 +493,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     if(this.filterHasChanged){
       this.filtering = true;
       const filters = new FiltersBy();
+      filters.organizationCharts = this.filtersBy.organizationCharts?.map(e => e.id) ?? [];
       filters.dependencies = this.filtersBy.dependencies?.map(e => e.data.id) ?? [];
       filters.validities = this.filtersBy.validities?.map(e => e.id) ?? [];
       filters.scopes = this.filtersBy.scopes?.map(e => e.id) ?? [];
@@ -483,7 +536,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   onViewChange(event: "list" | "chart") {
     this.store.dispatch(AppointmentActions.setViewMode({viewMode: event}));
-    this.partialAmmount = this.globalAmount;
+    this.partialAmmount = this.globalAmountByOrganizationChart;
     this.initChartGroupFilters();
   }
   
@@ -505,7 +558,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       .filter(e => this.chartGroupFilters.salaryScales.includes(e.label))
       .reduce((sum, e) => sum + this.chartInformation.chartDetail?.chartDetail.data[e.index], 0) || 0;
 
-    this.partialAmmount = this.globalAmount - (sumOfRemovedScopes + sumOfRemovedLevels + sumOfRemovedSalaryScales);
+    this.partialAmmount = this.globalAmountByOrganizationChart - (sumOfRemovedScopes + sumOfRemovedLevels + sumOfRemovedSalaryScales);
   }
 
   onClickOnScopeAndValidityLegend(data: { originalEvent: Event; datasetIndex: number; hidden: boolean }): void {
@@ -521,7 +574,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.updatePartialAmmount();
   } 
 
-  onClickOnStructureAndLevelLegend(data: { originalEvent: Event; datasetIndex: number; hidden: boolean }): void {
+  onClickOnDependencyAndLevelLegend(data: { originalEvent: Event; datasetIndex: number; hidden: boolean }): void {
     const { chartDetail } = this.chartInformation;
     const dataset = chartDetail.datasets[data.datasetIndex];
     this.chartGroupFilters.levels = data.hidden 
@@ -548,21 +601,25 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     const dataset = this.chartInformation.datasets[data.datasetIndex];
     const label = this.chartInformation.labels[data.dataIndex];
     this.chartFilters = {scope: dataset.label,  validity: label}
-    const filtered = this.appointments.filter(e => e.alcance.nombre == this.chartFilters.scope && e.vigencia.nombre == this.chartFilters.validity);
-    let chartDetail = this.buildBarChartInformation(filtered, 'estructura.nombre', 'nivel.nombre');
+    const filtered = this.appointments.filter(
+      e =>  e.jerarquia.idOrganigrama == this.chartSelectedOrganizationChart.id 
+            && e.alcance.nombre == this.chartFilters.scope 
+            && e.vigencia.nombre == this.chartFilters.validity);
+    let chartDetail = this.buildBarChartInformation(filtered, 'jerarquia.dependencia.nombre', 'nivel.nombre');
     this.chartInformation.chartDetail = chartDetail;
   }
 
-  onClickOnStructureAndLevelBar(data: { originalEvent: any; datasetIndex: number; dataIndex: number }): void {
+  onClickOnDependencyAndLevelBar(data: { originalEvent: any; datasetIndex: number; dataIndex: number }): void {
     const { chartDetail } = this.chartInformation;
     const dataset = chartDetail.datasets[data.datasetIndex];
     const label = chartDetail.labels[data.dataIndex];
-    this.chartFilters = {...this.chartFilters, level: dataset.label, structure: label };
-    const { scope, validity, structure, level } = this.chartFilters;
+    this.chartFilters = {...this.chartFilters, level: dataset.label, dependency: label };
+    const { scope, validity, dependency, level } = this.chartFilters;
     const filtered = this.appointments.filter(e => 
+        e.jerarquia.idOrganigrama == this.chartSelectedOrganizationChart.id &&
         e.alcance.nombre === scope &&
         e.vigencia.nombre === validity &&
-        //e.estructura.nombre === structure &&
+        e.jerarquia.dependencia.nombre === dependency &&
         e.nivel.nombre === level
     );
     chartDetail.chartDetail = this.buildPolarChartInformation(filtered, 'escalaSalarial.nombre', 'nivel.nombre');
@@ -577,22 +634,18 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     );
   }
 
-  private builtNodes(structures: Structure[], nodes: TreeNode<Structure>[]) {
-    if (!structures) {
-      return;
-    }
-    for (let structure of structures) {
-      if (Methods.parseStringToBoolean(structure.tipologia.esDependencia)) {
-        let node: TreeNode<Structure> = {
-          data: structure,
-          label: structure.nombre,
-          children: []
-        };
-        if (structure.subEstructuras?.length) {
-          this.builtNodes(structure.subEstructuras, node.children)
-        }
-        nodes.push(node);
-      }
+  private builtNodes(dependencies: Dependency[], nodes: TreeNode<Dependency>[]) {
+    if (!dependencies) return;
+    for (let dependency of dependencies) {
+      let node: TreeNode<Dependency> = {
+        data: dependency,
+        label: dependency.nombre,
+        children: []
+      };
+      /*if (dependency.subDependencias?.length) {
+        this.builtNodes(dependency.subDependencias, node.children)
+      }*/
+      nodes.push(node);
     }
   }
 
@@ -605,13 +658,18 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     const comparisonAtrribute = this.informationGroup.comparisonAtrribute;
     const comparisonKeys = [...new Set(list.map(item => item[comparisonAtrribute.comparisonKey]))];
 
+    function getNestedProperty(obj, key) {
+      if (!key) return obj;
+      return key.split('.').reduce((acc, curr) => acc && acc[curr], obj);
+    }
+
     function groupRecursively(items, level = 0) {
         if (level >= groupKeys.length) {
             return items;
         }
         const attr = groupKeys[level];
         return items.reduce((acc, item) => {
-            const key = item[attr];
+            const key = getNestedProperty(item, attr);
             if (!acc[key]) {
                 acc[key] = [];
             }
@@ -632,7 +690,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
             );
             const comparisonsPercomparisonKey = new Map();
             grouped[key].forEach(obj => {
-              const key = obj[comparisonAtrribute.comparisonKey];
+              const key = getNestedProperty(obj, comparisonAtrribute.comparisonKey);
               if (comparisonKeys.includes(key)) {
                 if (!comparisonsPercomparisonKey.has(key)) {
                   comparisonsPercomparisonKey.set(key, {totalCargos: 0, asignacionTotal: 0, ids: []});
@@ -646,7 +704,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
                 data: {
                   [groupKeys[level]]: key,
                   type: types[level],
-                  ... (groupValues[level] != null ? grouped[key][0][groupValues[level]] :  grouped[key][0]),
+                  ... (groupValues[level] != null ? getNestedProperty(grouped[key][0], groupValues[level]) :  grouped[key][0]),
                   items: grouped[key] as Appointment[],
                   isLastGroup: level == groupKeys.length - 1,
                   isFirstGroup: level == 0,
@@ -665,7 +723,6 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     const grouped = groupRecursively(list);
     const tree = buildTree(grouped);
     this.globalAmount = tree.reduce((sum, value) => sum + value.data.asignacionTotal, 0);
-    this.partialAmmount = this.globalAmount;
     return tree;
   }
 
@@ -730,6 +787,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
 
     const filters = new FiltersBy();
+    filters.organizationCharts = this.confirmedFilters?.organizationCharts?.map(e => e.id) ?? [];
     filters.dependencies = this.confirmedFilters?.dependencies?.map(e => e.data.id) ?? [];
     filters.validities = this.confirmedFilters?.validities?.map(e => e.id) ?? [];
     filters.scopes = this.confirmedFilters?.scopes?.map(e => e.id) ?? [];

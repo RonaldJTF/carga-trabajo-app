@@ -1,4 +1,4 @@
-import { Appointment, Structure } from "@models";
+import { Appointment, Hierarchy, Structure } from "@models";
 import * as AppointmentActions from "./appointment.actions";
 import {createReducer, on} from "@ngrx/store";
 
@@ -7,7 +7,7 @@ export interface AppointmentState {
   item: Appointment;
   expandedNodes: any[];
   mustRecharge: boolean;
-  structure: Structure;
+  hierarchy: Hierarchy;
   informationGroup: any;
   confirmedFilters: any;
   viewMode: 'list' | 'chart';
@@ -18,7 +18,7 @@ export const initialState: AppointmentState = {
   item: new Appointment(),
   expandedNodes: [],
   mustRecharge: true,
-  structure: null,
+  hierarchy: null,
   informationGroup: null,
   confirmedFilters: null,
   viewMode: 'list'
@@ -82,9 +82,9 @@ export const appointmentReducer = createReducer(
     informationGroup: informationGroup,
   })),
 
-  on(AppointmentActions.setStructureOnWorking, (state, {structure}) => ({
+  on(AppointmentActions.setHierarchyOnWorking, (state, {hierarchy}) => ({
     ...state,
-    structure: structure
+    hierarchy: hierarchy
   })),
 
   on(AppointmentActions.setConfirmedFilters, (state, {confirmedFilters}) => ({

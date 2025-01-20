@@ -1,60 +1,99 @@
 <ng-container *ngIf="!loading else sLoading">
-  <div *ngIf="!(organizationalCharts) else data">
-    <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo organigrama'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
+  <div *ngIf="!((organizationCharts$ | async).length) else data">
+      <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Crear nuevo organigrama'" (go)="openNew()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
   </div>
   <ng-template #data>
-    <div *ngIf="organizationalCharts" class="flex justify-content-center overflow-x-auto">
-      <div class="mb-0 w-full">
-        <div class="flex justify-content-between mb-3">
-          <div></div>
-          <div class="flex align-items-center justify-content-center">
-            <ng-container *ngIf="isAdmin">
-              <button *ngIf="!dataset" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
+    <div class="border-round-top-xl surface-100 p-3 border-bottom-none mb-0 card border-noround">
+      <p-menubar [model]="menuBarItems">
+        <ng-template pTemplate="start">
+            <button *ngIf="isAdmin" pButton pRipple icon="pi pi-plus" class="p-button-success m-1" (click)="openNew()" pTooltip="Nuevo" tooltipPosition="bottom">
                 <span class="p-button-label hidden-lg pl-2">Nuevo</span>
-              </button>
-              <button *ngIf="dataset" pButton pRipple icon="pi pi-replay" class="p-button-secondary m-1" (click)="listOrganizationChart()" pTooltip="Volver" tooltipPosition="bottom">
-                <span class="p-button-label hidden-lg pl-2">Volver</span>
-              </button>
-            </ng-container>
-          </div>
-        </div>
-        <div *ngIf="!dataset" class="flex flex-wrap justify-content-center gap-4">
-          <div *ngFor="let organigrama of organizationalCharts" class="p-3 text-center cursor-pointer bg-blue-100 border-round" title="Ver organigrama" (mouseenter)="toggleIcon(true, iconInfo)" (mouseleave)="toggleIcon(false, iconInfo)">
-            <div (click)="viewOrganizationChart(organigrama)">
-              <div class="font-bold">{{ organigrama.nombre }}</div>
-              <div>{{ organigrama.descripcion }}</div>
-            </div>
-            <span #iconInfo class="_badge" style="display: none;">
-              <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOrganizationChart" [id]="organigrama.id" [value]="organigrama" [buttonClass]="'p-button-rounded'"></app-menu-item>
-            </span>
-          </div>
-        </div>
-        <div *ngIf="dataset && organizationChart" class="w-full">
-          <div class="bg-primary-50 border-round-xl flex flex-column align-items-center p-4 my-3 w-full">
-            <span class="font-bold text-primary-500 text-3xl">{{ organizationChart.nombre }}</span>
-            <span class="text-500">{{ organizationChart.descripcion }}</span>
-          </div>
-          <div *ngIf="!dataset.length">
-            <app-go-to-if-not-found [imageSize]="IMAGE_SIZE.LARGE" [buttonLabel]="'Agregar dependencia'" (go)="onGoCreateDependency(organizationChart, true)" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR" [showButton]="isAdmin"></app-go-to-if-not-found>
-          </div>
-          <p-organizationChart [value]="dataset">
-            <ng-template let-node pTemplate="person">
-              <div class="text-center" (mouseenter)="toggleIcon(true, iconInfo)" (mouseleave)="toggleIcon(false, iconInfo)">
-                <i class="pi {{node.data.dependencia.convencion.claseIcono}} text-xl text-{{node.data.dependencia.convencion.nombreColor}}-500"></i>
-                <div class="font-bold">{{ node.data.dependencia.nombre }}</div>
-                <div>{{ node.data.dependencia.descripcion }}</div>
-                <span #iconInfo class="_badgeChart" style="display: none;">
-                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsDependency" [id]="node.data.id" [value]="node.data" [buttonClass]="'p-button-rounded'"></app-menu-item>
-              </span>
-              </div>
+            </button>
+        </ng-template>
+        <ng-template *ngIf="organizationCharts$ | async as organizationCharts" pTemplate="end">
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Organigrama" (click)="organizationChartOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #organizationChartOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="organizationCharts" [filter]="true" title="Organigramas" optionLabel="nombre"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeOrganizationChart($event)">
+                    </p-listbox>
+                </ng-template> 
+            </p-overlayPanel>
+        </ng-template>
+      </p-menubar>  
+    </div>
+  
+    <div class="border-round-bottom-xl p-0 card border-noround">
+      <ng-container *ngIf="!loadingHierarchies else sLoadingHierarchies">
+        <ng-container *ngIf="hierarchyTree?.length else sNoTree">
+          <p-organizationChart [value]="hierarchyTree" styleClass="p-4 overflow-x-auto">
+            <ng-template let-node pTemplate="default">
+              <ng-container *ngIf="node.data.root else sNoRoot">
+                <div class="flex flex-column p-3" style="position: relative;" (mouseenter)="toggleIcon(true, node.data.id, 'organizationChart')" (mouseleave)="toggleIcon(false, node.data.id, 'organizationChart')">
+                  <span class="font-medium">{{node.data.nombre | uppercase}}</span>
+                  <span class="text-500 text-sm">{{node.data.descripcion}}</span>
+                  <app-organization-chart-menu-item [toggleIcon]="showedIcons['organizationChart' + node.data.id]" [id]="node.data.id" [menuItems]="menuItemsOrganizationChart" ></app-organization-chart-menu-item >
+                </div>
+              </ng-container>
+              <ng-template #sNoRoot>
+                <div *ngIf="node.data.dependencia as dependency" class="flex flex-column align-items-center text-center p-3" style="position: relative;" (mouseenter)="toggleIcon(true, node.data.id, 'hierarchy')" (mouseleave)="toggleIcon(false, node.data.id, 'hierarchy')">
+                  <ng-container *ngIf="dependency.srcIcono else sNoIcon">
+                    <img [src]="dependency.srcIcono" [alt]="dependency.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-3rem" />
+                  </ng-container>
+                  <ng-template #sNoIcon>
+                    <div *ngIf="dependency.convencion" class="w-2rem h-2rem flex align-items-center justify-content-center bg-{{dependency.convencion.nombreColor}}-100 border-circle">
+                      <i class="pi {{dependency.convencion.claseIcono}} text-lg text-{{dependency.convencion.nombreColor}}-500"></i>
+                    </div>
+                  </ng-template>
+                  <span class="font-medium text-sm">{{dependency.nombre}}</span>
+                  <span class="text-500 text-xs">{{dependency.descripcion}}</span>
+                  <app-organization-chart-menu-item [toggleIcon]="showedIcons['hierarchy' + node.data.id]" [id]="node.data.id" [menuItems]="menuItemsHierarchy" ></app-organization-chart-menu-item >
+                </div>
+              </ng-template>
             </ng-template>
           </p-organizationChart>
+          <ng-container *ngIf="conventions$ | async as conventions">
+            <div *ngIf="conventions.length" class="flex p-3 surface-100 border-round-bottom-xl">
+              <p-chip *ngFor="let convention of conventions" label="{{convention.nombre}}" icon="pi {{convention.claseIcono}}" styleClass="m-1 text-{{convention.nombreColor}}-500 bg-{{convention.nombreColor}}-100 "></p-chip>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-template #sNoTree>
+          <div class="p-3">
+            <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM"></app-no-result>
+          </div>
+        </ng-template>
+      </ng-container>
+      <ng-template #sLoadingHierarchies>
+        <div class="p-3">
+          <app-loading></app-loading>
         </div>
-      </div>
+      </ng-template>
     </div>
   </ng-template>
 </ng-container>
+
 <ng-template #sLoading>
   <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
+
+<p-overlayPanel #dependencyOptionsOverlayPanel [showCloseIcon]="true">
+  <ng-template pTemplate>
+      <p-listbox [options]="filteredDependencies" [filter]="true" title="Dependencias" optionLabel="nombre"
+          [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+          [style]="{'max-height':'250px', 'overflow':'auto'}"
+          (onClick)="selectDependency($event)">
+          <ng-template pTemplate="empty">
+            <div *ngIf="!loadingDependencies else sLoadingDependencies" class="flex align-items-center justify-content-center">
+                <span>{{MESSAGE.NO_REGISTROS}}</span>
+            </div>
+            <ng-template #sLoadingDependencies>
+                <app-loading></app-loading>
+            </ng-template>
+        </ng-template>
+      </p-listbox>
+  </ng-template> 
+</p-overlayPanel>
 

@@ -1,12 +1,12 @@
 import { Location } from '@angular/common';
 import * as AppointmentActions from "@store/appointment.actions";
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
 import { Appointment, Hierarchy, Level, Normativity, OrganizationChart, SalaryScale} from '@models';
 import { Store } from '@ngrx/store';
-import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService, NormativityService, StructureService, UrlService, ValidityService } from '@services';
+import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService, NormativityService, OrganizationChartService, UrlService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { MenuItem, SelectItem, TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
@@ -35,6 +35,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   deleting: boolean = false;
   loadingAppointment: boolean = false;
   loadingSalaryScales: boolean = false;
+  loadingHierarchies: boolean = false;
 
   mustRechargeAppointmentFormGroup: boolean;
   mustRechargeAppointmentFormGroupSubscription: Subscription;
@@ -63,6 +64,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     private levelService: LevelService,
     private validityService: ValidityService,
     private appointmentService: AppointmentService,
+    private organizationChartService: OrganizationChartService,
     private authService: AuthenticationService,
     private location: Location,
     private router: Router,
@@ -94,6 +96,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
 
     const appointmentId = this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']);
     this.loadAppointmentInformation(appointmentId);
+    this.loadOrganizacionCharts();
     this.loadValidities(appointmentId);
     this.initMenus();
     this.loadLevels();
@@ -138,19 +141,24 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   }
 
   loadOrganizacionCharts(): void {
-    /*this.compensationCategoryService.getOrganizacionCharts().subscribe({
+    this.organizationChartService.getOrganizationalCharts().subscribe({
       next: (e) => {
         this.organizationChartOptions = e?.map( o => ({value: o, label: o.nombre}));
+        this.organizationChart = e?.find ( obj => obj.id == this.formAppointment.get('organizationChartId').value);
       }
-    });*/
+    });
   }
 
   loadHierarchies(organizaonChartId: number): void {
-    /*this.structureService.getHierarchies(organizaonChartId).subscribe({
+    this.loadingHierarchies = true;
+    this.organizationChartService.getHierarchiesByOrganizationChartId(organizaonChartId).subscribe({
       next: (e) => {
+        this.hierarchyOptions = [];
         this.builtNodes(e, this.hierarchyOptions);
-      }
-    });*/
+        this.loadingHierarchies = false;this.loadingHierarchies = false;
+      },
+      error: (e) => this.loadingHierarchies = false
+    });
   }
 
   loadValidities(appointmentId: number): void {
@@ -278,7 +286,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     //Reestablecemos a valores iniciales cuando vayamos a editar una vigencia
     this.validityService.setMustRechargeValidityFormGroup(true);
     const backRoute = this.appointment ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointment.id)}` : '/configurations/appointments/create';
-    this.router.navigate(["/configurations/validities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute, isSalaryScale: true}})
+    this.router.navigate(["/configurations/validities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
   changeNormativity(data: any){
@@ -292,14 +300,14 @@ export class AppointmentComponent implements OnInit, OnDestroy {
 
   openNewNormativity() {
     const backRoute = this.appointment ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointment.id)}` : '/configurations/appointments/create';
-    this.router.navigate(['/configurations/normativities/create'], { skipLocationChange: true, queryParams: {backRoute: backRoute}});
+    this.router.navigate(['/configurations/normativities/create'], { skipLocationChange: true, queryParams: {backRoute: backRoute, showScopes: true}});
   }
 
   onGoToUpdateNormativity (id : any, event: Event): void{
     event.preventDefault();
     event.stopPropagation();
     const backRoute = this.appointment ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointment.id)}` : '/configurations/appointments/create';
-    this.router.navigate(["/configurations/normativities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
+    this.router.navigate(["/configurations/normativities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute, showScopes: true}})
   }
 
   showDetailOfNormativity(elementRef: HTMLDivElement, event: Event) {
@@ -360,6 +368,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
         label: hierarchy.dependencia.nombre,
         children: [],
         key: hierarchy.id.toString(),
+        expanded: true
       };
       if (hierarchy.subJerarquias?.length) {
         this.builtNodes(hierarchy.subJerarquias, node.children)

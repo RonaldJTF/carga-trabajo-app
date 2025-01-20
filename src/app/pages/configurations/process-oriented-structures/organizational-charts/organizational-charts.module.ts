@@ -4,14 +4,17 @@ import { OrganizationalChartsRoutingModule } from './organizational-charts-routi
 import { ListComponent } from './list/list.component';
 import { SharedModule } from '@shared';
 import { OrganizationChartComponent } from './organization-chart/organization-chart.component';
-import { DependencyComponent } from './dependency/dependency.component';
+import { OrganizationChartMenuItemComponent } from './list/organization-chart-menu-item/organization-chart-menu-item.component';
+import { HierarchyComponent } from './hierarchy/hierarchy.component';
 
 
 @NgModule({
   declarations: [
     ListComponent,
     OrganizationChartComponent,
-    DependencyComponent
+    HierarchyComponent,
+    OrganizationChartMenuItemComponent,
+    HierarchyComponent
   ],
   imports: [
     OrganizationalChartsRoutingModule,

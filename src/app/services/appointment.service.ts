@@ -102,7 +102,7 @@ export class AppointmentService {
   createAppointmentFormGroup(){
     this.resetFormInformation();
     this.appointmentFormGroup = this.formBuilder.group({
-      idEstructura: ['', Validators.required],
+      idJerarquia: ['', Validators.required],
       idVigencia: ['', Validators.required],
       idNivel: ['', Validators.required],
       idEscalaSalarial: '',
@@ -113,6 +113,7 @@ export class AppointmentService {
       vigencia: null,
       hierarchyTree: null,
       normatividad: null,
+      organizationChartId: ''
     })
     return this.appointmentFormGroup;
   }
@@ -138,6 +139,7 @@ export class AppointmentService {
     this.appointmentFormGroup.get('vigencia').setValue(appointment.vigencia);
     this.appointmentFormGroup.get('normatividad').setValue(appointment.normatividad);
     this.appointmentFormGroup.get('hierarchyTree').setValue(node);
+    this.appointmentFormGroup.get('organizationChartId').setValue(appointment.jerarquia.idOrganigrama);
     
     return this.appointmentFormGroup;
   }

@@ -123,7 +123,6 @@
             <button *ngIf="formLevelCompensation?.value.idVigencia" (click)="removeValidity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="formLevelCompensation?.value.idVigencia" (click)="onGoToUpdateValidity(validity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewValidity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
-            <p-menu #validityMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Vigencias"  (click)="validityOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #validityOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>
@@ -168,7 +167,6 @@
             <button *ngIf="formLevelCompensation?.value.idCompensacionLaboral" (click)="removeCompensation()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="formLevelCompensation?.value.idCompensacionLaboral" (click)="onGoToUpdateCompensation(compensation.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewCompensation()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
-            <p-menu #compensationMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Compensaciones laborales"  (click)="compensationOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #compensationOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>
@@ -211,7 +209,6 @@
             <button *ngIf="valueByRuleFormGroup?.value.idRegla" (click)="removeRule()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="valueByRuleFormGroup?.value.idRegla" (click)="onGoToUpdateRule(rule.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewRule()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
-            <p-menu #ruleMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Reglas"  (click)="ruleOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #ruleOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>
@@ -251,7 +248,6 @@
             <button *ngIf="valueByRuleFormGroup?.value.idVariable" (click)="removeVariable()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
             <button *ngIf="valueByRuleFormGroup?.value.idVariable" (click)="onGoToUpdateVariable(variable.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
             <button pButton pRipple type="button" (click)="openNewVariable()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
-            <p-menu #variableMenu [popup]="true" [model]=""></p-menu>
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Variables"  (click)="variableOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #variableOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>

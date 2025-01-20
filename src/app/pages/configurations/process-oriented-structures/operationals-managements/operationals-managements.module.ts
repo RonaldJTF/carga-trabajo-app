@@ -4,7 +4,6 @@ import { SharedModule } from '@shared';
 import { ListComponent } from './list/list.component';
 import { OperationalManagementComponent } from './operational-management/operational-management.component';
 
-
 @NgModule({
   declarations: [ListComponent, OperationalManagementComponent],
   imports: [

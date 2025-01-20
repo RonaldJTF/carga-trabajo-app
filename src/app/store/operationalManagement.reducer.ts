@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { OperationalManagement, Structure } from "@models";
+import { OperationalManagement } from "@models";
 import * as OperationalManagementActions from "./operationalManagement.actions";
 import _ from 'lodash'; //Usada para clonar conservando la estructura del objeto, por ejemplo, el orden en que se encuentran en una lista, etc.
 

@@ -9,6 +9,8 @@ import {WorkplanState} from "@store/workplan.reducer";
 import {CompensationState} from "@store/compensation.reducer";
 import { LevelCompensationState } from "@store/levelCompensation.reducer";
 import { OperationalManagementState } from "@store/operationalManagement.reducer";
+import { OrganizationChartState } from "@store/organizationChart.reducer";
+import { HierarchyState } from "@store/hierarchy.reducer";
 
 export interface AppState {
   structure: StructureState,
@@ -21,5 +23,7 @@ export interface AppState {
   rule: RuleState,
   compensation: CompensationState,
   levelCompensation: LevelCompensationState,
-  operationalManagement: OperationalManagementState
+  operationalManagement: OperationalManagementState,
+  organizationChart: OrganizationChartState,
+  hierarchy: HierarchyState
 }

@@ -1,19 +1,17 @@
-._badge {
-  cursor: pointer;
-  position: absolute;
-  background-color: var(--primary-500);
-  color: white;
-  border-radius: 50%;
-  z-index: 9999;
+:host  ::ng-deep .p-menubar{
+  padding: 0px;
+  border: none;
+  background-color: var(--surface-100);
 }
 
-._badgeChart {
-  cursor: pointer;
-  position: absolute;
-  top: 15px;
-  left: -25px;
-  background-color: var(--primary-500);
-  color: white;
-  border-radius: 50%;
-  z-index: 9999;
+:host  ::ng-deep ul.p-menubar-root-list > li > a {
+  padding: 1rem !important;
+}
+
+:host ::ng-deep .p-organizationchart-node-content{
+  padding: 0;
+}
+
+::ng-deep  .p-listbox-empty-message{
+  text-align: center;
 }

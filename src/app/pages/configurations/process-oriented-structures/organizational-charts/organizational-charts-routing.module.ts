@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ListComponent } from './list/list.component';
 import {OrganizationChartComponent} from "./organization-chart/organization-chart.component";
-import {DependencyComponent} from "./dependency/dependency.component";
+import { HierarchyComponent } from './hierarchy/hierarchy.component';
 
 const routes: Routes = [
   {path: '', component: ListComponent},
   {path: 'create', component: OrganizationChartComponent},
-  {path: 'create/:id', component: OrganizationChartComponent},
-  {path: 'dependency', component: DependencyComponent},
-  {path: 'dependency/:id', component: DependencyComponent},
+  {path: ':id', component: OrganizationChartComponent},
+  {path: 'hierarchy/create', component: HierarchyComponent},
+  {path: 'hierarchy/:id', component: HierarchyComponent},
 ];
 
 @NgModule({

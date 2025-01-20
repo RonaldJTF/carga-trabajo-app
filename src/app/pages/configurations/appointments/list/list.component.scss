@@ -154,15 +154,14 @@
 }
 
 ::ng-deep .p-multiselect-token, 
-::ng-deep .p-treeselect-token,
-::ng-deep .p-chip{
+::ng-deep .p-treeselect-token{
     background-color: var(--surface-100) !important;
     color: var(--text-color-secondary) !important;
     border-radius: 1.5rem !important;
     margin-right: 0.5rem !important;
 }
 
-::ng-deep .p-chip{
+:host ::ng-deep .p-chip{
     background-color: var(--surface-200) !important;
     color: var(--text-color-secondary) !important;
     border-radius: 1.5rem !important;

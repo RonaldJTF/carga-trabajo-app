@@ -65,7 +65,6 @@ export class ListComponent implements OnInit, OnDestroy{
 
     this.levelsSubscription =  this.store.select(state => state.level.items).subscribe(e => this.levels = e);
     this.getLevels();
-    this.initMenus();
     //Reestablecemos a valores iniciales cuando vayamos a editar o a gestionar las escalas salariales del nivel ocupacional
     this.levelService.setMustRechargeLevelFormGroup(true);
     this.initMenus();

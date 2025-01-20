@@ -8,6 +8,6 @@ export class Hierarchy {
   orden: number;
   organigrama: OrganizationChart;
   dependencia: Dependency;
-  idJerarquiaPadre: number;
+  idPadre: number;
   subJerarquias: Hierarchy[];
 }
