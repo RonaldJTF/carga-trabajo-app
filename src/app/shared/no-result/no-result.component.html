@@ -1,4 +1,4 @@
-<div class="flex flex-column align-items-center">
+<div class="flex flex-column align-items-center" [ngClass]="styleClass">
     <div class="mr-1" style="width: {{imageSize}}px; height: {{imageSize}}px; overflow: hidden;">
         <img [src]="srcImage" [appImageFallback]  style="vertical-align: middle; width: 100%; height: auto;"/>
     </div>

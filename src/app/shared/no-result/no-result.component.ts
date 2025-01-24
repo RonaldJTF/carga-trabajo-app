@@ -9,4 +9,5 @@ export class NoResultComponent {
   @Input() imageSize: number = 50;
   @Input() message: string = 'No se encontró resultados';
   @Input() srcImage: string = 'assets/content/images/no_results.png';
+  @Input() styleClass: string = '';
 }

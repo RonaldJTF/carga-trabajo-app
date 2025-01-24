@@ -11,5 +11,6 @@ export class OperationalManagement{
     tipologia?: Typology;
     orden?: number;
     actividad?: Activity;
-    loaded?: boolean;
+    idJerarquiaGestionOperativa?: number;
+    hasActivity?: boolean;
 }

@@ -197,7 +197,7 @@
                         </ng-template>
                     </ng-container>
                     <ng-template #sLoadingDependency>
-                        <app-loading classStyle="mb-3"></app-loading>
+                        <app-loading styleClass="mb-3"></app-loading>
                     </ng-template>
                 </div>
             </div>
@@ -246,11 +246,11 @@
             </div>
         </div>
 
-        <div class="flex align-items-center w-full mb-3">
-            <div *ngIf="timeStatisticsStructure.srcIcono;" style="overflow: hidden; min-width: 3rem;" class="mr-2 w-5rem h-5rem ">
+        <div class="flex w-full mb-3">
+            <div *ngIf="timeStatisticsStructure.srcIcono;" style="overflow: hidden; min-width: 3rem;" class="mr-2 w-4rem">
                 <img [src]="timeStatisticsStructure.srcIcono" style="width: 100%; height: auto"/>
             </div>
-            <div class="flex flex-column">
+            <div class="flex flex-column my-auto">
                 <span class="font-medium">{{timeStatisticsStructure.nombre | uppercase}}</span>
                 <span class="text-500 text-justify">{{timeStatisticsStructure.descripcion}}</span>
             </div>

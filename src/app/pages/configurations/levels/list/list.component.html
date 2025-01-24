@@ -120,9 +120,7 @@
                                 </ng-template>
                             </ng-container>
                             <ng-template #sLoadingLevelWithActiveSalaryScales>
-                                <div class="p-3">
-                                    <app-loading></app-loading>
-                                </div>
+                                <app-loading styleClass="p-3"></app-loading>
                             </ng-template>
                         </td>
                     </tr>
@@ -155,7 +153,7 @@
     <div class="flex align-items-center">
       <div *ngIf="level" class="flex flex-column">
         <span class="font-medium">{{level?.descripcion | uppercase}}</span>
-        <span *ngIf="filteredSalaryScales && level.escalasSalariales?.length" class="text-blue-500">{{filteredSalaryScales.length}} de {{level.escalasSalariales.length}} escalas salariales</span>
+        <span *ngIf="filteredSalaryScales && level.escalasSalariales?.length" class="text-blue-500 text-sm">{{filteredSalaryScales.length}} de {{level.escalasSalariales.length}} escalas salariales</span>
       </div>
       <div class="ml-auto pl-2 flex align-items-center">
         <app-menu-item [menuItems]="menuItemsOfLevel" [id]="level.id" [value]="level" [buttonClass]="'p-button-outlined'"></app-menu-item>

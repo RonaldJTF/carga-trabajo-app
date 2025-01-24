@@ -33,6 +33,9 @@ export class OrganizationChartComponent implements OnInit, OnDestroy {
   deleting: boolean = false;
   loadingOrganizationChart: boolean = false;
 
+  uploadedFiles: any[] = [];
+  formData: FormData;
+
   mustRechargeOrganizationChartFormGroup: boolean;
   mustRechargeOrganizationChartFormGroupSubscription: Subscription;
   organizationChartSubscription: Subscription;
@@ -114,7 +117,7 @@ export class OrganizationChartComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateOrganizationChart(payload: OrganizationChart, id: number): void {
+  updateOrganizationChart(payload: any, id: number): void {
     this.organizationChartService.updateOrganizationChart(id, payload).subscribe({
       next: (e) => {
         this.store.dispatch(OrganizationChartActions.updateFromList({organizationChart: e}));
@@ -128,7 +131,7 @@ export class OrganizationChartComponent implements OnInit, OnDestroy {
     });
   }
 
-  createOrganizationChart(payload: OrganizationChart): void {
+  createOrganizationChart(payload: any): void {
     this.organizationChartService.createOrganizationChart(payload).subscribe({
       next: (e) => {
         this.store.dispatch(OrganizationChartActions.addToList({organizationChart: e}));
@@ -144,13 +147,18 @@ export class OrganizationChartComponent implements OnInit, OnDestroy {
 
   onSubmitOrganizationChart(event : Event): void {
     event.preventDefault();
-    let payload = {...this.organizationChart, ...this.formOrganizationChart.value};
+    let payload = {...this.organizationChart, ...this.formOrganizationChart.value};    
     delete payload.hierarchyTree;
+
+    let formData = new FormData();
+    formData.append('file', this.uploadedFiles[0]);
+    formData.append('organizationChart', JSON.stringify(payload));
+
     if (this.formOrganizationChart.invalid) {
       this.formOrganizationChart.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      this.updateMode ? this.updateOrganizationChart(payload, this.organizationChart.id) : this.createOrganizationChart(payload);
+      this.updateMode ? this.updateOrganizationChart(formData, this.organizationChart.id) : this.createOrganizationChart(formData);
     }
   }
 
@@ -223,5 +231,16 @@ export class OrganizationChartComponent implements OnInit, OnDestroy {
 
   parseStringToBoolean(str: string): boolean{
     return Methods.parseStringToBoolean(str);
+  }
+
+  onSelectFile(event: any) {
+    this.uploadedFiles = [];
+    for (const file of event.files) {
+        this.uploadedFiles.push(file);
+    }
+  }
+
+  onRemoveFile(event: any) {
+    this.uploadedFiles = this.uploadedFiles.filter(objeto => objeto.name !== event.file.name);
   }
 }

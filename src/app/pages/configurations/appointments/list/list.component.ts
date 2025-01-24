@@ -222,8 +222,8 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       if (e){
         const filters = new FiltersBy();
         if(this.hierarchy){
-          filters.dependencies = [this.hierarchy.idDependencia];
-          filters.organizationCharts = [this.hierarchy.idOrganigrama];
+          filters.dependencies = this.hierarchy.idDependencia ? [this.hierarchy.idDependencia] : [];
+          filters.organizationCharts = this.hierarchy.idOrganigrama ? [this.hierarchy.idOrganigrama] : [];
         }
         this.loading = true;
         this.getAppointments(filters)

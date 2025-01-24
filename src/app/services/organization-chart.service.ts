@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
-import {BehaviorSubject, Observable} from "rxjs";
-import {Dependency, Hierarchy, Normativity, OrganizationChart} from "@models";
-import {HttpResponse} from "@angular/common/http";
+import {BehaviorSubject, map, Observable} from "rxjs";
+import {Dependency, Hierarchy, Normativity, OperationalManagement, OrganizationChart} from "@models";
+import {HttpEventType, HttpResponse} from "@angular/common/http";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Injectable({
@@ -12,6 +12,7 @@ export class OrganizationChartService {
   private pathOrganizationChart: string = 'organization-chart';
   private pathDependency: string = this.pathOrganizationChart.concat('/dependency');
   private pathHierarchy: string = this.pathOrganizationChart.concat('/hierarchy');
+  private pathOperationalManagement: string = this.pathOrganizationChart.concat('/operational-management');
   
   private organizationChartFormGroup: FormGroup;
   
@@ -83,6 +84,65 @@ export class OrganizationChartService {
   }
 
 
+  createHierarchyRelationshipWithOperationalsManagements(organizationalChartIds: number[], hierarchyId: number): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathOperationalManagement, organizationalChartIds, {hierarchyId: hierarchyId});
+  }
+  getAssignedOperationalsManagements(hierarchyId: number): Observable<OperationalManagement[]> {
+    return this.webRequestService.getWithHeaders(`${this.pathOperationalManagement}/assigned`, {hierarchyId: hierarchyId});
+  }
+  getNoAssignedOperationalsManagements(organizationalChartId: number): Observable<OperationalManagement[]> {
+    return this.webRequestService.getWithHeaders(`${this.pathOperationalManagement}/no-assigned`, {organizationalChartId: organizationalChartId});
+  }
+  deleteHierarchyRelationshipWithOperationalsManagements(relationshipIds: number[]){
+    return this.webRequestService.deleteWithHeaders(`${this.pathOperationalManagement}`, null, relationshipIds);
+  }
+
+  /**
+   * Elimina la relación entre la jerarquía y la gestión operativa.
+   * @param relationshipId Id de la relación entre la jerarquía y la gestión operativa, es decir, idJerarquiaGestionOperativa
+   * @returns 
+   */
+  deleteHierarchyRelationshipWithOperationalManagement(relationshipId: number): Observable<any> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathOperationalManagement}/${relationshipId}`);
+  }
+
+  downloadReport(type: string, organizationChartId: number): Observable<number>{
+    const options = {
+      responseType: 'blob',
+      observe: 'events',
+      reportProgress: true
+    };
+    return this.webRequestService.getWithHeaders(`${this.pathOrganizationChart}/report`, {type: type, organizationChartId: organizationChartId}, null, options).pipe(
+      map(e => {
+        switch (e.type) {
+          case HttpEventType.DownloadProgress:
+            return Math.round((100 * e.loaded) / (e.total || 1));
+          case HttpEventType.Response:
+            this.handleFileDownload(e);
+            return 100;
+          default:
+            return 0;
+        }
+      })
+    )
+  }
+
+  private handleFileDownload(response: HttpResponse<Blob>) {
+    const filename = this.getFilenameFromHttpResponse(response);
+    const blob = new Blob([response.body], { type: response.headers.get('content-type') });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  private getFilenameFromHttpResponse(response: HttpResponse<Blob>): string {
+    const contentDisposition = response.headers.get('content-disposition');
+    const matches = /filename="?([^"]+)"?/.exec(contentDisposition);
+    return matches != null ? matches[1] : 'archivo_descargado';
+  }
 
   /*********************************************************************************************************************/
   /******************************************* SECTION OF FORMS TO APPOINTMENT *****************************************/

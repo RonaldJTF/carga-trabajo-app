@@ -1,10 +1,38 @@
-:host  ::ng-deep .p-menubar{
+._badge-container {
+  position: relative;
+  display: inline-block;
+}
+
+._badge {
+  cursor: pointer;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  padding: 3px 8px;
+  font-size: 11px;
+  z-index: 1;
+}
+
+:host ::ng-deep .p-treetable-header{
+  border: none;
+  background-color: transparent;
+  padding: 0px;
+}
+
+:host ::ng-deep .p-treetable-scrollable-body {
+  overflow-y: auto !important;
+}
+
+:host ::ng-deep .p-menubar{
   padding: 0px;
   border: none;
   background-color: var(--surface-100);
 }
 
-:host  ::ng-deep ul.p-menubar-root-list > li > a {
+:host ::ng-deep ul.p-menubar-root-list > li > a {
   padding: 1rem !important;
 }
 
@@ -12,6 +40,6 @@
   padding: 0;
 }
 
-::ng-deep  .p-listbox-empty-message{
+:host ::ng-deep  .p-listbox-empty-message{
   text-align: center;
 }

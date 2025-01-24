@@ -167,3 +167,13 @@
     border-radius: 1.5rem !important;
     margin-right: 0.5rem !important;
 }
+
+:host ::ng-deep .p-menubar{
+    padding: 0px;
+    border: none;
+    background-color: var(--surface-100);
+  }
+  
+  :host ::ng-deep ul.p-menubar-root-list > li > a {
+    padding: 1rem !important;
+  }

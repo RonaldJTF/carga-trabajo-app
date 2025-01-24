@@ -11,14 +11,14 @@ import {
   AuthenticationService,
   ConfirmationDialogService,
   CryptojsService,
-  OperationalManagementService,
   OrganizationChartService
 } from "@services";
 import {finalize, map, Observable, Subscription} from "rxjs";
-import {Convention, Dependency, Hierarchy, OrganizationChart, Structure} from "@models";
+import {Convention, Dependency, Hierarchy, OperationalManagement, OrganizationChart} from "@models";
 import {MenuItem, TreeNode} from "primeng/api";
 import { OverlayPanel } from 'primeng/overlaypanel';
 import {DomSanitizer} from "@angular/platform-browser";
+import { TreeTable } from 'primeng/treetable';
 
 @Component({
   selector: 'app-list',
@@ -32,11 +32,18 @@ export class ListComponent implements OnInit, OnDestroy {
 
   @ViewChild('dependencyOptionsOverlayPanel') dependencyOptionsOverlayPanel: OverlayPanel;
   @ViewChild('organizationChartOptionsOverlayPanel') organizationChartOptionsOverlayPanel: OverlayPanel;
+  @ViewChild('operationalsManagementsOverlayPanel') operationalsManagementsOverlayPanel: OverlayPanel;
+  @ViewChild('detailOfOrganizationChartOverlayPanel') detailOfOrganizationChartOverlayPanel: OverlayPanel;
+  @ViewChild('treeTableAssignedOperationalManagement') treeTableAssignedOperationalManagement: TreeTable;
+  @ViewChild('treeTableNoAssignedOperationalManagement') treeTableNoAssignedOperationalManagement: TreeTable;
 
   loading: boolean = false;
   loadingHierarchies: boolean = false;
   loadingDependencies: boolean = false;
+  loadingAssignedOperationalsManagements: boolean = false;
+  loadingNoAssignedOperationalsManagements: boolean = false;
   isAdmin: boolean;
+  isAssigning: boolean = false;
 
   organizationCharts$: Observable<OrganizationChart[]>;
   conventions$: Observable<Convention[]>;
@@ -47,12 +54,15 @@ export class ListComponent implements OnInit, OnDestroy {
   mustRechargeSubscription: Subscription;
   organizationChartSubscribe: Subscription;
   hierarchiesSubscribe: Subscription;
+  viewModeSubscription: Subscription;
 
   menuItemsOrganizationChart: MenuItem[] = [];
   menuItemsHierarchy: MenuItem[] = [];
+  operationalManagementItems: any[] | undefined;
+  operationalManagementActiveItem: any | undefined;
 
   showedIcons: any = {};
-  hierarchyIdOnWorking: any;
+  hierarchyOnWorking: Hierarchy;
   selectedDependency: Dependency;
 
   dependencies: Dependency[] = [];
@@ -63,6 +73,30 @@ export class ListComponent implements OnInit, OnDestroy {
     {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
   ];
 
+  assignedOperationalsManagementsTree: TreeNode[];
+  assignedOperationalsManagementsSubscription: Subscription;
+  selectedNodesOfAssignedOperationalManagement: TreeNode | TreeNode[] | null;
+  mustRechargeAssignedOperationalsManagements: boolean;
+  assignedOperationalsManagementsRowGroupMetadata: number[] = [];
+  numberOfElementsByAssignedOperationalManagement: any = {};
+
+  noAssignedOperationalsManagementsTree: TreeNode[];
+  noAssignedOperationalsManagementsSubscription: Subscription;
+  selectedNodesOfNoAssignedOperationalManagement: TreeNode | TreeNode[] | null;
+  mustRechargeNoAssignedOperationalsManagements: boolean;
+  mustRechargeNoAssignedOperationalsManagementsSubscription: Subscription;
+  noAssignedOperationalsManagementsRowGroupMetadata: number[] = [];
+  numberOfElementsByNoAssignedOperationalManagement: any = {};
+  
+  operationalManagementExpandedNodesSubscription: Subscription;
+  operationalManagementExpandedNodes: number[];
+
+  viewOptions: any[] = [
+    {icon: 'pi pi-table', value: 'base-structure', tooltip: 'Estructura base'}, 
+    {icon: 'pi pi-sitemap', value: 'diagram', tooltip: 'Diagrama'
+  }];
+  viewMode: 'base-structure' | 'diagram';
+
   constructor(
     private store: Store<AppState>,
     private router: Router,
@@ -72,14 +106,15 @@ export class ListComponent implements OnInit, OnDestroy {
     private confirmationDialogService: ConfirmationDialogService,
     private cryptoService: CryptojsService,
     private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef,
-    private operationalManagementService: OperationalManagementService,
+    private cdr: ChangeDetectorRef
   ) {
   }
 
   ngOnInit() {
     const {isAdministrator} = this.authService.roles();
     this.isAdmin = isAdministrator;
+    this.store.dispatch(OrganizationChartActions.setMustRechargeNoAssignedOperationalsManagements({mustRecharge: true}));
+    
     this.organizationCharts$ =  this.store.select(state => state.organizationChart.items);
     this.conventions$ = this.store.select(state => state.hierarchy.items).pipe(
       map(e => {
@@ -88,6 +123,23 @@ export class ListComponent implements OnInit, OnDestroy {
         return this.getConventions(associatedDependencies);
       })
     );
+
+    this.assignedOperationalsManagementsSubscription = this.store.select(state => state.organizationChart.assignedOperationalsManagements).subscribe(e => {
+      let elements = this.filterByActivity(e);
+      this.assignedOperationalsManagementsTree = elements?.map ( obj => this.transformAssignedOperationalManagementToTreeNode(obj));
+      this.assignedOperationalsManagementsRowGroupMetadata = this.onGoToUpdateOperationalManagementRowGroupMetaData(this.assignedOperationalsManagementsTree);
+      this.numberOfElementsByAssignedOperationalManagement[''] = elements?.length;
+      this.getNumberOfElementsByOperationalManagement(this.assignedOperationalsManagementsTree, this.numberOfElementsByAssignedOperationalManagement);
+    });
+
+    this.noAssignedOperationalsManagementsSubscription = this.store.select(state => state.organizationChart.noAssignedOperationalsManagements).subscribe(e => {
+      let elements = this.filterByActivity(e);
+      this.noAssignedOperationalsManagementsTree = elements?.map ( obj => this.transformNoAssignedOperationalManagementToTreeNode(obj));
+      this.noAssignedOperationalsManagementsRowGroupMetadata = this.onGoToUpdateOperationalManagementRowGroupMetaData(this.noAssignedOperationalsManagementsTree);
+      this.numberOfElementsByNoAssignedOperationalManagement[''] = elements?.length;
+      this.getNumberOfElementsByOperationalManagement(this.noAssignedOperationalsManagementsTree, this.numberOfElementsByNoAssignedOperationalManagement);
+    });
+
     this.organizationChartSubscribe =  this.store.select(state => state.organizationChart.item).subscribe( e => {
       this.selectedOrganizationChart = e;
       if(this.hierarchyTree?.length){
@@ -109,38 +161,98 @@ export class ListComponent implements OnInit, OnDestroy {
         )
       }
     });
+    this.operationalManagementExpandedNodesSubscription = this.store.select(state => state.organizationChart.operationalManagementExpandedNodes).subscribe(
+      e => {this.operationalManagementExpandedNodes = e;}
+    );
+    this.viewModeSubscription = this.store.select(state => state.organizationChart.viewMode).subscribe(e => this.viewMode = e);
     this.mustRechargeSubscription = this.store.select(state => state.organizationChart.mustRecharge).subscribe(e => {
       if (e){this.getOrganizationCharts()}
     });
-    this.initMenus();
+    this.mustRechargeNoAssignedOperationalsManagementsSubscription = this.store.select(state => state.organizationChart.mustRechargeNoAssignedOperationalsManagements).subscribe(
+      e => {this.mustRechargeNoAssignedOperationalsManagements = e;
+    });
 
-    this.menuBarItems = [
-      {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments()},
-      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload}
-    ];
+    this.initMenus();
   }
 
   ngOnDestroy(): void {
     this.hierarchiesSubscribe?.unsubscribe();
     this.organizationChartSubscribe?.unsubscribe();
     this.mustRechargeSubscription?.unsubscribe();
+    this.operationalManagementExpandedNodesSubscription?.unsubscribe();
+    this.viewModeSubscription?.unsubscribe();
+    this.assignedOperationalsManagementsSubscription?.unsubscribe();
+    this.noAssignedOperationalsManagementsSubscription?.unsubscribe();
+    this.mustRechargeNoAssignedOperationalsManagementsSubscription?.unsubscribe();
   }
 
   initMenus(){
+    this.menuBarItems = [
+      {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments({} as Hierarchy, e.originalEvent)},
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload}
+    ];
+    
+    this.operationalManagementItems = [
+      { label: 'Asignadas', icon: 'pi pi-check-circle', command: ()=> this.getAssignedOperationalsManagements(), viewMode: 'ASSIGNED'},
+      { label: 'Sin asignar', icon: 'pi pi-hourglass',command: ()=> this.getNoAssignedOperationalsManagements(), viewMode: 'NO_ASSIGNED'}
+    ];
+
     this.menuItemsOrganizationChart = [
+      {label: 'Ver detalles', icon: 'pi pi-eye', command: (e) => this.showDetailOfOrganizationChart(e.originalEvent)},
       {label: 'Agregar dependencia', icon: 'pi pi-plus', visible: this.isAdmin, command: (e) => this.onGoCreateHierarchy(null, e.item.id)},
       {label: 'Asociar dependencia', icon: 'pi pi-arrow-right-arrow-left', visible: this.isAdmin, command: (e) => this.onGoAssociateHierarchy(null, e.originalEvent)},
+      {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments({idOrganigrama: parseInt( e.item.id)} as Hierarchy, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoUpdateOrganizationChart(e.item.id, e.originalEvent)},
-      {label: 'Eliminar organigrama', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteOrganizationChart(e)}
+      {label: 'Eliminar organigrama', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteOrganizationChart(e)},
     ];
 
     this.menuItemsHierarchy = [
+      {label: 'Gestiones operativas', icon: 'pi pi-list', command: (e)=> this.onGoAssociateOperationalsManagements(e.item['value'], e.originalEvent)},
       {label: 'Agregar subdependencia', icon: 'pi pi-sitemap', visible: this.isAdmin, command: (e) => this.onGoCreateHierarchy(e.item.id, this.selectedOrganizationChart.id)},
-      {label: 'Asociar subdependencia', icon: 'pi pi-arrow-right-arrow-left', visible: this.isAdmin, command: (e) => this.onGoAssociateHierarchy(e.item.id, e.originalEvent)},
+      {label: 'Asociar subdependencia', icon: 'pi pi-arrow-right-arrow-left', visible: this.isAdmin, command: (e) => this.onGoAssociateHierarchy(e.item['value'], e.originalEvent)},
+      {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments(e.item['value'], e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoUpdateHierarchy(e.item.id, e.originalEvent)},
       {label: 'Eliminar jerarquía', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteHierarchy(e)},
       {label: 'Eliminar dependencia', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteHierarchyAndDependency(e)},
     ];
+  }  
+
+  get totalOfSelectedAssignedOperationalsManagements(): number{
+    return this.treeTableAssignedOperationalManagement?.selection?.length;
+  }
+
+  get totalOfSelectedNoAssignedOperationalsManagements(): number{
+    return this.treeTableNoAssignedOperationalManagement?.selection?.length;
+  }
+
+  get numberOfDependenciesInOrganizationChart(): number{
+    return this.getNumberOfDependenciesInOrganizationChart(this.hierarchies);
+  }
+
+  filterByActivity(elements: OperationalManagement[]): OperationalManagement[] {
+    return elements
+      .map((element) => {
+        if (element.subGestionesOperativas && element.subGestionesOperativas.length > 0) {
+          element.subGestionesOperativas = this.filterByActivity(element.subGestionesOperativas);
+        }
+        const hasActivity =
+          element.actividad !== undefined || 
+          (element.subGestionesOperativas && element.subGestionesOperativas.length > 0);
+
+        return hasActivity ? element : null;
+      })
+      .filter((element) => element !== null) as OperationalManagement[];
+  }
+  
+
+  getNumberOfDependenciesInOrganizationChart(hierarchies: Hierarchy[]){
+    let total = 0;
+    if(!hierarchies?.length) return  total;
+
+    for (let e of hierarchies){
+      total += 1 + this.getNumberOfDependenciesInOrganizationChart(e.subJerarquias);
+    }
+    return total;
   }
 
   getOrganizationCharts(){
@@ -315,8 +427,8 @@ export class ListComponent implements OnInit, OnDestroy {
     return conventions;
   }
 
-  onGoAssociateHierarchy(hierarchyId: any, event: Event){
-    this.hierarchyIdOnWorking = hierarchyId;
+  onGoAssociateHierarchy(hierarchy: Hierarchy, event: Event){
+    this.hierarchyOnWorking = hierarchy;
     if(!this.dependencies?.length){
       this.getDependencies();
     }else{
@@ -344,7 +456,7 @@ export class ListComponent implements OnInit, OnDestroy {
     let hierarchy = {
       idDependencia: this.selectedDependency.id,
       idOrganigrama: this.selectedOrganizationChart.id,
-      idPadre: this.hierarchyIdOnWorking,
+      idPadre: this.hierarchyOnWorking?.id,
     }
 
     let formData = new FormData();
@@ -365,6 +477,10 @@ export class ListComponent implements OnInit, OnDestroy {
       error: (error) => {},
     });
   }
+  
+  onViewChange(event: "base-structure" | "diagram") {
+    this.store.dispatch(OrganizationChartActions.setViewMode({viewMode: event}));
+  }
 
   changeOrganizationChart(data: any){
     this.store.dispatch(OrganizationChartActions.setOrganizationChart({organizationChart: data.value}));
@@ -376,18 +492,232 @@ export class ListComponent implements OnInit, OnDestroy {
     this.showedIcons[key+id] = show;
   }
 
-  onGoToManagementAppointments() {
+  showDetailOfOrganizationChart(event: Event){
+    this.detailOfOrganizationChartOverlayPanel.toggle(event);
+  } 
+
+  onGoToManagementAppointments(hierarchy: Hierarchy, event: Event) {
     const backRoute = '/configurations/structures';
-    this.store.dispatch(AppointmentActions.setHierarchyOnWorking({hierarchy: null}));
+    this.store.dispatch(AppointmentActions.setHierarchyOnWorking({hierarchy: hierarchy}));
     this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: true}));
     this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
-  onGoToManagementAppointmentsByHierarchyId(hierarchyId: number) {
-    const backRoute = '/configurations/structures';
-    this.store.dispatch(AppointmentActions.setHierarchyOnWorking({hierarchy: null}));
-    this.store.dispatch(AppointmentActions.setMustRecharge({mustRecharge: true}));
-    this.router.navigate(['configurations/appointments'], { skipLocationChange: true, queryParams: {backRoute: backRoute}})
+  onGoAssociateOperationalsManagements(hierarchy: Hierarchy, event: Event){
+    this.mustRechargeAssignedOperationalsManagements = hierarchy.id != this.hierarchyOnWorking?.id;
+    this.hierarchyOnWorking = hierarchy;
+    this.operationalsManagementsOverlayPanel.toggle(event);
+    if(!this.operationalManagementActiveItem){
+      this.operationalManagementActiveItem = this.operationalManagementItems[0];
+    }
+    this.desmarkAllAssignedOperationalsManagements();
+    this.desmarkAllNoAssignedOperationalsManagements();
+    this.operationalManagementActiveItem.command();
+  }
+
+  onOperationalsManagementsActiveItemChange(menuItem: MenuItem){
+    this.operationalManagementActiveItem = menuItem;
+  }
+
+  private getNumberOfElementsByOperationalManagement(nodes: TreeNode[], numberOfElementsBy){
+    nodes?.forEach( e=> {
+      numberOfElementsBy[e.data.id] = e.children?.length;
+      this.getNumberOfElementsByOperationalManagement(e.children, numberOfElementsBy)
+    })
+  }
+
+  hasDetailToShow(operationalManagement : OperationalManagement){
+    if (operationalManagement.actividad){
+      return true;
+    }
+    return false;
+  }
+
+  showDetailOfActivity(elementRef: HTMLDivElement, event: Event) {
+    if (elementRef.style.display === 'none' || !elementRef.style.display) {
+      elementRef.style.display = 'block';
+    } else {
+      elementRef.style.display = 'none'; 
+    }
+
+    const button = event.currentTarget as HTMLElement;
+    const iconElement = button.querySelector('span'); 
+    if (iconElement) {
+      if (iconElement.classList.contains('pi-eye')) {
+        iconElement.classList.remove('pi-eye');
+        iconElement.classList.add('pi-eye-slash');
+      } else {
+        iconElement.classList.remove('pi-eye-slash');
+        iconElement.classList.add('pi-eye');
+      }
+    }
+  }
+
+  getAssignedOperationalsManagements(){
+    if(this.mustRechargeAssignedOperationalsManagements){
+      this.loadingAssignedOperationalsManagements = true;
+      this.organizationChartService.getAssignedOperationalsManagements(this.hierarchyOnWorking.id).subscribe({
+        next: (e)=> {
+          this.store.dispatch(OrganizationChartActions.setAssignedOperationalsManagements({assignedOperationalsManagements: e}));
+          this.loadingAssignedOperationalsManagements = false;
+          this.mustRechargeAssignedOperationalsManagements = false;
+        },
+        error: (e)=>{
+          this.loadingAssignedOperationalsManagements = false;
+        }
+      });
+    }
+  }
+
+  getNoAssignedOperationalsManagements(){
+    if(this.mustRechargeNoAssignedOperationalsManagements){
+      this.loadingNoAssignedOperationalsManagements = true;
+      this.organizationChartService.getNoAssignedOperationalsManagements(this.selectedOrganizationChart.id).subscribe({
+        next: (e)=> {
+          this.store.dispatch(OrganizationChartActions.setNoAssignedOperationalsManagements({noAssignedOperationalsManagements: e}));
+          this.store.dispatch(OrganizationChartActions.setMustRechargeNoAssignedOperationalsManagements({mustRecharge: false}));
+          this.loadingNoAssignedOperationalsManagements = false;
+        },
+        error: (e)=>{
+          this.loadingNoAssignedOperationalsManagements = false;
+        }
+      });
+    }
+  }
+
+  onOperationalManagementNodeExpand(event) {
+    this.store.dispatch(OrganizationChartActions.addToOperationalManagementExpandedNodes({operationalManagementId: event.node.data.id}));
+  }
+
+  onOperationalManagementNodeCollapse(event) {
+    this.store.dispatch(OrganizationChartActions.removeFromOperationalManagementExpandedNodes({operationalManagementId: event.node.data.id}));
+  }
+
+  onFilterAssignedOperationalManagement(event: Event) {
+    this.treeTableAssignedOperationalManagement.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  onFilterNoAssignedOperationalManagement(event: Event) {
+    this.treeTableNoAssignedOperationalManagement.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  desmarkAllAssignedOperationalsManagements(){
+    this.selectedNodesOfAssignedOperationalManagement = [];
+  }
+
+  desmarkAllNoAssignedOperationalsManagements(){
+    this.selectedNodesOfNoAssignedOperationalManagement = [];
+  }
+
+  /**
+   * Elimina la relación de las gestiones operativas en una jerarquía.
+   */
+  deleteSelectedAssignedOperationalManagement() {
+    let relationshipIds = (this.selectedNodesOfAssignedOperationalManagement as TreeNode[])
+      .filter(e => e.data.idJerarquiaGestionOperativa != null)
+      .map(e => e.data.idJerarquiaGestionOperativa);
+    let operationalsManagementsIds = (this.selectedNodesOfAssignedOperationalManagement as TreeNode[]).map(e => e.data.id);
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.organizationChartService.deleteHierarchyRelationshipWithOperationalsManagements(relationshipIds)
+        .subscribe({
+          next: (e) => {
+            this.store.dispatch(OrganizationChartActions.removeItemsFromAssignedOperationalsManagements({operationalsManagementsIds: operationalsManagementsIds}));
+            this.store.dispatch(OrganizationChartActions.setMustRechargeNoAssignedOperationalsManagements({mustRecharge: true}));
+            this.desmarkAllAssignedOperationalsManagements();
+          }
+        });
+      }
+    )
+  }
+
+  deleteHierarchyRelationshipWithOperationalManagement(operationalManagement: OperationalManagement, event: Event){
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmationDialogService.showDeleteConfirmationDialog(
+      () => {
+        this.organizationChartService.deleteHierarchyRelationshipWithOperationalManagement(operationalManagement.idJerarquiaGestionOperativa).subscribe({
+          next: (e) => {
+            this.store.dispatch(OrganizationChartActions.removeFromAssignedOperationalsManagements({operationalManagementId: operationalManagement.id}));
+            this.store.dispatch(OrganizationChartActions.setMustRechargeNoAssignedOperationalsManagements({mustRecharge: true}));
+            this.desmarkAllAssignedOperationalsManagements();
+          }
+        });
+      }
+    )
+  } 
+
+  assignOperationalsManagements(){
+    this.isAssigning = true;
+    let operationalsManagementsIds = (this.selectedNodesOfNoAssignedOperationalManagement as TreeNode[]).filter(e => e.data.actividad != null).map(e => e.data.id);
+    this.organizationChartService.createHierarchyRelationshipWithOperationalsManagements(operationalsManagementsIds, this.hierarchyOnWorking.id).subscribe({
+      next: (e) => {
+        this.store.dispatch(OrganizationChartActions.addToAssignedOperationalsManagements({operationalsManagements: e}));
+        this.store.dispatch(OrganizationChartActions.removeItemsFromNoAssignedOperationalsManagements({operationalsManagementsIds: operationalsManagementsIds}));
+        this.desmarkAllNoAssignedOperationalsManagements();
+        this.isAssigning = false;
+      },
+      error: ()=> this.isAssigning = false
+    });
+  }
+
+  private onGoToUpdateOperationalManagementRowGroupMetaData(nodes: TreeNode[]){
+    let rowGroupMetadata = [];
+    this.updateOperationalManagementRowGroupMetaData(nodes ?? [], rowGroupMetadata);
+    return rowGroupMetadata;
+  }
+
+  private updateOperationalManagementRowGroupMetaData(nodes: TreeNode[], rowGroupMetadata: any[], idTipologiaPadre?: number){
+    nodes.forEach( (e, index) => {
+      const operationalManagement: OperationalManagement = e.data;
+      if (index == 0){
+        if (operationalManagement.idTipologia != idTipologiaPadre){
+          rowGroupMetadata.push(operationalManagement.id);
+        }
+      }
+      this.updateOperationalManagementRowGroupMetaData(e.children ?? [], rowGroupMetadata, operationalManagement.idTipologia);
+    })
+  }
+
+  private transformAssignedOperationalManagementToTreeNode(operationalManagement: OperationalManagement): TreeNode | null {
+    return (this.selectedNodesOfAssignedOperationalManagement as TreeNode[])?.find(e => e.data.id == operationalManagement.id) ?? {
+      data: {...operationalManagement, menuItems: this.getMenuItemsOfAssignedOperationalManagement(operationalManagement)},
+      children: operationalManagement.subGestionesOperativas?.map(e => this.transformAssignedOperationalManagementToTreeNode(e)).filter(e => e),
+      expanded: this.operationalManagementExpandedNodes?.includes(operationalManagement.id),
+    };
+  }
+
+  private transformNoAssignedOperationalManagementToTreeNode(operationalManagement: OperationalManagement): TreeNode | null {
+    return (this.selectedNodesOfAssignedOperationalManagement as TreeNode[])?.find(e => e.data.id == operationalManagement.id) ?? {
+      data: {...operationalManagement, menuItems:[]},
+      children: operationalManagement.subGestionesOperativas?.map(e => this.transformNoAssignedOperationalManagementToTreeNode(e)).filter(e => e),
+      expanded: this.operationalManagementExpandedNodes?.includes(operationalManagement.id),
+    };
+  }
+
+  /**
+   * Obtiene el menú de opciones para una gestión operativa.
+   * Nota: Aquí las únicas gestiones operativas que tienen el atributo idJerarquiaGestionOperativa son aquellas 
+   * gestiones operativas que estan relacionadas o han sido asignadas a una jerarquía.
+   * @param operationalManagement: Gestión operativa 
+   * @returns 
+   */
+  private getMenuItemsOfAssignedOperationalManagement(operationalManagement: OperationalManagement): MenuItem []{
+    if(!operationalManagement){
+      return [];
+    }
+    let generalMenuItem = [];
+    if(operationalManagement.idJerarquiaGestionOperativa != null){
+      generalMenuItem.push(
+        {
+          label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin && operationalManagement.idJerarquiaGestionOperativa != null, 
+          data:operationalManagement, command: (e) => this.deleteHierarchyRelationshipWithOperationalManagement(e.item['value'], e.originalEvent)
+        },
+      );
+    }
+    return [
+      ...generalMenuItem
+    ]
   }
 
   buildNodes(hierarchies: Hierarchy[]): TreeNode<Hierarchy>[] {
@@ -426,8 +756,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const initialLabel = menuItem?.label;
 
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    const organizationChartIds: number[] =  [ this.selectedOrganizationChart.id];
-    this.operationalManagementService.downloadReport(automationId, undefined, organizationChartIds).pipe(
+    this.organizationChartService.downloadReport(automationId, this.selectedOrganizationChart.id).pipe(
       finalize(() => {
         updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
       })

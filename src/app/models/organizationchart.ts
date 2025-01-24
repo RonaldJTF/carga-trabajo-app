@@ -5,5 +5,6 @@ export class OrganizationChart {
   nombre: string;
   descripcion: string;
   idNormatividad: number;
-  normatividad: Normativity
+  normatividad: Normativity;
+  srcDiagrama: string;
 }

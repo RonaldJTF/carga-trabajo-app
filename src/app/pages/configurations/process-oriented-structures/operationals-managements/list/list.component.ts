@@ -348,7 +348,7 @@ export class ListComponent {
 
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
     const operationalManagementIds = idOperationalManagement ? [idOperationalManagement] : (this.selectedNodesOfOperationalManagement as TreeNode[])?.map(e => e.data.id) || [];
-    this.operationalManagementService.downloadReport(automationId, operationalManagementIds).pipe(
+    /*this.operationalManagementService.downloadReport(automationId, operationalManagementIds).pipe(
       finalize(() => {
         updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
       })
@@ -356,7 +356,7 @@ export class ListComponent {
       next: (res) => {
         this.reportUploaded(menuItem, initialLabel, automationId, res);
       }
-    });
+    });*/
   }
 
   private reportUploaded(menuItem: MenuItem, label: string, automationId: string, downloadProgress: number) {

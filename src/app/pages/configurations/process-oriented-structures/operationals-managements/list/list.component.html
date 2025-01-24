@@ -171,7 +171,7 @@
                 [globalFilterFields]="['nombre', 'descripcion']"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" [tableStyle]="{ 'min-width': '400px' }">
                 <ng-template pTemplate="caption">
                     <div class="flex align-items-center">
-                        <button *ngIf="isAdmin && selectedStructures?.length" [disabled]="isMigrating" pButton pRipple [icon]="isMigrating ? 'pi pi-spin pi-spinner' : 'pi pi-window-minimize'"
+                        <button *ngIf="isAdmin" [disabled]="isMigrating || !selectedStructures?.length" pButton pRipple [icon]="isMigrating ? 'pi pi-spin pi-spinner' : 'pi pi-window-minimize'"
                             class="p-button-primary m-1" (click)="migrateStructures()" pTooltip="Migrar" tooltipPosition="bottom">
                             <span class="p-button-label hidden-lg pl-2">Migrar</span>
                         </button>
@@ -184,7 +184,7 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th class="text-center flex align-items-center justify-content-center " style="white-space: nowrap" ttSortableColumn="nombre" >
-                            {{structureTree[0].data.tipologia.nombre}}<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
+                            Dependencia<p-treeTableSortIcon field="nombre"></p-treeTableSortIcon>
                         </th>
                     </tr>
                 </ng-template>

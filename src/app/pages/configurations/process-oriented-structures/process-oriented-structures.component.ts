@@ -13,8 +13,6 @@ import { ProcessOrientedStructureService } from 'src/app/services/process-orient
 export class ProcessOrientedStructuresComponent implements OnInit, OnDestroy {
   items: any[] | undefined;
   activeItem: any | undefined;
-  activeItem$: Observable<number>
-
   activeItemSubscription: Subscription;
   routeSubscription: Subscription;
 
