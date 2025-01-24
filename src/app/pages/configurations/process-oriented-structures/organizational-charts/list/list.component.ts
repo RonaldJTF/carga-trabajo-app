@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as OrganizationChartActions from "@store/organizationChart.actions";
 import * as HierarchyActions from "@store/hierarchy.actions";
 import * as AppointmentActions from "@store/appointment.actions";
@@ -7,11 +7,18 @@ import {MESSAGE} from "@labels/labels";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../../../app.reducers";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AuthenticationService, ConfirmationDialogService, CryptojsService, OrganizationChartService} from "@services";
-import {map, Observable, Subscription} from "rxjs";
+import {
+  AuthenticationService,
+  ConfirmationDialogService,
+  CryptojsService,
+  OperationalManagementService,
+  OrganizationChartService
+} from "@services";
+import {finalize, map, Observable, Subscription} from "rxjs";
 import {Convention, Dependency, Hierarchy, OrganizationChart, Structure} from "@models";
 import {MenuItem, TreeNode} from "primeng/api";
 import { OverlayPanel } from 'primeng/overlaypanel';
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-list',
@@ -52,6 +59,10 @@ export class ListComponent implements OnInit, OnDestroy {
   filteredDependencies: Dependency[] = [];
   menuBarItems: MenuItem[] = [];
 
+  menuItemsOfDownload: MenuItem[] = [
+    {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
+  ];
+
   constructor(
     private store: Store<AppState>,
     private router: Router,
@@ -60,6 +71,9 @@ export class ListComponent implements OnInit, OnDestroy {
     private organizationChartService: OrganizationChartService,
     private confirmationDialogService: ConfirmationDialogService,
     private cryptoService: CryptojsService,
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef,
+    private operationalManagementService: OperationalManagementService,
   ) {
   }
 
@@ -101,7 +115,8 @@ export class ListComponent implements OnInit, OnDestroy {
     this.initMenus();
 
     this.menuBarItems = [
-      {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments()}
+      {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments()},
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload}
     ];
   }
 
@@ -110,7 +125,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.organizationChartSubscribe?.unsubscribe();
     this.mustRechargeSubscription?.unsubscribe();
   }
-  
+
   initMenus(){
     this.menuItemsOrganizationChart = [
       {label: 'Agregar dependencia', icon: 'pi pi-plus', visible: this.isAdmin, command: (e) => this.onGoCreateHierarchy(null, e.item.id)},
@@ -220,12 +235,12 @@ export class ListComponent implements OnInit, OnDestroy {
         });
       },
       `
-      ¿Está seguro de eliminar la relación de la dependencia <strong>${hierarchy?.dependencia?.nombre}</strong> 
+      ¿Está seguro de eliminar la relación de la dependencia <strong>${hierarchy?.dependencia?.nombre}</strong>
       en el organigrama <strong>${hierarchy?.organigrama?.nombre}</strong>?
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong>
-            Eliminar la relación implica eliminar las relaciones con las subdependencias. Aquí no se eliminan las dependencias relacionadas. 
+            Eliminar la relación implica eliminar las relaciones con las subdependencias. Aquí no se eliminan las dependencias relacionadas.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -253,7 +268,7 @@ export class ListComponent implements OnInit, OnDestroy {
       <div class="bg-yellow-50 text-yellow-500 border-round-xl p-4 text-justify mt-2">
         <span>
             <strong>Advertencia:</strong>
-            Eliminar la dependencia implica eliminar su relación en ésta y en otras estructuras organizacionales. 
+            Eliminar la dependencia implica eliminar su relación en ésta y en otras estructuras organizacionales.
             Por favor, asegúrese de que comprende el impacto de esta acción antes de proceder.
         </span>
       </div>
@@ -311,7 +326,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   private filterDependencies(dependencies: Dependency[]): Dependency[]{
-    let usedDependencies = []; 
+    let usedDependencies = [];
     this.getAssociatedDependenciesOnOrganizationChart(this.hierarchies, usedDependencies);
     return dependencies?.filter(e => !usedDependencies?.map(obj => obj.id).includes(e.id));
   }
@@ -350,7 +365,7 @@ export class ListComponent implements OnInit, OnDestroy {
       error: (error) => {},
     });
   }
-  
+
   changeOrganizationChart(data: any){
     this.store.dispatch(OrganizationChartActions.setOrganizationChart({organizationChart: data.value}));
     this.getHierarchies(this.selectedOrganizationChart.id);
@@ -390,5 +405,50 @@ export class ListComponent implements OnInit, OnDestroy {
       nodes.push(node);
     }
     return nodes;
+  }
+
+  download(data: any, organizationChartId?: number) {
+    const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
+      if (menuItem) {
+        menuItem.label = label;
+        menuItem.icon = icon;
+        menuItem.disabled = disabled;
+        menuItem.label = label;
+      }
+    };
+
+    const automationId = data.item.automationId;
+    const menuItem = ! this.selectedOrganizationChart.id
+      ? this.menuItemsOfDownload.find(e => e.automationId === automationId)
+      : null;
+    const initialIcon = menuItem?.icon;
+    const initialState = menuItem?.disabled;
+    const initialLabel = menuItem?.label;
+
+    updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
+    const organizationChartIds: number[] =  [ this.selectedOrganizationChart.id];
+    this.operationalManagementService.downloadReport(automationId, undefined, organizationChartIds).pipe(
+      finalize(() => {
+        updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
+      })
+    ).subscribe({
+      next: (res) => {
+        //this.reportUploaded(menuItem, initialLabel, automationId, res);
+      }
+    });
+  }
+
+  private reportUploaded(menuItem: MenuItem, label: string, automationId: string, downloadProgress: number) {
+    let element = document.getElementById(`${automationId}`) as HTMLProgressElement;
+    if (element === null) {
+      menuItem.label = `
+            <span>${label}</span>
+            <progress id="${automationId}" max="100" style="width: 100%"></progress>
+        `;
+      menuItem.label = this.sanitizer.bypassSecurityTrustHtml(menuItem.label as string) as unknown as string;
+    } else if (downloadProgress > 0) {
+      element.setAttribute('value', `${downloadProgress}`);
+    }
+    this.cdr.detectChanges();
   }
 }
