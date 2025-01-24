@@ -239,6 +239,7 @@ export class ListComponent {
     let generalMenuItem = [];
     generalMenuItem.push(
       {label: 'Migrar', icon: 'pi pi-window-minimize', visible: this.isAdmin, command: (e) => this.viewStructuresToMigrate(e.item['value'], e.originalEvent)},
+      {label: 'Agregar subproceso', icon: 'pi pi-plus', visible: (this.isAdmin && operationalManagement.idPadre == null), command: (e) => this.openNewSubprocess(e.item.id)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdate(e.item.id)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, data:operationalManagement, command: (e) => this.onDeleteStructure(e)},
     );
@@ -282,6 +283,10 @@ export class ListComponent {
 
   openNew() {
     this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true});
+  }
+
+  openNewSubprocess(idParent: any) {
+    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true, queryParams:{idParent: this.cryptoService.encryptParam(idParent)}});
   }
 
   onGoToUpdate (id : any): void{
