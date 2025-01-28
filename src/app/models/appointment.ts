@@ -23,4 +23,11 @@ export class Appointment{
     asignacionTotal: number;
     compensacionesLaboralesAplicadas: LevelCompensation[];
     asignacionBasicaAnual: number;
+    denominacionesEmpleos: JobTitle[];
+}
+
+export class JobTitle{
+    id: number;
+    nombre: string;
+    descripcion: string
 }

@@ -70,7 +70,8 @@ export class ListComponent implements OnInit, OnDestroy {
   menuBarItems: MenuItem[] = [];
 
   menuItemsOfDownload: MenuItem[] = [
-    {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
+    {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
+    //{label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"flat-excel", command: (e) => { this.download(e) }},
   ];
 
   assignedOperationalsManagementsTree: TreeNode[];
@@ -90,6 +91,9 @@ export class ListComponent implements OnInit, OnDestroy {
   
   operationalManagementExpandedNodesSubscription: Subscription;
   operationalManagementExpandedNodes: number[];
+
+  filteredAssignedValuesSubscription: Subscription;
+  filteredNoAssignedValuesSubscription: Subscription;
 
   viewOptions: any[] = [
     {icon: 'pi pi-table', value: 'base-structure', tooltip: 'Estructura base'}, 
@@ -184,6 +188,8 @@ export class ListComponent implements OnInit, OnDestroy {
     this.assignedOperationalsManagementsSubscription?.unsubscribe();
     this.noAssignedOperationalsManagementsSubscription?.unsubscribe();
     this.mustRechargeNoAssignedOperationalsManagementsSubscription?.unsubscribe();
+    this.filteredNoAssignedValuesSubscription?.unsubscribe();
+    this.filteredAssignedValuesSubscription?.unsubscribe();
   }
 
   initMenus(){
@@ -595,10 +601,24 @@ export class ListComponent implements OnInit, OnDestroy {
 
   onFilterAssignedOperationalManagement(event: Event) {
     this.treeTableAssignedOperationalManagement.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    if(!this.filteredAssignedValuesSubscription){
+      this.filteredAssignedValuesSubscription = this.treeTableAssignedOperationalManagement.onFilter.asObservable().subscribe( 
+        e => {
+          this.assignedOperationalsManagementsRowGroupMetadata = this.onGoToUpdateOperationalManagementRowGroupMetaData(e.filteredValue);
+        }
+      )
+    }
   }
 
   onFilterNoAssignedOperationalManagement(event: Event) {
     this.treeTableNoAssignedOperationalManagement.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    if(!this.filteredNoAssignedValuesSubscription){
+      this.filteredNoAssignedValuesSubscription = this.treeTableNoAssignedOperationalManagement.onFilter.asObservable().subscribe(
+         e => {
+          this.noAssignedOperationalsManagementsRowGroupMetadata = this.onGoToUpdateOperationalManagementRowGroupMetaData(e.filteredValue);
+         }
+      )
+    }
   }
 
   desmarkAllAssignedOperationalsManagements(){
@@ -737,7 +757,7 @@ export class ListComponent implements OnInit, OnDestroy {
     return nodes;
   }
 
-  download(data: any, organizationChartId?: number) {
+  download(data: any) {
     const updateMenuItem = (menuItem: MenuItem, icon: string, disabled: boolean, label?: string) => {
       if (menuItem) {
         menuItem.label = label;

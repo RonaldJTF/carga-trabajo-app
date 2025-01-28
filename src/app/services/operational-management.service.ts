@@ -43,13 +43,13 @@ export class OperationalManagementService {
     return this.webRequestService.postWithHeaders(`${this.pathOperationalManagement}/migrate-structures`, payload, {idParent: idParent});
   }
 
-  downloadReport(type: string, organizationChartId: number): Observable<number>{
+  downloadReport(type: string): Observable<number>{
     const options = {
       responseType: 'blob',
       observe: 'events',
       reportProgress: true
     };
-    return this.webRequestService.getWithHeaders(`${this.pathOperationalManagement}/report`, {type: type, organizationChartId: organizationChartId}, null, options).pipe(
+    return this.webRequestService.getWithHeaders(`${this.pathOperationalManagement}/report`, {type: type}, null, options).pipe(
       map(e => {
         switch (e.type) {
           case HttpEventType.DownloadProgress:

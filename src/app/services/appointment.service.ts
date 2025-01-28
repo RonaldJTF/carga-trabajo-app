@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import { Appointment, Hierarchy, Normativity, Validity } from '@models';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Appointment, Hierarchy, JobTitle, Normativity, Validity } from '@models';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
@@ -113,14 +113,16 @@ export class AppointmentService {
       vigencia: null,
       hierarchyTree: null,
       normatividad: null,
-      organizationChartId: ''
+      organizationChartId: '',
+      denominacionesEmpleos: this.formBuilder.array([])
     })
     return this.appointmentFormGroup;
   }
 
   initializeAppointmentFormGroup(appointment: Appointment): FormGroup {
     this._appointment.next(appointment);
-    
+    const formArray: FormArray = this.appointmentFormGroup.get('denominacionesEmpleos') as FormArray;
+
     const node: TreeNode<Hierarchy> = {
       data: appointment.jerarquia,
       label: appointment.jerarquia.dependencia.nombre,
@@ -141,6 +143,10 @@ export class AppointmentService {
     this.appointmentFormGroup.get('hierarchyTree').setValue(node);
     this.appointmentFormGroup.get('organizationChartId').setValue(appointment.jerarquia.idOrganigrama);
     
+    appointment.denominacionesEmpleos?.forEach(e => {
+      formArray.push(this.createJobTitleFormGroup(e));
+    })
+
     return this.appointmentFormGroup;
   }
 
@@ -198,4 +204,21 @@ export class AppointmentService {
     formGroup?.get('idJerarquia').markAsTouched();
     formGroup?.get('idJerarquia').setValue(node?.data?.id);
   }
+
+  submiJobTitle(jobTitle: JobTitle){
+    const formArray: FormArray = this.appointmentFormGroup.get('denominacionesEmpleos') as FormArray;
+    formArray.push(this.createJobTitleFormGroup(jobTitle));
+  }
+
+  removeJobTitle(index: number) {
+    const formArray: FormArray = this.appointmentFormGroup.get('denominacionesEmpleos') as FormArray;
+    formArray.removeAt(index);
+  }
+  
+  private createJobTitleFormGroup(jobTitle: JobTitle){
+      return this.formBuilder.group({
+        id: [jobTitle.id, Validators.required],
+        nombre: jobTitle.nombre
+      });
+    }
 }

@@ -95,6 +95,37 @@
         </div>
     </div>
 
+    <div class="mb-3">
+        <div class="flex flex-column md:flex-row align-items-center w-full">
+            <label class="text-left font-medium  w-full md:w-auto">Designaciones de empleos</label>
+            <div style="margin-left: auto; ">
+                <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Designaciones"  (click)="jobTitleOptionsOverlayPanel.toggle($event)"></button>
+                <p-overlayPanel #jobTitleOptionsOverlayPanel [showCloseIcon]="true">
+                    <ng-template pTemplate>
+                        <p-listbox [options]="jobTitleOptions" [filter]="true" title="Designación de empleos" optionLabel="nombre"
+                            [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                            [style]="{'max-height':'250px', 'overflow':'auto'}"
+                            (onClick)="changeJobTitle($event)">
+                        </p-listbox>
+                    </ng-template>
+                </p-overlayPanel>
+            </div>
+        </div>
+        <div *ngIf="denominacionesEmpleosFormArray.value?.length else sNoJobTitle"  class="surface-100 border-round p-3 mt-2">
+            <div *ngFor="let jobTitleControl of denominacionesEmpleosFormArray.controls"  class="w-full">
+                <span class="text-500 font-medium">{{jobTitleControl.value.nombre}}</span>
+                <input pInputText id="cargos" type="number" formControlName="cargos" class="pb-1 pl-1 ml-auto border-none border-bottom-1 shadow-none _input-value"/>       
+            </div>
+        </div>
+        <ng-template #sNoJobTitle>
+            <div class="surface-100 border-round flex align-items-center justify-content-center p-3 mt-2">
+                <i class="pi pi-exclamation-triangle text-3xl text-500 mr-2"></i>
+                <span class="text-500 text-justify">Especifique las denominaciones de empleos</span>
+            </div>
+        </ng-template>
+    </div>
+
+
     <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitAppointment($event)"
         (cancel)="onCancelAppointment($event)"

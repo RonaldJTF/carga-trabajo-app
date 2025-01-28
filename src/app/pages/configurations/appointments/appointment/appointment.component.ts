@@ -1,12 +1,12 @@
 import { Location } from '@angular/common';
 import * as AppointmentActions from "@store/appointment.actions";
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
-import { Appointment, Hierarchy, Level, Normativity, OrganizationChart, SalaryScale} from '@models';
+import { Appointment, Hierarchy, JobTitle, Level, Normativity, OrganizationChart, SalaryScale} from '@models';
 import { Store } from '@ngrx/store';
-import { AppointmentService, AuthenticationService, ConfirmationDialogService, CryptojsService, LevelService, NormativityService, OrganizationChartService, UrlService, ValidityService } from '@services';
+import { AppointmentService, AuthenticationService, BasicTablesService, ConfirmationDialogService, CryptojsService, LevelService, NormativityService, OrganizationChartService, UrlService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
 import { MenuItem, SelectItem, TreeNode } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
@@ -49,6 +49,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
 
   backRoute: string;
 
+  jobTitleOptions: JobTitle[] = [];
   organizationChartOptions: SelectItem[] = [];
   validityOptions: SelectItem[] = [];
   normativityOptions: SelectItem[] = [];
@@ -65,6 +66,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     private validityService: ValidityService,
     private appointmentService: AppointmentService,
     private organizationChartService: OrganizationChartService,
+    private basicTablesService: BasicTablesService,
     private authService: AuthenticationService,
     private location: Location,
     private router: Router,
@@ -101,6 +103,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.initMenus();
     this.loadLevels();
     this.loadNormativities();
+    this.loadJobTitles();
   }
 
   ngOnDestroy(): void {
@@ -111,6 +114,10 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   }
 
   initMenus(){}
+
+  get denominacionesEmpleosFormArray(): FormArray{
+    return this.formAppointment.get('denominacionesEmpleos') as FormArray;
+  }
 
   loadAppointmentInformation(id: number){
     if (id == undefined){
@@ -196,6 +203,14 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.normativityService.getAppointmentNormativities('1').subscribe({
       next: (e) => {
         this.normativityOptions = e?.map( o => ({value: o, label: o.nombre}));
+      }
+    });
+  }
+
+  loadJobTitles(){
+    this.levelService.getLevels().subscribe({
+      next: (e) => {
+        this.jobTitleOptions = e;
       }
     });
   }
@@ -354,6 +369,10 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.organizationChart = data.value;
     this.loadHierarchies(data.value.id);
     this.organizationChartOptionsOverlayPanel.hide();
+  }
+
+  changeJobTitle(data: any){
+    //this.appointmentService.submiJobTitle(data.value)
   }
 
   showDetailOfOrganizationChartNormativity(elementRef: HTMLDivElement, event: Event) {

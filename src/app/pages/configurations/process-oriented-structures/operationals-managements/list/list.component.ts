@@ -60,6 +60,7 @@ export class ListComponent {
   loadingStructureById: any = {};
   isMigrating: boolean = false;
 
+  filteredStructureValuesSubscription:Subscription;
   structureRowGroupMetadata: number[] = [];
   rowGroupMetadata: number[] = [];
   numberOfElementsByOperationalManagement: any = {};
@@ -74,6 +75,7 @@ export class ListComponent {
   menuItemsOfDownload: MenuItem[] = [
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
   ];
+  
   
   constructor(
     private store: Store<AppState>,
@@ -121,7 +123,9 @@ export class ListComponent {
     });
     this.expandedNodesSubscription = this.store.select(state => state.operationalManagement.expandedNodes).subscribe(e => this.expandedNodes = e);
 
-    this.menuBarItems = [];
+    this.menuBarItems = [
+      {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload}
+    ];
   }
 
   ngOnDestroy(): void {
@@ -132,6 +136,7 @@ export class ListComponent {
     this.structuresSubscription?.unsubscribe();
     this.expandedStructureNodesSubscription?.unsubscribe();
     this.orderOfTypologiesSubscription?.unsubscribe();
+    this.filteredStructureValuesSubscription?.unsubscribe();
   }
 
   get totalSelected(): number{
@@ -327,6 +332,11 @@ export class ListComponent {
 
   onFilterStructure(event: Event) {
     this.treeTableStructure.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    if(!this.filteredStructureValuesSubscription){
+      this.filteredStructureValuesSubscription = this.treeTableStructure.onFilter.asObservable().subscribe(
+         e => this.onGoToUpdateStructureRowGroupMetaData(e.filteredValue)
+      )
+    }
   }
   
   desmarkAll(){
@@ -352,8 +362,7 @@ export class ListComponent {
     const initialLabel = menuItem?.label;
 
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    const operationalManagementIds = idOperationalManagement ? [idOperationalManagement] : (this.selectedNodesOfOperationalManagement as TreeNode[])?.map(e => e.data.id) || [];
-    /*this.operationalManagementService.downloadReport(automationId, operationalManagementIds).pipe(
+    this.operationalManagementService.downloadReport(automationId).pipe(
       finalize(() => {
         updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
       })
@@ -361,7 +370,7 @@ export class ListComponent {
       next: (res) => {
         this.reportUploaded(menuItem, initialLabel, automationId, res);
       }
-    });*/
+    });
   }
 
   private reportUploaded(menuItem: MenuItem, label: string, automationId: string, downloadProgress: number) {

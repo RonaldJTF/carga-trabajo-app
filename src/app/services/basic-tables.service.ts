@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {WebRequestService} from "./web-request.service";
 import {Observable} from "rxjs";
-import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity, Normativity, NormativityType, Variable, Convention} from "@models";
+import {Action, Ftp, Gender, Level, Role, Typology, DocumentType, Scope, Category, Periodicity, Normativity, NormativityType, Variable, Convention, JobTitle} from "@models";
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +35,8 @@ export class BasicTablesService {
   private pathPrimaryVariable = 'primary-variable';
 
   private pathConvention = 'convention';
+
+  private pathJobTitle = 'job-title';
 
   constructor(
     private webRequestService: WebRequestService
@@ -399,5 +401,31 @@ export class BasicTablesService {
 
   deleteSelectedConventions(payload: number[]): Observable<Convention[]> {
     return this.webRequestService.deleteWithHeaders(this.pathConvention, undefined, payload);
+  }
+
+  // Job Title Services
+
+  getJobTitle(jobTitleId: number){
+    return this.webRequestService.getWithHeaders(`${this.pathJobTitle}/${jobTitleId}`);
+  }
+
+  getJobTitles(): Observable<JobTitle[]> {
+    return this.webRequestService.getWithHeaders(`${this.pathJobTitle}`);
+  }
+
+  createJobTitle(jobTitle: any): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathJobTitle, jobTitle);
+  }
+
+  updateJobTitle(id: number, jobTitle: JobTitle): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathJobTitle}/${id}`, jobTitle);
+  }
+
+  deleteJobTitle(jobTitleId: number): Observable<JobTitle> {
+    return this.webRequestService.deleteWithHeaders(`${this.pathJobTitle}/${jobTitleId}`);
+  }
+
+  deleteSelectedJobTitles(payload: number[]): Observable<JobTitle[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathJobTitle, undefined, payload);
   }
 }
