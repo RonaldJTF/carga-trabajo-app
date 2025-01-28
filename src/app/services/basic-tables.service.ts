@@ -31,7 +31,7 @@ export class BasicTablesService {
   private pathPeriodicity = 'periodicity';
 
   private pathNormativityType = 'normativity-type';
-  
+
   private pathPrimaryVariable = 'primary-variable';
 
   private pathConvention = 'convention';
@@ -350,8 +350,8 @@ export class BasicTablesService {
   deleteSelectedNormativityType(payload: number[]): Observable<NormativityType[]> {
     return this.webRequestService.deleteWithHeaders(this.pathNormativityType, undefined, payload);
   }
-  
-  // Servicios PrimaryVariable 
+
+  // Servicios PrimaryVariable
 
   getPrimaryVariable(idPrimaryVariable: number){
     return this.webRequestService.getWithHeaders(`${this.pathPrimaryVariable}/${idPrimaryVariable}`);
@@ -404,7 +404,6 @@ export class BasicTablesService {
   }
 
   // Job Title Services
-
   getJobTitle(jobTitleId: number){
     return this.webRequestService.getWithHeaders(`${this.pathJobTitle}/${jobTitleId}`);
   }

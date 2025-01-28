@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="flex align-items-center justify-content-between mb-4">
+    <div class="flex align-items-center">
+      <div
+        class="w-3rem h-3rem flex align-items-center justify-content-center bg-primary-100 border-circle mr-3 flex-shrink-0">
+        <i class="pi pi-briefcase text-xl text-primary-500"></i>
+      </div>
+      <div class="flex flex-column ">
+        <h5 class="m-0 text-700">Denominación de empleo</h5>
+        <span class="text-500">Configura y administra denominaciones del los empleos dentro del sistema</span>
+      </div>
+    </div>
+  </div>
+
+  <form class="p-0" [formGroup]="formJobTitle">
+    <div class="field p-fluid">
+      <label for="nombre" class="font-medium">Nombre</label>
+      <input type="text" id="nombre" pInputText formControlName="nombre">
+      <div *ngIf="invalidField('nombre')">
+        <div *ngIf="controls('nombre')">
+          <small class="p-error">Ingrese un nombre</small>
+        </div>
+      </div>
+    </div>
+    <div class="field p-fluid">
+      <label for="descripcion"><span class="font-medium">Descripción </span><span>(opcional)</span></label>
+      <textarea id="descripcion" rows="5" cols="30" placeholder="Escribe aquí..." pInputTextarea formControlName="descripcion" autocomplete="off"></textarea>
+    </div>
+    <app-form-action-button [updateMode]="updateMode"
+                            (createOrUpdate)="onSubmitScope($event)"
+                            (cancel)="onCancelScope($event)"
+                            (delete)="onDeleteJobTitle($event)"
+                            [showDeleteButton]="updateMode"
+                            [creatingOrUpdating]="creatingOrUpdating"
+                            [deleting]="deleting"
+                            [disabledCreateOrUpdateButton]="formJobTitle.invalid">
+    </app-form-action-button>
+  </form>
+</div>

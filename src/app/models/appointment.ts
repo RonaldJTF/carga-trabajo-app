@@ -2,7 +2,6 @@ import { LevelCompensation } from "./compensation";
 import { Hierarchy } from "./hierarchy";
 import { Level } from "./level";
 import { Normativity, Scope } from "./normativity";
-import { Structure } from "./structure";
 import { Validity } from "./validity";
 
 export class Appointment{

@@ -71,7 +71,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   menuItemsOfDownload: MenuItem[] = [
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
-    //{label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"flat-excel", command: (e) => { this.download(e) }},
+    {label: 'Reporte plano de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"flat-excel", command: (e) => { this.download(e) }},
   ];
 
   assignedOperationalsManagementsTree: TreeNode[];
@@ -88,7 +88,7 @@ export class ListComponent implements OnInit, OnDestroy {
   mustRechargeNoAssignedOperationalsManagementsSubscription: Subscription;
   noAssignedOperationalsManagementsRowGroupMetadata: number[] = [];
   numberOfElementsByNoAssignedOperationalManagement: any = {};
-  
+
   operationalManagementExpandedNodesSubscription: Subscription;
   operationalManagementExpandedNodes: number[];
 
@@ -96,7 +96,7 @@ export class ListComponent implements OnInit, OnDestroy {
   filteredNoAssignedValuesSubscription: Subscription;
 
   viewOptions: any[] = [
-    {icon: 'pi pi-table', value: 'base-structure', tooltip: 'Estructura base'}, 
+    {icon: 'pi pi-table', value: 'base-structure', tooltip: 'Estructura base'},
     {icon: 'pi pi-sitemap', value: 'diagram', tooltip: 'Diagrama'
   }];
   viewMode: 'base-structure' | 'diagram';
@@ -118,7 +118,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const {isAdministrator} = this.authService.roles();
     this.isAdmin = isAdministrator;
     this.store.dispatch(OrganizationChartActions.setMustRechargeNoAssignedOperationalsManagements({mustRecharge: true}));
-    
+
     this.organizationCharts$ =  this.store.select(state => state.organizationChart.items);
     this.conventions$ = this.store.select(state => state.hierarchy.items).pipe(
       map(e => {
@@ -197,7 +197,7 @@ export class ListComponent implements OnInit, OnDestroy {
       {label: 'Asignación de cargos', icon: 'pi pi-users', command: (e)=> this.onGoToManagementAppointments({} as Hierarchy, e.originalEvent)},
       {label: 'Reportes', icon: 'pi pi-fw pi-file', items: this.menuItemsOfDownload}
     ];
-    
+
     this.operationalManagementItems = [
       { label: 'Asignadas', icon: 'pi pi-check-circle', command: ()=> this.getAssignedOperationalsManagements(), viewMode: 'ASSIGNED'},
       { label: 'Sin asignar', icon: 'pi pi-hourglass',command: ()=> this.getNoAssignedOperationalsManagements(), viewMode: 'NO_ASSIGNED'}
@@ -221,7 +221,7 @@ export class ListComponent implements OnInit, OnDestroy {
       {label: 'Eliminar jerarquía', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteHierarchy(e)},
       {label: 'Eliminar dependencia', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteHierarchyAndDependency(e)},
     ];
-  }  
+  }
 
   get totalOfSelectedAssignedOperationalsManagements(): number{
     return this.treeTableAssignedOperationalManagement?.selection?.length;
@@ -242,14 +242,14 @@ export class ListComponent implements OnInit, OnDestroy {
           element.subGestionesOperativas = this.filterByActivity(element.subGestionesOperativas);
         }
         const hasActivity =
-          element.actividad !== undefined || 
+          element.actividad !== undefined ||
           (element.subGestionesOperativas && element.subGestionesOperativas.length > 0);
 
         return hasActivity ? element : null;
       })
       .filter((element) => element !== null) as OperationalManagement[];
   }
-  
+
 
   getNumberOfDependenciesInOrganizationChart(hierarchies: Hierarchy[]){
     let total = 0;
@@ -483,7 +483,7 @@ export class ListComponent implements OnInit, OnDestroy {
       error: (error) => {},
     });
   }
-  
+
   onViewChange(event: "base-structure" | "diagram") {
     this.store.dispatch(OrganizationChartActions.setViewMode({viewMode: event}));
   }
@@ -500,7 +500,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   showDetailOfOrganizationChart(event: Event){
     this.detailOfOrganizationChartOverlayPanel.toggle(event);
-  } 
+  }
 
   onGoToManagementAppointments(hierarchy: Hierarchy, event: Event) {
     const backRoute = '/configurations/structures';
@@ -543,11 +543,11 @@ export class ListComponent implements OnInit, OnDestroy {
     if (elementRef.style.display === 'none' || !elementRef.style.display) {
       elementRef.style.display = 'block';
     } else {
-      elementRef.style.display = 'none'; 
+      elementRef.style.display = 'none';
     }
 
     const button = event.currentTarget as HTMLElement;
-    const iconElement = button.querySelector('span'); 
+    const iconElement = button.querySelector('span');
     if (iconElement) {
       if (iconElement.classList.contains('pi-eye')) {
         iconElement.classList.remove('pi-eye');
@@ -602,7 +602,7 @@ export class ListComponent implements OnInit, OnDestroy {
   onFilterAssignedOperationalManagement(event: Event) {
     this.treeTableAssignedOperationalManagement.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     if(!this.filteredAssignedValuesSubscription){
-      this.filteredAssignedValuesSubscription = this.treeTableAssignedOperationalManagement.onFilter.asObservable().subscribe( 
+      this.filteredAssignedValuesSubscription = this.treeTableAssignedOperationalManagement.onFilter.asObservable().subscribe(
         e => {
           this.assignedOperationalsManagementsRowGroupMetadata = this.onGoToUpdateOperationalManagementRowGroupMetaData(e.filteredValue);
         }
@@ -665,7 +665,7 @@ export class ListComponent implements OnInit, OnDestroy {
         });
       }
     )
-  } 
+  }
 
   assignOperationalsManagements(){
     this.isAssigning = true;
@@ -717,10 +717,10 @@ export class ListComponent implements OnInit, OnDestroy {
 
   /**
    * Obtiene el menú de opciones para una gestión operativa.
-   * Nota: Aquí las únicas gestiones operativas que tienen el atributo idJerarquiaGestionOperativa son aquellas 
+   * Nota: Aquí las únicas gestiones operativas que tienen el atributo idJerarquiaGestionOperativa son aquellas
    * gestiones operativas que estan relacionadas o han sido asignadas a una jerarquía.
-   * @param operationalManagement: Gestión operativa 
-   * @returns 
+   * @param operationalManagement: Gestión operativa
+   * @returns
    */
   private getMenuItemsOfAssignedOperationalManagement(operationalManagement: OperationalManagement): MenuItem []{
     if(!operationalManagement){
@@ -730,7 +730,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if(operationalManagement.idJerarquiaGestionOperativa != null){
       generalMenuItem.push(
         {
-          label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin && operationalManagement.idJerarquiaGestionOperativa != null, 
+          label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin && operationalManagement.idJerarquiaGestionOperativa != null,
           data:operationalManagement, command: (e) => this.deleteHierarchyRelationshipWithOperationalManagement(e.item['value'], e.originalEvent)
         },
       );

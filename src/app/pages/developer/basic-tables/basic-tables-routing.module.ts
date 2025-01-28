@@ -27,6 +27,8 @@ import { PrimaryVariableComponent } from './primary-variable/primary-variable.co
 import { FormPrimaryVariableComponent } from './primary-variable/form-primary-variable/form-primary-variable.component';
 import { ConventionComponent } from './convention/convention.component';
 import { FormConventionComponent } from './convention/form-convention/form-convention.component';
+import {JobTitleComponent} from "./jobtitle/jobtitle.component";
+import {FormJobTitleComponent} from "./jobtitle/form-job-title/form-job-title.component";
 
 const routes: Routes = [{
   path: '', component: BasicTablesComponent, children: [
@@ -70,7 +72,10 @@ const routes: Routes = [{
     {path: 'convention',component: ConventionComponent},
     {path: 'create-convention', component: FormConventionComponent},
     {path: "create-convention/:id", component: FormConventionComponent},
-    
+    {path: "job-title", component: JobTitleComponent},
+    {path: "create-job-title", component: FormJobTitleComponent},
+    {path: "create-job-title/:id", component: FormJobTitleComponent},
+
   ]
 }];
 

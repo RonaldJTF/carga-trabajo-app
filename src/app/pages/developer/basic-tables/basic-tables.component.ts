@@ -78,6 +78,22 @@ export class BasicTablesComponent implements OnInit {
         state: {}
       },
       {
+        title: 'Convenciones',
+        icon: 'pi pi-bars',
+        url: 'convention',
+        label: 'Gestión de tipos de convenciones',
+        iconStyle: 'primary',
+        state: {}
+      },
+      {
+        title: 'Denominación empleo',
+        icon: 'pi pi-briefcase',
+        url: 'job-title',
+        label: 'Gestiona los distintos títulos o cargos utilizados en la organización',
+        iconStyle: 'primary',
+        state: {}
+      },
+      {
         title: 'Documentos de identidad',
         icon: 'pi pi-id-card',
         url: 'document-type',
@@ -156,14 +172,6 @@ export class BasicTablesComponent implements OnInit {
           severity: 'warn',
           show: true
         }
-      },
-      {
-        title: 'Convenciones',
-        icon: 'pi pi-bars',
-        url: 'convention',
-        label: 'Gestión de tipos de convenciones',
-        iconStyle: 'primary',
-        state: {}
       },
     ]
   }

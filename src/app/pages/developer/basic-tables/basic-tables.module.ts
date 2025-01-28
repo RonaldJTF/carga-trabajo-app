@@ -27,6 +27,8 @@ import { PrimaryVariableComponent } from './primary-variable/primary-variable.co
 import { FormPrimaryVariableComponent } from './primary-variable/form-primary-variable/form-primary-variable.component';
 import { ConventionComponent } from './convention/convention.component';
 import { FormConventionComponent } from './convention/form-convention/form-convention.component';
+import {JobTitleComponent} from './jobtitle/jobtitle.component';
+import { FormJobTitleComponent } from './jobtitle/form-job-title/form-job-title.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,9 @@ import { FormConventionComponent } from './convention/form-convention/form-conve
     PrimaryVariableComponent,
     FormPrimaryVariableComponent,
     ConventionComponent,
-    FormConventionComponent
+    FormConventionComponent,
+    JobTitleComponent,
+    FormJobTitleComponent
   ],
   imports: [BasicTablesRoutingModule, SharedModule]
 })
