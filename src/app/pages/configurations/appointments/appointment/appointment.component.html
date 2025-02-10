@@ -5,24 +5,43 @@
 
     <div class="field p-fluid mt-3">
         <label htmlFor="idJerarquia" class="font-medium">Dependencia</label>
-        <p-treeSelect *ngIf="!loadingHierarchies else sLoadingHierarchies" [options]="hierarchyOptions" formControlName="hierarchyTree" optionLabel="label" optionValue="key"
+        <p-treeSelect *ngIf="!loadingHierarchies else sLoadingHierarchies" [options]="hierarchyOptions" formControlName="hierarchyTreeNode" optionLabel="label" optionValue="key"
                     [showClear]="false" [filter]="true" [showClear]="true"
                     containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
                     [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
             <ng-template let-node pTemplate="default">
                 <div class="flex align-items-center cursor-pointer" pRipple>
-                <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
-                    <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
-                </div>
-                <ng-template #sNoItemIcon>
-                    <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-primary-100 border-circle">
-                        <i class="pi pi-sitemap text-xl text-primary-500"></i>
+                    <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                        <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
                     </div>
+                    <ng-template #sNoItemIcon>
+                        <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-primary-100 border-circle">
+                            <i class="pi pi-sitemap text-xl text-primary-500"></i>
+                        </div>
+                    </ng-template>
+                    <div class="flex flex-column ml-2">
+                        <span>{{ node.label }}</span>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template let-node pTemplate="value" let-placeholder="placeholder">
+                <div *ngIf="node else sPlaceHolder" class="flex align-items-center">
+                    <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="w-2rem" style="min-width: 2rem;">
+                        <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto;" alt=""/>
+                    </div>
+                    <ng-template #sNoItemIcon>
+                        <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-primary-100 border-circle">
+                            <i class="pi pi-sitemap text-xl text-primary-500"></i>
+                        </div>
+                    </ng-template>
+                    <div class="flex flex-column ml-2">
+                        <span>{{ node.label }}</span>
+                        <span *ngIf="node.data.dependencia?.descripcion" class="text-sm text-500">{{node.data.dependencia.descripcion}}</span>
+                    </div>
+                </div>
+                <ng-template #sPlaceHolder>
+                    <span>{{placeholder}}</span>
                 </ng-template>
-                <div class="flex flex-column ml-2">
-                    <span>{{ node.label }}</span>
-                </div>
-                </div>
             </ng-template>
         </p-treeSelect>
         <ng-template #sLoadingHierarchies>
@@ -73,31 +92,27 @@
 
     <ng-container *ngTemplateOutlet="normativityOptionTemplate; context: {normativity: formAppointment.get('normatividad').value}"></ng-container>
 
-    <div class="grid grid-nogutter mt-3">
-        <div class="field p-fluid col-12 md:col-6 md:pr-2">
-            <label htmlFor="asignacionBasicaMensual" class="font-medium">Asignación básica</label>
-            <input pInputText id="asignacionBasicaMensual" type="number" aria-describedby="text-help" formControlName="asignacionBasicaMensual"/>
-            <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors && (formAppointment.controls['asignacionBasicaMensual'].touched||formAppointment.controls['asignacionBasicaMensual'].dirty)">
-                <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors?.['required']">
-                    <small id="text-help" class="p-error">Ingrese una asignación básica para el cargo</small>
-                </div>  
-            </div>
+    <div class="field p-fluid mt-3">
+        <label htmlFor="asignacionBasicaMensual" class="font-medium">Asignación básica</label>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+              <i class="pi pi-dollar"></i>
+            </span>
+            <span class="p-float-label">
+              <input pInputText id="asignacionBasicaMensual" type="number" aria-describedby="text-help" formControlName="asignacionBasicaMensual"/>
+            </span>
         </div>
 
-        <div class="field p-fluid col-12 md:col-6 md:pl-2">
-            <label htmlFor="totalCargos" class="font-medium">Total de cargos</label>
-            <input pInputText id="totalCargos" type="number" aria-describedby="text-help" formControlName="totalCargos"/>
-            <div *ngIf="formAppointment.controls['totalCargos'].errors && (formAppointment.controls['totalCargos'].touched||formAppointment.controls['totalCargos'].dirty)">
-                <div *ngIf="formAppointment.controls['totalCargos'].errors?.['required']">
-                    <small id="text-help" class="p-error">Ingrese un total de cargos</small>
-                </div>  
-            </div>
+        <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors && (formAppointment.controls['asignacionBasicaMensual'].touched||formAppointment.controls['asignacionBasicaMensual'].dirty)">
+            <div *ngIf="formAppointment.controls['asignacionBasicaMensual'].errors?.['required']">
+                <small id="text-help" class="p-error">Ingrese una asignación básica para el cargo</small>
+            </div>  
         </div>
     </div>
 
     <div class="mb-3">
         <div class="flex flex-column md:flex-row align-items-center w-full">
-            <label class="text-left font-medium  w-full md:w-auto">Designaciones de empleos</label>
+            <label class="font-medium">Designaciones de empleos</label>
             <div style="margin-left: auto; ">
                 <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Designaciones"  (click)="jobTitleOptionsOverlayPanel.toggle($event)"></button>
                 <p-overlayPanel #jobTitleOptionsOverlayPanel [showCloseIcon]="true">
@@ -112,9 +127,14 @@
             </div>
         </div>
         <div *ngIf="denominacionesEmpleosFormArray.value?.length else sNoJobTitle"  class="surface-100 border-round p-3 mt-2">
-            <div *ngFor="let jobTitleControl of denominacionesEmpleosFormArray.controls"  class="w-full">
-                <span class="text-500 font-medium">{{jobTitleControl.value.nombre}}</span>
-                <input pInputText id="cargos" type="number" formControlName="cargos" class="pb-1 pl-1 ml-auto border-none border-bottom-1 shadow-none _input-value"/>       
+            <div formArrayName="denominacionesEmpleos">
+                <div *ngFor="let group of denominacionesEmpleosFormArray.controls; let i = index" [formGroupName]="i" class="flex align-items-center justify-content-between">
+                    <span class="text-500 mr-3 w-full font-medium pb-1 pl-1 border-none border-bottom-1 shadow-none p-inputtext _input-text">{{group.value.nombre}}</span>       
+                    <input pInputText id="totalCargos" placeholder="Número de cargos"  type="number" formControlName="totalCargos" class="w-12rem mr-3 pb-1 pl-1 border-none border-bottom-1 shadow-none _input-value"/>       
+                    <div>
+                        <button (click)="removeJobTitle(i)" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+                    </div>
+                </div>
             </div>
         </div>
         <ng-template #sNoJobTitle>
@@ -124,7 +144,6 @@
             </div>
         </ng-template>
     </div>
-
 
     <app-form-action-button [updateMode]="updateMode"
         (createOrUpdate)="onSubmitAppointment($event)"

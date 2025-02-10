@@ -789,7 +789,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   private reportUploaded(menuItem: MenuItem, label: string, automationId: string, downloadProgress: number) {
     let element = document.getElementById(`${automationId}`) as HTMLProgressElement;
-    if (element === null) {
+    if (element === null && menuItem != null) {
       menuItem.label = `
             <span>${label}</span>
             <progress id="${automationId}" max="100" style="width: 100%"></progress>

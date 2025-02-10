@@ -29,6 +29,10 @@ export class AppointmentService {
     return this.webRequestService.getWithHeaders(this.pathAppointment, filterIds);
   }
 
+  getMultiAppointments(appointmentIdOfGroup: any) {
+    return this.webRequestService.getWithHeaders(`${this.pathAppointment}/all-group/${appointmentIdOfGroup}`);
+  }
+
   getAppointment(id: number) {
     return this.webRequestService.getWithHeaders(`${this.pathAppointment}/${id}`);
   }
@@ -108,13 +112,13 @@ export class AppointmentService {
       idEscalaSalarial: '',
       idAlcance: '',
       idNormatividad: ['', Validators.required],
-      totalCargos: ['', Validators.compose([Validators.required, Validators.min(0)])],
+      totalCargos: '',
       asignacionBasicaMensual: ['', Validators.compose([Validators.required, Validators.min(0)])],
       vigencia: null,
-      hierarchyTree: null,
+      hierarchyTreeNode: null,
       normatividad: null,
       organizationChartId: '',
-      denominacionesEmpleos: this.formBuilder.array([])
+      denominacionesEmpleos: this.formBuilder.array([], Validators.required)
     })
     return this.appointmentFormGroup;
   }
@@ -140,7 +144,7 @@ export class AppointmentService {
     this.appointmentFormGroup.get('asignacionBasicaMensual').setValue(appointment.asignacionBasicaMensual);
     this.appointmentFormGroup.get('vigencia').setValue(appointment.vigencia);
     this.appointmentFormGroup.get('normatividad').setValue(appointment.normatividad);
-    this.appointmentFormGroup.get('hierarchyTree').setValue(node);
+    this.appointmentFormGroup.get('hierarchyTreeNode').setValue(node);
     this.appointmentFormGroup.get('organizationChartId').setValue(appointment.jerarquia.idOrganigrama);
     
     appointment.denominacionesEmpleos?.forEach(e => {
@@ -216,9 +220,10 @@ export class AppointmentService {
   }
   
   private createJobTitleFormGroup(jobTitle: JobTitle){
-      return this.formBuilder.group({
-        id: [jobTitle.id, Validators.required],
-        nombre: jobTitle.nombre
-      });
-    }
+    return this.formBuilder.group({
+      id: [jobTitle.id, Validators.required],
+      nombre: jobTitle.nombre,
+      totalCargos: [jobTitle.totalCargos, Validators.compose([Validators.required, Validators.min(0)])],
+    });
+  }
 }

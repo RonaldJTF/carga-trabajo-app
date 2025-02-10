@@ -74,7 +74,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     this.indexOfSalaryScaleSubscription =  this.levelService.indexOfSalaryScale$.subscribe(e => this.indexOfSalaryScale = e);
     this.salaryScaleFormGroupSubscription = this.levelService.salaryScaleFormGroup$.subscribe(e => this.salaryScaleFormGroup = e);
     this.mustRechargeLevelFormGroupSubscription = this.levelService.mustRechargeLevelFormGroup$.subscribe(e => this.mustRechargeLevelFormGroup = e);
-    this.levelSubscription = this.levelService.level$.subscribe(e => this.level = e)
+    this.levelSubscription = this.levelService.level$.subscribe(e => this.level = e);
     
     if (this.mustRechargeLevelFormGroup){
       this.levelService.createLevelFormGroup();

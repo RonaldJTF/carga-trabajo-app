@@ -1,0 +1,391 @@
+<form *ngIf="!loadingAppointments else sLoadingAppointments" class="p-0" [formGroup]="formMultiAppointments">
+    <ng-container *ngTemplateOutlet="validityOptionTemplate; context: {validity: formMultiAppointments.get('vigencia').value}"></ng-container>
+
+    <ng-container *ngTemplateOutlet="organizacionChartOptionTemplate; context: {organizationChart: formMultiAppointments.get('organigrama').value}"></ng-container>
+
+    <div class="field p-fluid mt-3">
+        <label htmlFor="idJerarquia" class="font-medium">Dependencia</label>
+        <p-treeSelect *ngIf="!loadingHierarchies else sLoadingHierarchies" [options]="hierarchyOptions" formControlName="hierarchyTreeNode" optionLabel="label" optionValue="key"
+                    [showClear]="false" [filter]="true" [showClear]="true"
+                    containerStyleClass="w-full" [placeholder]="MESSAGE.SELECCIONA_OPCION"
+                    [emptyMessage]="MESSAGE.NO_REGISTROS" [filterInputAutoFocus]="true">
+            <ng-template let-node pTemplate="default">
+                <div class="flex align-items-center cursor-pointer" pRipple>
+                    <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="flex-shrink-0 w-2rem h-2rem" style="border-radius: 50%; overflow: hidden;">
+                        <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto" alt=""/>
+                    </div>
+                    <ng-template #sNoItemIcon>
+                        <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-primary-100 border-circle">
+                            <i class="pi pi-sitemap text-xl text-primary-500"></i>
+                        </div>
+                    </ng-template>
+                    <div class="flex flex-column ml-2">
+                        <span>{{ node.label }}</span>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template let-node pTemplate="value" let-placeholder="placeholder">
+                <div *ngIf="node else sPlaceHolder" class="flex align-items-center">
+                    <div *ngIf="node.data.dependencia.srcIcono else sNoItemIcon" class="w-2rem" style="min-width: 2rem;">
+                        <img [src]="node.data.dependencia.srcIcono" [appImageFallback]="'assets/content/images/image-fallback-perfil.png'" style="width: 100%; height: auto;" alt=""/>
+                    </div>
+                    <ng-template #sNoItemIcon>
+                        <div class="flex-shrink-0 w-2rem h-2rem flex align-items-center justify-content-center bg-primary-100 border-circle">
+                            <i class="pi pi-sitemap text-xl text-primary-500"></i>
+                        </div>
+                    </ng-template>
+                    <div class="flex flex-column ml-2">
+                        <span>{{ node.label }}</span>
+                        <span *ngIf="node.data.dependencia?.descripcion" class="text-sm text-500">{{node.data.dependencia.descripcion}}</span>
+                    </div>
+                </div>
+                <ng-template #sPlaceHolder>
+                    <span>{{placeholder}}</span>
+                </ng-template>
+            </ng-template>
+        </p-treeSelect>
+        <ng-template #sLoadingHierarchies>
+            <span class="p-input-icon-left">
+                <i class="pi pi-spin pi-spinner text-xl"></i>
+                <input type="text" [disabled]="true" pInputText value="Cargando..."/>
+            </span>
+        </ng-template>
+        <div *ngIf="formMultiAppointments.controls['idJerarquia'].errors && (formMultiAppointments.controls['idJerarquia'].touched||formMultiAppointments.controls['idJerarquia'].dirty)">
+            <div *ngIf="formMultiAppointments.controls['idJerarquia'].errors?.['required']">
+                <small id="text-help" class="p-error">Seleccione una dependencia</small>
+            </div>  
+        </div>
+    </div>
+
+    <ng-container *ngTemplateOutlet="normativityOptionTemplate; context: {normativity: formMultiAppointments.get('normatividad').value}"></ng-container>
+
+    <p-divider layout="horizontal" align="center" styleClass="mt-5">
+        <span class="text-500">Asignaciones de cargos</span>
+    </p-divider>
+
+    <div class="mb-3">
+        <ng-container *ngIf="levelGroupFormGroup">
+            <ng-container *ngTemplateOutlet="formLevelGroupTemplate; context: { $implicit: levelGroupFormGroup}"></ng-container>
+        </ng-container>
+    
+        <ng-container *ngIf="levelGroupsFormArray.controls?.length else sNoLevelGroups" formArrayName="gruposNiveles">
+            <div *ngIf="!levelGroupFormGroup" class="flex align-items-center justify-content-end mb-2"> 
+                <button pButton pRipple type="button"  class="p-button-text" (click)="openNewLevelGroup()" >
+                    <i class="pi pr-2 pi-plus"></i>
+                    <span>Asociar cargos por nivel ocupacional</span>
+                </button>
+            </div>
+    
+            <p-table #tableOfSalaryScales [value]="levelGroupsFormArray.value" rowGroupMode="subheader" dataKey="idNivel"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
+                <ng-template pTemplate="body" let-levelGroup let-rowIndex="rowIndex" let-expanded="expanded">
+                    <tr >
+                        <td [ngClass]="{'_border-left-primary': indexOfLevelGroup == rowIndex, '_border-left-transparent': indexOfLevelGroup != rowIndex}" class="w-3rem _border-left-5">
+                            <button type="button" pButton pRipple [pRowToggler]="levelGroup" class="_buttom-more-info p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        </td>
+                        <td class="font-medium">{{ levelGroup.nivel?.descripcion }}</td>
+                        <td class="w-5rem">
+                            <div class="flex align-items-center justify-content-end">
+                                <app-menu-item *ngIf="isAdmin" [menuItems]="menuItemsOfLevelGroup" [index]="rowIndex"></app-menu-item>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-levelGroup let-rowIndex="rowIndex">
+                    <tr>
+                        <td colspan="3" [ngClass]="{'_border-left-primary': indexOfLevelGroup == rowIndex, '_border-left-transparent': indexOfLevelGroup != rowIndex}" class="_border-left-5 hover:surface-0 p-0">
+                            <ng-container *ngIf="levelGroup.gruposEscalasSalariales.length; else sNoSalaryScaleGroup">
+                                <ng-container *ngFor="let salaryScaleGroup of levelGroup.gruposEscalasSalariales; let indexOfSalaryScaleGroup = index">
+                                    <div class="px-3 py-2 hover:surface-hover">
+                                       <div class="flex align-items-center">
+                                            <span class="font-medium m-2 text-500">{{indexOfSalaryScaleGroup+1}}.</span>
+                                            <span class="font-medium text-500 flex-grow-1">{{salaryScaleGroup.escalaSalarial?.nombre || 'Nivel ocupacional'}}</span>
+                                            <span class="text-500 mx-2" pTooltip="Asignación básica mensual" tooltipPosition="bottom">{{salaryScaleGroup.asignacionBasicaMensual | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
+                                            <button pButton pRipple type="button" (click)="removeSalaryScaleGroupToMultiAppointments(indexOfSalaryScaleGroup, rowIndex)" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+                                       </div>
+                                       <div *ngFor="let item of salaryScaleGroup.denominacionesEmpleos; let indexOfJobTitle=index "  class="flex flex-row align-items-center ml-3">
+                                            <span class="text-500" style="white-space: nowrap">{{item.nombre}}</span>
+                                            <hr class="border-top-1 border-dashed flex-grow-1 mx-2">
+                                            <p-badge [value]="item.totalCargos?.toString() ?? '0'" severity="info" pTooltip="Cargos asignados" tooltipPosition="bottom" styleClass="mx-2"></p-badge>
+                                            <button pButton pRipple type="button" (click)="removeJobTitleToMultiAppointments(indexOfJobTitle, indexOfSalaryScaleGroup, rowIndex)" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <div class="text-500 text-sm px-3 py-2 mb-2">Asignación de cargos por escala salarial</div>
+                            </ng-container>
+                            <ng-template #sNoSalaryScaleGroup>
+                                <app-no-result [imageSize]="IMAGE_SIZE.MEDIUM" [message]="MESSAGE.NO_REGISTROS" styleClass="p-3"></app-no-result>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="text-500 text-sm mx-2 mb-2 my-3">Asignación de cargos por nivel ocupacional</div>
+        </ng-container>
+    
+        <ng-template #sNoLevelGroups>
+            <div *ngIf="!levelGroupFormGroup" class="flex align-items-center justify-content-center"> 
+                <button pButton pRipple type="button" class="p-button-outlined w-5" (click)="openNewLevelGroup()" >
+                    <div class="w-full">
+                        <i class="pi pr-2 pi-plus"></i>
+                        <span>Asociar cargos por nivel ocupacional</span>
+                    </div>
+                </button>
+            </div>
+        </ng-template>
+    </div>
+
+    <app-form-action-button [updateMode]="updateMode"
+        (createOrUpdate)="onSubmitMultiAppointments($event)"
+        (cancel)="onCancelMultiAppointments($event)"
+        (delete)="onDeleteMultiAppointments($event)"
+        [showDeleteButton] = "updateMode"
+        [creatingOrUpdating] = "creatingOrUpdating"
+        [deleting] = "deleting"
+        [disabledCreateOrUpdateButton] = "formMultiAppointments.invalid">
+    </app-form-action-button>
+</form>
+
+<ng-template #sLoadingAppointments>
+    <app-loading></app-loading>
+</ng-template>
+
+<ng-template #validityOptionTemplate let-validity="validity">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Vigencia</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formMultiAppointments?.value.idVigencia" (click)="removeValidity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formMultiAppointments?.value.idVigencia" (click)="onGoToUpdateValidity(validity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewValidity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Vigencias"  (click)="validityOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #validityOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="validityOptions" [filter]="true" title="Vigencias"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeValidity($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <span>{{item.label }}</span>
+                                <div class="ml-auto">
+                                    <i class="pi p-3" [ngClass]="{'text-green-500 pi-verified': parseStringToBoolean(item.value.estado), 'text-red-500 pi-times-circle': !parseStringToBoolean(item.value.estado)}" pTooltip="Estado" tooltipPosition="bottom"></i>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div  *ngIf="formMultiAppointments?.value.vigencia as validity; else sNoValidity" class="flex align-items-center surface-100 border-round p-3 mt-2">
+        <span class="text-500">{{validity.nombre | uppercase}}</span>
+        <span style="white-space: nowrap;" pTooltip="Año" tooltipPosition="bottom" [class]="'ml-auto validity-badge validity-' + (validity.estado | validity ).classStyle">{{validity.anio}}</span>
+    </div>
+
+    <ng-template #sNoValidity>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_VIGENCIA_ASOCIADA"></app-no-result>
+    </ng-template>
+
+    <div *ngIf="formMultiAppointments.controls['idVigencia'] && formMultiAppointments.controls['idVigencia'].errors && (formMultiAppointments.controls['idVigencia'].touched || formMultiAppointments.controls['idVigencia'].dirty)">
+        <div *ngIf="formMultiAppointments.controls['idVigencia'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una vigencia para las asignaciones laborales</small>
+        </div>  
+    </div>
+</ng-template>
+
+<ng-template #normativityOptionTemplate let-normativity="normativity">
+    <div class="flex flex-column md:flex-row align-items-center w-full">
+        <label class="text-left font-medium  w-full md:w-auto">Normatividad</label>
+        <div style="margin-left: auto; ">
+            <button *ngIf="formMultiAppointments?.value.idNormatividad" (click)="removeNormativity()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+            <button *ngIf="formMultiAppointments?.value.idNormatividad" (click)="onGoToUpdateNormativity(normativity.id, $event)" pButton pRipple type="button" icon="pi pi-pencil" class="p-button-rounded p-button-secondary p-button-text"  pTooltip="Editar" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" (click)="openNewNormativity()" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-text"  pTooltip="Crear" tooltipPosition="bottom"></button>
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Normatividades"  (click)="normativityOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #normativityOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="normativityOptions" [filter]="true" title="Normatividades"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeNormativity($event)">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center gap-2 w-full">
+                                <span>{{item.label }}</span>
+                                <div class="ml-auto">
+                                    <button (click)="onDeleteNormativity(item.value, $event)" pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div *ngIf="normativity; else sNoNormativity" class="surface-100 border-round p-3 mt-2">
+        <div class="flex align-items-center">
+            <div class="flex flex-column" >
+                <span class="text-500">{{normativity.nombre | uppercase}}</span>
+                <span class="text-blue-500 text-sm" >{{normativity.alcance?.nombre | titlecase}}</span>
+            </div>
+            <button (click)="showDetailOfNormativity(detailOfNormativity, $event)"  pButton pRipple icon="pi pi-eye"
+                class="ml-auto p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+        </div>
+        <div #detailOfNormativity style="display: none; max-height: 500px; overflow-y: auto;" class="ql-snow w-full">
+            <div class="ql-editor" [innerHTML] ="normativity?.descripcion ?? '' | sanitizeHtml"></div>
+        </div>
+    </div>
+    <div *ngIf="formMultiAppointments.controls['idNormatividad'] && formMultiAppointments.controls['idNormatividad'].errors && (formMultiAppointments.controls['idNormatividad'].touched || formMultiAppointments.controls['idNormatividad'].dirty)">
+        <div *ngIf="formMultiAppointments.controls['idNormatividad'].errors?.['required']">
+            <small id="text-help" class="p-error">Seleccione una normatividad sobre la que se soportan la asignaciones laborales</small>
+        </div>  
+    </div>
+    <ng-template #sNoNormativity>
+        <app-no-result [imageSize]="IMAGE_SIZE.LARGE" [message]="MESSAGE.NO_NORMATIVIDAD_ASOCIADA"></app-no-result>
+    </ng-template>
+</ng-template>
+
+<ng-template #organizacionChartOptionTemplate let-organizationChart="organizationChart">
+    <div class="flex flex-column md:flex-row align-items-center w-full mt-3">
+        <label class="text-left font-medium w-full md:w-auto">Estructura organizacional</label>
+        <div style="margin-left: auto; ">
+            <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Organigramas" (click)="organizationChartOptionsOverlayPanel.toggle($event)"></button>
+            <p-overlayPanel #organizationChartOptionsOverlayPanel [showCloseIcon]="true">
+                <ng-template pTemplate>
+                    <p-listbox [options]="organizationChartOptions" [filter]="true" title="Organigramas"
+                        [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                        [style]="{'max-height':'250px', 'overflow':'auto'}"
+                        (onClick)="changeOrganizationChart($event)">
+                    </p-listbox>
+                </ng-template>
+            </p-overlayPanel>
+        </div>
+    </div> 
+
+    <div *ngIf="organizationChart; else sNoOrganizationChart" class="surface-100 border-round p-3 mt-2">
+        <div class="flex align-items-center">
+            <div class="flex flex-column" >
+                <span class="text-500">{{organizationChart.nombre | uppercase}}</span>
+                <span class="text-500 text-sm">{{organizationChart.descripcion}}</span>
+            </div>
+            <button (click)="showDetailOfOrganizationChartNormativity(detailOfOrganizationChartNormativity, $event)"  pButton pRipple icon="pi pi-eye"
+                class="ml-auto p-button-rounded p-button-text p-button p-component p-button-icon-only" pTooltip="Ver detalles" tooltipPosition="bottom"></button>
+        </div>
+        <div #detailOfOrganizationChartNormativity style="display: none; max-height: 500px; overflow-y: auto;" class="ql-snow w-full">
+            <div class="ql-editor" [innerHTML] ="organizationChart.normatividad?.descripcion ?? '' | sanitizeHtml"></div>
+        </div>
+    </div>
+
+    <ng-template #sNoOrganizationChart>
+        <div class="surface-100 border-round flex align-items-center justify-content-center p-3 mt-2">
+            <i class="pi pi-exclamation-triangle text-3xl text-500 mr-2"></i>
+            <span class="text-500 text-justify">Seleccione una opción</span>
+        </div>
+    </ng-template>
+</ng-template>
+
+<ng-template #formLevelGroupTemplate let-levelGroupFormGroup>
+    <div [formGroup]="levelGroupFormGroup" class="surface-100 border-round surface-border mb-3 p-3 _border-left-5 " 
+        [ngClass]="{'_border-left-primary': indexOfLevelGroup >= 0, '_border-left-transparent': indexOfLevelGroup < 0 }">
+        <div class="flex align-items-center mb-3">
+            <div class="w-2rem h-2rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-2 flex-shrink-0">
+                <i  class="pi pi-pencil text-blue-500"></i>
+            </div>
+            <div class="flex flex-column ">
+                <span class="text-left font-medium text-500">Asignación de cargos por nivel ocupacional</span>
+                <span class="text-500 text-sm">{{indexOfLevelGroup < 0 ? 'Creación' : 'Modificación'}}</span>
+            </div>
+        </div>
+
+        <div class="field p-fluid">
+            <label class="font-medium" for="idNivel">Nivel ocupacional</label>
+            <p-dropdown id="idNivel" inputId="idNivel" [autoDisplayFirst]="false" styleClass="surface-100"
+                        [options]="levels" optionLabel="descripcion" [filter]="true" formControlName="idNivel"
+                        [showClear]="true" (onChange)="onChangeLevel($event)" optionValue="id"
+                        [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
+            </p-dropdown>
+            <div *ngIf="levelGroupFormGroup.controls['idNivel'].errors && (levelGroupFormGroup.controls['idNivel'].touched||levelGroupFormGroup.controls['idNivel'].dirty)">
+                <div *ngIf="levelGroupFormGroup.controls['idNivel'].errors?.['required']">
+                    <small id="text-help" class="p-error">Seleccione un nivel ocupacional</small>
+                </div>  
+            </div>
+        </div>
+
+        <ng-container *ngIf="!loadingSalaryScales else sLoadingSalaryScales">
+            <div *ngIf="salaryScales?.length" class="flex flex-column md:flex-row align-items-center w-full">
+                <label class="text-left w-full md:w-auto font-medium">Escala salarial</label>
+                <div style="margin-left: auto; ">
+                    <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Escalas salariales" (click)="salaryScaleOptionsOverlayPanel.toggle($event)"></button>
+                    <p-overlayPanel #salaryScaleOptionsOverlayPanel [showCloseIcon]="true">
+                        <ng-template pTemplate>
+                            <p-listbox [options]="salaryScales" [filter]="true" title="Escalas salariales" optionLabel="nombre"
+                                [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                                [style]="{'max-height':'250px', 'overflow':'auto'}"
+                                (onClick)="selectSalaryScale($event)">
+                            </p-listbox>
+                        </ng-template> 
+                    </p-overlayPanel>
+                </div>
+            </div> 
+            <div *ngIf="salaryScaleGroupFormArray.value?.length">
+                <div formArrayName="gruposEscalasSalariales">
+                    <div *ngFor="let group of salaryScaleGroupFormArray.controls; let i = index" [formGroupName]="i" class="border-left-3 border-gray-400 pl-2 mb-3">
+                        <div class="flex align-items-center">
+                            <span class="text-500 mr-3 flex-grow-1 font-medium py-1 pl-1 border-none border-bottom-1 shadow-none p-inputtext _input-text">{{group.value.escalaSalarial?.nombre || 'Nivel ocupacional' | uppercase}}</span>       
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-dollar"></i>
+                                <input pInputText id="asignacionBasica" placeholder="A. básica mensual"  type="number" formControlName="asignacionBasicaMensual" class="w-13rem py-1 border-none border-bottom-1 shadow-none _input-value"/>       
+                            </span>
+                            <button pButton pRipple type="button" (click)="removeSalaryScaleGroup(i)"  icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
+                        </div>
+                        <ng-container *ngTemplateOutlet="formJobTitleTemplate; context: { $implicit: group, indexOfSalaryScaleGroup: i}"></ng-container>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!salaryScaleGroupFormArray.value?.length && salaryScales?.length>0" class="flex align-items-center justify-content-center p-3 mt-2">
+                <i class="pi pi-exclamation-triangle text-3xl text-500 mr-2"></i>
+                <span class="text-500 text-justify">Especifique las asignaciones de cargos por escala salarial</span>
+            </div>
+        </ng-container>
+        <ng-template #sLoadingSalaryScales>
+            <app-loading></app-loading>
+        </ng-template>
+
+        <div class="flex flex-wrap justify-content-end mt-3">
+            <button pButton pRipple icon="pi pi-times" class="p-button-secondary p-button-rounded p-button-outlined mr-2" 
+                (click)="cancelLevelGroup($event)" pTooltip="Cancelar" tooltipPosition="bottom">
+            </button>
+            <button pButton pRipple icon="pi pi-send" class="p-button-success p-button-rounded p-button-outlined" type="submit" 
+                (click)="submitLevelGroup($event)" [disabled]="levelGroupFormGroup.invalid" pTooltip="Agregar" tooltipPosition="bottom">
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #formJobTitleTemplate let-jobTitleFormGroup let-indexOfSalaryScaleGroup="indexOfSalaryScaleGroup">
+    <div [formGroup]="jobTitleFormGroup" class="mb-3 ml-3">
+        <div formArrayName="denominacionesEmpleos">
+            <div *ngFor="let group of getDenominacionesEmpleosFormArray(jobTitleFormGroup).controls; let i = index" [formGroupName]="i" class="flex align-items-center">
+                <span class="text-500 mr-3 flex-grow-1 py-1 pl-1 border-none border-bottom-1 shadow-none p-inputtext _input-text">{{group.value.nombre}}</span>       
+                <span class="p-input-icon-left">
+                    <i class="pi pi-users"></i>
+                    <input pInputText id="totalCargos" placeholder="Número de cargos"  type="number" formControlName="totalCargos" class="w-13rem py-1 border-none border-bottom-1 shadow-none _input-value"/>       
+                </span>
+                <button pButton pRipple type="button" (click)="removeJobTitle(i, indexOfSalaryScaleGroup)" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text" pTooltip="Remover" tooltipPosition="bottom"></button>
+            </div>
+        </div>
+    </div>
+    <div class="flex align-items-center">
+        <button pButton pRipple label="Cargos por empleo" type="button" icon="pi pi-plus" style="white-space: nowrap;"
+            class="w-17rem p-button-rounded p-button-text" (click)="jobTitleOptionsOverlayPanel.toggle($event)"></button>
+        <p-overlayPanel #jobTitleOptionsOverlayPanel [showCloseIcon]="true">
+            <ng-template pTemplate>
+                <p-listbox [options]="jobTitleOptions" [filter]="true" title="Designación de empleos" optionLabel="nombre"
+                    [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
+                    [style]="{'max-height':'250px', 'overflow':'auto'}"
+                    (onClick)="changeJobTitle($event, indexOfSalaryScaleGroup, jobTitleOptionsOverlayPanel)">
+                </p-listbox>
+            </ng-template>
+        </p-overlayPanel>
+        <div class="surface-border border-none border-top-2 border-solid mr-5 w-full"></div>
+    </div>
+</ng-template>

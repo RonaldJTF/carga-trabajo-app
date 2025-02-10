@@ -436,14 +436,14 @@ export class ListComponent implements OnInit, OnDestroy{
 
   private reportUploaded(menuItem: MenuItem, label: string, automationId: string, downloadProgress: number) {
     let element = document.getElementById(`${automationId}`) as HTMLProgressElement;
-    if (element === null) {
+    if (element === null && menuItem != null) {
       menuItem.label = `
             <span>${label}</span>
             <progress id="${automationId}" max="100" style="width: 100%"></progress>
         `;
       menuItem.label = this.sanitizer.bypassSecurityTrustHtml(menuItem.label as string) as unknown as string;
     } else if (downloadProgress > 0) {
-      element.setAttribute('value', `${downloadProgress}`);
+      element?.setAttribute('value', `${downloadProgress}`);
     }
     this.cdr.detectChanges();
   }

@@ -1,5 +1,5 @@
 <div class="flex flex-column align-items-center">
-    <div *ngIf="showImage" class="mr-1" style="width: {{imageSize}}px; height: {{imageSize}}px; overflow: hidden;">
+    <div *ngIf="showImage" class="mr-1" [ngStyle]="{'width.px': imageSize, 'height.px': imageSize, 'overflow': 'hidden'}">
         <img src="assets/content/images/no_results.png" [appImageFallback]  style="vertical-align: middle; width: 100%; height: auto;"/>
     </div>
 

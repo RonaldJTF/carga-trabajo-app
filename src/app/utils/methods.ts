@@ -215,7 +215,7 @@ export class Methods {
   }
 
   static cloneFormArray(formArray: FormArray): FormArray {
-    const clonedArray = new FormArray([]);
+    const clonedArray = new FormArray([], formArray.validator, formArray.asyncValidator);
     formArray.controls.forEach(control => {
       if (control instanceof FormGroup) {
         clonedArray.push(this.cloneFormGroup(control));

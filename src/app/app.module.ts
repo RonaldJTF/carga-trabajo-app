@@ -65,6 +65,7 @@ import { operationalManagementReducer } from '@store/operationalManagement.reduc
 import { ProcessOrientedStructureService } from './services/process-oriented-structure.service';
 import { organizationChartReducer } from '@store/organizationChart.reducer';
 import { hierarchyReducer } from '@store/hierarchy.reducer';
+import { MultiAppointmentsService } from './services/multi-appointments.service';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,7 @@ import { hierarchyReducer } from '@store/hierarchy.reducer';
     StructureService, LevelService, StatisticsService, DocumentTypeService, ScopeService, PeriodicityService, CompensationCategoryService, NormativityTypeService, PrimaryVariableService, 
     ConventionService, GenderService, PersonService, UserService, MatrizlevantamientoService, WorkplanService, UrlService, ChangePasswordService, SentryInitService, DialogService,
     NormativityService, ScopeService, ValidityService, AppointmentService, VariableService, MathjaxService, RuleService, LevelCompensationService, CompensationService,
-    ProcessOrientedStructureService, OperationalManagementService,
+    ProcessOrientedStructureService, OperationalManagementService, MultiAppointmentsService,
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: OkInterceptor, multi: true},
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},

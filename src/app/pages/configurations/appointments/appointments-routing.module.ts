@@ -4,6 +4,7 @@ import { AppointmentsComponent } from './appointments.component';
 import { ListComponent } from './list/list.component';
 import { AppointmentComponent } from './appointment/appointment.component';
 import {adminGuard} from "@guards";
+import { MultiAppointmentsComponent } from './multi-appointments/multi-appointments.component';
 
 const routes: Routes = [{
   path: '', component: AppointmentsComponent, children: [

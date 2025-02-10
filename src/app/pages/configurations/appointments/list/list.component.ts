@@ -11,6 +11,7 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { TreeTable } from 'primeng/treetable';
 import { finalize, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.reducers';
+import { MultiAppointmentsService } from 'src/app/services/multi-appointments.service';
 
 class FiltersBy{
   organizationCharts: any[];
@@ -179,6 +180,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     private scopeService: ScopeService,
     private levelService: LevelService,
     private organizationChartService: OrganizationChartService,
+    private multiAppointmentsService: MultiAppointmentsService,
     private confirmationDialogService: ConfirmationDialogService,
     private authService: AuthenticationService,
     private router: Router,
@@ -192,6 +194,9 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   ngOnInit(): void {
     const {isAdministrator, isOperator} = this.authService.roles();
     this.isAdmin = isAdministrator;
+
+    /**Restablecemos el formulario de multiples asignaciones de cargos, si por alguna razón navegamos a él */
+    this.multiAppointmentsService.setMustRechargeMultiAppointmentsFormGroup(true);
 
     this.initChartGroupFilters();
     const documentStyle = getComputedStyle(document.documentElement);
