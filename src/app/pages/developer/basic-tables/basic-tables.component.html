@@ -41,7 +41,7 @@
         <i class="pi pi-exclamation-triangle text-5xl text-yellow-500 mb-2"></i>
         <span class="text-yellow-500 text-justify">{{ messages?.detail }}</span>
       </div>
-
+      <app-go-to-if-not-found [showImage]="false" [buttonLabel]="'Migrar'" (go)="migrateActivities()" [message]="MESSAGE.NO_REGISTROS_PROCEDE_CREAR"></app-go-to-if-not-found>
     </div>
     <div class="col-12 md:col-8 pb-0">
       <router-outlet></router-outlet>

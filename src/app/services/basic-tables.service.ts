@@ -38,6 +38,8 @@ export class BasicTablesService {
 
   private pathJobTitle = 'job-title';
 
+  private pathMigrationActivities = 'operational-management/migrate-activities';
+
   constructor(
     private webRequestService: WebRequestService
   ) {
@@ -426,5 +428,9 @@ export class BasicTablesService {
 
   deleteSelectedJobTitles(payload: number[]): Observable<JobTitle[]> {
     return this.webRequestService.deleteWithHeaders(this.pathJobTitle, undefined, payload);
+  }
+
+  migrateActivities(): Observable<any> {
+    return this.webRequestService.postWithHeaders(this.pathMigrationActivities, undefined, undefined);
   }
 }

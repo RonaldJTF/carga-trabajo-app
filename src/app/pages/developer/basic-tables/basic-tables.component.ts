@@ -2,8 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {MegaMenuItem, Message} from "primeng/api";
 import {MESSAGE} from "@labels/labels";
 import {Location} from "@angular/common";
-import {MenuService} from "@services";
+import {BasicTablesService, MenuService} from "@services";
 import { Router } from '@angular/router';
+import {IMAGE_SIZE} from "@utils";
 
 @Component({
   selector: 'app-basic-tables',
@@ -12,18 +13,18 @@ import { Router } from '@angular/router';
 })
 export class BasicTablesComponent implements OnInit {
 
+  protected readonly IMAGE_SIZE = IMAGE_SIZE;
   protected readonly MESSAGE = MESSAGE;
 
   menuItems: MegaMenuItem[];
-
   selectedOption: MegaMenuItem;
-
   messages: Message | undefined;
 
   constructor(
     public menuService: MenuService,
     private router: Router,
     private location: Location,
+    private basicTableService: BasicTablesService,
   ) {
   }
 
@@ -86,7 +87,7 @@ export class BasicTablesComponent implements OnInit {
         state: {}
       },
       {
-        title: 'Denominación empleo',
+        title: 'Denominación de empleo',
         icon: 'pi pi-briefcase',
         url: 'job-title',
         label: 'Gestiona los distintos títulos o cargos utilizados en la organización',
@@ -175,5 +176,14 @@ export class BasicTablesComponent implements OnInit {
       },
     ]
   }
+
+  migrateActivities(){
+    this.basicTableService.migrateActivities().subscribe({
+      next: (result) => {
+        console.log(result);
+      }
+    })
+  }
+
 
 }
