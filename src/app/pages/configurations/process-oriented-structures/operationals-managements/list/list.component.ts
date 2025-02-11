@@ -73,9 +73,9 @@ export class ListComponent {
   menuBarItems: MenuItem[] = [];
 
   menuItemsOfDownload: MenuItem[] = [
+    {label: 'Reporte de tiempos en PDF', escape: false, icon: 'pi pi-file-pdf', automationId:"pdf", command: (e) => { this.download(e) }},
     {label: 'Reporte de tiempos en Excel', escape: false, icon: 'pi pi-file-excel', automationId:"excel", command: (e) => { this.download(e) }},
   ];
-  
   
   constructor(
     private store: Store<AppState>,
@@ -244,7 +244,13 @@ export class ListComponent {
     let generalMenuItem = [];
     generalMenuItem.push(
       {label: 'Migrar', icon: 'pi pi-window-minimize', visible: this.isAdmin, command: (e) => this.viewStructuresToMigrate(e.item['value'], e.originalEvent)},
-      {label: 'Agregar subproceso', icon: 'pi pi-plus', visible: (this.isAdmin && operationalManagement.idPadre == null), command: (e) => this.openNewSubprocess(e.item.id)},
+      {label: `Agregar sub${operationalManagement.tipologia.nombre.toLowerCase()}`, icon: 'pi pi-plus', visible: this.isAdmin, command: (e) => this.openNewSubOperationalManagement(e.item['value'])},
+      {label: 'Agregar gestión operativa', icon: 'pi pi-plus', visible: (this.isAdmin && operationalManagement.tipologia.idTipologiaSiguiente != null), command: (e) => this.openNewOperationalManagement(e.item['value'])},
+      {
+        label: 'Gestionar tarea', icon: 'pi pi-cog', command: (e) => {this.managementTask(e, operationalManagement)},
+        visible: this.isAdmin && operationalManagement.tipologia.idTipologiaSiguiente == null, 
+        disabled: this.hasChildrenOfTheSameType(operationalManagement)
+      },
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdate(e.item.id)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, data:operationalManagement, command: (e) => this.onDeleteStructure(e)},
     );
@@ -252,6 +258,23 @@ export class ListComponent {
     return [
       ...generalMenuItem
     ]
+  }
+
+  managementTask(event: any, operationalManagement: OperationalManagement){
+    const path = 'action/activity';
+    const operationalManagementId = event.item.id;
+    this.router.navigate([path], {
+      relativeTo: this.route,
+      skipLocationChange: true,
+      queryParams: {
+        idOperationalManagement: this.cryptoService.encryptParam(operationalManagementId),
+        idActivity: this.cryptoService.encryptParam(operationalManagement.actividad?.id),
+      }}
+    );
+  }
+
+  private hasChildrenOfTheSameType(operationalManagement: OperationalManagement){
+    return operationalManagement.subGestionesOperativas?.some(e => e.idTipologia == operationalManagement.idTipologia);
   }
 
   deleteSelectedOperationalManagement() {
@@ -290,8 +313,26 @@ export class ListComponent {
     this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true});
   }
 
-  openNewSubprocess(idParent: any) {
-    this.router.navigate(['create'], { relativeTo: this.route, skipLocationChange: true, queryParams:{idParent: this.cryptoService.encryptParam(idParent)}});
+  openNewSubOperationalManagement(operationalManagement: OperationalManagement) {
+    this.router.navigate(['create'], { 
+      relativeTo: this.route, 
+      skipLocationChange: true, 
+      queryParams:{
+        idParent: this.cryptoService.encryptParam(operationalManagement.id),
+        idTipology: this.cryptoService.encryptParam(operationalManagement.idTipologia)
+      }
+    });
+  }
+
+  openNewOperationalManagement(operationalManagement: OperationalManagement) {
+    this.router.navigate(['create'], { 
+      relativeTo: this.route, 
+      skipLocationChange: true, 
+      queryParams:{
+        idParent: this.cryptoService.encryptParam(operationalManagement.id),
+        idTipology: this.cryptoService.encryptParam(operationalManagement.tipologia.idTipologiaSiguiente)
+      }
+    });
   }
 
   onGoToUpdate (id : any): void{
@@ -362,7 +403,8 @@ export class ListComponent {
     const initialLabel = menuItem?.label;
 
     updateMenuItem(menuItem, "pi pi-spin pi-spinner", true);
-    this.operationalManagementService.downloadReport(automationId).pipe(
+    const operationalManagementIds = idOperationalManagement ? [idOperationalManagement] : (this.selectedNodesOfOperationalManagement as TreeNode[])?.map(e => e.data.id) || [];
+    this.operationalManagementService.downloadReport(automationId, operationalManagementIds).pipe(
       finalize(() => {
         updateMenuItem(menuItem, initialIcon, initialState, initialLabel);
       })

@@ -8,6 +8,7 @@ const routes: Routes = [
   {path: '', component: ListComponent},
   {path: 'create', component: OperationalManagementComponent, canActivate: [adminGuard]},
   {path: ':id', component: OperationalManagementComponent, canActivate: [adminGuard]},
+  {path: 'action', loadChildren: ()=>import('./action/action.module').then(m=>m.ActionModule), canActivate: [adminGuard]}
 ];
 
 @NgModule({

@@ -13,3 +13,15 @@ export class Activity {
   nivel?: Level;
   tiempoTotalTarea?: number
 }
+export class ManagementActivity {
+  id?: number;
+  frecuencia?: number;
+  tiempoMaximo?: number;
+  tiempoMinimo?: number;
+  tiempoPromedio?: number;
+  idNivel?: number;
+  idGestionOperativa?: number;
+  descripcion?: string;
+  nivel?: Level;
+  tiempoTotalTarea?: number
+}

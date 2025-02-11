@@ -156,6 +156,27 @@ export const operationalManagementReducer = createReducer(
     return { ...state, items: items};
   }),
 
+  on(OperationalManagementActions.setActivityToOperationalManagement, (state, { activity }) =>{
+      const items = _.cloneDeep(state.items);
+      let updatedOperationalManagement = findOperationalManagement(activity.idGestionOperativa, items);
+      if (updatedOperationalManagement){
+        if (!updatedOperationalManagement.actividad){
+          updatedOperationalManagement.actividad = activity;
+        }else{
+          Object.assign(updatedOperationalManagement.actividad, activity);
+        }
+      }
+      return { ...state, items:items };
+    }),
+  
+    on(OperationalManagementActions.removeActivityFromOperationalManagement, (state, { operationalManagementId }) =>{
+      const items = _.cloneDeep(state.items);
+      let updatedOperationalManagement = findOperationalManagement(operationalManagementId, items);
+      if (updatedOperationalManagement){
+        updatedOperationalManagement.actividad = null;
+      }
+      return { ...state, items:items};
+    }),
 );
 
 
