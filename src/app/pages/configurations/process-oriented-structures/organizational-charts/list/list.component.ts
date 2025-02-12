@@ -490,6 +490,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   changeOrganizationChart(data: any){
     this.store.dispatch(OrganizationChartActions.setOrganizationChart({organizationChart: data.value}));
+    this.store.dispatch(OrganizationChartActions.setMustRechargeNoAssignedOperationalsManagements({mustRecharge: true}));
     this.getHierarchies(this.selectedOrganizationChart.id);
     this.organizationChartOptionsOverlayPanel.hide();
   }
