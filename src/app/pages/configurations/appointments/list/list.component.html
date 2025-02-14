@@ -77,10 +77,10 @@
                         <td class="border-0 py-0">
                             <div *ngIf="chartInformation" class="_chart-container w-full">
                                 <div style="position: relative;" >
-                                    <app-bar-chart 
-                                        [labels]="chartInformation.labels" 
-                                        [datasets]="chartInformation.datasets" 
-                                        (onClickOnBar)="onClickOnScopeAndValidityBar($event)" 
+                                    <app-bar-chart
+                                        [labels]="chartInformation.labels"
+                                        [datasets]="chartInformation.datasets"
+                                        (onClickOnBar)="onClickOnScopeAndValidityBar($event)"
                                         (onClickOnLegend)="onClickOnScopeAndValidityLegend($event)"
                                         title="Asignación total por vigencias y alcances"
                                         yAxisTitle="Asignación total ($)">
@@ -97,22 +97,22 @@
                     <tr *ngIf="chartInformation.chartDetail?.datasets?.length">
                         <td class="border-0 py-0">
                            <div class="grid">
-                                <div class="col-12 " [ngClass]="{'md:col-8': chartInformation.chartDetail.chartDetail?.data?.length}">
-                                    <app-bar-chart 
-                                        [labels]="chartInformation.chartDetail.labels" 
-                                        [datasets]="chartInformation.chartDetail.datasets" 
-                                        [stacked]="true" 
+                                <div class="col-12 _scroll-chart-container" style="overflow: auto; max-height: 300px;" [ngClass]="{'md:col-8': chartInformation.chartDetail.chartDetail?.data?.length}">
+                                    <app-bar-chart
+                                        [labels]="chartInformation.chartDetail.labels"
+                                        [datasets]="chartInformation.chartDetail.datasets"
+                                        [stacked]="true"
                                         indexAxis = "y"
                                         title="Asignación total por dependencias y niveles ocupacionales"
                                         [subtitle]="chartFilters.scope + ' & ' + chartFilters.validity"
-                                        xAxisTitle="Asignación total ($)" 
+                                        xAxisTitle="Asignación total ($)"
                                         (onClickOnLegend)="onClickOnDependencyAndLevelLegend($event)"
                                         (onClickOnBar)="onClickOnDependencyAndLevelBar($event)" >
                                     </app-bar-chart>
                                 </div>
                                 <div class="col-12 md:col-4" *ngIf="chartInformation.chartDetail.chartDetail?.data?.length">
-                                    <app-polar-chart 
-                                        [labels]="chartInformation.chartDetail.chartDetail.labels" 
+                                    <app-polar-chart
+                                        [labels]="chartInformation.chartDetail.chartDetail.labels"
                                         [data]="chartInformation.chartDetail.chartDetail.data"
                                         datasetLabel="Asignación"
                                         title="Asignación total por escalas salariales"
@@ -441,5 +441,5 @@
                 </ng-template>
             </p-overlayPanel>
         </div>
-    </div> 
+    </div>
 </ng-template>

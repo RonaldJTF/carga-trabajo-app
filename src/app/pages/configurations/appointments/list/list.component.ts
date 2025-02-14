@@ -162,7 +162,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   partialAmmount: number = 0;
   viewOptions: any[] = [
-    {icon: 'pi pi-list', value: 'list', tooltip: 'Lista'}, 
+    {icon: 'pi pi-list', value: 'list', tooltip: 'Lista'},
     {icon: 'pi pi-chart-bar', value: 'chart', tooltip: 'Gráfica'
   }];
   viewMode: 'list' | 'chart';
@@ -484,7 +484,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.filtersBy[key]?.splice(index, 1);
     if (this.confirmedFilters[key]?.length){
       const list = this.appointments.filter(
-        e => this.getNestedProperty(e, this.filterProps[key].externalKeyRelashionship) != this.getNestedProperty(deleted, this.filterProps[key].internalKeyRelashionship) 
+        e => this.getNestedProperty(e, this.filterProps[key].externalKeyRelashionship) != this.getNestedProperty(deleted, this.filterProps[key].internalKeyRelashionship)
       );
       this.store.dispatch(AppointmentActions.setList({appointments: list}));
     }else if(this.isObjectEmpty(this.confirmedFilters)){
@@ -544,7 +544,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.partialAmmount = this.globalAmountByOrganizationChart;
     this.initChartGroupFilters();
   }
-  
+
   private initChartGroupFilters(){
     this.chartGroupFilters = {scopes: [], levels: [], salaryScales: []};
   }
@@ -568,24 +568,24 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
 
   onClickOnScopeAndValidityLegend(data: { originalEvent: Event; datasetIndex: number; hidden: boolean }): void {
     const dataset = this.chartInformation.datasets[data.datasetIndex];
-    this.chartGroupFilters.scopes = data.hidden 
+    this.chartGroupFilters.scopes = data.hidden
                                     ? [...this.chartGroupFilters.scopes, dataset.label]
                                     : this.chartGroupFilters.scopes.filter(item => item !== dataset.label);
-  
+
     if(this.chartFilters.scope == dataset.label){
       this.chartInformation.chartDetail = null;
       this.chartGroupFilters.levels = [];
     }
     this.updatePartialAmmount();
-  } 
+  }
 
   onClickOnDependencyAndLevelLegend(data: { originalEvent: Event; datasetIndex: number; hidden: boolean }): void {
     const { chartDetail } = this.chartInformation;
     const dataset = chartDetail.datasets[data.datasetIndex];
-    this.chartGroupFilters.levels = data.hidden 
+    this.chartGroupFilters.levels = data.hidden
                                     ? [...this.chartGroupFilters.levels, dataset.label]
                                     : this.chartGroupFilters.levels.filter(item => item !== dataset.label);
-  
+
     if(this.chartFilters.level == dataset.label){
       chartDetail.chartDetail = null;
       this.chartGroupFilters.salaryScales = [];
@@ -596,19 +596,19 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   onClickOnSalaryScaleLegend(data: { originalEvent: Event; index: number; hidden: boolean }): void {
     const { chartDetail } = this.chartInformation.chartDetail;
     const label = chartDetail.labels[data.index];
-    this.chartGroupFilters.salaryScales = data.hidden 
+    this.chartGroupFilters.salaryScales = data.hidden
                                     ? [...this.chartGroupFilters.salaryScales, label]
                                     : this.chartGroupFilters.salaryScales.filter(item => item !== label);
     this.updatePartialAmmount();
   }
 
-  onClickOnScopeAndValidityBar(data: {originalEvent: Event, datasetIndex: number, dataIndex: number}){    
+  onClickOnScopeAndValidityBar(data: {originalEvent: Event, datasetIndex: number, dataIndex: number}){
     const dataset = this.chartInformation.datasets[data.datasetIndex];
     const label = this.chartInformation.labels[data.dataIndex];
     this.chartFilters = {scope: dataset.label,  validity: label}
     const filtered = this.appointments.filter(
-      e =>  e.jerarquia.idOrganigrama == this.chartSelectedOrganizationChart.id 
-            && e.alcance.nombre == this.chartFilters.scope 
+      e =>  e.jerarquia.idOrganigrama == this.chartSelectedOrganizationChart.id
+            && e.alcance.nombre == this.chartFilters.scope
             && e.vigencia.nombre == this.chartFilters.validity);
     let chartDetail = this.buildBarChartInformation(filtered, 'jerarquia.dependencia.nombre', 'nivel.nombre');
     this.chartInformation.chartDetail = chartDetail;
@@ -620,7 +620,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     const label = chartDetail.labels[data.dataIndex];
     this.chartFilters = {...this.chartFilters, level: dataset.label, dependency: label };
     const { scope, validity, dependency, level } = this.chartFilters;
-    const filtered = this.appointments.filter(e => 
+    const filtered = this.appointments.filter(e =>
         e.jerarquia.idOrganigrama == this.chartSelectedOrganizationChart.id &&
         e.alcance.nombre === scope &&
         e.vigencia.nombre === validity &&
@@ -629,7 +629,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     );
     chartDetail.chartDetail = this.buildPolarChartInformation(filtered, 'escalaSalarial.nombre', 'nivel.nombre');
   }
-  
+
 
   private isObjectEmpty(obj) {
     return Object.values(obj).every(value =>
@@ -734,18 +734,18 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
   private buildBarChartInformation(list: Appointment[], att1: string, att2: string): ChartInformation {
     const grouped = list.reduce((acc, item) => {
       const {asignacionTotal, totalCargos } = item;
-      const prop1: string = this.getNestedProperty(item, att1); 
-      const prop2: string = this.getNestedProperty(item, att2); 
+      const prop1: string = this.getNestedProperty(item, att1);
+      const prop2: string = this.getNestedProperty(item, att2);
       if (!acc[prop1]) {
         acc[prop1] = {};
       }
       acc[prop1][prop2] = (acc[prop1][prop2] || 0 ) + asignacionTotal * totalCargos;
       return acc;
     }, {});
-  
-    const labels = Object.keys(grouped);
+
+    let labels = Object.keys(grouped);
     const keys = new Set(list.map((item) => this.getNestedProperty(item, att2)));
-    const datasets = Array.from(keys).map((group2, index) => ({
+    let datasets = Array.from(keys).map((group2, index) => ({
       label: group2,
       data: labels.map((group1) => grouped[group1]?.[group2] || 0),
       backgroundColor: this.colors[index],
@@ -753,6 +753,15 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       borderSkipped: false,
       tension: 0
     }));
+    labels = [
+      ...labels, ...labels,...labels, ...labels, ...labels,...labels, ...labels, ...labels, ...labels,...labels,
+      ...labels, ...labels, ...labels, ...labels,...labels,...labels, ...labels, ...labels, ...labels,...labels,
+    ];
+    datasets = [
+      ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets,
+      ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets,
+
+    ];
     return { labels, datasets };
   }
 
@@ -760,18 +769,18 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
    * Construye el dataset requerido para pintar el detalle más profundo de las gráficas.
    * @param list: Lista de asignaciones de cargos.
    * @param att1: Atributo por el que se agrupa la data en la gráfica.
-   * @param optionalAtt: Se utiliza cuando no hay información para el attr1, 
+   * @param optionalAtt: Se utiliza cuando no hay información para el attr1,
    *                     por ejemplo, si no tiene escala salarial, use en su lugar el nivel ocupacional.
    * @returns: Información reuqrida para pintar la gráfica.
    */
   private buildPolarChartInformation(list: Appointment[], att1: string, optionalAtt: string): ChartInformation {
     const grouped = list.reduce((acc, item) => {
       const {asignacionTotal, totalCargos } = item;
-      const prop1: string = this.getNestedProperty(item, att1) || this.getNestedProperty(item, optionalAtt); 
+      const prop1: string = this.getNestedProperty(item, att1) || this.getNestedProperty(item, optionalAtt);
       acc[prop1] = (acc[prop1] || 0 ) + asignacionTotal * totalCargos;
       return acc;
     }, {});
-  
+
     const labels = Object.keys(grouped);
     const data = labels.map((group1) => grouped[group1] || 0)
     return { labels, data };

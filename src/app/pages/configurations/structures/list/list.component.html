@@ -44,7 +44,7 @@
                                 <td class="flex flex-row align-items-center">
                                     <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                                     <p-treeTableCheckbox *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
-                                    <div pRipple (click)="viewDependency(structure)" class="flex flex-column cursor-pointer">
+                                    <div #referenceElement id="element_{{structure.id}}" pRipple (click)="viewDependency(structure)" class="flex flex-column cursor-pointer">
                                         <div class="font-medium" [ngClass]="{'text-500': structure.idPadre, 'text-primary': structure.id == (dependency$ | async)?.id}">{{structure.nombre}}</div>
                                         <div class="text-500">{{structure.descripcion}}</div>
                                     </div>
@@ -118,7 +118,7 @@
                                             <td class="flex flex-row align-items-center">
                                                 <p-treeTableToggler [rowNode]="rowNode" ></p-treeTableToggler>
                                                 <p-treeTableCheckbox  *ngIf="isAdmin" [value]="rowNode"></p-treeTableCheckbox>
-                                                <div class="flex flex-column">
+                                                <div #referenceElement id="element_{{structure.id}}" class="flex flex-column">
                                                     <div class="font-medium">{{structure.orden != null ? structure.orden + '. ' : ''}} {{structure.nombre}}</div>
                                                     <div class="text-500">{{structure.descripcion}}</div>
                                                 </div>
@@ -234,7 +234,7 @@
     <app-skeleton-list-grid [isList]="true"></app-skeleton-list-grid>
 </ng-template>
 
-<p-overlayPanel #timeStatisticsOverlayPanel [showCloseIcon]="false"  [styleClass]="'w-full sm:w-9 md:w-6'">
+<p-overlayPanel #timeStatisticsOverlayPanel [showCloseIcon]="false" [styleClass]="'w-full sm:w-9 xl:w-7'">
     <ng-template pTemplate>
         <div class="flex align-items-center mb-3">
             <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
@@ -257,7 +257,7 @@
         </div>
 
         <div *ngIf="!loadingTimeStatistics else sLoadingTimeStatistics" class="grid">
-            <div class="col-12 flex align-items-center3">
+            <div class="col-12 flex align-items-center">
                 <ng-container *ngTemplateOutlet="statisticsSummarizeTemplate; context:{value: timeStatisticsSummarize.tiempoTotal, label: 'Horas requeridas', advance: timeStatisticsSummarize.porcentaje, icon: 'pi-clock'}"></ng-container>
                 <ng-container *ngTemplateOutlet="statisticsSummarizeTemplate; context:{value: timeStatisticsSummarize.personalTotal, label: 'Personas requeridas', advance: timeStatisticsSummarize.porcentaje, icon: 'pi-users'}"></ng-container>
             </div>

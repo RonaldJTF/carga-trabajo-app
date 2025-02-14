@@ -1,4 +1,13 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import * as StructureActions from "@store/structure.actions";
 import {finalize, map, Observable, Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
@@ -31,6 +40,8 @@ export class ListComponent implements OnInit, OnDestroy{
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
   @ViewChild('timeStatisticsOverlayPanel') timeStatisticsOverlayPanel: OverlayPanel;
+
+  @ViewChildren('referenceElement') referenceElement!: QueryList<ElementRef>;
 
   isAdmin: boolean;
   isOperator: boolean;
@@ -558,6 +569,19 @@ export class ListComponent implements OnInit, OnDestroy{
       },
       error: ()=>{this.loadingTimeStatistics = false;}
     });
-    this.timeStatisticsOverlayPanel.toggle(event)
+    //this.timeStatisticsOverlayPanel.toggle(event)
+    this.openOverlayPanel(structure.id, event);
   }
+
+  openOverlayPanel(id: number, event: Event): void {
+    if (!this.referenceElement || this.referenceElement.length === 0) {
+      return;
+    }
+    const reference = this.referenceElement.find((ref) => ref.nativeElement.id === `element_${id}`);
+    if (!reference) {
+      return;
+    }
+    this.timeStatisticsOverlayPanel.toggle(event, reference.nativeElement);
+  }
+
 }

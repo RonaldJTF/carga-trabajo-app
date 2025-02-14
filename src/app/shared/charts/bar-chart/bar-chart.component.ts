@@ -51,6 +51,7 @@ export class BarChartComponent implements OnChanges, OnDestroy {
       indexAxis: this.indexAxis,
       plugins: {
         legend: {
+          display: true,
           labels: {
             fontColor: textColor,
           },
@@ -96,9 +97,10 @@ export class BarChartComponent implements OnChanges, OnDestroy {
             color: textColorSecondary,
             callback: function(value, index, ticks) {
               const label = this.getLabelForValue(value);
-              const maxLength = 50; 
+              const maxLength = 50;
               return label.length > maxLength ? label.substring(0, maxLength) + '...' : label;
             },
+            autoSkip: false,
           },
           grid: {
             color: surfaceBorder,
@@ -142,7 +144,7 @@ export class BarChartComponent implements OnChanges, OnDestroy {
       const datasetIndex = element.datasetIndex;
       const dataIndex = element.index;
       this.onClickOnBar.emit({originalEvent: event.native, datasetIndex: datasetIndex, dataIndex: dataIndex});
-    } 
+    }
   }
 
   handleClickOnLegend(event: ChartEvent, legendItem: any, legend: any){
@@ -152,5 +154,13 @@ export class BarChartComponent implements OnChanges, OnDestroy {
     meta.hidden = meta.hidden === null ? !chart.data.datasets[datasetIndex].hidden : null;
     chart.update();
     this.onClickOnLegend.emit({originalEvent: event.native, datasetIndex: datasetIndex, hidden: !legendItem.hidden});
+  }
+
+  getChartHeight(): string {
+    if (this.indexAxis === "y" && this.labels.length > 10) {
+      return `${Math.max(300, this.labels.length * 30)}px`;
+    }else {
+      return "300px";
+    }
   }
 }

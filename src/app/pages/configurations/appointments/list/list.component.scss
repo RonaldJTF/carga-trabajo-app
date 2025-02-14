@@ -1,13 +1,13 @@
 ._badge-container {
     position: relative;
-    display: inline-block; 
+    display: inline-block;
 }
 
 ._badge {
     cursor: pointer;
     position: absolute;
     top: -8px;
-    right: -8px; 
+    right: -8px;
     background-color: var(--primary-color);
     color: white;
     border-radius: 50%;
@@ -34,18 +34,18 @@
 }
 
 ._appointment-info-container:hover{
-    border: 1px solid var(--surface-border);	
+    border: 1px solid var(--surface-border);
 }
 
 ._chart-container {
     position: relative;
-    display: inline-block; 
+    display: inline-block;
 }
 
 ._chart-summary{
     position: absolute;
     top: 10px;
-    right: 0px; 
+    right: 0px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -53,7 +53,7 @@
     border-radius: var(--border-radius);
     background-color:#D0E1FD33;
     color:  var(--blue-500);
-    white-space: nowrap; 
+    white-space: nowrap;
     padding: 1.25rem;
     z-index: 1;
     width: 12rem;
@@ -89,9 +89,9 @@
 }
 
 ._card{
-    width: 100%; 
-    height: 100%; 
-    cursor: pointer; 
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
     border-radius: var(--border-radius);
     border-width: 1px;
     border-color: var(--surface-border);
@@ -119,15 +119,23 @@
 }
 
 ._circle{
-    display: flex;            
-    justify-content: center;  
-    align-items: center;     
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 32px;
     height: 32px;
-    background-color: var(--primary-100); 
+    background-color: var(--primary-100);
     color: var(--primary-500);
     border-radius: 50%;
     font-size: 1.5rem;
+}
+
+._scroll-chart-container::-webkit-scrollbar-thumb {
+  background-color: var(--surface-0);
+}
+
+._scroll-chart-container:hover::-webkit-scrollbar-thumb {
+  background-color: var(--primary-200);
 }
 
 :host ::ng-deep .p-treetable-header{
@@ -153,7 +161,7 @@
     text-align: center;
 }
 
-::ng-deep .p-multiselect-token, 
+::ng-deep .p-multiselect-token,
 ::ng-deep .p-treeselect-token{
     background-color: var(--surface-100) !important;
     color: var(--text-color-secondary) !important;
@@ -173,7 +181,7 @@
     border: none;
     background-color: var(--surface-100);
   }
-  
+
   :host ::ng-deep ul.p-menubar-root-list > li > a {
     padding: 1rem !important;
   }
