@@ -267,6 +267,7 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     this.menuItemsOfAppointment = [
       {label: 'Ver detalles', icon: 'pi pi-eye', command: (e) => this.viewDetailOfAppointment(e.item.id, e.originalEvent)},
       {label: 'Editar', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateAppointment(e.item.id, e.originalEvent)},
+      {label: 'Editar por grupo', icon: 'pi pi-pencil', visible: this.isAdmin, command: (e) => this.onGoToUpdateMultiAppointments(e.item.id, e.originalEvent)},
       {label: 'Eliminar', icon: 'pi pi-trash', visible: this.isAdmin, command: (e) => this.onDeleteAppointment(e)},
     ];
 
@@ -416,6 +417,12 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
     event.preventDefault();
     event.stopPropagation();
     this.router.navigate([this.cryptoService.encryptParam(id)], {relativeTo: this.route, skipLocationChange: true})
+  }
+
+  onGoToUpdateMultiAppointments (id : any, event: Event): void{
+    event.preventDefault();
+    event.stopPropagation();
+    this.router.navigate(['multiappointments', this.cryptoService.encryptParam(id)], {relativeTo: this.route, skipLocationChange: true})
   }
 
   onDeleteAppointment(event: any): void {
@@ -742,10 +749,10 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       acc[prop1][prop2] = (acc[prop1][prop2] || 0 ) + asignacionTotal * totalCargos;
       return acc;
     }, {});
-
-    let labels = Object.keys(grouped);
+  
+    const labels = Object.keys(grouped);
     const keys = new Set(list.map((item) => this.getNestedProperty(item, att2)));
-    let datasets = Array.from(keys).map((group2, index) => ({
+    const datasets = Array.from(keys).map((group2, index) => ({
       label: group2,
       data: labels.map((group1) => grouped[group1]?.[group2] || 0),
       backgroundColor: this.colors[index],
@@ -753,15 +760,6 @@ export class ListComponent implements OnInit, OnDestroy, DoCheck{
       borderSkipped: false,
       tension: 0
     }));
-    labels = [
-      ...labels, ...labels,...labels, ...labels, ...labels,...labels, ...labels, ...labels, ...labels,...labels,
-      ...labels, ...labels, ...labels, ...labels,...labels,...labels, ...labels, ...labels, ...labels,...labels,
-    ];
-    datasets = [
-      ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets,
-      ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets, ...datasets,
-
-    ];
     return { labels, datasets };
   }
 

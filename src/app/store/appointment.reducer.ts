@@ -1,4 +1,4 @@
-import { Appointment, Hierarchy, Structure } from "@models";
+import { Appointment, Hierarchy } from "@models";
 import * as AppointmentActions from "./appointment.actions";
 import {createReducer, on} from "@ngrx/store";
 
@@ -102,4 +102,10 @@ export const appointmentReducer = createReducer(
     ...state,
     viewMode: viewMode,
   })),
+
+  on(AppointmentActions.addMultiAppointmentsToList, (state, { appointments }) =>{
+    return { ...state,
+      items:[...state.items, ...appointments]
+    };
+  }),
 );

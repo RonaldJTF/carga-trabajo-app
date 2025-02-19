@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebRequestService } from './web-request.service';
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import { Appointment, Hierarchy, JobTitle, Normativity, Validity } from '@models';
+import { Appointment, Hierarchy, JobTitle, Normativity, OrganizationChart, Validity } from '@models';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
@@ -49,8 +49,24 @@ export class AppointmentService {
     return this.webRequestService.deleteWithHeaders(`${this.pathAppointment}/${idAppointment}`);
   }
 
-  deleteSelectedLevel(payload: number[]): Observable<Appointment[]> {
-    return this.webRequestService.deleteWithHeaders(this.pathAppointment, undefined, payload);
+  deleteSelectedLevel(appointmentIds: number[]): Observable<Appointment[]> {
+    return this.webRequestService.deleteWithHeaders(this.pathAppointment, undefined, appointmentIds);
+  }
+
+  createMultiAppointments(appointments: Appointment[]): Observable<any> {
+    return this.webRequestService.postWithHeaders(`${this.pathAppointment}/multiappointments`, appointments);
+  }
+
+  updateMultiAppointments(appointments: Appointment[], initialAppointmentIds: number[]): Observable<any> {
+    return this.webRequestService.putWithHeaders(`${this.pathAppointment}/multiappointments`, appointments, {initialAppointmentIds: JSON.stringify(initialAppointmentIds)});
+  }
+
+  deleteAppointments(appointmentIds: number[]): Observable<Appointment> {
+    return this.webRequestService.deleteWithHeaders(this.pathAppointment, undefined, appointmentIds);
+  }
+
+  getBasicMonthlyAllowance(validityId: number, levelId: number, salaryScaleId: number) {
+    return this.webRequestService.getWithHeaders(`${this.pathAppointment}/basic-monthly-allowance`, {validityId, levelId, salaryScaleId: salaryScaleId ?? ''});
   }
 
   downloadReport(type: string, filterIds: any): Observable<number>{
@@ -117,7 +133,8 @@ export class AppointmentService {
       vigencia: null,
       hierarchyTreeNode: null,
       normatividad: null,
-      organizationChartId: '',
+      idOrganigrama: '',
+      organigrama: null,
       denominacionesEmpleos: this.formBuilder.array([], Validators.required)
     })
     return this.appointmentFormGroup;
@@ -145,7 +162,8 @@ export class AppointmentService {
     this.appointmentFormGroup.get('vigencia').setValue(appointment.vigencia);
     this.appointmentFormGroup.get('normatividad').setValue(appointment.normatividad);
     this.appointmentFormGroup.get('hierarchyTreeNode').setValue(node);
-    this.appointmentFormGroup.get('organizationChartId').setValue(appointment.jerarquia.idOrganigrama);
+    this.appointmentFormGroup.get('idOrganigrama').setValue(appointment.jerarquia.idOrganigrama);
+    this.appointmentFormGroup.get('organigrama').setValue(appointment.jerarquia.organigrama);
     
     appointment.denominacionesEmpleos?.forEach(e => {
       formArray.push(this.createJobTitleFormGroup(e));
@@ -201,6 +219,12 @@ export class AppointmentService {
     if(formGroup?.get('idNormatividad').value == normativityId){
       this.setNormativityToAppointment(null);
     }
+  }
+
+  setOrganizationChartToAppointment(organizationChart: OrganizationChart){
+    const formGroup = this.appointmentFormGroup;
+    formGroup?.get('idOrganigrama').setValue(organizationChart?.id);
+    formGroup?.get('organigrama').setValue(organizationChart);
   }
 
   setHierarchyToAppointment(node: TreeNode<Hierarchy>){

@@ -176,14 +176,4 @@ export class BasicTablesComponent implements OnInit {
       },
     ]
   }
-
-  migrateActivities(){
-    this.basicTableService.migrateActivities().subscribe({
-      next: (result) => {
-        console.log(result);
-      }
-    })
-  }
-
-
 }

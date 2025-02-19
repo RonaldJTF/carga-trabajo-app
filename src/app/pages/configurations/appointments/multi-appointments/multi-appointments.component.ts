@@ -1,10 +1,10 @@
 import { Location } from '@angular/common';
 import * as AppointmentActions from "@store/appointment.actions";
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MESSAGE } from '@labels/labels';
-import { Appointment, Hierarchy, JobTitle, Level, LevelGroupOfMultiAppointment, MultiAppointments, Normativity, OrganizationChart, SalaryScale, SalaryScaleGroupOfMultiAppointment} from '@models';
+import { Appointment, Hierarchy, JobTitle, Level, LevelGroupOfMultiAppointment, MultiAppointments, Normativity, SalaryScale, SalaryScaleGroupOfMultiAppointment} from '@models';
 import { Store } from '@ngrx/store';
 import { AppointmentService, AuthenticationService, BasicTablesService, ConfirmationDialogService, CryptojsService, LevelService, NormativityService, OrganizationChartService, UrlService, ValidityService } from '@services';
 import { IMAGE_SIZE, Methods } from '@utils';
@@ -32,12 +32,14 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
   isAdmin: boolean;
   formMultiAppointments !: FormGroup;
   multiAppointments: MultiAppointments;
+  initialAppointments: Appointment[];
   updateMode: boolean;
   creatingOrUpdating: boolean = false;
   deleting: boolean = false;
   loadingAppointments: boolean = false;
   loadingSalaryScales: boolean = false;
   loadingHierarchies: boolean = false;
+  loadingBasicMonthlyAllowance: any = {};
 
   indexOfLevelGroup: number;
   levelGroupFormGroup: FormGroup;
@@ -48,14 +50,17 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
   indexOfLevelGroupSubscription: Subscription;
   organizationChartSubscription: Subscription;
   hierarchySubscription: Subscription;
-  levelSubscription: Subscription;
+  initialAppointmentsSubscription: Subscription;
 
   levels: Level[] = [];
+  levelOptions: Level[] = [];
   salaryScales: SalaryScale[] = [];
+  salaryScaleOptions: SalaryScale[] = [];
   normativities: Normativity[] = [];
 
   backRoute: string;
 
+  jobTitles: JobTitle[] = [];
   jobTitleOptions: JobTitle[] = [];
   organizationChartOptions: SelectItem[] = [];
   validityOptions: SelectItem[] = [];
@@ -96,7 +101,8 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     this.mustRechargeMultiAppointmentsFormGroupSubscription = this.multiAppointmentsService.mustRechargeMultiAppointmentsFormGroup$.subscribe(
       e => {this.mustRechargeMultiAppointmentsFormGroup = e;}
     );
-    this.multiAppointmentsSubscription = this.multiAppointmentsService.multiAppointments$.subscribe(e => this.multiAppointments = e)
+    this.multiAppointmentsSubscription = this.multiAppointmentsService.multiAppointments$.subscribe(e => this.multiAppointments = e);
+    this.initialAppointmentsSubscription = this.multiAppointmentsService.initialAppointments$.subscribe(e => this.initialAppointments = e);
 
     if (this.mustRechargeMultiAppointmentsFormGroup){
       this.multiAppointmentsService.createMultiAppointmentsFormGroup();
@@ -110,11 +116,20 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
 
     this.organizationChartSubscription = this.multiAppointmentsService.getMultiAppointmentsFormGroup().get('idOrganigrama').valueChanges.subscribe(
       (value: number) => {
-        this.loadHierarchies(value);
-        this.hierarchyTreeNodeAbstractControl.setValue(null);
-        this.idJerarquiaAbstractControl.markAsUntouched();
+        if(value){
+          this.loadHierarchies(value);
+          this.hierarchyTreeNodeAbstractControl?.setValue(null);
+          this.idJerarquiaAbstractControl?.markAsUntouched();
+        }
       }
     );
+
+    const initialOrganizationChartId: number | null = this.multiAppointmentsService.getMultiAppointmentsFormGroup().get('idOrganigrama')?.value;
+    if (initialOrganizationChartId) {
+      this.loadHierarchies(initialOrganizationChartId);
+      this.hierarchyTreeNodeAbstractControl?.setValue(null);
+      this.idJerarquiaAbstractControl?.markAsUntouched();
+    }
 
     this.appointmentIdOfGroup = this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']);
     this.loadMultiAppointmentInformation(this.appointmentIdOfGroup);
@@ -124,6 +139,8 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     this.loadLevels();
     this.loadNormativities();
     this.loadJobTitles();
+    /*Si al abrir existe el formulario, entonces cargamos las escalas salariales */
+    this.loadSalaryScaleOnChangeLevel();
   }
 
   ngOnDestroy(): void {
@@ -133,7 +150,7 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     this.levelGroupFormGroupSubscription?.unsubscribe();
     this.organizationChartSubscription?.unsubscribe();
     this.hierarchySubscription?.unsubscribe();
-    this.levelSubscription?.unsubscribe();
+    this.initialAppointmentsSubscription?.unsubscribe();
   }
 
   initMenus(){
@@ -144,19 +161,19 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
   }
 
   get levelGroupsFormArray(): FormArray{
-    return this.formMultiAppointments.get('gruposNiveles') as FormArray;
+    return this.formMultiAppointments?.get('gruposNiveles') as FormArray;
   }
   
   get salaryScaleGroupFormArray(): FormArray{
-    return this.levelGroupFormGroup.get('gruposEscalasSalariales') as FormArray;
+    return this.levelGroupFormGroup?.get('gruposEscalasSalariales') as FormArray;
   }
 
   get hierarchyTreeNodeAbstractControl(): AbstractControl{
-    return this.formMultiAppointments.get('hierarchyTreeNode');
+    return this.formMultiAppointments?.get('hierarchyTreeNode');
   }
 
   get idJerarquiaAbstractControl(): AbstractControl{
-    return this.formMultiAppointments.get('idJerarquia');
+    return this.formMultiAppointments?.get('idJerarquia');
   }
 
   getDenominacionesEmpleosFormArray(control: AbstractControl): FormArray{
@@ -174,6 +191,7 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
         this.loadingAppointments = true;
         this.appointmentService.getMultiAppointments(appointmentIdOfGroup).subscribe({
           next: (e) => {
+            this.multiAppointmentsService.setInitialAppointments(e);
             this.formMultiAppointments = this.multiAppointmentsService.initializeMultiAppointmentsFormGroup(
               this.multiAppointmentsService.transformAppointmentsToMultiAppointments(e)
             );
@@ -224,6 +242,10 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     this.levelService.getLevels().subscribe({
       next: (e) => {
         this.levels = e;
+        /*Si al cargar el componente ya el formulario de gestión de grupos de niveles está abierto 
+        (porque estaba abierto cuando hicimos una acción sobre crear normatividad u otra cosa que nos retorne a este mismo componente), 
+        entonces actualizamos las opciones de los niveles que se deben de mostrar porque no han sido gestionados*/
+        this.updateLevelOptions();
       }
     });
   }
@@ -233,9 +255,11 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     this.levelService.getSalaryScalesByLevelIdAndActive(levelId).subscribe({
       next: (e) => {
         this.salaryScales = e;
+        this.updateSalaryScaleOptions();
         this.loadingSalaryScales = false;
-        if(!this.salaryScales?.length && this.indexOfLevelGroup < 0){
+        if(!this.salaryScales?.length && !this.salaryScaleGroupFormArray?.value?.length){
           this.multiAppointmentsService.setNewSalaryScaleGroup({} as SalaryScaleGroupOfMultiAppointment);
+          this.loadBasicMonthlyAllowance(this.formMultiAppointments.value.idVigencia, levelId);
         }
       },
       error: ()=>{this.loadingSalaryScales = false;}
@@ -253,13 +277,44 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
   loadJobTitles(){
     this.basicTablesService.getJobTitles().subscribe({
       next: (e) => {
-        this.jobTitleOptions = e;
+        this.jobTitles = e;
       }
     });
   }
 
+  private loadBasicMonthlyAllowance(validityId: number, levelId: number, salaryScaleId?: number){
+    if(validityId != null && levelId != null){
+      this.loadingBasicMonthlyAllowance[`${levelId}-${salaryScaleId ?? ''}`] = true;
+      this.appointmentService.getBasicMonthlyAllowance(validityId, levelId, salaryScaleId).subscribe({
+        next: (e) => {
+          const salaryScaleGroup = this.salaryScaleGroupFormArray.controls.find(control => control.get('idEscalaSalarial')?.value == salaryScaleId) as FormGroup | undefined;
+          salaryScaleGroup.get('asignacionBasicaMensual').setValue(e);
+          this.loadingBasicMonthlyAllowance[`${levelId}-${salaryScaleId ?? ''}`] = false;
+        },
+        error: () => this.loadingBasicMonthlyAllowance[`${levelId}-${salaryScaleId ?? ''}`] = false
+      });
+    }
+  }
+
   openNewLevelGroup(){
     this.multiAppointmentsService.setNewLevelGroup({} as LevelGroupOfMultiAppointment);
+    this.updateLevelOptions();
+  }
+
+  private updateLevelOptions(){
+    const levelIds: number[] = this.levelGroupsFormArray?.value?.map(e => e.idNivel) ?? [];
+    const levelIdOnWorking: number = this.levelGroupFormGroup?.value?.idNivel;
+    this.levelOptions = this.levels?.map( e =>  { return {...e, disabled: levelIds.includes(e.id) && e.id != levelIdOnWorking}} );
+  }
+
+  private updateSalaryScaleOptions(){
+    const salaryScaleIds: number[] = this.salaryScaleGroupFormArray?.value?.map(e => e.idEscalaSalarial) ?? [];
+    this.salaryScaleOptions = this.salaryScales?.map( e =>  { return {...e, disabled: salaryScaleIds.includes(e.id)}} )
+  }
+
+  private updateJobTitleOptions(indexOfSalaryScaleGroup: number){
+    const jobTitleIds: number[] = this.salaryScaleGroupFormArray?.at(indexOfSalaryScaleGroup)?.get('denominacionesEmpleos').value?.map(e => e.id) ?? [];
+    this.jobTitleOptions = this.jobTitles?.map( e =>  { return {...e, disabled: jobTitleIds.includes(e.id)}} )
   }
 
   cancelLevelGroup(event: Event){
@@ -287,13 +342,19 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     this.loadSalaryScaleOnChangeLevel();
   }
 
+  showJobTitleOptions(event: Event, indexOfSalaryScaleGroup: number, overlayPanel: OverlayPanel){
+    this.updateJobTitleOptions(indexOfSalaryScaleGroup);
+    overlayPanel.toggle(event);
+  }
 
-  selectSalaryScale(data: any){
+  changeSalaryScale(data: any){
     const salaryScale: SalaryScale = data.value;
     this.salaryScaleOptionsOverlayPanel.hide();
     this.multiAppointmentsService.setNewSalaryScaleGroup(
       {idEscalaSalarial: salaryScale.id, escalaSalarial: salaryScale} as SalaryScaleGroupOfMultiAppointment
     );
+    this.updateSalaryScaleOptions();
+    this.loadBasicMonthlyAllowance(this.formMultiAppointments.value.idVigencia, this.levelGroupFormGroup.value.idNivel, salaryScale.id);
   }
 
   modifyLevelGroup(index: number, event: Event){
@@ -301,43 +362,46 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.multiAppointmentsService.modifyLevelGroup(index);
     this.loadSalaryScaleOnChangeLevel();
+    this.updateLevelOptions();
   }
 
   removeLevelGroup(index: number, event: Event){
     event.preventDefault();
     event.stopPropagation();
     this.multiAppointmentsService.removeLevelGroup(index);
+    this.updateLevelOptions();
   }
 
   loadSalaryScaleOnChangeLevel(){
-    const levelId = this.levelGroupFormGroup.get('idNivel').value;
+    const levelId = this.levelGroupFormGroup?.get('idNivel')?.value;
     if(levelId){
       this.loadSalaryScale(levelId);
     }
   }
 
-
-  updateMultiAppointmenta(payload: Appointment[]): void {
-    /*this.appointmentService.updateAppointment(id, payload).subscribe({
+  updateMultiAppointments(payload: Appointment[]): void {
+    const initialAppointmentIds = this.initialAppointments.map(e => e.id);
+    this.appointmentService.updateMultiAppointments(payload, initialAppointmentIds).subscribe({
       next: (e) => {
-        this.store.dispatch(AppointmentActions.updateFromList({appointment: e}));
+        this.store.dispatch(AppointmentActions.removeItemsFromList({appointmentIds: initialAppointmentIds ?? []}));
+        this.store.dispatch(AppointmentActions.addMultiAppointmentsToList({appointments: e}));
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
-        this.appointmentService.resetFormInformation();
+        this.multiAppointmentsService.resetFormInformation();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
       },
-    });*/
+    });
   }
 
-  createMultiAppointmenta(payload: Appointment[]): void {
-    this.appointmentService.createAppointment(payload).subscribe({
+  createMultiAppointments(payload: Appointment[]): void {
+    this.appointmentService.createMultiAppointments(payload).subscribe({
       next: (e) => {
-        this.store.dispatch(AppointmentActions.addToList({appointment: e}));
+        this.store.dispatch(AppointmentActions.addMultiAppointmentsToList({appointments: e}));
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.creatingOrUpdating = false;
-        this.appointmentService.resetFormInformation();
+        this.multiAppointmentsService.resetFormInformation();
       },
       error: (error) => {
         this.creatingOrUpdating = false;
@@ -347,36 +411,30 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
 
   onSubmitMultiAppointments(event : Event): void {
     event.preventDefault();
-    console.log(this.formMultiAppointments)
-    console.log(this.multiAppointmentsService.transformMultiAppointmentsToAppointments(this.formMultiAppointments.value))
-    /*let payload = {...this.appointment, ...this.formAppointment.value};
-    payload.totalCargos = this.denominacionesEmpleosFormArray.value.reduce((acc, e) => e.totalCargos + acc, 0) ?? 0;
-    delete payload.hierarchyTreeNode;
-
-    
-    console.log(payload)
-    if (this.formAppointment.invalid) {
-      this.formAppointment.markAllAsTouched();
+    let payload = this.multiAppointmentsService.transformMultiAppointmentsToAppointments(this.formMultiAppointments.value);
+    if (this.formMultiAppointments.invalid) {
+      this.formMultiAppointments.markAllAsTouched();
     } else {
       this.creatingOrUpdating = true;
-      this.updateMode ? this.updateAppointment(payload, this.appointment.id) : this.createAppointment(payload);
-    }*/
+      this.updateMode ? this.updateMultiAppointments(payload) : this.createMultiAppointments(payload);
+    }
   }
 
   onDeleteMultiAppointments(event : Event): void {
     event.preventDefault();
-    /*this.deleting = true;
-    this.appointmentService.deleteAppointment(this.appointment.id).subscribe({
+    const initialAppointmentIds = this.initialAppointments.map(e => e.id);
+    this.deleting = true;
+    this.appointmentService.deleteAppointments(initialAppointmentIds).subscribe({
       next: () => {
-        this.store.dispatch(AppointmentActions.removeFromList({id: this.appointment.id}));
+        this.store.dispatch(AppointmentActions.removeItemsFromList({appointmentIds: initialAppointmentIds}));
         this.router.navigate([this.backRoute], {skipLocationChange: true});
         this.deleting = false;
-        this.appointmentService.resetFormInformation();
+        this.multiAppointmentsService.resetFormInformation();
       },
       error: (error) => {
         this.deleting = false;
       },
-    });*/
+    });
   }
 
   onCancelMultiAppointments(event : Event): void {
@@ -397,7 +455,7 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
   openNewValidity() {
     //Reestablecemos a valores iniciales cuando vayamos a crear una vigencia
     this.validityService.setMustRechargeValidityFormGroup(true);
-    const backRoute = this.multiAppointments ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
+    const backRoute = this.multiAppointments ? `${'/configurations/appointments/multiappointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
     this.router.navigate(['/configurations/validities/create'], { skipLocationChange: true, queryParams: {backRoute: backRoute}});
   }
 
@@ -406,7 +464,7 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     //Reestablecemos a valores iniciales cuando vayamos a editar una vigencia
     this.validityService.setMustRechargeValidityFormGroup(true);
-    const backRoute = this.multiAppointments ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
+    const backRoute = this.multiAppointments ? `${'/configurations/appointments/multiappointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
     this.router.navigate(["/configurations/validities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute}})
   }
 
@@ -420,14 +478,14 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
   }
 
   openNewNormativity() {
-    const backRoute = this.multiAppointments ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
+    const backRoute = this.multiAppointments ? `${'/configurations/appointments/multiappointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
     this.router.navigate(['/configurations/normativities/create'], { skipLocationChange: true, queryParams: {backRoute: backRoute, showScopes: true}});
   }
 
   onGoToUpdateNormativity (id : any, event: Event): void{
     event.preventDefault();
     event.stopPropagation();
-    const backRoute = this.multiAppointments ? `${'/configurations/appointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
+    const backRoute = this.multiAppointments ? `${'/configurations/appointments/multiappointments/'+ this.cryptoService.encryptParam(this.appointmentIdOfGroup)}` : '/configurations/appointments/create';
     this.router.navigate(["/configurations/normativities", this.cryptoService.encryptParam(id)], {skipLocationChange: true, queryParams: {backRoute: backRoute, showScopes: true}})
   }
 
@@ -473,7 +531,6 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
 
   changeOrganizationChart(data: any){
     this.multiAppointmentsService.setOrganizationChartToMultiAppointments(data.value);
-    this.validityOptionsOverlayPanel.hide();
     this.organizationChartOptionsOverlayPanel.hide();
   }
 
@@ -496,6 +553,7 @@ export class MultiAppointmentsComponent implements OnInit, OnDestroy {
 
   removeSalaryScaleGroup(indexOfSalaryScaleGroup: number){
     this.multiAppointmentsService.removeSalaryScaleGroup(indexOfSalaryScaleGroup);
+    this.updateSalaryScaleOptions();
   }
 
   showDetailOfOrganizationChartNormativity(elementRef: HTMLDivElement, event: Event) {

@@ -9,8 +9,9 @@ import { MultiAppointmentsComponent } from './multi-appointments/multi-appointme
 const routes: Routes = [{
   path: '', component: AppointmentsComponent, children: [
     {path: '', component: ListComponent},
-    {path: 'create', component: AppointmentComponent, canActivate: [adminGuard]},
+    {path: 'create', component: MultiAppointmentsComponent, canActivate: [adminGuard]},
     {path: ':id', component: AppointmentComponent, canActivate: [adminGuard]},
+    {path: 'multiappointments/:id', component: MultiAppointmentsComponent, canActivate: [adminGuard]},
   ]
 }];
 

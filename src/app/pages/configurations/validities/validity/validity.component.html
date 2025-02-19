@@ -141,14 +141,14 @@
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Variables"  (click)="variableOptionsOverlayPanel.toggle($event)"></button>
             <p-overlayPanel #variableOptionsOverlayPanel [showCloseIcon]="true">
                 <ng-template pTemplate>
-                    <p-listbox [options]="variableOptions" [filter]="true" title="Variables"
+                    <p-listbox [options]="variableOptions" [filter]="true" title="Variables" optionLabel="nombre" 
                         [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
                         [style]="{'max-height':'250px', 'overflow':'auto'}"
                         (onClick)="changeVariable($event)">
                         <ng-template let-item pTemplate="item">
                             <div class="flex align-items-center gap-2 w-full">
-                                <div>{{item.label }}</div>
-                                <button *ngIf="!parseStringToBoolean(item.value.primaria) else sNoDeleteButton"  (click)="onDeleteVariable(item.value, $event)" pButton pRipple
+                                <div>{{item.nombre }}</div>
+                                <button *ngIf="!parseStringToBoolean(item.primaria) else sNoDeleteButton"  (click)="onDeleteVariable(item, $event)" pButton pRipple
                                     type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-text z-5 ml-auto"  pTooltip="Eliminar" tooltipPosition="bottom"></button>
                                 <ng-template #sNoDeleteButton>
                                     <i class="pi pi-trash text-500 ml-auto p-3" pTooltip="Deshabilitado" tooltipPosition="bottom"></i>

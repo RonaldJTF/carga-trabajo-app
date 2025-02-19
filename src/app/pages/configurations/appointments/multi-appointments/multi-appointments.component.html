@@ -75,8 +75,7 @@
                     <span>Asociar cargos por nivel ocupacional</span>
                 </button>
             </div>
-    
-            <p-table #tableOfSalaryScales [value]="levelGroupsFormArray.value" rowGroupMode="subheader" dataKey="idNivel"  responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
+            <p-table #tableOfLevelGroups [value]="levelGroupsFormArray?.value" dataKey="idNivel" responsiveLayout="scroll" [scrollable]="true" scrollHeight="500px" class="w-full">
                 <ng-template pTemplate="body" let-levelGroup let-rowIndex="rowIndex" let-expanded="expanded">
                     <tr >
                         <td [ngClass]="{'_border-left-primary': indexOfLevelGroup == rowIndex, '_border-left-transparent': indexOfLevelGroup != rowIndex}" class="w-3rem _border-left-5">
@@ -96,13 +95,13 @@
                             <ng-container *ngIf="levelGroup.gruposEscalasSalariales.length; else sNoSalaryScaleGroup">
                                 <ng-container *ngFor="let salaryScaleGroup of levelGroup.gruposEscalasSalariales; let indexOfSalaryScaleGroup = index">
                                     <div class="px-3 py-2 hover:surface-hover">
-                                       <div class="flex align-items-center">
+                                        <div class="flex align-items-center">
                                             <span class="font-medium m-2 text-500">{{indexOfSalaryScaleGroup+1}}.</span>
                                             <span class="font-medium text-500 flex-grow-1">{{salaryScaleGroup.escalaSalarial?.nombre || 'Nivel ocupacional'}}</span>
                                             <span class="text-500 mx-2" pTooltip="Asignación básica mensual" tooltipPosition="bottom">{{salaryScaleGroup.asignacionBasicaMensual | currency:'COP':'symbol-narrow':'1.0-0'}}</span>
                                             <button pButton pRipple type="button" (click)="removeSalaryScaleGroupToMultiAppointments(indexOfSalaryScaleGroup, rowIndex)" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
-                                       </div>
-                                       <div *ngFor="let item of salaryScaleGroup.denominacionesEmpleos; let indexOfJobTitle=index "  class="flex flex-row align-items-center ml-3">
+                                        </div>
+                                        <div *ngFor="let item of salaryScaleGroup.denominacionesEmpleos; let indexOfJobTitle=index "  class="flex flex-row align-items-center ml-3">
                                             <span class="text-500" style="white-space: nowrap">{{item.nombre}}</span>
                                             <hr class="border-top-1 border-dashed flex-grow-1 mx-2">
                                             <p-badge [value]="item.totalCargos?.toString() ?? '0'" severity="info" pTooltip="Cargos asignados" tooltipPosition="bottom" styleClass="mx-2"></p-badge>
@@ -299,7 +298,7 @@
         <div class="field p-fluid">
             <label class="font-medium" for="idNivel">Nivel ocupacional</label>
             <p-dropdown id="idNivel" inputId="idNivel" [autoDisplayFirst]="false" styleClass="surface-100"
-                        [options]="levels" optionLabel="descripcion" [filter]="true" formControlName="idNivel"
+                        [options]="levelOptions" optionLabel="descripcion" [filter]="true" formControlName="idNivel"
                         [showClear]="true" (onChange)="onChangeLevel($event)" optionValue="id"
                         [placeholder]="MESSAGE.SELECCIONA_OPCION" [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS">
             </p-dropdown>
@@ -311,29 +310,29 @@
         </div>
 
         <ng-container *ngIf="!loadingSalaryScales else sLoadingSalaryScales">
-            <div *ngIf="salaryScales?.length" class="flex flex-column md:flex-row align-items-center w-full">
+            <div *ngIf="salaryScaleOptions?.length" class="flex flex-column md:flex-row align-items-center w-full">
                 <label class="text-left w-full md:w-auto font-medium">Escala salarial</label>
                 <div style="margin-left: auto; ">
                     <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Escalas salariales" (click)="salaryScaleOptionsOverlayPanel.toggle($event)"></button>
                     <p-overlayPanel #salaryScaleOptionsOverlayPanel [showCloseIcon]="true">
                         <ng-template pTemplate>
-                            <p-listbox [options]="salaryScales" [filter]="true" title="Escalas salariales" optionLabel="nombre"
+                            <p-listbox [options]="salaryScaleOptions" [filter]="true" title="Escalas salariales" optionLabel="nombre"
                                 [emptyMessage]="MESSAGE.NO_REGISTROS" [emptyFilterMessage]="MESSAGE.NO_REGISTROS"
                                 [style]="{'max-height':'250px', 'overflow':'auto'}"
-                                (onClick)="selectSalaryScale($event)">
+                                (onClick)="changeSalaryScale($event)">
                             </p-listbox>
                         </ng-template> 
                     </p-overlayPanel>
                 </div>
             </div> 
-            <div *ngIf="salaryScaleGroupFormArray.value?.length">
+            <div *ngIf="salaryScaleGroupFormArray?.value?.length">
                 <div formArrayName="gruposEscalasSalariales">
                     <div *ngFor="let group of salaryScaleGroupFormArray.controls; let i = index" [formGroupName]="i" class="border-left-3 border-gray-400 pl-2 mb-3">
                         <div class="flex align-items-center">
                             <span class="text-500 mr-3 flex-grow-1 font-medium py-1 pl-1 border-none border-bottom-1 shadow-none p-inputtext _input-text">{{group.value.escalaSalarial?.nombre || 'Nivel ocupacional' | uppercase}}</span>       
                             <span class="p-input-icon-left">
                                 <i class="pi pi-dollar"></i>
-                                <input pInputText id="asignacionBasica" placeholder="A. básica mensual"  type="number" formControlName="asignacionBasicaMensual" class="w-13rem py-1 border-none border-bottom-1 shadow-none _input-value"/>       
+                                <input pInputText id="asignacionBasica" [placeholder]="loadingBasicMonthlyAllowance[levelGroupFormGroup.get('idNivel').value + '-' + (group.value.idEscalaSalarial ?? '')] ? 'Cargando...' : 'A. básica mensual'"  type="number" formControlName="asignacionBasicaMensual" class="w-13rem py-1 border-none border-bottom-1 shadow-none _input-value"/>       
                             </span>
                             <button pButton pRipple type="button" (click)="removeSalaryScaleGroup(i)"  icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"  pTooltip="Remover" tooltipPosition="bottom"></button>
                         </div>
@@ -341,7 +340,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="!salaryScaleGroupFormArray.value?.length && salaryScales?.length>0" class="flex align-items-center justify-content-center p-3 mt-2">
+            <div *ngIf="!salaryScaleGroupFormArray?.value?.length && salaryScaleOptions?.length>0" class="flex align-items-center justify-content-center p-3 mt-2">
                 <i class="pi pi-exclamation-triangle text-3xl text-500 mr-2"></i>
                 <span class="text-500 text-justify">Especifique las asignaciones de cargos por escala salarial</span>
             </div>
@@ -376,7 +375,7 @@
     </div>
     <div class="flex align-items-center">
         <button pButton pRipple label="Cargos por empleo" type="button" icon="pi pi-plus" style="white-space: nowrap;"
-            class="w-17rem p-button-rounded p-button-text" (click)="jobTitleOptionsOverlayPanel.toggle($event)"></button>
+            class="w-17rem p-button-rounded p-button-text" (click)="showJobTitleOptions($event, indexOfSalaryScaleGroup, jobTitleOptionsOverlayPanel)"></button>
         <p-overlayPanel #jobTitleOptionsOverlayPanel [showCloseIcon]="true">
             <ng-template pTemplate>
                 <p-listbox [options]="jobTitleOptions" [filter]="true" title="Designación de empleos" optionLabel="nombre"

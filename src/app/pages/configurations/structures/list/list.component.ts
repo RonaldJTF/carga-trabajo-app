@@ -40,7 +40,6 @@ export class ListComponent implements OnInit, OnDestroy{
   @ViewChild('treeTableDependency') treeTableDependency: TreeTable;
   @ViewChild('treeTableOfStructuresNoDependency') treeTableOfStructuresNoDependency: TreeTable;
   @ViewChild('timeStatisticsOverlayPanel') timeStatisticsOverlayPanel: OverlayPanel;
-
   @ViewChildren('referenceElement') referenceElement!: QueryList<ElementRef>;
 
   isAdmin: boolean;
@@ -569,7 +568,6 @@ export class ListComponent implements OnInit, OnDestroy{
       },
       error: ()=>{this.loadingTimeStatistics = false;}
     });
-    //this.timeStatisticsOverlayPanel.toggle(event)
     this.openOverlayPanel(structure.id, event);
   }
 

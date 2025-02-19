@@ -11,7 +11,7 @@
             </button>
         </ng-template>
         <ng-template *ngIf="organizationCharts$ | async as organizationCharts" pTemplate="end">
-          <div class="flex align-items-center flex-wrap">
+          <div class="flex align-items-center flex-wrap justify-content-end">
             <button pButton pRipple type="button" icon="pi pi-angle-down" class="p-button-rounded p-button-info p-button-text"  label="Organigramas" (click)="organizationChartOptionsOverlayPanel.toggle($event)"></button>
             <p-selectButton styleClass="m-1" [options]="viewOptions" [(ngModel)]="viewMode" (ngModelChange)="onViewChange($event)">
               <ng-template let-item pTemplate>
@@ -39,14 +39,14 @@
             <p-organizationChart [value]="hierarchyTree" styleClass="p-4 overflow-x-auto" [preserveSpace]="false">
               <ng-template let-node pTemplate="default">
                 <ng-container *ngIf="node.data.root else sNoRoot">
-                  <div class="flex flex-column p-3" style="position: relative;" (mouseenter)="toggleIcon(true, node.data.id, 'organizationChart')" (mouseleave)="toggleIcon(false, node.data.id, 'organizationChart')">
+                  <div #hierarchyReferenceElement  id="element_root" class="flex flex-column p-3" style="position: relative;" (mouseenter)="toggleIcon(true, node.data.id, 'organizationChart')" (mouseleave)="toggleIcon(false, node.data.id, 'organizationChart')">
                     <span class="font-medium text-700">{{node.data.nombre | uppercase}}</span>
                     <span class="text-500 text-sm">{{node.data.descripcion}}</span>
                     <app-organization-chart-menu-item [toggleIcon]="showedIcons['organizationChart' + node.data.id]" [id]="node.data.id" [value]="node.data" [menuItems]="menuItemsOrganizationChart" ></app-organization-chart-menu-item >
                   </div>
                 </ng-container>
                 <ng-template #sNoRoot>
-                  <div *ngIf="node.data.dependencia as dependency" class="flex flex-column align-items-center text-center p-3" style="position: relative;" (mouseenter)="toggleIcon(true, node.data.id, 'hierarchy')" (mouseleave)="toggleIcon(false, node.data.id, 'hierarchy')">
+                  <div #hierarchyReferenceElement id="element_{{node.data.id}}" *ngIf="node.data.dependencia as dependency" class="flex flex-column align-items-center text-center p-3" style="position: relative;" (mouseenter)="toggleIcon(true, node.data.id, 'hierarchy')" (mouseleave)="toggleIcon(false, node.data.id, 'hierarchy')">
                     <ng-container *ngIf="dependency.srcIcono else sNoIcon">
                       <img [src]="dependency.srcIcono" [alt]="dependency.nombre" [appImageFallback]="'assets/content/images/image-fallback-structure.png'" class="h-3rem" />
                     </ng-container>

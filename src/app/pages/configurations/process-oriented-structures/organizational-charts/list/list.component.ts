@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import * as OrganizationChartActions from "@store/organizationChart.actions";
 import * as HierarchyActions from "@store/hierarchy.actions";
 import * as AppointmentActions from "@store/appointment.actions";
@@ -36,6 +36,7 @@ export class ListComponent implements OnInit, OnDestroy {
   @ViewChild('detailOfOrganizationChartOverlayPanel') detailOfOrganizationChartOverlayPanel: OverlayPanel;
   @ViewChild('treeTableAssignedOperationalManagement') treeTableAssignedOperationalManagement: TreeTable;
   @ViewChild('treeTableNoAssignedOperationalManagement') treeTableNoAssignedOperationalManagement: TreeTable;
+  @ViewChildren('hierarchyReferenceElement') hierarchyReferenceElement!: QueryList<ElementRef>;
 
   loading: boolean = false;
   loadingHierarchies: boolean = false;
@@ -440,7 +441,18 @@ export class ListComponent implements OnInit, OnDestroy {
     }else{
       this.filteredDependencies = this.filterDependencies(this.dependencies);
     }
-    this.dependencyOptionsOverlayPanel.toggle(event);
+    this.openDependencyOptionsOverlayPanel(hierarchy?.id, event);
+  }
+
+  openDependencyOptionsOverlayPanel(id: number, event: Event): void {
+    if (!this.hierarchyReferenceElement || this.hierarchyReferenceElement.length === 0) {
+      return;
+    }
+    const reference = this.hierarchyReferenceElement.find((ref) => ref.nativeElement.id === `element_${id ?? 'root'}`);
+    if (!reference) {
+      return;
+    }
+    this.dependencyOptionsOverlayPanel.toggle(event, reference.nativeElement);
   }
 
   private filterDependencies(dependencies: Dependency[]): Dependency[]{
@@ -783,7 +795,7 @@ export class ListComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (res) => {
-        //this.reportUploaded(menuItem, initialLabel, automationId, res);
+        this.reportUploaded(menuItem, initialLabel, automationId, res);
       }
     });
   }

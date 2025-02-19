@@ -26,6 +26,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   @ViewChild('validityOptionsOverlayPanel') validityOptionsOverlayPanel: OverlayPanel;
   @ViewChild('normativityOptionsOverlayPanel') normativityOptionsOverlayPanel: OverlayPanel;
   @ViewChild('organizationChartOptionsOverlayPanel') organizationChartOptionsOverlayPanel: OverlayPanel;
+  @ViewChild('jobTitleOptionsOverlayPanel') jobTitleOptionsOverlayPanel: OverlayPanel;
 
   isAdmin: boolean;
   formAppointment !: FormGroup;
@@ -42,6 +43,7 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   appointmentSubscription: Subscription;
   levelSubscription: Subscription;
   hierarchySubscription: Subscription;
+  organizationChartSubscription: Subscription;
 
   levels: Level[] = [];
   salaryScales: SalaryScale[] = [];
@@ -49,14 +51,13 @@ export class AppointmentComponent implements OnInit, OnDestroy {
 
   backRoute: string;
 
+  jobTitles: JobTitle[] = [];
   jobTitleOptions: JobTitle[] = [];
   organizationChartOptions: SelectItem[] = [];
   validityOptions: SelectItem[] = [];
   normativityOptions: SelectItem[] = [];
   hierarchyOptions: TreeNode<Hierarchy>[] = [];
   menuItemsOfValidity: MenuItem[] = [];
-
-  organizationChart: OrganizationChart;
 
   constructor(
     private store: Store<AppState>,
@@ -96,6 +97,23 @@ export class AppointmentComponent implements OnInit, OnDestroy {
       this.loadSalaryScale(value);
     });
 
+    this.organizationChartSubscription = this.appointmentService.getAppointmentFormGroup().get('idOrganigrama').valueChanges.subscribe(
+      (value: number) => {
+        if(value){
+          this.loadHierarchies(value);
+          this.hierarchyTreeNodeAbstractControl?.setValue(null);
+          this.idJerarquiaAbstractControl?.markAsUntouched();
+        }
+      }
+    );
+
+    const initialOrganizationChartId: number | null = this.appointmentService.getAppointmentFormGroup().get('idOrganigrama')?.value;
+    if (initialOrganizationChartId) {
+      this.loadHierarchies(initialOrganizationChartId);
+      this.hierarchyTreeNodeAbstractControl?.setValue(null);
+      this.idJerarquiaAbstractControl?.markAsUntouched();
+    }
+
     const appointmentId = this.cryptoService.decryptParamAsNumber(this.route.snapshot.params['id']);
     this.loadAppointmentInformation(appointmentId);
     this.loadOrganizacionCharts();
@@ -111,20 +129,21 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.appointmentSubscription?.unsubscribe();
     this.levelSubscription?.unsubscribe();
     this.hierarchySubscription?.unsubscribe();
+    this.organizationChartSubscription?.unsubscribe();
   }
 
   initMenus(){}
 
   get denominacionesEmpleosFormArray(): FormArray{
-    return this.formAppointment.get('denominacionesEmpleos') as FormArray;
+    return this.formAppointment?.get('denominacionesEmpleos') as FormArray;
   }
 
   get hierarchyTreeNodeAbstractControl(): AbstractControl{
-    return this.formAppointment.get('hierarchyTreeNode');
+    return this.formAppointment?.get('hierarchyTreeNode');
   }
 
   get idJerarquiaAbstractControl(): AbstractControl{
-    return this.formAppointment.get('idJerarquia');
+    return this.formAppointment?.get('idJerarquia');
   }
 
   loadAppointmentInformation(id: number){
@@ -159,7 +178,6 @@ export class AppointmentComponent implements OnInit, OnDestroy {
     this.organizationChartService.getOrganizationalCharts().subscribe({
       next: (e) => {
         this.organizationChartOptions = e?.map( o => ({value: o, label: o.nombre}));
-        this.organizationChart = e?.find ( obj => obj.id == this.formAppointment.get('organizationChartId').value);
       }
     });
   }
@@ -218,7 +236,8 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   loadJobTitles(){
     this.basicTablesService.getJobTitles().subscribe({
       next: (e) => {
-        this.jobTitleOptions = e;
+        this.jobTitles = e;
+        this.updateJobTitleOptions();
       }
     });
   }
@@ -373,19 +392,24 @@ export class AppointmentComponent implements OnInit, OnDestroy {
   }
 
   changeOrganizationChart(data: any){
-    this.organizationChart = data.value;
-    this.loadHierarchies(data.value.id);
-    this.hierarchyTreeNodeAbstractControl.setValue(null);
-    this.idJerarquiaAbstractControl.markAsUntouched();
+    this.appointmentService.setOrganizationChartToAppointment(data.value);
     this.organizationChartOptionsOverlayPanel.hide();
   }
 
   changeJobTitle(data: any){
     this.appointmentService.submiJobTitle(data.value);
+    this.jobTitleOptionsOverlayPanel.hide();
+    this.updateJobTitleOptions();
+  }
+
+  private updateJobTitleOptions(){
+    const jobTitleIds: number[] = this.denominacionesEmpleosFormArray?.value?.map(e => e.id) ?? [];
+    this.jobTitleOptions = this.jobTitles?.map( e =>  { return {...e, disabled: jobTitleIds.includes(e.id)}} )
   }
 
   removeJobTitle(index: number){
     this.appointmentService.removeJobTitle(index);
+    this.updateJobTitleOptions();
   }
 
   showDetailOfOrganizationChartNormativity(elementRef: HTMLDivElement, event: Event) {

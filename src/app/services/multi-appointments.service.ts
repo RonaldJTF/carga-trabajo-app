@@ -16,11 +16,13 @@ export class MultiAppointmentsService {
   private _indexOfLevelGroup: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
   private _mustRechargeMultiAppointmentsFormGroup: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private _multiAppointments: BehaviorSubject<MultiAppointments> = new BehaviorSubject<MultiAppointments>(null);
+  private _initialAppointments: BehaviorSubject<Appointment[]> = new BehaviorSubject<Appointment[]>(null);
 
   public levelGroupFormGroup$ = this._levelGroupFormGroup.asObservable();
   public indexOfLevelGroup$ = this._indexOfLevelGroup.asObservable();
   public mustRechargeMultiAppointmentsFormGroup$ = this._mustRechargeMultiAppointmentsFormGroup.asObservable();
   public multiAppointments$ = this._multiAppointments.asObservable();
+  public initialAppointments$ = this._initialAppointments.asObservable();
 
   constructor(
     private webRequestService: WebRequestService,
@@ -73,11 +75,16 @@ export class MultiAppointmentsService {
     this.multiAppointmentsFormGroup.get('normatividad').setValue(multiAppointments.normatividad);
     this.multiAppointmentsFormGroup.get('hierarchyTreeNode').setValue(node);
     this.multiAppointmentsFormGroup.get('idOrganigrama').setValue(multiAppointments.jerarquia.idOrganigrama);
+    this.multiAppointmentsFormGroup.get('organigrama').setValue(multiAppointments.jerarquia.organigrama);
     
     multiAppointments.gruposNiveles?.forEach(e => {
       formArray.push(this.createLevelGroupFormGroup(e));
     })
     return this.multiAppointmentsFormGroup;
+  }
+
+  setInitialAppointments(appointments: Appointment[]) {
+    this._initialAppointments.next(appointments);
   }
 
   setNewLevelGroup(levelGroup: LevelGroupOfMultiAppointment) {
@@ -276,6 +283,7 @@ export class MultiAppointmentsService {
           nivel: appointment.nivel,
           gruposEscalasSalariales: []
         } as LevelGroupOfMultiAppointment;
+        multiAppointments.gruposNiveles.push(levelGroupOfMultiAppointment);
         levelId = appointment.idNivel;
       }
       levelGroupOfMultiAppointment.gruposEscalasSalariales.push(
@@ -288,7 +296,6 @@ export class MultiAppointmentsService {
           denominacionesEmpleos: appointment.denominacionesEmpleos
         } as SalaryScaleGroupOfMultiAppointment
       );
-      multiAppointments.gruposNiveles.push(levelGroupOfMultiAppointment);
     }
     return multiAppointments;  
   }

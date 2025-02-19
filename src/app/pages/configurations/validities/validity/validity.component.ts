@@ -55,7 +55,8 @@ export class ValidityComponent implements OnInit {
 
   backRoute: string;
 
-  variableOptions: SelectItem[] = [];
+  variableOptions: Variable[] = [];
+  variables: Variable[] = [];
   menuItemsOfValueInValidity: MenuItem[] = [];
 
   idLevel: string;
@@ -96,7 +97,7 @@ export class ValidityComponent implements OnInit {
   }
 
   get valuesInValidityFormArray(): FormArray{
-    return this.formValidity.get('valoresVigencia') as FormArray;
+    return this.formValidity?.get('valoresVigencia') as FormArray;
   }
 
   initMenus(){
@@ -131,7 +132,8 @@ export class ValidityComponent implements OnInit {
   loadVariables(): void {
     this.variableService.getVariablesConfigureByValidityAndActive().subscribe({
       next: (e) => {
-        this.variableOptions = e?.map( o => ({value: o, label: o.nombre}))
+        this.variables = e;
+        this.updateVariableOptions();
       }
     });
   }
@@ -209,6 +211,7 @@ export class ValidityComponent implements OnInit {
 
   openNewValueInValidity(){
     this.validityService.setNewValueInValidity({idVigencia: this.validity?.id} as ValueInValidity);
+    this.updateVariableOptions();
   }
 
   cancelValueInValidity(event: Event){
@@ -227,15 +230,23 @@ export class ValidityComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.validityService.modifyValueInValidity(index);
+    this.updateVariableOptions();
   }
 
   removeValueInValidity(index: number){
     this.validityService.removeValueInValidity(index);
+    this.updateVariableOptions();
   }
 
   changeVariable(data: any){
     this.validityService.setVariableToValueInValidity(data.value);
     this.variableOptionsOverlayPanel.hide();
+  }
+
+  private updateVariableOptions(){
+    const variableIds: number[] = this.valuesInValidityFormArray?.value?.map(e => e.idVariable) ?? [];
+    const variableIdOnWorking: number = this.valueInValidityFormGroup?.value?.idVariable;
+    this.variableOptions = this.variables?.map( e =>  { return {...e, disabled: variableIds.includes(e.id) && e.id != variableIdOnWorking}} )
   }
 
   removeVariable(){
@@ -262,7 +273,8 @@ export class ValidityComponent implements OnInit {
         this.variableService.deleteVariable(variable.id).subscribe({
           next: () => {
             this.validityService.removeValuesInValidityByVariable(variable.id);
-            this.variableOptions = this.variableOptions.filter(e => e.value?.id != variable.id);
+            this.variables = this.variables.filter(e => e.id != variable.id);
+            this.updateVariableOptions();
           },
         });
       },
